@@ -1,0 +1,9 @@
+{"seq": 1, "tick": 0, "wall": "2026-07-22T17:41:41+00:00", "type": "run_start", "data": {"run_id": "ab25", "scenario": "seahaven", "seed": 7, "ticks": 3, "provider": "gemini", "models": {"routine": "gemini-2.5-flash-lite", "dialogue": "gemini-2.5-flash-lite", "reflect": "gemini-2.5-flash-lite", "judge": "gemini-2.5-flash-lite"}, "cfg": {"use_cache": true}}}
+{"seq": 2, "tick": 0, "wall": "2026-07-22T17:41:41+00:00", "type": "tick_start", "data": {"tick": 0, "when": "第1天 06:00"}}
+{"seq": 3, "tick": 0, "wall": "2026-07-22T17:41:41+00:00", "type": "think", "data": {"agent": "chen_yuan", "reason": "no_action", "tier": "dialogue"}}
+{"seq": 4, "tick": 0, "wall": "2026-07-22T17:41:41+00:00", "type": "think", "data": {"agent": "lin_shu", "reason": "no_action", "tier": "routine"}}
+{"seq": 5, "tick": 0, "wall": "2026-07-22T17:41:41+00:00", "type": "think", "data": {"agent": "wang_hao", "reason": "no_action", "tier": "routine"}}
+{"seq": 6, "tick": 0, "wall": "2026-07-22T17:41:41+00:00", "type": "think", "data": {"agent": "mei_yi", "reason": "no_action", "tier": "routine"}}
+{"seq": 7, "tick": 0, "wall": "2026-07-22T17:41:41+00:00", "type": "think", "data": {"agent": "guo_bo", "reason": "no_action", "tier": "routine"}}
+{"seq": 8, "tick": 0, "wall": "2026-07-22T17:41:41+00:00", "type": "think", "data": {"agent": "su_qing", "reason": "no_action", "tier": "routine"}}
+{"seq": 9, "tick": 0, "wall": "2026-07-22T17:41:48+00:00", "type": "llm_call", "data": {"key": "0:chen_yuan:act", "tier": "dialogue", "provider": "gemini", "model": "gemini-2.5-flash-lite", "usage": {"inp": 3306, "out": 894, "c_write": 0, "c_read": 0}, "output": null, "error": "輸出被截斷（60 字元，結尾不完整）——多半是 max_tokens 不夠，reflect 這類長輸出尤其容易撞到。原始錯誤：Expecting value: line 1 column 1 (char 0)"}}

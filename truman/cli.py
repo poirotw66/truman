@@ -41,6 +41,9 @@ def load_scenario(name: str):
 def build_config(args, **kw) -> SimConfig:
     """套用 --model 覆寫。接受 `ID`（全層）或 `tier=ID`（單層），可重複。"""
     cfg = SimConfig(provider=args.provider, **kw)
+    lvl = getattr(args, "thinking", None)
+    if lvl:
+        cfg.gemini_thinking = {t: lvl for t in cfg.models}
     for spec in getattr(args, "model", None) or []:
         tier, sep, model = spec.partition("=")
         if not sep:
@@ -423,6 +426,11 @@ def main() -> None:
     load_dotenv()
     p = argparse.ArgumentParser(prog="truman", description="單主角楚門式 LLM 社會模擬")
     p.add_argument("--scenario", default="seahaven")
+    p.add_argument(
+        "--thinking",
+        choices=["minimal", "low", "medium", "high"],
+        help="Gemini 專屬：覆寫所有層的 thinking_level",
+    )
     p.add_argument(
         "--model", action="append",
         help='覆寫模型：ID（全層）或 tier=ID（單層），可重複',

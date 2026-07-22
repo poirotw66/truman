@@ -129,6 +129,9 @@ class SimConfig:
     # --- provider 與模型路由（見上方成本推導）---
     provider: str = DEFAULT_PROVIDER
     models: dict = field(default_factory=dict)  # 留空則採用該 provider 的預設
+    # Gemini 專屬：每層的 thinking_level。留空則用 provider 預設。
+    # 合法下限隨模型而異——見 gemini_client.DEFAULT_THINKING 的註解。
+    gemini_thinking: dict = field(default_factory=dict)
 
     # --- 感知 ---
     vision_radius: int = 5  # Chebyshev 距離內可見

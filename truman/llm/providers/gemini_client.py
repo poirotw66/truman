@@ -32,12 +32,18 @@ import json
 
 from ..base import BaseLLMClient, Call
 
-# thinking_level 合法值：minimal | low | medium | high（SDK 內省確認）
-TIER_PARAMS = {
-    "routine": {"thinking_level": "low"},
-    "dialogue": {"thinking_level": "low"},
-    "reflect": {"thinking_level": "high"},
-    "judge": {"thinking_level": "low"},
+# thinking_level 合法值：minimal | low | medium | high（SDK 內省確認）。
+#
+# ⚠ 各層級換算出的 thinking budget 下限**隨模型而異**：
+#   gemini-3.1-flash-lite  "low" 可用
+#   gemini-2.5-flash-lite  "low" → budget 256，低於該模型下限 512，直接 400
+# 換模型時如果撞到 "thinking budget N is invalid"，就把該層調高一級
+# （`--thinking medium`，或改 SimConfig.gemini_thinking）。
+DEFAULT_THINKING = {
+    "routine": "low",
+    "dialogue": "low",
+    "reflect": "high",
+    "judge": "low",
 }
 
 
@@ -53,21 +59,34 @@ class GeminiClient(BaseLLMClient):
 
             self._client = genai.Client()
 
+    def _thinking(self, tier: str) -> str:
+        override = getattr(self.cfg, "gemini_thinking", None) or {}
+        return override.get(tier, DEFAULT_THINKING[tier])
+
     async def _invoke(self, c: Call, model: str):
         # 世界在前、人設在後——隱式快取靠的就是這個順序穩定。
         system_instruction = "\n\n".join(c.system_blocks)
 
-        resp = await self._client.aio.interactions.create(
-            model=model,
-            system_instruction=system_instruction,
-            input=c.user_message,
-            store=False,
-            generation_config={
-                "thinking_level": TIER_PARAMS[c.tier]["thinking_level"],
-                "max_output_tokens": c.max_tokens,
-            },
-            response_format=text_json_format(c.schema),
-        )
+        try:
+            resp = await self._client.aio.interactions.create(
+                model=model,
+                system_instruction=system_instruction,
+                input=c.user_message,
+                store=False,
+                generation_config={
+                    "thinking_level": self._thinking(c.tier),
+                    "max_output_tokens": c.max_tokens,
+                },
+                response_format=text_json_format(c.schema),
+            )
+        except Exception as e:  # noqa: BLE001
+            if "thinking budget" in str(e):
+                raise ValueError(
+                    f"{model} 不接受 thinking_level={self._thinking(c.tier)!r}"
+                    f"（各模型的 budget 下限不同）。調高一級再試："
+                    f" --thinking medium。原始錯誤：{e}"
+                ) from e
+            raise
         return (*_parse(resp), _usage(resp))
 
 
@@ -105,4 +124,11 @@ def _parse(resp) -> tuple[dict | None, str | None]:
     try:
         return json.loads(text), None
     except json.JSONDecodeError as e:
+        # 被 max_output_tokens 切斷時，JSON 會停在半路。這和「模型吐了非 JSON」
+        # 是兩種完全不同的問題，錯誤訊息要分得出來，否則會往錯的方向查。
+        if not text.rstrip().endswith(("}", "]")):
+            return None, (
+                f"輸出被截斷（{len(text)} 字元，結尾不完整）——多半是 max_tokens 不夠，"
+                f"reflect 這類長輸出尤其容易撞到。原始錯誤：{e}"
+            )
         return None, f"json decode: {e} | head={text[:120]!r}"
