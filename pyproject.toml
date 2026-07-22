@@ -1,0 +1,21 @@
+[project]
+name = "truman"
+version = "0.1.0"
+description = "單主角楚門式 LLM 多智能體社會模擬"
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv>=1.0",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.60"]
+gemini = ["google-genai>=2.3"]      # Interactions API 需要 2.3 以上
+all = ["anthropic>=0.60", "google-genai>=2.3"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["truman*", "scenarios*"]
