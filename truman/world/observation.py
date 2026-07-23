@@ -27,6 +27,7 @@ class Observation:
     doing: str = "沒有正在進行的事。"
     plan: str = ""
     rejection: str = ""  # 上一步被世界駁回的理由，只出現一次
+    wound: int = 0  # 自己的傷勢
 
     # -------------------------------------------------------- 顯著度
     def new_faces(self, previously_seen: list[str]) -> list[str]:
@@ -44,12 +45,14 @@ class Observation:
         ]
         if self.visible:
             who = "、".join(
-                f"{v['name']}（在{v['area']}，看起來正在{v['doing']}）" for v in self.visible
+                f"{v['name']}（在{v['area']}，{_state_word(v)}）" for v in self.visible
             )
             lines.append(f"你看得見：{who}。")
             # 世界區塊只寫了「三格以內聽得見」這條規則，但 agent 拿不到座標距離，
             # 沒辦法自己算。誰在射程內必須每個 tick 明講。
-            in_earshot = [v["name"] for v in self.visible if v.get("hearable")]
+            in_earshot = [
+                v["name"] for v in self.visible if v.get("hearable") and v.get("alive", True)
+            ]
             if in_earshot:
                 lines.append(f"其中聽得見你說話的只有：{'、'.join(in_earshot)}。")
             else:
@@ -70,6 +73,11 @@ class Observation:
         if self.rejection:
             lines.append(f"你上一步沒有做成：{self.rejection}")
 
+        if self.wound:
+            lines.append(
+                "你自己身上有傷，動作使不上力。" if self.wound == 1
+                else "你傷得很重，站著都吃力，再挨一下就完了。"
+            )
         lines.append(f"你正在做的事：{self.doing}")
         lines.append(f"你原本的打算：{self.plan}")
         return "\n".join(lines)
@@ -81,6 +89,16 @@ class Observation:
         parts += [h["utterance"] for h in self.heard]
         parts += self.injected
         return " ".join(p for p in parts if p)
+
+
+def _state_word(v: dict) -> str:
+    """看得見的人長什麼樣。沒有傷、沒有屍體時完全不提，和平劇本讀起來一模一樣。"""
+    if not v.get("alive", True):
+        return "倒在地上，已經沒氣了"
+    wound = v.get("wound", 0)
+    hurt = ("", "帶著傷", "傷得很重")[min(wound, 2)]
+    doing = f"看起來正在{v['doing']}"
+    return f"{hurt}，{doing}" if hurt else doing
 
 
 def describe_action(a: AgentState) -> str:
@@ -130,6 +148,8 @@ def build_observations(
                         # 只從 visible 推導：hearing > vision 時寧可少給機會，
                         # 也不要洩漏一個看不見的人的存在。
                         "hearable": dist <= cfg.hearing_radius,
+                        "wound": other.wound,
+                        "alive": other.alive,
                     }
                 )
 
@@ -159,5 +179,6 @@ def build_observations(
             doing=describe_action(a),
             plan=a.plan,
             rejection=a.last_rejection,
+            wound=a.wound,
         )
     return obs

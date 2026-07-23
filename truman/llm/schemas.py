@@ -6,6 +6,8 @@ structured outputs 不支援 minLength/maximum 之類的約束，
 用空字串約定的失敗模式最少。
 """
 
+import copy
+
 ACTION_SCHEMA = {
     "type": "object",
     "properties": {
@@ -48,6 +50,23 @@ ACTION_SCHEMA = {
     "required": ["thought", "action", "plan"],
     "additionalProperties": False,
 }
+
+
+def action_schema(combat: bool = False) -> dict:
+    """combat 劇本才把 attack 放進 enum。
+
+    和平劇本連這個選項都不該存在——enum 是模型看得到的東西，
+    列出來就等於在暗示可以用。
+    """
+    if not combat:
+        return ACTION_SCHEMA
+    s = copy.deepcopy(ACTION_SCHEMA)
+    act = s["properties"]["action"]["properties"]
+    act["kind"]["enum"] = [*act["kind"]["enum"], "attack"]
+    act["target_agent"]["description"] = (
+        "kind=speak 或 attack 時填對象的名字；對全場說話或其餘情況填空字串。"
+    )
+    return s
 
 
 REFLECTION_SCHEMA = {

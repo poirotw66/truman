@@ -13,6 +13,7 @@
 
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -65,12 +66,15 @@ class Engine:
         injections = self.director.apply(w, self.grid)
         obs = build_observations(w, self.grid, self.pending_speech, injections, self.cfg)
 
-        for aid, a in w.agents.items():
+        # 死人不知覺、不決策、不移動。屍體仍然留在原地被別人看見。
+        living = {aid: a for aid, a in w.agents.items() if a.alive}
+
+        for aid, a in living.items():
             cognition.record_perception(a, obs[aid], self.cfg, t)
 
         # --- 主決策階段 ---
         thinkers: list[tuple[str, str]] = []
-        for aid, a in w.agents.items():
+        for aid, a in living.items():
             need, reason = cognition.needs_llm(a, obs[aid], self.cfg, t)
             if need:
                 thinkers.append((aid, reason))
@@ -96,8 +100,9 @@ class Engine:
             )
 
         # --- 推進所有進行中的動作 ---
-        for aid, a in w.agents.items():
-            self._advance(a)
+        for a in w.agents.values():
+            if a.alive:
+                self._advance(a)
 
         await self._reflect_phase()
         await self._awareness_phase()
@@ -173,6 +178,8 @@ class Engine:
         for ev in speech:
             tgt = ev.get("to")
             if not tgt or tgt in spoke or tgt not in w.agents:
+                continue
+            if not w.agents[tgt].alive:  # 死人不接話
                 continue
             speaker = w.agents[ev["speaker"]]
             if w.agents[tgt].pos.chebyshev(speaker.pos) > self.cfg.hearing_radius:
@@ -250,6 +257,30 @@ class Engine:
             self.log.write("speech", ev)
             return ev
 
+        if kind == "attack":
+            if not getattr(self.cfg, "combat", False):
+                return reject("我不是那種會動手的人，這個念頭一閃就過去了。")
+            target_name = (act.get("target_agent") or "").strip()
+            target = None
+            for oid, o in w.agents.items():
+                if o.name == target_name or oid == target_name:
+                    target = o
+                    break
+            if target is None:
+                return reject(f"我想對「{target_name}」下手，但這裡沒有這個人。")
+            if target.id == a.id:
+                return reject("我舉起手，才發現要打的是自己。這念頭沒有道理。")
+            if not target.alive:
+                return reject(f"{target.name}已經倒在那裡了，再補一刀沒有意義。")
+            dist = target.pos.chebyshev(a.pos)
+            if dist > self.cfg.reach:
+                return reject(
+                    f"{target.name}離我還有 {dist} 步，這個距離出手打不到，"
+                    "我得先欺身上去。",
+                    dist=dist,
+                )
+            return self._resolve_attack(a, target)
+
         if kind == "interact":
             obj = (act.get("object") or "").strip() or "發呆"
             a.action = {"kind": "interact", "object": obj, "ticks_left": 2, "done": False}
@@ -260,6 +291,70 @@ class Engine:
         return None
 
     # ------------------------------------------------------------ 動作推進
+    # ------------------------------------------------------------ 動手
+    def _resolve_attack(self, a, target):
+        """勝負由世界判定，不是由出手的人宣告。
+
+        隨機源綁死在 (seed, tick, 誰打誰) 上——replay 必須重現同一個結果，
+        否則一次血案之後整條時間線就對不上了。
+        """
+        w, t, when = self.world, self.world.tick, clock_str(self.world.tick)
+        rng = random.Random(f"{w.seed}:{t}:{a.id}:{target.id}")
+
+        # 傷勢是實打實的拖累：帶傷 -2，重傷 -4。先出手的人佔一點便宜。
+        atk = a.skill - 2 * a.wound + 2 + rng.randint(0, 5)
+        dfn = target.skill - 2 * target.wound + rng.randint(0, 5)
+        margin = atk - dfn
+
+        hurt_target = 3 if margin >= 6 else 2 if margin >= 3 else 1 if margin >= 1 else 0
+        hurt_self = 1 if margin <= -3 else 0
+
+        if hurt_target:
+            # 從全身而退到當場斃命，中間至少要挨兩次。一擊斃命會讓所有實力懸殊的
+            # 遭遇在一個 tick 內結束——那既不像武俠，也讓「重傷之後怎麼辦」
+            # 這段最有戲的部分永遠不會發生。要取人性命，得先把人打傷。
+            target.wound = min(2 if target.wound == 0 else 3, target.wound + hurt_target)
+        if hurt_self:
+            a.wound = min(3, a.wound + hurt_self)
+
+        died = [x for x in (target, a) if not x.alive and not x.killed_by]
+        if not target.alive and not target.killed_by:
+            target.killed_by = a.id
+        if not a.alive and not a.killed_by:
+            a.killed_by = target.id  # 反被格殺
+
+        if not target.alive:
+            line = f"{a.name}向{target.name}下手，{target.name}倒了下去，沒再起來。"
+        elif hurt_target >= 2:
+            line = f"{a.name}向{target.name}下手，{target.name}受了重傷。"
+        elif hurt_target:
+            line = f"{a.name}向{target.name}下手，{target.name}掛了彩。"
+        elif hurt_self:
+            line = f"{a.name}向{target.name}下手，反被{target.name}所傷。"
+        else:
+            line = f"{a.name}向{target.name}下手，被{target.name}擋了下來。"
+
+        self.log.write("attack", {
+            "attacker": a.id, "target": target.id, "margin": margin,
+            "target_wound": target.wound, "attacker_wound": a.wound,
+            "line": line,
+        })
+        for x in died:
+            self.log.write("death", {
+                "agent": x.id, "name": x.name, "killed_by": x.killed_by, "when": when,
+            })
+
+        # 動手是當場的事，不能等到下一個 tick 才讓人知道。
+        # 看得見的人立刻記住——這是江湖裡消息傳開的起點。
+        for other in w.agents.values():
+            if not other.alive and other not in died:
+                continue
+            if other.pos.chebyshev(a.pos) > self.cfg.vision_radius and other is not target:
+                continue
+            other.memory.add(t, when, "observation", line, importance=9)
+        a.action = None if a.alive else {"kind": "wait", "ticks_left": 1, "done": False}
+        return None
+
     def _advance(self, a) -> None:
         act = a.action
         if not act or act.get("done"):

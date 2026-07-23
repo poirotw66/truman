@@ -101,6 +101,21 @@ def require_credentials(provider: str) -> None:
         sys.exit(2)
 
 
+def scenario_world_block(scen, grid) -> str:
+    """劇本可以換掉世界設定與少樣例示範；機制與語氣是全劇本共用的。"""
+    from .llm.prompts import SEAHAVEN_EXAMPLES, SEAHAVEN_SETTING
+
+    return world_block(
+        grid,
+        scen.BRIEF,
+        scen.NORMS,
+        getattr(scen, "PUBLIC_CAST", ""),
+        setting=getattr(scen, "SETTING", SEAHAVEN_SETTING),
+        examples=getattr(scen, "EXAMPLES", SEAHAVEN_EXAMPLES),
+        combat=getattr(scen, "COMBAT", False),
+    )
+
+
 def make_engine(world, scen, cfg, run_dir: Path, replay_index=None, quiet=False, stub=False):
     grid = scen.build_grid()
     log = EventLog(run_dir)
@@ -119,9 +134,7 @@ def make_engine(world, scen, cfg, run_dir: Path, replay_index=None, quiet=False,
         llm=llm,
         director=director,
         log=log,
-        world_block_text=world_block(
-            grid, scen.BRIEF, scen.NORMS, getattr(scen, "PUBLIC_CAST", "")
-        ),
+        world_block_text=scenario_world_block(scen, grid),
         run_dir=run_dir,
         console=None if quiet else console,
     )
@@ -181,7 +194,8 @@ def cmd_run(args) -> None:
     if not args.stub:
         require_credentials(args.provider)
     scen = load_scenario(args.scenario)
-    cfg = build_config(args, use_cache=not args.no_cache)
+    cfg = build_config(args, use_cache=not args.no_cache,
+                       combat=getattr(scen, "COMBAT", False))
     world = scen.build_world(args.run_id, args.seed)
     run_dir = RUNS / args.run_id
     engine, log, llm = make_engine(world, scen, cfg, run_dir, quiet=args.quiet, stub=args.stub)
@@ -200,7 +214,9 @@ def cmd_replay(args) -> None:
     console.print(f"[dim]載入 {len(index)} 筆 LLM 記錄，重放不會呼叫 API。[/dim]")
 
     scen = load_scenario(args.scenario)
-    cfg = build_config(args)
+    # combat 也要帶進來：少了它，replay 會把當初生效的 attack 全部駁回，
+    # 整條時間線就對不上了。
+    cfg = build_config(args, combat=getattr(scen, "COMBAT", False))
     world = scen.build_world(f"{args.run_id}_replay", args.seed)
     run_dir = RUNS / f"{args.run_id}_replay"
     engine, log, llm = make_engine(world, scen, cfg, run_dir, replay_index=index, quiet=args.quiet)
@@ -219,7 +235,8 @@ def cmd_fork(args) -> None:
         src = Path(args.from_checkpoint)
 
     scen = load_scenario(args.scenario)
-    cfg = build_config(args, use_cache=not args.no_cache)
+    cfg = build_config(args, use_cache=not args.no_cache,
+                       combat=getattr(scen, "COMBAT", False))
     world = checkpoint.fork(src, args.run_id)
     run_dir = RUNS / args.run_id
     engine, log, llm = make_engine(world, scen, cfg, run_dir, quiet=args.quiet, stub=args.stub)
@@ -326,12 +343,55 @@ def cmd_report(args) -> None:
         for i in invalid[:10]:
             console.print(f"[red]{i['agent']}[/red] {i['reason']}")
 
+    fights = [(e["tick"], e["data"]) for e in events if e["type"] == "attack"]
+    deaths = [(e["tick"], e["data"]) for e in events if e["type"] == "death"]
+    if fights:
+        console.rule(f"動手（{len(fights)} 次，死 {len(deaths)} 人）")
+        for tick, d in fights:
+            colour = "bold red" if d["target_wound"] >= 3 else "yellow"
+            console.print(f"[{colour}]t{tick}  {d['line']}[/{colour}]")
+        for tick, d in deaths:
+            console.print(f"[bold red]  ☠ {d['when']}  {d['name']} 死於 {d['killed_by']} 之手[/bold red]")
+
     if speech:
         _report_social(speech, scenario, getattr(args, "track", None))
+    _report_gatherings(events)
 
     if summary:
         console.rule("成本")
         _print_stats(summary["llm"])
+
+
+def _report_gatherings(events: list[dict], least: int = 3) -> None:
+    """有沒有人自己聚起來——箱庭裡最值得看的一件事。
+
+    位置從 arrive 事件重建。第一次 arrive 之前不知道人在哪，那段就不算，
+    寧可漏報也不要編造。
+    """
+    where: dict[str, str] = {}
+    seen: set[tuple[int, str, tuple[str, ...]]] = set()
+    rows = []
+    for ev in events:
+        if ev["type"] != "arrive":
+            continue
+        where[ev["data"]["agent"]] = ev["data"]["area"]
+        here = sorted(a for a, ar in where.items() if ar == ev["data"]["area"])
+        if len(here) < least:
+            continue
+        key = (ev["data"]["area"], tuple(here))
+        if key in seen:
+            continue
+        seen.add(key)  # type: ignore[arg-type]
+        rows.append((ev["tick"], ev["data"]["area"], here))
+    if not rows:
+        return
+    console.rule("聚在一起")
+    t = Table(show_edge=False)
+    for col in ("tick", "地點", "誰"):
+        t.add_column(col)
+    for tick, area, here in rows[:12]:
+        t.add_row(f"t{tick}", area, "、".join(here))
+    console.print(t)
 
 
 def _report_social(speech: list[tuple[int, dict]], scenario: str, track: str | None) -> None:
@@ -410,7 +470,7 @@ def cmd_tokens(args) -> None:
     scen = load_scenario(args.scenario)
     cfg = build_config(args)
     grid = scen.build_grid()
-    wb = world_block(grid, scen.BRIEF, scen.NORMS, getattr(scen, "PUBLIC_CAST", ""))
+    wb = scenario_world_block(scen, grid)
     world = scen.build_world("tokens", 0)
 
     exact = None

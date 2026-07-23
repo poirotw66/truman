@@ -31,10 +31,22 @@ class AgentState:
     # g6 裡林淑就連續五個 tick 對著一個聽不見的人講同一件事。
     # 這一句會直接掛進下一個 tick 的 observation，看過一次就清掉。
     last_rejection: str = ""
+    # --- 武林劇本才用得到 ---
+    skill: int = 5  # 武功高低 1–10，只有世界引擎看得到，不寫進人設
+    wound: int = 0  # 0 無傷 / 1 輕傷 / 2 重傷 / 3 死
+    killed_by: str = ""  # 誰下的手（空字串表示還活著或不是死於人手）
 
     @property
     def is_protagonist(self) -> bool:
         return self.role == "protagonist"
+
+    @property
+    def alive(self) -> bool:
+        return self.wound < 3
+
+    @property
+    def wound_word(self) -> str:
+        return ("無傷", "帶傷", "重傷", "已死")[min(self.wound, 3)]
 
     def to_dict(self) -> dict:
         return {
@@ -51,6 +63,9 @@ class AgentState:
             "last_think_tick": self.last_think_tick,
             "think_count": self.think_count,
             "last_rejection": self.last_rejection,
+            "skill": self.skill,
+            "wound": self.wound,
+            "killed_by": self.killed_by,
         }
 
     @staticmethod
@@ -69,6 +84,9 @@ class AgentState:
             last_think_tick=d.get("last_think_tick", -999),
             think_count=d.get("think_count", 0),
             last_rejection=d.get("last_rejection", ""),
+            skill=d.get("skill", 5),
+            wound=d.get("wound", 0),
+            killed_by=d.get("killed_by", ""),
         )
 
 

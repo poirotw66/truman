@@ -51,7 +51,10 @@ class Grid:
 
     STREET = "街道"
 
-    def __init__(self, rows: list[str], legend: dict[str, tuple[str, bool]], areas: list[Area]):
+    def __init__(self, rows: list[str], legend: dict[str, tuple[str, bool]],
+                 areas: list[Area], street: str | None = None):
+        # 區域之外的空地叫什麼，跟著劇本走：海晏鎮是「街道」，衡山城是「長街」。
+        self.street = street or self.STREET
         self.rows = rows
         self.legend = legend
         self.h = len(rows)
@@ -79,7 +82,7 @@ class Grid:
         for a in self.areas.values():
             if a.contains(p):
                 return a.name
-        return self.STREET
+        return self.street
 
     def area(self, name: str) -> Area | None:
         return self.areas.get(name)
@@ -91,8 +94,8 @@ class Grid:
         raw = raw.strip()
         if raw in self.areas:
             return raw
-        if raw == self.STREET:
-            return self.STREET
+        if raw == self.street:
+            return self.street
         for name in self.areas:
             if name in raw or raw in name:
                 return name
@@ -105,7 +108,7 @@ class Grid:
                 Pos(x, y)
                 for y in range(self.h)
                 for x in range(self.w)
-                if self.walkable(Pos(x, y)) and self.area_at(Pos(x, y)) == self.STREET
+                if self.walkable(Pos(x, y)) and self.area_at(Pos(x, y)) == self.street
             ]
         else:
             candidates = [
@@ -179,5 +182,5 @@ class Grid:
             lines.append(
                 f"  ● {a.name}  範圍 ({a.x0},{a.y0})–({a.x1},{a.y1})：{a.description}"
             )
-        lines.append(f"  ● {self.STREET}：不屬於任何場所的戶外通道，人們在此往來、擦身而過。")
+        lines.append(f"  ● {self.street}：不屬於任何場所的戶外通道，人們在此往來、擦身而過。")
         return "\n".join(lines)

@@ -138,6 +138,12 @@ class SimConfig:
     hearing_radius: int = 3  # 說話可被聽見的半徑
     move_speed: int = 3  # 每 tick 可走幾格
 
+    # --- 武力（只有 combat 劇本開）---
+    # 預設關閉，而且是徹底關閉：attack 不進 schema 的 enum、動手的規則不進世界區塊。
+    # 讓和平劇本的 agent 知道「可以動手」，本身就會改變它們。
+    combat: bool = False
+    reach: int = 2  # 出手打得到的距離
+
     # --- 認知節流（成本的最大槓桿）---
     forced_think_interval: int = 6  # 就算無事發生，每 N tick 也強制思考一次
     # act 一次的輸出上限。Gemini 的 thinking token 吃同一份額度，900 會讓長台詞

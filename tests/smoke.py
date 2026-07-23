@@ -382,6 +382,57 @@ def main() -> int:
                               repr(a3.last_rejection))
         log3.close()
 
+        # ---- 武林：動手、傷、死 ----
+        print("\n動手")
+        from scenarios import jianghu  # noqa: PLC0415
+
+        blood = type("Sink", (), {"write": lambda self, *a: None})()  # log 已關
+
+        def duel(attacker: str, target: str, tick: int = 0, combat: bool = True):
+            w = jianghu.build_world("duel", 7)
+            w.tick = tick
+            eng = Engine(
+                world=w, grid=jianghu.build_grid(), cfg=SimConfig(combat=combat),
+                llm=None, director=None, log=blood, world_block_text="",
+                run_dir=tmp / "e",
+            )
+            a, b = w.agents[attacker], w.agents[target]
+            b.pos = Pos(a.pos.x + 1, a.pos.y)
+            eng._apply_intent(a, {"kind": "attack", "target_agent": b.name})
+            return w, a, b
+
+        _, tian, yilin = duel("tian_boguang", "yi_lin")
+        failures += not check("高手一招打得動低手", yilin.wound > 0, yilin.wound_word)
+        failures += not check("但不會一擊斃命（要死得先受傷）", yilin.alive, yilin.wound_word)
+        w2, tian2, yilin2 = duel("tian_boguang", "yi_lin", tick=1)
+        yilin2.wound = 2
+        Engine(world=w2, grid=jianghu.build_grid(), cfg=SimConfig(combat=True),
+               llm=None, director=None, log=blood, world_block_text="",
+               run_dir=tmp / "e")._apply_intent(
+                   tian2, {"kind": "attack", "target_agent": "儀琳"})
+        failures += not check("重傷的人會被打死", not yilin2.alive, yilin2.wound_word)
+        failures += not check("死者記得是誰下的手", yilin2.killed_by == "tian_boguang",
+                              yilin2.killed_by)
+
+        # 迴歸測試：勝負綁死在 (seed, tick, 誰打誰)，否則 replay 一遇血案就分岔。
+        outs = {duel("tian_boguang", "yi_lin", tick=3)[2].wound for _ in range(3)}
+        failures += not check("同 seed/tick 的勝負可重現", len(outs) == 1, str(outs))
+
+        # 和平劇本不該有這個動作——連 schema 的 enum 都不給。
+        _, _, yilin3 = duel("tian_boguang", "yi_lin", combat=False)
+        failures += not check("和平劇本駁回動手", yilin3.wound == 0)
+        from truman.llm.schemas import action_schema  # noqa: PLC0415
+
+        peace_kinds = action_schema(False)["properties"]["action"]["properties"]["kind"]["enum"]
+        war_kinds = action_schema(True)["properties"]["action"]["properties"]["kind"]["enum"]
+        failures += not check("attack 只出現在 combat schema",
+                              "attack" not in peace_kinds and "attack" in war_kinds)
+        failures += not check("動手規則只進 combat 劇本的世界區塊",
+                              "attack" in cli_mod.scenario_world_block(
+                                  jianghu, jianghu.build_grid())
+                              and "attack" not in cli_mod.scenario_world_block(
+                                  seahaven, grid))
+
         # ---- 記憶檢索 ----
         print("\n記憶檢索")
         p = engine.world.protagonist()

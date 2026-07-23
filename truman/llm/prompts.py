@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from ..world.grid import Grid
 
-WORLD_RULES = """\
+SEAHAVEN_SETTING = """\
 # 這個世界
 
 海晏鎮是一座濱海小鎮。鎮上的人彼此認識，生活以步行可達的範圍為界。
@@ -38,7 +38,10 @@ WORLD_RULES = """\
 - 晚上（18:00–22:00）回家吃飯，或在廣場上多坐一會兒。
 
 沒有人嚴格遵守這個節奏，但偏離太多會被注意到。
+"""
 
+# 機制，和劇本無關：動作清單與輸出契約。所有劇本共用同一份位元組。
+MECHANICS = """\
 # 你能做的事
 
 你每次只能選一個動作：
@@ -71,7 +74,11 @@ WORLD_RULES = """\
   所以不必得體、不必客套。困惑就是困惑，煩躁就是煩躁，想偷懶就是想偷懶。
 - `action`：你接下來要做的那**一個**動作。
 - `plan`：接下來一兩個小時的打算，一句話。
+"""
 
+# 少樣例示範。這一段必須跟著劇本走——拿海晏鎮的咖啡館當範例去跑武林，
+# 語域會被拉回現代小鎮。
+SEAHAVEN_EXAMPLES = """\
 # 幾個例子
 
 看得出差別就好，不要照抄內容。
@@ -95,7 +102,9 @@ WORLD_RULES = """\
   thought: 陳原感到一絲不安，他緩緩地將目光投向遠方的海平線。  ← 這是在寫小說，不是在想事情
   thought: 我需要：1. 確認情況 2. 收集資訊 3. 做出判斷      ← 沒有人會這樣想事情
   thought: 根據我的觀察，這個情境存在若干異常之處。          ← 太書面、太抽離
+"""
 
+TONE = """\
 # 語氣
 
 你是一個具體的人，不是敘事者。用第一人稱想事情。
@@ -111,21 +120,51 @@ WORLD_RULES = """\
 """
 
 
-def world_block(grid: Grid, scenario_brief: str, social_norms: str, cast: str = "") -> str:
+# 只在劇本開啟 combat 時掛上去。和平劇本連這段字都不該看到——
+# 讓村民知道「可以動手」本身就會改變村民。
+COMBAT = """\
+5. `attack` —— 動手。`target_agent` 填對方的名字。
+   只能打到身邊的人（兩步以內）。遠的人打不到，你得先走過去。
+   出手的結果**不是你決定的**：勝負看雙方的武功、身上的傷，以及當時的運氣。
+   你可能一招得手，也可能被對方擋下來反受重傷。
+
+   動手是有後果的。旁邊看見的人會記得是誰先出手，會傳出去，
+   會有人來尋仇、有人來討公道。死了的人不會再站起來。
+
+   受傷會拖累你：輕傷讓你出手變慢，重傷讓你幾乎打不動，也走不快。
+   你自己的傷勢和身邊人的傷勢，都寫在「此刻」那一段裡。
+"""
+
+
+def world_block(
+    grid: Grid,
+    scenario_brief: str,
+    social_norms: str,
+    cast: str = "",
+    *,
+    setting: str = SEAHAVEN_SETTING,
+    examples: str = SEAHAVEN_EXAMPLES,
+    combat: bool = False,
+) -> str:
     """system[0]：完全靜態。所有 agent、所有 tick 共用同一份位元組。
 
-    cast 只能放「全鎮公開的常識」——誰住哪、誰做什麼。
-    絕不可以出現誰是演員、誰是主角，那是 system[1] 才有的資訊。
+    cast 只能放「全世界公開的常識」——誰是誰、誰在哪。
+    絕不可以出現誰是演員、誰是主角、誰藏了什麼秘密，那是 system[1] 才有的資訊。
+
+    setting / examples 跟著劇本走，MECHANICS 與 TONE 全劇本共用。
     """
     parts = [
-        WORLD_RULES,
+        setting,
+        MECHANICS + COMBAT if combat else MECHANICS,
+        examples,
+        TONE,
         "# 地理",
         grid.brief(),
-        "# 這座鎮的樣子",
+        "# 這個地方的樣子",
         scenario_brief,
     ]
     if cast:
-        parts += ["# 鎮上的人（這些是每個人都知道的事）", cast]
+        parts += ["# 這裡的人（這些是每個人都知道的事）", cast]
     parts += ["# 這裡的人怎麼相處", social_norms]
     return "\n\n".join(parts)
 
