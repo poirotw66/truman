@@ -203,6 +203,43 @@ def main() -> int:
             failures += not check(f"事件日誌含 {want}", want in types)
         failures += not check("節流有生效", any(e["type"] == "coast" for e in events))
 
+        # 迴歸測試：judge 掛在 tick % interval 上，跑 N tick 走的是 tick 0..N-1，
+        # 所以最後一段軌跡永遠評不到——收工必須強制補評一次（g5 跑 48 tick 只評到 1 次）。
+        judged = [e for e in events if e["data"].get("source") == "llm_judge"]
+        failures += not check("收工有強制評審一次",
+                              bool(judged) and judged[-1]["tick"] == engine.world.tick,
+                              f"評了 {len(judged)} 次，最後一次在 tick "
+                              f"{judged[-1]['tick'] if judged else '—'}")
+        before_n = llm.n
+        asyncio.run(engine._awareness_phase(force=True))
+        failures += not check("剛評過不會重複評", llm.n == before_n)
+
+        # 迴歸測試：CLI 有自己的 tick 迴圈，不走 Engine.run()。收工評審只掛在 run()
+        # 上的話，真實路徑永遠不會執行——g6 就是這樣白跑了 48 tick 才發現。
+        from truman import cli as cli_mod  # noqa: PLC0415
+
+        eng2, log2, llm2, _ = build(tmp / "c")
+        asyncio.run(cli_mod._drive(eng2, log2, llm2, 8, quiet=True))
+        judged2 = [e for e in EventLog.read(tmp / "c")
+                   if e["data"].get("source") == "llm_judge"]
+        failures += not check("CLI 路徑收工也會評審",
+                              bool(judged2) and judged2[-1]["tick"] == 8,
+                              f"最後一次在 tick {judged2[-1]['tick'] if judged2 else '—'}")
+
+        # 迴歸測試：哨兵原本是無上限累加器，g5 跑到 10.5，和評審的 0–10 不同尺度。
+        print("\n覺察哨兵封頂")
+        from truman.director import awareness as aw  # noqa: PLC0415
+
+        p0 = engine.world.protagonist()
+        loud = "太巧了，這一切都是假的，一模一樣的劇本又重複了一次"
+        sink = type("Sink", (), {"write": lambda self, *a: None})()  # log 上面關掉了
+        for _ in range(40):
+            aw.score_tick(engine.world, p0, loud, "", engine.cfg, sink)
+        failures += not check("哨兵封頂在 10", engine.world.awareness_score == 10.0,
+                              str(engine.world.awareness_score))
+        failures += not check("撞頂後仍記錄命中（證據鏈不能斷）",
+                              engine.world.awareness_log[-1]["source"] == "pattern")
+
         # ---- 序列化往返 ----
         print("\n序列化 / checkpoint")
         d = engine.world.to_dict()
@@ -293,6 +330,57 @@ def main() -> int:
         failures += not check("旁人兩句都收得到", len(o["wang_hao"].heard) == 2,
                               f"{len(o['wang_hao'].heard)} 句")
         failures += not check("說話者聽不見自己", len(o["chen_yuan"].heard) == 0)
+
+        # ---- 聽力射程要寫進 observation ----
+        # 迴歸測試：vision(5) > hearing(3)，agent 算不出距離，射程名單不明講的話
+        # 它就會對著看得見卻聽不見的人講話，被 _apply_intent 駁回（g4 佔 13% 的 intent）。
+        print("\n聽力射程")
+        w = seahaven.build_world("ear", 1)
+        cfg_ear = SimConfig()
+        w.agents["chen_yuan"].pos = Pos(8, 8)
+        w.agents["lin_shu"].pos = Pos(10, 8)  # 距離 2：聽得見
+        w.agents["wang_hao"].pos = Pos(12, 8)  # 距離 4：看得見、聽不見
+        for other in ("mei_yi", "guo_bo", "su_qing"):
+            w.agents[other].pos = Pos(22, 14)  # 挪遠，別干擾
+        o = build_observations(w, grid, [], {}, cfg_ear)
+        vis = {v["name"]: v["hearable"] for v in o["chen_yuan"].visible}
+        failures += not check("看得見的人都有標 hearable",
+                              set(vis) == {"林淑", "王浩"}, str(sorted(vis)))
+        failures += not check("距離 2 聽得見、距離 4 聽不見",
+                              vis.get("林淑") is True and vis.get("王浩") is False, str(vis))
+        text = o["chen_yuan"].render()
+        failures += not check("射程名單有寫進 render",
+                              "聽得見你說話的只有：林淑。" in text)
+        failures += not check("聽不見的人不進射程名單",
+                              "聽得見你說話的只有：林淑、王浩" not in text)
+
+        w.agents["lin_shu"].pos = Pos(12, 8)  # 兩個都挪到聽力範圍外
+        o = build_observations(w, grid, [], {}, cfg_ear)
+        failures += not check("全部太遠時明講沒人聽得見",
+                              "沒有人聽得見" in o["chen_yuan"].render())
+
+        # ---- 駁回回饋要進下一個 tick 的眼前 ----
+        # 迴歸測試：只寫進記憶不夠，檢索不保證撈得到——g6 裡林淑連續五個 tick
+        # 對著一個聽不見的人講同一件事。
+        print("\n駁回回饋")
+        w.agents["chen_yuan"].last_rejection = "梅姨離我太遠了，他聽不見。"
+        o = build_observations(w, grid, [], {}, cfg_ear)
+        failures += not check("駁回理由出現在 observation",
+                              "你上一步沒有做成：梅姨離我太遠了，他聽不見。"
+                              in o["chen_yuan"].render())
+        failures += not check("沒被駁回的人不會多這一行",
+                              "你上一步沒有做成" not in o["lin_shu"].render())
+
+        eng3, log3, llm3, _ = build(tmp / "d")
+        a3 = eng3.world.agents["chen_yuan"]
+        a3.last_rejection = "測試：上一步沒做成。"
+        obs3 = build_observations(eng3.world, grid, [], {}, eng3.cfg)
+        failures += not check("駁回理由有進 prompt",
+                              "測試：上一步沒做成。" in obs3["chen_yuan"].render())
+        asyncio.run(eng3._decide([("chen_yuan", "forced")], obs3, "act"))
+        failures += not check("送進 prompt 之後就清掉", a3.last_rejection == "",
+                              repr(a3.last_rejection))
+        log3.close()
 
         # ---- 記憶檢索 ----
         print("\n記憶檢索")

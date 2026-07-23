@@ -135,6 +135,7 @@ async def _drive(engine, log, llm, ticks: int, quiet: bool) -> int:
             if not quiet:
                 console.rule(f"[dim]{clock_str(engine.world.tick)}  (tick {engine.world.tick})[/dim]")
             await engine.tick()
+        await engine.finish()  # 收工補評一次覺察，見 Engine.finish
     finally:
         checkpoint.save(engine.world, engine.run_dir)
         stats = llm.stats()
@@ -247,7 +248,10 @@ def cmd_report(args) -> None:
     reflections: list[dict] = []
     invalid: list[dict] = []
     failed: list[dict] = []
+    speech: list[tuple[int, dict]] = []
     summary = None
+    # 追蹤詞的預設值來自劇本，所以要知道這個 run 當初跑的是哪一本。
+    scenario = getattr(args, "scenario", "seahaven")
 
     for ev in events:
         kinds[ev["type"]] = kinds.get(ev["type"], 0) + 1
@@ -262,8 +266,12 @@ def cmd_report(args) -> None:
             reflections.append(d)
         elif ev["type"] == "invalid_intent":
             invalid.append(d)
+        elif ev["type"] == "speech":
+            speech.append((ev["tick"], d))
         elif ev["type"] == "run_summary":
             summary = d
+        elif ev["type"] == "run_start":
+            scenario = d.get("scenario", scenario)
         elif ev["type"] in ("think_failed", "reflect_failed", "judge_failed"):
             failed.append(d)
 
@@ -318,9 +326,70 @@ def cmd_report(args) -> None:
         for i in invalid[:10]:
             console.print(f"[red]{i['agent']}[/red] {i['reason']}")
 
+    if speech:
+        _report_social(speech, scenario, getattr(args, "track", None))
+
     if summary:
         console.rule("成本")
         _print_stats(summary["llm"])
+
+
+def _report_social(speech: list[tuple[int, dict]], scenario: str, track: str | None) -> None:
+    """箱庭觀測：誰跟誰講話、話題傳了多遠。
+
+    這兩件事是「把人放進小鎮會發生什麼」唯一便宜又有訊息量的量法——
+    都從既有日誌算得出來，不需要再叫一次 LLM。
+    """
+    names = {d["speaker"]: d["speaker_name"] for _, d in speech}
+    pairs: dict[tuple[str, str], int] = {}
+    said: dict[str, int] = {}
+    for _, d in speech:
+        who = d["speaker_name"]
+        said[who] = said.get(who, 0) + 1
+        if d.get("to"):
+            key = (who, names.get(d["to"], d["to"]))
+            pairs[key] = pairs.get(key, 0) + 1
+
+    console.rule("誰跟誰說話")
+    t = Table(show_edge=False)
+    t.add_column("說話者"); t.add_column("對象"); t.add_column("次數", justify="right")
+    for (a, b), n in sorted(pairs.items(), key=lambda x: -x[1])[:12]:
+        t.add_row(a, b, str(n))
+    console.print(t)
+    console.print("[dim]發言數：" + "、".join(
+        f"{k} {v}" for k, v in sorted(said.items(), key=lambda x: -x[1])) + "[/dim]")
+
+    topics = [s.strip() for s in track.split(",") if s.strip()] if track else []
+    if not topics:
+        try:
+            topics = list(getattr(load_scenario(scenario), "TRACK_TOPICS", []))
+        except Exception:  # noqa: BLE001  劇本可能已改名或不存在，不該讓 report 掛掉
+            topics = []
+    if not topics:
+        return
+
+    console.rule("話題擴散")
+    t = Table(show_edge=False)
+    for col in ("詞", "首次", "誰先說的", "講過的人", "傳開耗時"):
+        t.add_column(col)
+    for word in topics:
+        hits = [(tick, d) for tick, d in speech if word in d["utterance"]]
+        if not hits:
+            t.add_row(word, "—", "—", "0 人", "—")
+            continue
+        speakers: dict[str, int] = {}
+        for tick, d in hits:
+            speakers.setdefault(d["speaker_name"], tick)
+        first_tick, first_d = hits[0]
+        spread = max(speakers.values()) - first_tick if len(speakers) > 1 else None
+        t.add_row(
+            word,
+            f"t{first_tick}",
+            first_d["speaker_name"],
+            f"{len(speakers)} 人",
+            f"{spread} tick" if spread is not None else "沒傳開",
+        )
+    console.print(t)
 
 
 def cmd_map(args) -> None:
@@ -472,6 +541,10 @@ def main() -> None:
 
     rep = sub.add_parser("report", help="彙整一次 run")
     rep.add_argument("--run-id", required=True)
+    rep.add_argument(
+        "--track",
+        help="話題擴散要追的詞，逗號分隔。留空則用劇本的 TRACK_TOPICS",
+    )
     rep.set_defaults(func=cmd_report)
 
     m = sub.add_parser("map", help="印出地圖")

@@ -41,11 +41,22 @@ class Engine:
     ok_calls: int = 0
     failed_calls: int = 0
     last_error: str = ""
+    _last_judge_tick: int = -999  # 收工強制評審用來避免重複評
 
     # ------------------------------------------------------------ 主迴圈
     async def run(self, ticks: int) -> None:
         for _ in range(ticks):
             await self.tick()
+        await self.finish()
+
+    async def finish(self) -> None:
+        """收工強制評一次覺察。
+
+        judge 掛在 tick % judge_interval 上，而跑 N tick 走的是 tick 0..N-1
+        ——tick N 不存在，所以最後一段軌跡永遠拿不到分數（g5 跑 48 tick 只評到
+        tick 24 那一次）。CLI 有自己的 tick 迴圈，不走 run()，所以那邊也要呼叫。
+        """
+        await self._awareness_phase(force=True)
 
     async def tick(self) -> None:
         w, t = self.world, self.world.tick
@@ -110,6 +121,9 @@ class Engine:
             c = cognition.action_call(a, obs[aid], self.world_block_text, self.cfg, tier, t)
             c.key = f"{t}:{aid}:{suffix}"
             calls.append(c)
+            # 駁回理由已經渲染進這次的 observation 了，看過就清掉——
+            # 只在真的送進 prompt 時清，coast 的人下次還看得到。
+            a.last_rejection = ""
             self.log.write("think", {"agent": aid, "reason": reason, "tier": tier})
 
         results = await self.llm.run_batch(calls)
@@ -172,10 +186,15 @@ class Engine:
         w, t, when = self.world, self.world.tick, clock_str(self.world.tick)
         kind = (act.get("kind") or "wait").strip()
 
-        def reject(msg: str):
-            self.log.write("invalid_intent", {"agent": a.id, "action": act, "reason": msg})
+        def reject(msg: str, **detail):
+            self.log.write(
+                "invalid_intent",
+                {"agent": a.id, "action": act, "reason": msg, **detail},
+            )
             # 把錯誤寫回記憶，否則它會一直重複同一個幻覺。
             a.memory.add(t, when, "observation", msg, importance=5)
+            # 記憶不保證被檢索到，所以同一句也直接掛進下一個 tick 的 observation。
+            a.last_rejection = msg
             a.action = {"kind": "wait", "ticks_left": 1, "done": False}
             return None
 
@@ -208,8 +227,17 @@ class Engine:
                         break
                 if target_id is None:
                     return reject(f"我想跟「{target_name}」說話，但這裡沒有這個人。")
-                if w.agents[target_id].pos.chebyshev(a.pos) > self.cfg.hearing_radius:
-                    return reject(f"{target_name}離我太遠了，他聽不見。")
+                dist = w.agents[target_id].pos.chebyshev(a.pos)
+                if dist > self.cfg.hearing_radius:
+                    # 距離和可見性一起記進日誌：「看得見但喊不到」和「對著根本不在
+                    # 視野裡的人講話」是兩種不同的病，g6 之前分不出來。
+                    return reject(
+                        f"{target_name}離我太遠了（{dist} 格，超過 "
+                        f"{self.cfg.hearing_radius} 格就聽不見），他聽不見。"
+                        "我得先走過去，或找在旁邊的人說。",
+                        dist=dist,
+                        visible=dist <= self.cfg.vision_radius,
+                    )
             a.action = None  # 說完就重新決定，讓對話能接下去
             ev = {
                 "speaker": a.id,
@@ -283,11 +311,18 @@ class Engine:
                 self.console.print(f"[dim]※ {a.name} 想通了：{'；'.join(insights[:2])}[/dim]")
 
     # ------------------------------------------------------------ 覺察評分
-    async def _awareness_phase(self) -> None:
+    async def _awareness_phase(self, force: bool = False) -> None:
         w, t = self.world, self.world.tick
-        if t == 0 or t % self.cfg.judge_interval != 0:
+        if force:
+            # 剛評過就別再評一次（跑的 tick 數正好是 judge_interval 倍數時會撞上）
+            if t - self._last_judge_tick <= 1:
+                return
+        elif t == 0 or t % self.cfg.judge_interval != 0:
             return
-        p = w.protagonist()
+        # 箱庭劇本沒有主角，覺察評審整層不存在——連呼叫都不該發生。
+        p = w.protagonist_or_none()
+        if p is None:
+            return
         call = awareness.judge_call(w, p, self.cfg)
         if call is None:
             return
@@ -297,6 +332,7 @@ class Engine:
             self.log.write("judge_failed", {"error": str(res)})
             return
         awareness.apply_judgement(w, res, self.log)
+        self._last_judge_tick = t
         if self.console:
             self.console.print(
                 f"[bold yellow]覺察評分 {res.get('score')}/10[/bold yellow] "

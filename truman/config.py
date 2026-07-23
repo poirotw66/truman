@@ -140,7 +140,9 @@ class SimConfig:
 
     # --- 認知節流（成本的最大槓桿）---
     forced_think_interval: int = 6  # 就算無事發生，每 N tick 也強制思考一次
-    max_output_tokens: int = 900
+    # act 一次的輸出上限。Gemini 的 thinking token 吃同一份額度，900 會讓長台詞
+    # 的 JSON 斷在字串中間（g5：208 次呼叫掉 3 次，1.4%，全是這個原因）。
+    max_output_tokens: int = 1600
 
     # --- 記憶 ---
     retrieval_k: int = 8  # 每次思考檢索幾條 episodic memory

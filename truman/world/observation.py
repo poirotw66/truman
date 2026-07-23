@@ -26,6 +26,7 @@ class Observation:
     injected: list[str] = field(default_factory=list)  # 導演注入的「事實」
     doing: str = "沒有正在進行的事。"
     plan: str = ""
+    rejection: str = ""  # 上一步被世界駁回的理由，只出現一次
 
     # -------------------------------------------------------- 顯著度
     def new_faces(self, previously_seen: list[str]) -> list[str]:
@@ -46,6 +47,13 @@ class Observation:
                 f"{v['name']}（在{v['area']}，看起來正在{v['doing']}）" for v in self.visible
             )
             lines.append(f"你看得見：{who}。")
+            # 世界區塊只寫了「三格以內聽得見」這條規則，但 agent 拿不到座標距離，
+            # 沒辦法自己算。誰在射程內必須每個 tick 明講。
+            in_earshot = [v["name"] for v in self.visible if v.get("hearable")]
+            if in_earshot:
+                lines.append(f"其中聽得見你說話的只有：{'、'.join(in_earshot)}。")
+            else:
+                lines.append("他們都離你太遠，你現在說什麼都沒有人聽得見。")
         else:
             lines.append("附近沒有其他人。")
 
@@ -57,6 +65,10 @@ class Observation:
 
         for text in self.injected:
             lines.append(text)
+
+        # 駁回理由要在眼前，不能只躺在記憶裡等檢索去撈。
+        if self.rejection:
+            lines.append(f"你上一步沒有做成：{self.rejection}")
 
         lines.append(f"你正在做的事：{self.doing}")
         lines.append(f"你原本的打算：{self.plan}")
@@ -104,13 +116,20 @@ def build_observations(
         for oid, other in world.agents.items():
             if oid == aid:
                 continue
-            if a.pos.chebyshev(other.pos) <= cfg.vision_radius:
+            dist = a.pos.chebyshev(other.pos)
+            if dist <= cfg.vision_radius:
                 visible.append(
                     {
                         "id": oid,
                         "name": other.name,
                         "area": grid.area_at(other.pos),
                         "doing": describe_action(other),
+                        # 看得見 ≠ 喊得到（vision 5 > hearing 3）。不標出來的話 agent 會
+                        # 對著看得見卻聽不見的人講話，每次都被 _apply_intent 駁回，
+                        # 白燒一整趟呼叫——g4 有 13% 的 intent 是這樣掉的。
+                        # 只從 visible 推導：hearing > vision 時寧可少給機會，
+                        # 也不要洩漏一個看不見的人的存在。
+                        "hearable": dist <= cfg.hearing_radius,
                     }
                 )
 
@@ -139,5 +158,6 @@ def build_observations(
             injected=injections.get(aid, []),
             doing=describe_action(a),
             plan=a.plan,
+            rejection=a.last_rejection,
         )
     return obs

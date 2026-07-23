@@ -27,6 +27,10 @@ class AgentState:
     seen_last_tick: list[str] = field(default_factory=list)
     last_think_tick: int = -999
     think_count: int = 0
+    # 上一步被世界駁回的理由。只寫進記憶不夠——檢索不一定撈得到它，
+    # g6 裡林淑就連續五個 tick 對著一個聽不見的人講同一件事。
+    # 這一句會直接掛進下一個 tick 的 observation，看過一次就清掉。
+    last_rejection: str = ""
 
     @property
     def is_protagonist(self) -> bool:
@@ -46,6 +50,7 @@ class AgentState:
             "seen_last_tick": self.seen_last_tick,
             "last_think_tick": self.last_think_tick,
             "think_count": self.think_count,
+            "last_rejection": self.last_rejection,
         }
 
     @staticmethod
@@ -63,6 +68,7 @@ class AgentState:
             seen_last_tick=list(d.get("seen_last_tick", [])),
             last_think_tick=d.get("last_think_tick", -999),
             think_count=d.get("think_count", 0),
+            last_rejection=d.get("last_rejection", ""),
         )
 
 
@@ -79,10 +85,17 @@ class WorldState:
     awareness_log: list[dict] = field(default_factory=list)
 
     def protagonist(self) -> AgentState:
+        p = self.protagonist_or_none()
+        if p is None:
+            raise ValueError("這個劇本沒有主角")
+        return p
+
+    def protagonist_or_none(self) -> "AgentState | None":
+        """箱庭劇本（hakoniwa）裡每個人都是普通村民，沒有主角是合法狀態。"""
         for a in self.agents.values():
             if a.is_protagonist:
                 return a
-        raise ValueError("這個劇本沒有主角")
+        return None
 
     def occupants(self) -> dict[Pos, str]:
         return {a.pos: a.name[0] for a in self.agents.values()}
