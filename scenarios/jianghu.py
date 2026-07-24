@@ -180,6 +180,10 @@ NORMS = """\
 #
 # 人設裡不寫武功數值，只寫江湖傳聞裡的高低。數值在 skill，那是世界的屬性。
 # 每個人的最後一段都是「他今天要做的事」——互相排斥的那幾件。
+#
+# kin 是「這個人在意的人」的 id：對方死了，噩耗會傳到他眼前逼他面對尋仇
+# （見 Engine._notify_kin）。這裡只放全書最硬的一條線——劉正風與曲洋的知音之情。
+# 其餘的死亡靠「親眼見殺 → 義憤」發酵。要加更多線（同門、師徒）就往 kin 裡填。
 
 AGENTS = [
     {
@@ -189,6 +193,7 @@ AGENTS = [
         "home_area": "劉府",
         "start": (2, 2),
         "skill": 8,
+        "kin": ["qu_yang"],
         "persona": """\
 你是劉正風，衡山派掌門莫大先生的師弟，江湖上叫你劉三爺。
 你劍法極高，在衡山城住了半輩子，人緣極好。你有妻兒，一家老小都在府裡。
@@ -287,6 +292,7 @@ AGENTS = [
         "home_area": "荒祠",
         "start": (12, 14),
         "skill": 8,
+        "kin": ["liu_zhengfeng"],
         "persona": """\
 你是曲洋，日月神教的長老。在旁人眼裡你只是個愛琴的老人。
 
@@ -357,5 +363,6 @@ def build_world(run_id: str, seed: int) -> WorldState:
             home_area=spec["home_area"],
             pos=Pos(*spec["start"]),
             skill=spec["skill"],
+            kin=list(spec.get("kin", [])),
         )
     return world

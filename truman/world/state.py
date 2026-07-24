@@ -35,6 +35,12 @@ class AgentState:
     skill: int = 5  # 武功高低 1–10，只有世界引擎看得到，不寫進人設
     wound: int = 0  # 0 無傷 / 1 輕傷 / 2 重傷 / 3 死
     killed_by: str = ""  # 誰下的手（空字串表示還活著或不是死於人手）
+    # 義憤：親眼見人被殺會被激起，出手更狠。和 skill 一樣是世界的屬性、不寫進人設，
+    # 存在的目的是讓連續擊殺越來越難——見 Engine._resolve_attack。
+    fury: int = 0
+    # 這個人在意的人（師門／親友／知音）的 id。他們死了，噩耗會傳到這個人眼前，
+    # 逼他面對「要不要討公道」——見 Engine._notify_kin。江湖上沒有白死的人。
+    kin: list[str] = field(default_factory=list)
 
     @property
     def is_protagonist(self) -> bool:
@@ -66,6 +72,8 @@ class AgentState:
             "skill": self.skill,
             "wound": self.wound,
             "killed_by": self.killed_by,
+            "fury": self.fury,
+            "kin": self.kin,
         }
 
     @staticmethod
@@ -87,6 +95,8 @@ class AgentState:
             skill=d.get("skill", 5),
             wound=d.get("wound", 0),
             killed_by=d.get("killed_by", ""),
+            fury=d.get("fury", 0),
+            kin=list(d.get("kin", [])),
         )
 
 

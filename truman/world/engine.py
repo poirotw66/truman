@@ -107,6 +107,18 @@ class Engine:
         await self._reflect_phase()
         await self._awareness_phase()
 
+        # 逐 tick 全員位置＋傷勢快照。checkpoint 每 12 tick 才存一次，畫不出走位；
+        # 這一行讓「回放畫面」能一格一格重現誰站哪、誰帶傷、誰倒下。一行 JSON，可忽略。
+        self.log.write("snapshot", {
+            "agents": {
+                aid: {
+                    "pos": ag.pos.as_list(), "area": self.grid.area_at(ag.pos),
+                    "wound": ag.wound, "fury": ag.fury, "alive": ag.alive,
+                }
+                for aid, ag in w.agents.items()
+            }
+        })
+
         self.pending_speech = speech
         w.tick += 1
         if w.tick % self.cfg.checkpoint_interval == 0:
@@ -297,13 +309,24 @@ class Engine:
 
         隨機源綁死在 (seed, tick, 誰打誰) 上——replay 必須重現同一個結果，
         否則一次血案之後整條時間線就對不上了。
+
+        三個機制一起對抗「強者通吃」（j1b 費彬六戰全勝、零反抗、一人清城）：
+
+          先手  只給一點便宜（+1）。原本 +2 配上技高一籌就足以讓武功相近者穩贏。
+          背水  帶傷的人再出手是拿命去搏：傷勢不拖累「攻擊」，重傷更添三分狠勁，
+                但「守勢」照樣因傷大減。重傷者因此是「一擊要命、門戶大開」的玻璃刀——
+                被逼到角落的高手，那最後一刀最危險。這給了受害者反殺的一線生機。
+          義憤  親眼見過殺人的人 fury 會漲，出手更狠（見 witness 迴圈）。
+                費彬每殺一個，在場的人就更難對付——連續擊殺不再是零阻力。
         """
         w, t, when = self.world, self.world.tick, clock_str(self.world.tick)
         rng = random.Random(f"{w.seed}:{t}:{a.id}:{target.id}")
 
-        # 傷勢是實打實的拖累：帶傷 -2，重傷 -4。先出手的人佔一點便宜。
-        atk = a.skill - 2 * a.wound + 2 + rng.randint(0, 5)
-        dfn = target.skill - 2 * target.wound + rng.randint(0, 5)
+        # 攻方：本事＋義憤＋先手＋背水－傷勢＋運氣；守方：本事＋義憤－傷勢×2＋運氣。
+        # 攻擊只扣一份傷勢、又被背水抵掉（重傷還倒賺），守勢扣兩份——傷者是玻璃刀。
+        desperate = 3 if a.wound >= 2 else 0
+        atk = a.skill + a.fury + 1 + desperate - a.wound + rng.randint(0, 5)
+        dfn = target.skill + target.fury - 2 * target.wound + rng.randint(0, 5)
         margin = atk - dfn
 
         hurt_target = 3 if margin >= 6 else 2 if margin >= 3 else 1 if margin >= 1 else 0
@@ -347,13 +370,56 @@ class Engine:
         # 動手是當場的事，不能等到下一個 tick 才讓人知道。
         # 看得見的人立刻記住——這是江湖裡消息傳開的起點。
         for other in w.agents.values():
+            seen = other.pos.chebyshev(a.pos) <= self.cfg.vision_radius
+            # 太遠、又不是當事人，這一拍還不知道。當事人（攻、守）一定記得。
+            if other is not a and other is not target and not seen:
+                continue
             if not other.alive and other not in died:
-                continue
-            if other.pos.chebyshev(a.pos) > self.cfg.vision_radius and other is not target:
-                continue
+                continue  # 早就躺下的屍體不再記事（剛死的還留最後一筆）
             other.memory.add(t, when, "observation", line, importance=9)
+            if other.alive and other is not a:
+                # 眼前見血，先前在做的事都得放下重新盤算——不然會眼睜睜錯過一場命案，
+                # 或挨了打卻繼續埋頭走路。動手的人自己的 action 在最後另外處理。
+                other.action = None
+                if died:
+                    # 義憤：親眼見人被殺，出手更狠。連續擊殺的阻力就從這裡來。
+                    other.fury = min(4, other.fury + 2)
+
+        # 有人死了，噩耗傳到他的師門親友那裡——江湖上沒有白死的人。
+        for x in died:
+            self._notify_kin(x, a, t)
+
         a.action = None if a.alive else {"kind": "wait", "ticks_left": 1, "done": False}
         return None
+
+    def _notify_kin(self, dead, killer, t: int) -> None:
+        """把噩耗＋尋仇的念頭塞進死者親友的眼前。
+
+        用導演的 runtime inject 在**下一拍**送達：obs.injected 會觸發 needs_llm，
+        逼親友當場面對「要不要討公道」。就算人在城的另一頭，消息也傳得到——
+        這正是導演層「只有某些人觀察得到的事實」該做的事，也讓死亡有了社會後果，
+        而不是費彬連殺五人卻沒有一個人來討。
+
+        親眼看見的人不重複報信：他們的義憤和記憶已經夠了，「有人急奔來報」這種
+        框架只對不在場的親友成立。
+        """
+        if self.director is None:  # 離線測試沒有導演層
+            return
+        when = clock_str(t)
+        for other in self.world.agents.values():
+            if dead.id not in other.kin or not other.alive or other is killer:
+                continue
+            if other.pos.chebyshev(dead.pos) <= self.cfg.vision_radius:
+                continue  # 親眼看見的，不必再報一次
+            text = (
+                f"（有人急奔來報：{dead.name}死了，是{killer.name}下的手。"
+                f"你和他的交情，你自己心裡有數。江湖上沒有白死的人。）"
+            )
+            self.director.add_runtime(other.id, text, t + 1)
+            self.log.write(
+                "revenge_seed",
+                {"mourner": other.id, "dead": dead.id, "killer": killer.id, "when": when},
+            )
 
     def _advance(self, a) -> None:
         act = a.action

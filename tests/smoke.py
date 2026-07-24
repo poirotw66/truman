@@ -27,7 +27,7 @@ from truman.obs.eventlog import EventLog  # noqa: E402
 from truman.world.engine import Engine  # noqa: E402
 from truman.world.observation import build_observations  # noqa: E402
 from truman.world.grid import Pos  # noqa: E402
-from truman.world.state import WorldState  # noqa: E402
+from truman.world.state import AgentState, WorldState  # noqa: E402
 
 AREAS = ["咖啡館", "廣場", "報攤", "圖書館", "公園", "海堤", "保險行"]
 
@@ -432,6 +432,99 @@ def main() -> int:
                                   jianghu, jianghu.build_grid())
                               and "attack" not in cli_mod.scenario_world_block(
                                   seahaven, grid))
+
+        # ---- 武林：對抗「強者通吃」的三個機制 ----
+        # 背景：j1b 費彬六戰全勝、零反抗、一人清城。以下驗證新加的平衡機制。
+        def war_engine(world, director=None, run="e"):
+            return Engine(
+                world=world, grid=jianghu.build_grid(), cfg=SimConfig(combat=True),
+                llm=None, director=director, log=blood, world_block_text="",
+                run_dir=tmp / run,
+            )
+
+        print("\n義憤")
+        # 親眼見人被殺，旁觀者 fury 上升、放下手邊的事重新盤算；下手的人自己不義憤。
+        w = jianghu.build_world("fury", 7)
+        w.tick = 5
+        fei, yilin, lh = w.agents["fei_bin"], w.agents["yi_lin"], w.agents["linghu_chong"]
+        yilin.wound = 2
+        yilin.pos = Pos(fei.pos.x + 1, fei.pos.y)      # 貼著費彬，這一刀會死
+        lh.pos = Pos(fei.pos.x + 1, fei.pos.y + 1)     # 站在旁邊看得見
+        lh.action = {"kind": "interact", "object": "喝酒", "ticks_left": 2, "done": False}
+        fury_fei0, fury_lh0 = fei.fury, lh.fury
+        war_engine(w)._apply_intent(fei, {"kind": "attack", "target_agent": "儀琳"})
+        failures += not check("重傷者被補刀而死", not yilin.alive, yilin.wound_word)
+        failures += not check("旁觀者見殺，義憤上升", lh.fury > fury_lh0,
+                              f"{fury_lh0}→{lh.fury}")
+        failures += not check("下手的人自己不義憤", fei.fury == fury_fei0)
+        failures += not check("見血後旁觀者放下手邊的事重新決定", lh.action is None)
+
+        print("\n背水一戰")
+        # 重傷的令狐沖(6)硬拚沒受傷的費彬(8)，要有實質勝算——不再是必敗清場。
+        # 舊公式下重傷 -4 讓弱者出手幾乎穩輸；背水一戰把傷勢對「攻擊」的拖累抵掉。
+        hits = 0
+        for tk in range(60):
+            wd = jianghu.build_world("desp", 7)
+            wd.tick = tk
+            lhx, feix = wd.agents["linghu_chong"], wd.agents["fei_bin"]
+            lhx.wound = 2
+            feix.pos = Pos(lhx.pos.x + 1, lhx.pos.y)
+            war_engine(wd)._apply_intent(lhx, {"kind": "attack", "target_agent": "費彬"})
+            if feix.wound > 0:
+                hits += 1
+        failures += not check("重傷者拼死一擊能傷到武功更高的人", hits > 0, f"{hits}/60 命中")
+
+        print("\n尋仇")
+        # 有人死了，噩耗＋尋仇的念頭下一拍傳到不在場的知音眼前（obs.injected → needs_llm）。
+        w = jianghu.build_world("revenge", 7)
+        w.tick = 10
+        director = Director(script=[], log=blood)
+        fei, liu, qu = w.agents["fei_bin"], w.agents["liu_zhengfeng"], w.agents["qu_yang"]
+        fei.fury = 6      # 墊高勝負讓這一刀穩死，好專心驗尋仇（fury 值本身不是重點）
+        liu.wound = 2
+        fei.pos = Pos(liu.pos.x + 1, liu.pos.y)
+        qu.pos = Pos(12, 14)   # 曲洋在城外荒祠，看不見這一幕
+        war_engine(w, director)._apply_intent(fei, {"kind": "attack", "target_agent": "劉正風"})
+        failures += not check("劉正風被殺", not liu.alive, liu.wound_word)
+        queued = [c for c in director.cues_for_tick(11) if c.get("agent") == "qu_yang"]
+        failures += not check("噩耗下一拍注入不在場的知音",
+                              len(queued) == 1 and "劉正風" in queued[0]["text"],
+                              f"{len(queued)} 則")
+        w.tick = 11
+        inj = director.apply(w, jianghu.build_grid())
+        failures += not check("尋仇注入送達知音的眼前",
+                              any("劉正風" in x for x in inj.get("qu_yang", [])))
+
+        # 沒有親友的人被殺，不會憑空冒出尋仇者——尋仇要有交情作根據。
+        w2 = jianghu.build_world("norev", 7)
+        w2.tick = 10
+        d2 = Director(script=[], log=blood)
+        fei2, yl2 = w2.agents["fei_bin"], w2.agents["yi_lin"]
+        yl2.wound = 2
+        yl2.pos = Pos(fei2.pos.x + 1, fei2.pos.y)
+        war_engine(w2, d2)._apply_intent(fei2, {"kind": "attack", "target_agent": "儀琳"})
+        failures += not check("儀琳被殺", not yl2.alive, yl2.wound_word)
+        failures += not check("無親友者被殺不生尋仇注入",
+                              d2.runtime_injections == [], str(d2.runtime_injections))
+
+        # 親眼看見的親友不重複報信（義憤和記憶已經夠了）。
+        w3 = jianghu.build_world("seen", 7)
+        w3.tick = 10
+        d3 = Director(script=[], log=blood)
+        fei3, liu3, qu3 = w3.agents["fei_bin"], w3.agents["liu_zhengfeng"], w3.agents["qu_yang"]
+        fei3.fury = 6
+        liu3.wound = 2
+        fei3.pos = Pos(liu3.pos.x + 1, liu3.pos.y)
+        qu3.pos = Pos(liu3.pos.x, liu3.pos.y + 1)   # 曲洋就在旁邊，親眼看見
+        war_engine(w3, d3)._apply_intent(fei3, {"kind": "attack", "target_agent": "劉正風"})
+        failures += not check("親眼看見的親友不另外報信",
+                              not d3.runtime_injections, str(d3.runtime_injections))
+
+        # 序列化要涵蓋新欄位（fury / kin），否則分支重跑會丟掉義憤與交情。
+        qu_rt = AgentState.from_dict(qu.to_dict())
+        failures += not check("fury / kin 可序列化往返",
+                              qu_rt.fury == qu.fury and qu_rt.kin == qu.kin,
+                              f"fury={qu_rt.fury} kin={qu_rt.kin}")
 
         # ---- 記憶檢索 ----
         print("\n記憶檢索")
