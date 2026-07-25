@@ -192,12 +192,14 @@ outp = Path(__file__).with_name("frames.json")
 outp.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 print("wrote", outp, f"{outp.stat().st_size / 1024:.1f} KB")
 
-# ---- 注入模板 ----
+# ---- 注入模板（共用像素美術 + 資料）----
 tpl = Path(__file__).with_name("template.html").read_text(encoding="utf-8")
-marker = "/*__DATA__*/ null"
-if marker not in tpl:
-    raise SystemExit(f"template.html 裡找不到注入點 {marker!r}")
-html = tpl.replace(marker, json.dumps(out, ensure_ascii=False, separators=(",", ":")))
+for marker in ("/*__DATA__*/ null", "/*__PIXELART__*/"):
+    if marker not in tpl:
+        raise SystemExit(f"template.html 裡找不到注入點 {marker!r}")
+art = (ROOT / "web" / "pixelart.js").read_text(encoding="utf-8")
+html = tpl.replace("/*__PIXELART__*/", art)
+html = html.replace("/*__DATA__*/ null", json.dumps(out, ensure_ascii=False, separators=(",", ":")))
 htmlp = ROOT / "jianghu_replay.html"
 htmlp.write_text(html, encoding="utf-8")
 print("wrote", htmlp, f"{htmlp.stat().st_size / 1024:.1f} KB")

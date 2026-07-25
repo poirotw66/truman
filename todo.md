@@ -10,7 +10,8 @@ smoke 只驗機制單元對不對（背水命中率、義憤 +2、尋仇注入�
 要重跑一整天（tick 0–96）看：費彬還會不會六戰全勝、曲洋收到噩耗後會不會真去尋仇、
 中英夾雜有沒有壓下去。跟 j1/j1b 對照。
 
-- [ ] `python -m truman.cli --provider gemini run jianghu --ticks 96 --seed 7`（約 $1）
+- [ ] `python -m truman.cli --provider gemini --scenario jianghu run --run-id j2 --ticks 96 --seed 7`（約 $1）
+      （`--scenario` 是主 parser 的參數，要放在 `run` 前面；舊版寫成 `run jianghu` 是錯的，跑不起來）
 
 ### 5. 箱庭（hakoniwa）還沒實跑一整天
 和平劇本至今只用 stub 乾跑過。梅姨的小聚引信訂在 tick 72（18:00），
@@ -26,6 +27,22 @@ smoke 只驗機制單元對不對（背水命中率、義憤 +2、尋仇注入�
   左冷禪授意的「清理門戶」，全派自動尋仇會抹掉這層政治張力。留白是刻意的。
 
 ## 已完成（本輪）
+
+- **人物工作室（開場之前的前端頁）**：`cast/build_editor.py` → `cast_editor.html`，
+  離線可開、自帶資料。左邊名單（像素頭像）、中間表單、右邊地圖。
+  - 改得動的：名字/id、身分門派、稱號、角色類型、武功（1–10）、家、**起始位置（直接點地圖）**、
+    在意的人（kin，chip 勾選）、今日所求、江湖傳聞（公開人物表）、人設（大 textarea + 字數）、
+    長相（衣色/滾邊/髮色/名牌色、頭上、鬚、兵器）＋即時像素預覽（四向 + 走路動畫）。
+  - 可以新增／刪除人物；改 id 會自動更新別人 kin 裡的參照。
+  - 「出門前檢查」即時列出問題（站在牆上、id 重複或格式錯、人設空白、kin 指到不存在的人、
+    兩人同格、家不在地圖上）。改動暫存在 localStorage，關掉不會白改。
+  - 匯入既有 cast.json（檔案或貼上）、複製 JSON、複製開跑指令、一鍵還原成劇本原設定。
+- **`--cast` 讓設定檔真的能開跑**（`truman/cast.py` + CLI）：
+  `--scenario jianghu run --cast cast/jianghu.json`。載入 → 驗證（一次列出全部問題，
+  有問題就 exit 2，不燒額度）→ 套進世界；沒寫到的欄位沿用劇本預設，公開人物表也跟著換
+  （拿掉的人不會還在世界區塊裡被介紹）。劇本 .py 不動。
+  `cast/<劇本>.default.json` 是劇本原設定，可直接跑也方便 diff。smoke 加了 7 項檢查。
+- **像素美術抽成共用模組** `web/pixelart.js`：回放頁與工作室都注入同一支，兩個頁面同一個世界。
 
 - **回放畫面改成像素風遊戲**（取代原本的棋子版）：產生器搬進 repo `replay/`
   （`build_frames.py` + `template.html`，一支腳本直接產出根目錄的 `jianghu_replay.html`）。

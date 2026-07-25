@@ -101,22 +101,49 @@ def require_credentials(provider: str) -> None:
         sys.exit(2)
 
 
-def scenario_world_block(scen, grid) -> str:
-    """劇本可以換掉世界設定與少樣例示範；機制與語氣是全劇本共用的。"""
+def scenario_world_block(scen, grid, public_cast: str | None = None) -> str:
+    """劇本可以換掉世界設定與少樣例示範；機制與語氣是全劇本共用的。
+
+    `public_cast` 是給 --cast 用的：換了人，公開人物表也要跟著換，
+    否則世界區塊還在介紹一批已經不存在的人。
+    """
     from .llm.prompts import SEAHAVEN_EXAMPLES, SEAHAVEN_SETTING
 
     return world_block(
         grid,
         scen.BRIEF,
         scen.NORMS,
-        getattr(scen, "PUBLIC_CAST", ""),
+        public_cast if public_cast is not None else getattr(scen, "PUBLIC_CAST", ""),
         setting=getattr(scen, "SETTING", SEAHAVEN_SETTING),
         examples=getattr(scen, "EXAMPLES", SEAHAVEN_EXAMPLES),
         combat=getattr(scen, "COMBAT", False),
     )
 
 
-def make_engine(world, scen, cfg, run_dir: Path, replay_index=None, quiet=False, stub=False):
+def apply_cast(world, scen, path: str):
+    """讀人物設定檔、驗證、套進世界。回傳要覆蓋的公開人物表。"""
+    from . import cast as cast_mod
+
+    grid = scen.build_grid()
+    try:
+        data = cast_mod.load(path)
+    except cast_mod.CastError as e:
+        console.print(f"[red]{e}[/red]")
+        sys.exit(2)
+    problems = cast_mod.validate(data, grid, getattr(scen, "NAME", None))
+    if problems:
+        console.print(f"[red]人物設定檔有 {len(problems)} 個問題，這次 run 不會開始：[/red]")
+        for p in problems:
+            console.print(f"  [red]· {p}[/red]")
+        sys.exit(2)
+    cast_mod.apply(world, data, grid)
+    names = "、".join(a.name for a in world.agents.values())
+    console.print(f"[dim]套用人物設定 {path}：{len(world.agents)} 人（{names}）[/dim]")
+    return cast_mod.public_cast_text(data, getattr(scen, "PUBLIC_CAST", ""))
+
+
+def make_engine(world, scen, cfg, run_dir: Path, replay_index=None, quiet=False, stub=False,
+                public_cast: str | None = None):
     grid = scen.build_grid()
     log = EventLog(run_dir)
     log.bind_tick(lambda: world.tick)
@@ -134,7 +161,7 @@ def make_engine(world, scen, cfg, run_dir: Path, replay_index=None, quiet=False,
         llm=llm,
         director=director,
         log=log,
-        world_block_text=scenario_world_block(scen, grid),
+        world_block_text=scenario_world_block(scen, grid, public_cast),
         run_dir=run_dir,
         console=None if quiet else console,
     )
@@ -197,10 +224,12 @@ def cmd_run(args) -> None:
     cfg = build_config(args, use_cache=not args.no_cache,
                        combat=getattr(scen, "COMBAT", False))
     world = scen.build_world(args.run_id, args.seed)
+    public_cast = apply_cast(world, scen, args.cast) if getattr(args, "cast", None) else None
     run_dir = RUNS / args.run_id
-    engine, log, llm = make_engine(world, scen, cfg, run_dir, quiet=args.quiet, stub=args.stub)
+    engine, log, llm = make_engine(world, scen, cfg, run_dir, quiet=args.quiet, stub=args.stub,
+                                   public_cast=public_cast)
     log.write("run_start", {"run_id": args.run_id, "scenario": scen.NAME, "seed": args.seed,
-                            "ticks": args.ticks, "provider": cfg.provider,
+                            "ticks": args.ticks, "provider": cfg.provider, "cast": args.cast,
                             "models": cfg.models, "cfg": {"use_cache": cfg.use_cache}})
     sys.exit(asyncio.run(_drive(engine, log, llm, args.ticks, args.quiet)))
 
@@ -579,6 +608,10 @@ def main() -> None:
     r.add_argument("--no-cache", action="store_true")
     r.add_argument("--quiet", action="store_true")
     r.add_argument("--stub", action="store_true", help="用假 LLM 跑，不需憑證、不花錢")
+    r.add_argument(
+        "--cast",
+        help="人物設定檔（JSON）：用它取代劇本裡的人。由 cast_editor.html 產生",
+    )
     r.set_defaults(func=cmd_run)
 
     rp = sub.add_parser("replay", help="用既有日誌零成本重放")

@@ -234,6 +234,30 @@ truman/
   llm/tokens.py          CJK-aware 保守估算 + count_tokens 真值 + 模型清單
   obs/eventlog.py        JSONL 全量日誌
   obs/checkpoint.py      存檔 / 讀檔 / 分支
+  cast.py                人物設定檔（--cast）：載入 / 驗證 / 套進世界
 scenarios/seahaven.py    地圖、六個人物、導演腳本
 tests/smoke.py           離線煙霧測試（不呼叫 API）
+web/pixelart.js          共用像素美術（地圖圖磚 + 人物），兩個網頁都注入它
+cast/build_editor.py     產生 cast_editor.html（人物工作室）＋ 劇本原設定 JSON
+replay/build_frames.py   事件日誌 → jianghu_replay.html（整日回放）
 ```
+
+## 開場之前：人物工作室
+
+跑之前先決定「這場的人是誰」。產生編輯頁（離線可開，不需要伺服器）：
+
+```powershell
+.\.venv\Scripts\python.exe cast\build_editor.py jianghu   # 產出 cast_editor.html
+```
+
+在頁面上改名字／人設／武功／起始位置／在意的人／長相，按「下載 cast.json」存到
+`cast/jianghu.json`，然後用它開跑：
+
+```powershell
+.\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run `
+  --run-id j2 --ticks 96 --seed 7 --cast cast\jianghu.json
+```
+
+劇本 `.py` 一個字都不會動——設定檔只在那一次 run 生效，換一份就是另一場實驗。
+設定檔有問題（站在牆上、id 重複、人設空白、亂指親友）會在燒掉任何額度之前被擋下來，
+一次列出全部問題。`cast/<劇本>.default.json` 是劇本原設定，可以直接拿來跑，也方便 diff。

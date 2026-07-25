@@ -526,6 +526,55 @@ def main() -> int:
                               qu_rt.fury == qu.fury and qu_rt.kin == qu.kin,
                               f"fury={qu_rt.fury} kin={qu_rt.kin}")
 
+        # ---- 人物設定檔（--cast）----
+        # 人物工作室產出的 JSON 是這次 run 的人物真相來源：套錯了會整場跑歪，
+        # 所以驗證要在燒掉 API 額度之前就擋下壞檔案。
+        print("\n人物設定檔")
+        from truman import cast as cast_mod  # noqa: PLC0415
+
+        jgrid = jianghu.build_grid()
+        base_cast = {"scenario": "jianghu", "agents": [
+            {"id": a["id"], "name": a["name"], "home_area": a["home_area"],
+             "start": list(a["start"]), "skill": a["skill"], "kin": list(a.get("kin", [])),
+             "persona": a["persona"], "public": f"- {a['name']}，測試用。"}
+            for a in jianghu.AGENTS]}
+        failures += not check("劇本原設定通過驗證",
+                              cast_mod.validate(base_cast, jgrid, "jianghu") == [])
+
+        broken = json.loads(json.dumps(base_cast))
+        broken["agents"][0]["start"] = [0, 0]          # 城牆
+        broken["agents"][1]["kin"] = ["nobody"]
+        broken["agents"][2]["id"] = broken["agents"][3]["id"]
+        broken["agents"][4]["persona"] = "  "
+        broken["agents"][5]["skill"] = 99
+        probs = cast_mod.validate(broken, jgrid, "jianghu")
+        failures += not check("站不上去 / 重複 id / 空人設 / 亂指親友 / 武功超範圍都抓得到",
+                              len(probs) >= 5, f"{len(probs)} 個問題")
+
+        cw = jianghu.build_world("cast", 7)
+        edited = json.loads(json.dumps(base_cast))
+        edited["agents"] = [a for a in edited["agents"] if a["id"] != "tian_boguang"]
+        for a in edited["agents"]:
+            a["kin"] = [k for k in a["kin"] if k != "tian_boguang"]
+            if a["id"] == "fei_bin":
+                a["skill"] = 3
+                a["persona"] = "換過的人設。"
+                a["start"] = [9, 8]
+        cast_mod.apply(cw, edited, jgrid)
+        fb = cw.agents["fei_bin"]
+        failures += not check("套用後人少一個", len(cw.agents) == 5 and "tian_boguang" not in cw.agents,
+                              f"{len(cw.agents)} 人")
+        failures += not check("套用後人設／武功／位置都換掉",
+                              fb.persona == "換過的人設。" and fb.skill == 3 and fb.pos == Pos(9, 8),
+                              f"skill={fb.skill} pos={fb.pos}")
+        failures += not check("沒寫到的人沿用劇本預設",
+                              cw.agents["liu_zhengfeng"].kin == ["qu_yang"])
+        pub = cast_mod.public_cast_text(edited, jianghu.PUBLIC_CAST)
+        failures += not check("公開人物表跟著換（拿掉的人不再被介紹）",
+                              "田伯光" not in pub and "劉正風" in pub)
+        failures += not check("空的設定檔擋下來",
+                              _raises(lambda: cast_mod.load(tmp / "does_not_exist.json")))
+
         # ---- 記憶檢索 ----
         print("\n記憶檢索")
         p = engine.world.protagonist()

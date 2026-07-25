@@ -1,0 +1,815 @@
+<title>人物工作室 · 開場之前</title>
+<style>
+  :root{
+    --bg:#12100c; --panel:#211d15; --panel2:#2a251b; --field:#181510;
+    --ink:#f0e6d0; --ink2:#a99b7e; --line:rgba(240,230,205,.13); --line2:rgba(240,230,205,.26);
+    --gold:#d9a63c; --cinnabar:#c8483a; --jade:#5aa38f;
+    --disp:"Songti SC","STSong","Source Han Serif SC","Noto Serif CJK SC","PMingLiU",serif;
+    --ui:"PingFang SC","Source Han Sans SC","Noto Sans CJK SC","Microsoft JhengHei",sans-serif;
+    --mono:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
+    --shadow:0 6px 22px rgba(0,0,0,.45);
+  }
+  :root[data-theme="light"], :root:not([data-theme="dark"]){}
+  @media (prefers-color-scheme:light){
+    :root:not([data-theme="dark"]){
+      --bg:#e9dcbe; --panel:#f6eeda; --panel2:#ece0c2; --field:#fbf5e6;
+      --ink:#25211a; --ink2:#6d6350; --line:rgba(37,33,26,.14); --line2:rgba(37,33,26,.28);
+      --shadow:0 6px 20px rgba(60,48,26,.18);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#e9dcbe; --panel:#f6eeda; --panel2:#ece0c2; --field:#fbf5e6;
+    --ink:#25211a; --ink2:#6d6350; --line:rgba(37,33,26,.14); --line2:rgba(37,33,26,.28);
+    --shadow:0 6px 20px rgba(60,48,26,.18);
+  }
+  *{box-sizing:border-box}
+  .st{font-family:var(--ui); color:var(--ink); background:
+      radial-gradient(120% 90% at 50% -20%, color-mix(in srgb,var(--panel) 60%,transparent), transparent 65%), var(--bg);
+      min-height:100%; padding:clamp(10px,1.6vw,22px); line-height:1.5; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1440px; margin:0 auto; display:flex; flex-direction:column; gap:12px}
+
+  .topbar{display:flex; align-items:center; gap:10px 18px; flex-wrap:wrap;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:11px 16px; box-shadow:var(--shadow)}
+  .brand{display:flex; flex-direction:column; gap:2px; margin-right:auto}
+  .brand .k{font-size:10px; letter-spacing:.34em; color:var(--gold); font-weight:700}
+  .brand h1{margin:0; font-family:var(--disp); font-size:clamp(17px,2vw,23px); font-weight:600; letter-spacing:.04em}
+  .brand h1 small{font-size:12px; color:var(--ink2); font-family:var(--ui); letter-spacing:0; margin-left:8px}
+
+  button.b{font-family:var(--ui); font-size:12.5px; color:var(--ink); background:var(--panel2);
+    border:1px solid var(--line2); border-radius:8px; padding:8px 13px; cursor:pointer; transition:background .15s, transform .07s}
+  button.b:hover{background:color-mix(in srgb,var(--gold) 18%,var(--panel2))}
+  button.b:active{transform:translateY(1px)}
+  button.b.go{background:linear-gradient(180deg,var(--gold),#b8842a); color:#1a1610; border:0; font-weight:700}
+  button.b.danger:hover{background:color-mix(in srgb,var(--cinnabar) 26%,var(--panel2)); border-color:var(--cinnabar)}
+  button.b.mini{padding:4px 9px; font-size:11.5px}
+
+  .cols{display:grid; grid-template-columns:236px minmax(0,1fr) 360px; gap:12px; align-items:start}
+  @media(max-width:1180px){ .cols{grid-template-columns:210px minmax(0,1fr)} .mapcol{grid-column:1/-1} }
+  @media(max-width:780px){ .cols{grid-template-columns:1fr} }
+
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); overflow:hidden}
+  .card>h3{margin:0; padding:9px 13px; font-size:10.5px; font-weight:700; letter-spacing:.22em; color:var(--ink2);
+    border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px}
+  .card>h3 em{margin-left:auto; font-style:normal; color:var(--gold); letter-spacing:.06em}
+  .card .pad{padding:12px 13px}
+
+  .who{list-style:none; margin:0; padding:5px}
+  .who li{display:flex; gap:9px; align-items:center; padding:6px 7px; border-radius:9px; cursor:pointer}
+  .who li:hover{background:var(--panel2)}
+  .who li.sel{background:color-mix(in srgb,var(--gold) 22%,transparent); outline:1px solid var(--gold)}
+  .who canvas{width:34px; height:34px; image-rendering:pixelated; border-radius:8px; background:#171410; flex:none}
+  .who .n{font-family:var(--disp); font-size:14.5px; font-weight:600; line-height:1.25}
+  .who .s{font-size:10.5px; color:var(--ink2)}
+  .who .bad{margin-left:auto; color:var(--cinnabar); font-size:13px}
+
+  .form{display:flex; flex-direction:column; gap:14px}
+  .row{display:flex; gap:10px; flex-wrap:wrap}
+  .f{display:flex; flex-direction:column; gap:4px; flex:1 1 150px; min-width:0}
+  .f.wide{flex-basis:100%}
+  label{font-size:10.5px; letter-spacing:.16em; color:var(--gold); font-weight:700}
+  label span{color:var(--ink2); letter-spacing:0; font-weight:400; margin-left:6px; font-size:10.5px}
+  input[type=text], textarea, select{font-family:var(--ui); font-size:13.5px; color:var(--ink); background:var(--field);
+    border:1px solid var(--line2); border-radius:8px; padding:8px 10px; width:100%; resize:vertical}
+  textarea{line-height:1.72; font-size:13px}
+  input:focus, textarea:focus, select:focus{outline:2px solid var(--gold); outline-offset:1px}
+  input.mono{font-family:var(--mono); font-size:12px}
+  .hint{font-size:11px; color:var(--ink2); line-height:1.55}
+  .count{font-size:10.5px; color:var(--ink2); text-align:right; font-family:var(--mono)}
+
+  .sk{display:flex; align-items:center; gap:9px}
+  .sk input[type=range]{flex:1; accent-color:var(--gold)}
+  .sk b{font-family:var(--disp); font-size:19px; min-width:2ch; text-align:center}
+  .chips{display:flex; flex-wrap:wrap; gap:6px}
+  .chip{font-size:12px; padding:4px 11px; border-radius:20px; background:var(--panel2); border:1px solid var(--line2);
+    cursor:pointer; user-select:none}
+  .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--jade) 26%,transparent); border-color:var(--jade); color:var(--jade)}
+  .chip.none{opacity:.6; cursor:default}
+
+  .look{display:flex; gap:12px; align-items:flex-start}
+  .look .prev{flex:none; width:132px; background:var(--field); border:1px solid var(--line2); border-radius:10px;
+    padding:8px; display:flex; flex-direction:column; align-items:center; gap:7px}
+  .look .prev canvas{width:112px; height:112px; image-rendering:pixelated}
+  .look .prev .fbtn{display:flex; gap:3px}
+  .look .fields{flex:1; display:flex; flex-direction:column; gap:9px}
+  .swatch{display:flex; align-items:center; gap:7px}
+  input[type=color]{width:34px; height:26px; padding:0; border:1px solid var(--line2); border-radius:6px; background:none; cursor:pointer}
+
+  .mapwrap{position:relative; border:1px solid var(--line2); border-radius:10px; overflow:hidden; background:#0d0b08; cursor:crosshair}
+  .mapwrap canvas{display:block; width:100%; image-rendering:pixelated}
+  .maphint{font-size:11px; color:var(--ink2); margin-top:7px; line-height:1.6}
+  .maphint b{color:var(--ink)}
+
+  .checks{display:flex; flex-direction:column; gap:5px; font-size:12px}
+  .checks div{display:flex; gap:7px; padding:5px 8px; border-radius:7px; background:var(--panel2); line-height:1.45}
+  .checks div.err{background:color-mix(in srgb,var(--cinnabar) 16%,var(--panel2)); border-left:3px solid var(--cinnabar)}
+  .checks div.ok{color:var(--jade)}
+  .cmd{font-family:var(--mono); font-size:11.5px; background:var(--field); border:1px solid var(--line2);
+    border-radius:8px; padding:9px 10px; color:var(--ink2); word-break:break-all; line-height:1.6}
+  .cmd b{color:var(--ink)}
+  .saved{font-size:11px; color:var(--ink2)}
+  dialog{border:1px solid var(--line2); border-radius:12px; background:var(--panel); color:var(--ink); max-width:640px; width:92vw; padding:0}
+  dialog::backdrop{background:rgba(8,6,4,.7)}
+  dialog .pad{display:flex; flex-direction:column; gap:10px}
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+</style>
+
+<div class="st">
+ <div class="wrap">
+  <header class="topbar">
+   <div class="brand"><span class="k">TRUMAN · 開場之前</span>
+     <h1>人物工作室<small id="scenlab"></small></h1></div>
+   <span class="saved" id="saved"></span>
+   <button class="b" id="btnLoad">載入 cast.json</button>
+   <button class="b" id="btnPaste">貼上 JSON</button>
+   <button class="b danger" id="btnReset">還原成劇本原設定</button>
+   <button class="b" id="btnCopy">複製 JSON</button>
+   <button class="b go" id="btnSave">⤓ 下載 cast.json</button>
+   <input type="file" id="file" accept=".json,application/json" hidden>
+  </header>
+
+  <div class="cols">
+   <!-- 名單 -->
+   <div style="display:flex; flex-direction:column; gap:12px">
+    <div class="card">
+     <h3>這場的人 <em id="count"></em></h3>
+     <ul class="who" id="who"></ul>
+     <div class="pad" style="padding-top:0; display:flex; gap:6px">
+      <button class="b mini" id="btnAdd">＋ 新增</button>
+      <button class="b mini danger" id="btnDel">刪掉這個人</button>
+     </div>
+    </div>
+    <div class="card">
+     <h3>出門前檢查</h3>
+     <div class="pad"><div class="checks" id="checks"></div></div>
+    </div>
+   </div>
+
+   <!-- 表單 -->
+   <div class="card">
+    <h3>人物設定 <em id="editing"></em></h3>
+    <div class="pad form" id="form"></div>
+   </div>
+
+   <!-- 地圖 -->
+   <div class="mapcol" style="display:flex; flex-direction:column; gap:12px">
+    <div class="card">
+     <h3>起始位置 <em>點地圖放人</em></h3>
+     <div class="pad">
+      <div class="mapwrap" id="mapwrap"><canvas id="map"></canvas></div>
+      <p class="maphint" id="maphint"></p>
+     </div>
+    </div>
+    <div class="card">
+     <h3>改完之後</h3>
+     <div class="pad" style="display:flex; flex-direction:column; gap:9px">
+      <p class="hint">存成 <b>cast/<span id="fname">jianghu</span>.json</b>，然後：</p>
+      <div class="cmd" id="cmd"></div>
+      <button class="b mini" id="btnCmd" style="align-self:flex-start">複製指令</button>
+      <p class="hint">劇本的 .py 一個字都不會動——設定檔只在這次 run 生效，隨時可以換一份重跑。</p>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<dialog id="pasteDlg"><div class="pad">
+  <label>貼上 cast.json 的內容</label>
+  <textarea id="pasteBox" rows="14" style="font-family:var(--mono); font-size:11.5px"></textarea>
+  <div style="display:flex; gap:8px; justify-content:flex-end">
+    <button class="b" id="pasteCancel">取消</button><button class="b go" id="pasteOK">載入</button>
+  </div>
+</div></dialog>
+
+<script>
+"use strict";
+const DATA = {"scenario":"jianghu","title":"jianghu","combat":true,"rows":["########################","#lll....mmmm...tttt....#","#lll....mmmm...tttt....#","#lll....mmmm...tttt....#","#......................#","#....sssssssss.........#","#....sssssssss......ggg#","#....sssssssss......ggg#","#......................#","#yyy.......ppppp...ccc.#","#yyy.......ppppp...ccc.#","#yyy.......ppppp...ccc.#","#......................#","#......................#","#..........zzzz........#","########################"],"legend":{"#":{"name":"城牆","walk":false},".":{"name":"長街","walk":true},"l":{"name":"劉府廳堂","walk":true},"m":{"name":"市集攤位","walk":true},"t":{"name":"迴雁樓內","walk":true},"s":{"name":"演武場地磚","walk":true},"g":{"name":"城門洞","walk":true},"y":{"name":"後院","walk":true},"p":{"name":"群玉院內","walk":true},"c":{"name":"城隍廟內","walk":true},"z":{"name":"荒祠","walk":true}},"areas":[{"name":"劉府","x0":1,"y0":1,"x1":3,"y1":3,"desc":"衡山派劉三爺的宅子。今日廳上擺了金盆，滿地紅氈。"},{"name":"市集","x0":8,"y0":1,"x1":11,"y1":3,"desc":"賣米、賣布、賣刀鞘的攤子擠成一排，人聲嘈雜。"},{"name":"迴雁樓","x0":15,"y0":1,"x1":18,"y1":3,"desc":"衡山城最高的酒樓，三層，樓上看得見半座城。"},{"name":"演武場","x0":5,"y0":5,"x1":13,"y1":7,"desc":"劉府前的空地，青石鋪面，今日圍了不少看熱鬧的人。"},{"name":"城門","x0":20,"y0":6,"x1":22,"y1":7,"desc":"東門。守門的兵丁懶洋洋的，出城的路從這裡走。"},{"name":"後院","x0":1,"y0":9,"x1":3,"y1":11,"desc":"劉府後院，堆著柴和空酒罈，一道側門通往長街。"},{"name":"群玉院","x0":11,"y0":9,"x1":15,"y1":11,"desc":"城南的院子，白日裡沒什麼人，門口掛著兩盞紅燈籠。"},{"name":"城隍廟","x0":19,"y0":9,"x1":21,"y1":11,"desc":"香火不旺的小廟，泥像掉了半隻手，廊下可以避雨。"},{"name":"荒祠","x0":11,"y0":14,"x1":14,"y1":14,"desc":"城外的破祠堂，供桌塌了一半。趕路的人偶爾在這裡歇腳。"}],"street":"長街","agents":[{"id":"liu_zhengfeng","name":"劉正風","role":"villager","home_area":"劉府","start":[2,2],"skill":8,"kin":["qu_yang"],"public":"- 劉正風，衡山派掌門莫大先生的師弟，人稱劉三爺。今日在自家廳上金盆洗手。\n  他劍法極高，為人和氣，衡山城裡沒有人說他不好。","persona":"你是劉正風，衡山派掌門莫大先生的師弟，江湖上叫你劉三爺。\n你劍法極高，在衡山城住了半輩子，人緣極好。你有妻兒，一家老小都在府裡。\n\n你有一個秘密，這個秘密要是傳出去，五嶽劍派會要你的命：\n你最好的朋友曲洋是日月神教的長老。你們因為一首曲子相識，合譜了一曲《笑傲江湖》。\n在你心裡，這份知音之情比正邪之分要真得多。但你也知道江湖不會這樣看。\n\n所以你今天要金盆洗手，退出江湖。洗了手，你就不再是五嶽劍派的人，\n往後和曲洋來往，誰也管不著。這是你想了很久才想出來的辦法。\n\n今天你只要一件事：把這個手洗完。誰來說什麼，你都忍。","art":{"sect":"衡山派","title":"劉三爺","color":"#4f9b86","robe":"#3f7d6e","trim":"#25584c","hair":"#241d16","hat":"bun","beard":"short","weapon":"sword","goal":"把這個手洗完。誰來說什麼，都忍。"}},{"id":"fei_bin","name":"費彬","role":"villager","home_area":"劉府","start":[5,5],"skill":8,"kin":[],"public":"- 費彬，嵩山派高手，人稱「大嵩陽手」。左冷禪的心腹，說話帶三分官腔。\n  他是奉盟主之命來的，來做什麼沒有明說。","persona":"你是費彬，嵩山派高手，江湖上稱你「大嵩陽手」。你是左盟主最信得過的人之一。\n\n你這次來衡山，是奉左盟主的密令：劉正風不能洗手。\n五嶽劍派要並成一派，衡山派這根釘子不能鬆。他今天要是洗成了，\n往後衡山派誰也調不動。盟主的話很清楚——攔下他，用什麼手段都可以。\n\n而且你手上有一件東西：有人密報劉正風私通魔教長老曲洋。\n這罪名夠大，大到可以當眾發作。你在等一個時機把它抖出來，\n最好是在他洗手之前，當著滿座賓客的面。\n\n你辦事講究名正言順。要動手，也要動得讓人說不出話來。","art":{"sect":"嵩山派","title":"大嵩陽手","color":"#6f7a94","robe":"#3d4457","trim":"#20242f","hair":"#191510","hat":"official","beard":"none","weapon":"sword","goal":"攔下這場洗手。用什麼手段都可以。"}},{"id":"linghu_chong","name":"令狐沖","role":"villager","home_area":"迴雁樓","start":[16,2],"skill":6,"kin":[],"public":"- 令狐沖，華山派大弟子，岳不群的開山弟子。愛喝酒、不拘小節、講義氣。\n  江湖上都說這人不錯，就是規矩差了點。","persona":"你是令狐沖，華山派岳不群的大弟子。愛喝酒、愛開玩笑、不太守規矩。\n師父常說你行事沒個正形，可是你自己覺得，人活著總要對得起朋友。\n\n你這次代表華山派來賀劉三爺洗手。師父交代你少說話、別惹事。\n你答應了，但你自己也知道那話當不得真。\n\n你劍法在同輩裡算好的，可是這裡到處是成名多年的高手，\n真動起手來，你打不過他們。你心裡有數。\n\n你最看不得的事是以多欺少、以強欺弱。看到了你就會插手，\n就算插手的下場是自己倒楣。","art":{"sect":"華山派","title":"岳不群大弟子","color":"#c9903a","robe":"#b07a1e","trim":"#7d5310","hair":"#241d16","hat":"bun","beard":"none","weapon":"sword","goal":"少說話、別惹事——他自己也知道當不得真。"}},{"id":"yi_lin","name":"儀琳","role":"villager","home_area":"城隍廟","start":[20,10],"skill":3,"kin":[],"public":"- 儀琳，恆山派定逸師太的弟子，年紀很小的小尼姑。心軟，怕事，不會說謊。","persona":"你是儀琳，恆山派定逸師太的弟子，今年十六歲，出家人。\n你心軟，膽小，不會說謊——師父說你這樣在江湖上要吃虧，你也知道，可是改不了。\n\n你是跟著師父來衡山賀劉三爺洗手的，可是路上和師父走散了，\n現在你一個人在城裡，有點怕。你想找到師父，或者找個安全的地方待著。\n\n你武功很低，這裡任何一個人動起手來你都擋不住。你自己很清楚這一點。\n遇到危險你第一個念頭是逃，或者念經。\n\n有人對你好，你會記很久。","art":{"sect":"恆山派","title":"定逸師太弟子","color":"#cf8fa4","robe":"#d9d0bd","trim":"#a58f8f","hair":"none","hat":"nun","beard":"none","weapon":null,"goal":"找到師父，或找個安全的地方待著。"}},{"id":"tian_boguang","name":"田伯光","role":"villager","home_area":"群玉院","start":[13,10],"skill":8,"kin":[],"public":"- 田伯光，江湖人稱「萬里獨行」，快刀無雙，也是有名的採花大盜。\n  正道人人喊打，可十幾年沒人抓得住他。","persona":"你是田伯光，江湖人稱「萬里獨行」。快刀是你的看家本事，十幾年沒人抓得住你。\n你也是有名的採花大盜，正道人人喊打，你不在乎——他們喊了十幾年了。\n\n你今天來衡山不是為了看誰洗手，那種熱鬧你沒興趣。\n你在城裡看見了一個恆山派的小尼姑，落單的。你動了心思。\n\n你有你的規矩：你不殺沒有還手之力的人，也不喜歡在人多的地方動手。\n你喜歡把人哄到沒人的地方去。真要動起手來，你的刀比誰都快。\n\n你怕的東西不多，但你不想惹上整個五嶽劍派。能不當眾撕破臉，就不當眾撕破臉。","art":{"sect":"萬里獨行","title":"快刀無雙","color":"#b84a3c","robe":"#8e3b31","trim":"#5c231d","hair":"#1b1610","hat":"band","beard":"stub","weapon":"blade","goal":"把那個落單的小尼姑哄到沒人的地方去。"}},{"id":"qu_yang","name":"曲洋","role":"villager","home_area":"荒祠","start":[12,14],"skill":8,"kin":["liu_zhengfeng"],"public":"- 曲洋，一個愛琴的老人。旁人只知道他琴彈得極好，來歷不清不楚。","persona":"你是曲洋，日月神教的長老。在旁人眼裡你只是個愛琴的老人。\n\n你這輩子在教中殺過不少人，做過不少事，可是到了這個年紀，\n你發現真正放不下的只有一件：琴。還有一個懂琴的人。\n\n劉正風是你的知音。你們合譜了一曲《笑傲江湖》，那是你這輩子做過最好的事。\n正邪之分在你眼裡是笑話——可你也知道，這個笑話會要人命。\n\n今天他金盆洗手，你知道那是為了什麼。你本來不該來，來了就是害他。\n可是你還是進了城，你想遠遠看一眼。\n\n你的身份要是被認出來，滿城的正道都會撲上來。你不怕死，\n你怕的是連累他。","art":{"sect":"日月神教","title":"長老","color":"#8b6bab","robe":"#6b4a86","trim":"#42295a","hair":"#ddd6c8","hat":"bun","beard":"long","weapon":"qin","goal":"遠遠看他一眼就走。別連累他。"}}],"leftover_public":[],"art_defaults":{"fallback":{"sect":"","title":"","color":"#8a8272","robe":"#6f6455","trim":"#463f34","hair":"#241d16","hat":"bun","beard":"none","weapon":null,"goal":""}}};
+
+/* ============================ 像素美術（共用模組，注入自 web/pixelart.js） ============================ */
+/* 共用像素美術：地圖圖磚 + 人物畫法。
+   回放頁（replay/template.html）與人物工作室（cast/editor.template.html）都注入這一支，
+   兩邊看起來才會是同一個世界。純函式、無 DOM 依賴（除了 canvas）。
+
+   對外：
+     ART                              一格 = 16 個美術像素
+     buildWorldCanvas(rows, areas, TS, decor?)   → 畫好的離屏 canvas
+     DECOR_JIANGHU                    衡山城的固定裝飾（樹/井/紅氈/幌子）
+     drawFigure(g, cx, footY, T, prof, opts)     人物（腳底站在 footY）
+     drawPortrait(g, size, prof, opts)           方形頭像
+   prof 欄位：robe trim hair hat(bun|official|nun|band|none) beard(long|short|stub|none)
+              weapon(sword|blade|qin|null)
+*/
+"use strict";
+const ART = 16;
+
+function hash(x, y, s) {
+  let n = (x * 73856093) ^ (y * 19349663) ^ ((s || 0) * 83492791);
+  n = (n < 0 ? ~n : n) % 65521;
+  return n / 65521;
+}
+
+const PAL = {
+  street:["#c2a877","#b99f6e","#cbb181"], streetLine:"#a78d5f",
+  wall:"#5d5648", wallTop:"#7b7360", wallDark:"#3b3529",
+  plaza:["#9fa093","#96978a","#a8a99b"],
+  dirt:["#a08a5f","#977f55"],
+  gate:"#6b6252",
+};
+/* 室內是「掀了屋頂」的畫法（人在屋裡就看得見人），牆畫在區塊邊緣，南面留門。 */
+const INT = {
+  l:{floor:"#b58f57", plank:"#9c7743", wall:"#7c4331", wallHi:"#a35a3c", kind:"wood"},
+  t:{floor:"#a87c46", plank:"#8d6434", wall:"#6b4425", wallHi:"#8b5c33", kind:"wood"},
+  p:{floor:"#a8767c", plank:"#8f5e66", wall:"#7d3f47", wallHi:"#a2545e", kind:"wood"},
+  c:{floor:"#8e8b7c", plank:"#7c7969", wall:"#5b5850", wallHi:"#767264", kind:"stone"},
+  z:{floor:"#7b7566", plank:"#6a6456", wall:"#4c473b", wallHi:"#615c4c", kind:"stone", ruin:true},
+};
+const DECOR_JIANGHU = [
+  {t:"carpet", x:2, y:4}, {t:"carpet", x:3, y:4}, {t:"carpet", x:4, y:4}, {t:"carpet", x:4, y:5},
+  {t:"tree", x:6, y:4}, {t:"tree", x:19, y:4}, {t:"tree", x:6, y:13}, {t:"tree", x:17, y:12}, {t:"tree", x:14, y:8},
+  {t:"well", x:8, y:12}, {t:"crate", x:16, y:5}, {t:"crate", x:9, y:13}, {t:"banner", x:17, y:4},
+];
+
+function buildWorldCanvas(rows, areas, TS, decor) {
+  const W = rows[0].length, H = rows.length;
+  const cv = document.createElement("canvas");
+  cv.width = W * TS; cv.height = H * TS;
+  const wx = cv.getContext("2d");
+  const at = (x, y) => (x < 0 || y < 0 || x >= W || y >= H) ? "#" : rows[y][x];
+
+  /* 同符號連通塊 → 知道自己在不在區塊邊緣、門開在哪一格 */
+  const blockIdx = new Int16Array(W * H).fill(-1), blocks = [];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const s = at(x, y);
+    if (s === "." || s === "#" || blockIdx[y*W+x] >= 0) continue;
+    const id = blocks.length, q = [[x, y]], b = { sym:s, x0:x, y0:y, x1:x, y1:y };
+    blockIdx[y*W+x] = id;
+    while (q.length) {
+      const [cx, cy] = q.pop();
+      b.x0 = Math.min(b.x0,cx); b.x1 = Math.max(b.x1,cx); b.y0 = Math.min(b.y0,cy); b.y1 = Math.max(b.y1,cy);
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy]) => {
+        const nx = cx+dx, ny = cy+dy;
+        if (nx<0 || ny<0 || nx>=W || ny>=H) return;
+        if (at(nx,ny) === s && blockIdx[ny*W+nx] < 0) { blockIdx[ny*W+nx] = id; q.push([nx,ny]); }
+      });
+    }
+    blocks.push(b);
+  }
+  const blockAt = (x, y) => blocks[blockIdx[y*W+x]];
+
+  function paintTile(x, y) {
+    const sym = at(x, y), T = TS, u = T / ART;
+    const R = (ax, ay, aw, ah, c) => { wx.fillStyle = c; wx.fillRect(Math.round(x*T+ax*u), Math.round(y*T+ay*u), Math.max(1,Math.round(aw*u)), Math.max(1,Math.round(ah*u))); };
+    const h = (s) => hash(x, y, s);
+
+    if (sym === "#") {                                     // 城牆
+      R(0,0,16,16,PAL.wall);
+      for (let ry=0; ry<16; ry+=4) { R(0,ry,16,1,PAL.wallDark); const off = (ry/4)%2 ? 0 : 4; for (let rx=off; rx<16; rx+=8) R(rx,ry,1,4,PAL.wallDark); }
+      if (at(x,y+1) !== "#") R(0,13,16,3,PAL.wallDark);
+      if (at(x,y-1) !== "#") { R(0,0,16,3,PAL.wallTop); for (let rx=1; rx<16; rx+=6) R(rx,0,3,2,PAL.wall); }
+      if (h(3) > .86) R(3,6,4,3,"#4d5a3c");                // 苔
+      return;
+    }
+    if (INT[sym]) {                                        // 室內（掀頂）
+      const p = INT[sym], b = blockAt(x,y);
+      const N = y === b.y0, S = y === b.y1, WW = x === b.x0, E = x === b.x1;
+      const doorX = Math.floor((b.x0 + b.x1) / 2), tall = b.y1 > b.y0;
+      R(0,0,16,16,p.floor);
+      if (p.kind === "wood") { for (let ry=3; ry<16; ry+=4) R(0,ry,16,1,p.plank); if (h(9)>.6) R(2,7,7,1,p.plank); }
+      else { for (let ry=0; ry<16; ry+=8) R(0,ry,16,1,p.plank); for (let rx=0; rx<16; rx+=8) R(rx,0,1,16,p.plank); }
+      if (p.ruin && h(2) > .5) R(3+Math.floor(h(3)*7), 5+Math.floor(h(4)*7), 3, 2, "#4a4438");
+      if (p.ruin && h(5) > .72) R(9,9,4,3,"#4d6a3e");
+
+      // 家什
+      if (sym === "l") {                                              // 廳堂：紅氈、太師椅
+        if (x === doorX) { R(4,0,8,16,"#9d3a2f"); R(4,0,1,16,"#7e2c23"); R(11,0,1,16,"#7e2c23"); }
+        else if (!N && h(6) > .45) { R(3,6,4,5,"#6b4a2c"); R(3,5,4,2,"#8a6a3c"); }
+      } else if (sym === "t") {                                       // 酒樓：酒桌
+        if ((x + y) % 2 === 0 && !N) { R(4,6,8,6,"#7a5230"); R(5,5,6,2,"#94663c"); R(2,8,2,3,"#5d3a1c"); R(12,8,2,3,"#5d3a1c"); R(6,7,2,2,"#e6dcc4"); }
+      } else if (sym === "p") {                                       // 院子：屏風、坐榻
+        if (h(7) > .55 && !N) { R(2,5,12,4,"#8a4f57"); R(2,5,12,1,"#c2848c"); }
+        if (h(8) > .8) R(5,10,6,4,"#6d3a41");
+      } else if (sym === "c") {                                       // 廟：蒲團
+        if (h(6) > .6 && !N) { R(5,8,6,4,"#9a8a5c"); R(5,8,6,1,"#b7a675"); }
+      }
+
+      // 牆
+      if (N) {
+        R(0,0,16,5,p.wall); R(0,4,16,1,p.wallHi);
+        if (sym === "l" && x === doorX) { R(3,0,10,4,"#8c2b22"); R(3,0,10,1,"#d9a63c"); R(3,3,10,1,"#d9a63c"); R(6,1,4,2,"#d9a63c"); }
+        else if (sym === "t") { R(1,0,14,4,"#5d3a1c"); for (let rx=2; rx<14; rx+=3) { R(rx,1,2,3,"#8a6a3c"); R(rx,1,2,1,"#c8a02e"); } }
+        else if (sym === "p") { for (let rx=0; rx<16; rx+=3) R(rx,0,2,5,"#914b55"); R(0,4,16,1,"#d9a63c"); }
+        else if (sym === "c" && x === doorX) { R(5,0,6,5,"#b79a4c"); R(6,1,4,2,"#d9c07a"); R(6,3,4,2,"#8c7433"); }
+        else if (p.ruin) { if (h(1) > .5) R(4,1,6,4,p.floor); }
+      }
+      if (WW) { R(0,0,2,16,p.wall); R(2,0,1,16,p.wallHi); }
+      if (E) { R(14,0,2,16,p.wall); R(13,0,1,16,p.wallHi); }
+      if (S && tall) {
+        if (x === doorX) { R(0,14,4,2,p.wall); R(12,14,4,2,p.wall); R(0,13,4,1,p.wallHi); R(12,13,4,1,p.wallHi); }
+        else { R(0,14,16,2,p.wall); R(0,13,16,1,p.wallHi); }
+      }
+      R(0,0,16,16,"rgba(30,18,6,.10)");                    // 室內壓暗一點
+      return;
+    }
+    if (sym === "m") {                                     // 市集：北面布篷，其餘是攤位走道
+      const b = blockAt(x,y);
+      R(0,0,16,16,"#b09363");
+      for (let i=0; i<3; i++) if (hash(x,y,40+i) > .5) R(1+Math.floor(h(9+i)*11), 2+Math.floor(h(19+i)*12), 3, 2, "#9c8052");
+      if (y === b.y0) {
+        const A = ["#cdd6d8","#c05a4a","#dcc37a"][Math.floor(h(9)*3)];
+        R(0,0,16,9,"#f2ead6");
+        for (let rx=0; rx<16; rx+=4) R(rx,0,2,9,A);
+        R(0,8,16,2,"#6d5836"); R(0,0,16,1,"#6d5836");
+      } else {
+        R(1,3,14,5,"#8a6a3c"); R(1,3,14,1,"#a5814a"); R(1,7,14,1,"#5e4526");
+        const g = ["#b8823a","#8fa05a","#c0574a","#d9c07a"][Math.floor(h(11)*4)];
+        R(3,4,3,2,g); R(8,4,2,2,"#d9c07a"); R(11,4,3,2,g);
+        R(2,11,2,4,"#6d5836"); R(12,11,2,4,"#6d5836");
+      }
+      return;
+    }
+    if (sym === "s") {                                     // 演武場青石
+      R(0,0,16,16,PAL.plaza[Math.floor(h(2)*3)]);
+      R(0,0,16,1,"#87887c"); R(0,0,1,16,"#87887c");
+      if (h(7) > .8) R(4,5,7,4,"#8b8c80");
+      return;
+    }
+    if (sym === "g") {                                     // 城門洞：石地，東面是包鐵大門
+      const b = blockAt(x,y);
+      R(0,0,16,16,PAL.gate);
+      for (let ry=0; ry<16; ry+=5) R(0,ry,16,1,"#544c3e");
+      if (y === b.y0) { R(0,0,16,4,"#4a4337"); R(0,3,16,1,"#7b7360"); }
+      if (y === b.y1) R(0,13,16,3,"#4a4337");
+      if (x === b.x1) {
+        R(9,0,7,16,"#4a3627"); R(9,0,1,16,"#6b5238");
+        for (let ry=1; ry<16; ry+=4) { R(10,ry,6,1,"#33261a"); R(11,ry,2,2,"#8d8676"); }
+      }
+      return;
+    }
+    if (sym === "y") {                                     // 後院泥地
+      R(0,0,16,16,PAL.dirt[h(2)>.5?0:1]);
+      if (h(3) > .74) { R(2,7,10,6,"#7a5c33"); for (let ry=8; ry<13; ry+=2) R(2,ry,10,1,"#5e4526"); }
+      else if (h(4) > .62) { R(5,6,6,8,"#6d6355"); R(5,5,6,2,"#57503f"); }
+      else if (h(5) > .5) R(6,9,5,4,"#4d5a3c");
+      return;
+    }
+    // 長街
+    R(0,0,16,16,PAL.street[Math.floor(h(1)*3)]);
+    for (let i=0; i<4; i++) { const cx = Math.floor(h(10+i)*12)+1, cy = Math.floor(h(20+i)*12)+1;
+      if (hash(x,y,30+i) > .45) R(cx,cy,3,2,PAL.streetLine); }
+    if (h(6) > .93) { R(6,7,4,3,"#6e7a45"); R(7,6,2,2,"#7f8c4e"); }
+    if (h(8) > .96) R(3,3,2,2,"#a89b78");
+  }
+
+  /* 牆與屋身往南邊投影，讓建築離地 */
+  function paintShadows() {
+    const T = TS, u = T / ART;
+    const solid = s => s === "#" || (INT[s] !== undefined);
+    for (let y=0; y<H; y++) for (let x=0; x<W; x++) {
+      const me = at(x,y), up = at(x,y-1);
+      if (me === up || !solid(up) || me === "#") continue;
+      if (INT[up] && y - 1 !== blockAt(x,y-1).y1) continue;   // 只有屋子最南那排（有牆）才投影
+      wx.fillStyle = "rgba(20,14,6,.26)";
+      wx.fillRect(Math.round(x*T), Math.round(y*T), T, Math.round(4*u));
+    }
+  }
+
+  function paintDecor(list) {
+    const T = TS, u = T / ART;
+    const at2 = (x,y) => (ax,ay,aw,ah,c) => { wx.fillStyle=c; wx.fillRect(Math.round(x*T+ax*u),Math.round(y*T+ay*u),Math.max(1,Math.round(aw*u)),Math.max(1,Math.round(ah*u))); };
+    list.forEach(d => {
+      const R = at2(d.x, d.y);
+      if (d.t === "carpet") { R(0,0,16,16,"#9d3a2f"); R(0,0,16,2,"#7e2c23"); R(0,14,16,2,"#7e2c23"); R(2,7,12,2,"#c1a04a"); }
+      else if (d.t === "tree") { R(6,10,4,5,"#5b4325"); R(2,2,12,9,"#3f6b3a"); R(3,1,10,3,"#4d7f45"); R(5,4,5,3,"#5b9450"); R(4,9,8,2,"#31552d"); }
+      else if (d.t === "well") { R(3,5,10,9,"#7a7364"); R(4,6,8,7,"#3a4348"); R(3,4,10,2,"#8d8676"); R(5,1,2,5,"#5b4325"); R(9,1,2,5,"#5b4325"); R(4,0,8,2,"#5b4325"); }
+      else if (d.t === "crate") { R(3,6,10,8,"#8a6a3c"); R(3,9,10,1,"#5e4526"); R(7,6,1,8,"#5e4526"); }
+      else if (d.t === "banner") { R(7,0,2,10,"#5b4325"); R(9,1,6,9,"#c8a02e"); R(9,3,6,1,"#8c6a15"); R(9,6,6,1,"#8c6a15"); }
+    });
+  }
+
+  for (let y=0; y<H; y++) for (let x=0; x<W; x++) paintTile(x,y);
+  paintShadows();
+  paintDecor(decor || []);
+  // 區域名：貼在區域上緣（北牆下方），免得壓到站在屋子中間的人
+  wx.textAlign = "center"; wx.textBaseline = "middle";
+  wx.font = `600 ${Math.round(TS*0.38)}px "Songti SC",serif`;
+  (areas || []).forEach(a => {
+    const cx = ((a.x0+a.x1)/2+0.5)*TS, cy = a.y0*TS + TS*0.74;
+    wx.fillStyle = "rgba(10,8,4,.5)"; wx.fillText(a.name, cx, cy+2);
+    wx.fillStyle = "rgba(255,246,224,.44)"; wx.fillText(a.name, cx, cy);
+  });
+  return cv;
+}
+
+/* ---------------------------------------------------------------- 人物 */
+const SKIN = "#e4b98d", SKIN_D = "#c99a6f", DARK = "#1b1610";
+
+function drawFigure(g, cx, footY, T, prof, o) {
+  o = o || {};
+  const u = T / ART, face = o.face || "down", fr = o.frame || 0, hurt = o.wound || 0;
+  const bob = o.bob || 0;
+  const ox = cx - 8*u, oy = footY - 15*u + bob*u;
+  const R = (ax, ay, aw, ah, c) => { g.fillStyle = c; g.fillRect(Math.round(ox+ax*u), Math.round(oy+ay*u), Math.max(1,Math.round(aw*u)), Math.max(1,Math.round(ah*u))); };
+  const flip = face === "left";
+  const FX = (ax, aw) => flip ? 16 - ax - aw : ax;
+  const RX = (ax, ay, aw, ah, c) => R(FX(ax,aw), ay, aw, ah, c);
+  const side = face === "left" || face === "right";
+
+  g.fillStyle = "rgba(0,0,0,.3)";
+  g.beginPath(); g.ellipse(cx, footY - u, 5.2*u, 2*u, 0, 0, 6.3); g.fill();
+
+  if (o.dead) { drawFallen(g, cx, footY, T, prof); return; }
+
+  const swing = (fr === 1 || fr === 3) ? 1 : 0, back = fr === 3 ? 1 : 0;
+  // 腿
+  R(5.5, 12 - swing, 2, 3 + swing, prof.trim); R(8.5, 12 - back, 2, 3 + back, prof.trim);
+  R(5.3, 14.6, 2.4, 1.2, DARK); R(8.3, 14.6, 2.4, 1.2, DARK);
+  // 身
+  const bw = side ? 6 : 8, bodyX = side ? 5 : 4;
+  R(bodyX, 6.4, bw, 6.4, prof.robe);
+  R(bodyX, 12.2, bw, 1.1, prof.trim);
+  R(bodyX, 9.4, bw, 1.1, prof.trim);
+  R(bodyX+1, 9.4, bw-2, 1.1, prof.hat === "official" ? "#c8a02e" : prof.trim);
+  // 袖
+  if (side) { RX(10.6, 7, 2, 4.6, prof.robe); RX(11, 11.2, 1.6, 1.4, SKIN); }
+  else { R(3, 7, 1.8, 4.6, prof.robe); R(11.2, 7, 1.8, 4.6, prof.robe);
+         R(3.1, 11.2, 1.6, 1.4, SKIN); R(11.3, 11.2, 1.6, 1.4, SKIN); }
+  // 頭
+  R(5.4, 2.2, 5.2, 5, SKIN); R(5.4, 6.6, 5.2, .8, SKIN_D);
+  if (face === "up") { R(5.4, 2.2, 5.2, 4, prof.hair === "none" ? "#efe7d5" : prof.hair); }
+  else {
+    if (prof.hat === "nun") { R(4.9, 1.7, 6.2, 2.6, "#efe7d5"); R(4.9, 3.9, 1, 2.6, "#efe7d5"); R(10.1, 3.9, 1, 2.6, "#efe7d5"); }
+    else { R(5.1, 1.6, 5.8, 2.2, prof.hair); R(5.1, 3.2, 1, 2.4, prof.hair); R(9.9, 3.2, 1, 2.4, prof.hair); }
+    if (prof.hat === "bun") { R(7.2, .2, 2.4, 1.8, prof.hair); R(7.4, -.3, 2, .8, prof.trim); }
+    if (prof.hat === "official") { R(4.4, .3, 7.2, 2.2, "#221d16"); R(3, 1, 1.6, 1.2, "#221d16"); R(11.4, 1, 1.6, 1.2, "#221d16"); R(7.4, .3, 1.2, 2.2, "#c8a02e"); }
+    if (prof.hat === "band") { R(5, 2.4, 6, 1, "#c8a02e"); }
+    // 眼
+    if (face === "down") { R(6.3, 4.3, 1, 1.1, DARK); R(8.8, 4.3, 1, 1.1, DARK); }
+    else if (side) { RX(8.6, 4.3, 1, 1.1, DARK); }
+    // 鬚
+    if (prof.beard === "long") { R(6.6, 6.6, 3, 2.6, "#e6e0d2"); R(6.2, 5.4, .9, 1.4, "#e6e0d2"); R(9, 5.4, .9, 1.4, "#e6e0d2"); }
+    else if (prof.beard === "short") { R(6.8, 6.4, 2.6, 1.2, prof.hair); }
+    else if (prof.beard === "stub") { R(6.4, 6.2, 3.4, 1.1, "rgba(30,24,16,.55)"); }
+  }
+  // 兵器
+  if (prof.weapon === "sword") { RX(11.4, 3.4, 1.1, 8, "#8a6a3c"); RX(11.2, 2.6, 1.6, 1.2, "#d9c07a"); }
+  else if (prof.weapon === "blade") { RX(11.2, 3.6, 1.4, 7.4, "#4a4a52"); RX(11, 3.2, 2, 1, "#cfd4da"); RX(11.3, 10.6, 1.2, 1.6, "#8a3a2f"); }
+  else if (prof.weapon === "qin") { RX(2.2, 8, 3, 5.4, "#6b4a2c"); RX(2.6, 8.4, .5, 4.6, "#d9c07a"); RX(3.6, 8.4, .5, 4.6, "#d9c07a"); }
+  // 傷
+  if (hurt >= 1) R(6.4, 8, 2.2, 1.4, "#a32c22");
+  if (hurt >= 2) { R(5, 7, 1.6, 3.4, "#8c1f18"); R(9.4, 10.2, 2.4, 1.6, "#8c1f18"); R(6.2, 3.6, 1.4, .9, "#a32c22"); }
+}
+
+function drawFallen(g, cx, footY, T, prof) {
+  const u = T / ART, oy = footY - 6*u, ox = cx - 8*u;
+  const R = (ax, ay, aw, ah, c) => { g.fillStyle = c; g.fillRect(Math.round(ox+ax*u), Math.round(oy+ay*u), Math.max(1,Math.round(aw*u)), Math.max(1,Math.round(ah*u))); };
+  g.fillStyle = "rgba(120,20,14,.5)";
+  g.beginPath(); g.ellipse(cx, footY - 1.5*u, 6.6*u, 2.8*u, 0, 0, 6.3); g.fill();
+  R(3.4, 2.2, 8, 3.4, prof.robe); R(3.4, 4.2, 8, 1, prof.trim);
+  R(11.2, 2, 3.2, 3.4, SKIN);
+  R(12.4, 1.6, 2.4, 2, prof.hat === "nun" ? "#efe7d5" : (prof.hair === "none" ? "#efe7d5" : prof.hair));
+  R(2, 2.6, 2, 2.6, prof.trim);
+  R(5, 3, 3.4, 1.2, "#8c1f18");
+}
+
+function drawPortrait(g, size, prof, o) {
+  g.imageSmoothingEnabled = false;
+  g.clearRect(0, 0, size, size);
+  drawFigure(g, size/2, size*.97, size*.94, prof, Object.assign({ face:"down", frame:0 }, o || {}));
+}
+
+
+/* ============================ 狀態 ============================ */
+const ROWS = DATA.rows, W = ROWS[0].length, H = ROWS.length;
+const LEGEND = DATA.legend, AREAS = DATA.areas;
+const KEY = "truman.cast." + DATA.scenario;
+const clone = o => JSON.parse(JSON.stringify(o));
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const walkable = (x,y) => x>=0 && y>=0 && x<W && y<H && !!(LEGEND[ROWS[y][x]] || {}).walk;
+const terrainOf = (x,y) => ((LEGEND[ROWS[y][x]] || {}).name) || "?";
+const areaAt = (x,y) => (AREAS.find(a => x>=a.x0 && x<=a.x1 && y>=a.y0 && y<=a.y1) || {name:DATA.street}).name;
+
+let S = load() || clone({ scenario:DATA.scenario, agents:DATA.agents });
+let sel = 0, face = "down", walking = false;
+
+function load() {
+  try { const raw = localStorage.getItem(KEY); if (!raw) return null;
+    const d = JSON.parse(raw); return (d && d.agents && d.agents.length) ? d : null; } catch (e) { return null; }
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(S));
+    document.getElementById("saved").textContent = "已暫存於瀏覽器 " + new Date().toLocaleTimeString();
+  } catch (e) { document.getElementById("saved").textContent = "（這個瀏覽器不給暫存，記得下載）"; }
+}
+const cur = () => S.agents[sel];
+
+/* ============================ 驗證 ============================ */
+function problems() {
+  const out = [], ids = new Set();
+  S.agents.forEach(a => {
+    const who = a.name || a.id || "（無名）";
+    if (!a.id) out.push([a, "沒有 id"]);
+    else if (!/^[a-z][a-z0-9_]*$/.test(a.id)) out.push([a, `id ${a.id} 只能用小寫英文、數字、底線，且開頭是字母`]);
+    else if (ids.has(a.id)) out.push([a, `id ${a.id} 和別人重複`]);
+    ids.add(a.id);
+    if (!(a.name || "").trim()) out.push([a, "沒有名字"]);
+    if (!(a.persona || "").trim()) out.push([a, `${who} 的人設是空的`]);
+    if (!walkable(a.start[0], a.start[1]))
+      out.push([a, `${who} 站在 ${terrainOf(a.start[0], a.start[1])}（${a.start}）上，那裡不能走`]);
+    if (a.home_area !== DATA.street && !AREAS.some(x => x.name === a.home_area))
+      out.push([a, `${who} 的家 ${a.home_area} 不在這張地圖上`]);
+  });
+  S.agents.forEach(a => (a.kin || []).forEach(k => {
+    if (!S.agents.some(b => b.id === k)) out.push([a, `${a.name} 在意的人 ${k} 已經不在名單裡`]);
+  }));
+  const at = {};
+  S.agents.forEach(a => { const k = a.start.join(",");
+    if (at[k]) out.push([a, `${a.name} 和 ${at[k]} 都站在 (${k})`]); else at[k] = a.name; });
+  return out;
+}
+function renderChecks() {
+  const ps = problems(), el = document.getElementById("checks");
+  el.innerHTML = ps.length
+    ? ps.map(([a,m]) => `<div class="err"><span>✕</span><span>${esc(m)}</span></div>`).join("")
+    : `<div class="ok"><span>✓</span><span>${S.agents.length} 個人都設好了，可以開跑。</span></div>`;
+}
+
+/* ============================ 名單 ============================ */
+function renderWho() {
+  const ps = problems(), bad = new Set(ps.map(([a]) => a.id));
+  const ul = document.getElementById("who");
+  ul.innerHTML = "";
+  S.agents.forEach((a, i) => {
+    const li = document.createElement("li");
+    li.className = i === sel ? "sel" : "";
+    const c = document.createElement("canvas"); c.width = c.height = 34;
+    drawPortrait(c.getContext("2d"), 34, a.art);
+    li.appendChild(c);
+    const box = document.createElement("span");
+    box.innerHTML = `<span class="n">${esc(a.name || "（無名）")}</span><br>
+      <span class="s">${esc(a.art.sect || "—")}${a.art.title ? " · " + esc(a.art.title) : ""}　武功 ${a.skill}</span>`;
+    li.appendChild(box);
+    if (bad.has(a.id)) { const w = document.createElement("span"); w.className = "bad"; w.textContent = "!"; li.appendChild(w); }
+    li.onclick = () => { sel = i; renderAll(); };
+    ul.appendChild(li);
+  });
+  document.getElementById("count").textContent = S.agents.length + " 人";
+}
+
+/* ============================ 表單 ============================ */
+const HATS = [["bun","髮髻"],["official","官帽"],["nun","僧帽"],["band","抹額"],["none","不戴"]];
+const BEARDS = [["none","無"],["short","短鬚"],["long","長白鬚"],["stub","鬍碴"]];
+const WEAPONS = [["","空手"],["sword","劍"],["blade","刀"],["qin","琴"]];
+const ROLES = [["villager","一般人物"],["protagonist","主角（會被評覺察）"]];
+
+function opt(list, v) { return list.map(([k,t]) => `<option value="${k}" ${k===(v||"")?"selected":""}>${t}</option>`).join(""); }
+
+function renderForm() {
+  const a = cur();
+  document.getElementById("editing").textContent = a.name || "（無名）";
+  const others = S.agents.filter(b => b.id !== a.id);
+  const areaOpts = [DATA.street].concat(AREAS.map(x => x.name))
+    .map(n => `<option ${n===a.home_area?"selected":""}>${esc(n)}</option>`).join("");
+  document.getElementById("form").innerHTML = `
+    <div class="row">
+      <div class="f"><label>名字</label><input type="text" data-k="name" value="${esc(a.name)}"></div>
+      <div class="f"><label>id <span>程式用，唯一</span></label><input class="mono" type="text" data-k="id" value="${esc(a.id)}"></div>
+      <div class="f"><label>身分／門派</label><input type="text" data-art="sect" value="${esc(a.art.sect)}"></div>
+      <div class="f"><label>稱號</label><input type="text" data-art="title" value="${esc(a.art.title)}"></div>
+    </div>
+
+    <div class="look">
+      <div class="prev">
+        <canvas id="prev" width="112" height="112"></canvas>
+        <div class="fbtn">
+          ${["down","left","right","up"].map(f=>`<button class="b mini" data-face="${f}" ${f===face?'style="border-color:var(--gold)"':""}>${{down:"↓",left:"←",right:"→",up:"↑"}[f]}</button>`).join("")}
+          <button class="b mini" id="walk">${walking?"■":"▶"}</button>
+        </div>
+      </div>
+      <div class="fields">
+        <div class="row">
+          <div class="f"><label>衣色</label><div class="swatch"><input type="color" data-art="robe" value="${a.art.robe}">
+            <input class="mono" type="text" data-art="robe" value="${a.art.robe}"></div></div>
+          <div class="f"><label>滾邊／束帶</label><div class="swatch"><input type="color" data-art="trim" value="${a.art.trim}">
+            <input class="mono" type="text" data-art="trim" value="${a.art.trim}"></div></div>
+        </div>
+        <div class="row">
+          <div class="f"><label>髮色</label><div class="swatch"><input type="color" data-art="hair" value="${a.art.hair === "none" ? "#241d16" : a.art.hair}">
+            <input class="mono" type="text" data-art="hair" value="${esc(a.art.hair)}"></div></div>
+          <div class="f"><label>名牌色</label><div class="swatch"><input type="color" data-art="color" value="${a.art.color}">
+            <input class="mono" type="text" data-art="color" value="${a.art.color}"></div></div>
+        </div>
+        <div class="row">
+          <div class="f"><label>頭上</label><select data-art="hat">${opt(HATS, a.art.hat)}</select></div>
+          <div class="f"><label>鬚</label><select data-art="beard">${opt(BEARDS, a.art.beard)}</select></div>
+          <div class="f"><label>隨身兵器</label><select data-art="weapon">${opt(WEAPONS, a.art.weapon)}</select></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="f"><label>武功 <span>1–10，只有世界引擎看得到，不寫進人設</span></label>
+        <div class="sk"><input type="range" min="1" max="10" step="1" data-k="skill" value="${a.skill}"><b id="skv">${a.skill}</b></div></div>
+      <div class="f"><label>家 <span>沒事會回去的地方</span></label><select data-k="home_area">${areaOpts}</select></div>
+      <div class="f" style="flex:0 0 190px"><label>角色類型</label><select data-k="role">${opt(ROLES, a.role)}</select></div>
+    </div>
+
+    <div class="f wide"><label>在意的人 <span>他們死了，噩耗會傳到這個人眼前，逼他面對要不要討公道</span></label>
+      <div class="chips" id="kin">${others.length ? others.map(b =>
+        `<button class="chip" data-kin="${esc(b.id)}" aria-pressed="${(a.kin||[]).includes(b.id)}">${esc(b.name)}</button>`).join("")
+        : `<span class="chip none">名單上只有這一個人</span>`}</div></div>
+
+    <div class="f wide"><label>今日所求 <span>一句話。只出現在回放頁，不進 prompt</span></label>
+      <input type="text" data-art="goal" value="${esc(a.art.goal)}"></div>
+
+    <div class="f wide"><label>江湖傳聞 <span>公開人物表：這一段所有人都看得見</span></label>
+      <textarea rows="3" data-k="public">${esc(a.public)}</textarea>
+      <div class="hint">寫別人打聽得到的事——名號、來歷、風評。祕密不要寫在這裡。</div></div>
+
+    <div class="f wide"><label>人設 <span>只有他自己看得見，用「你是……」第二人稱寫</span></label>
+      <textarea rows="14" data-k="persona">${esc(a.persona)}</textarea>
+      <div class="count" id="plen"></div>
+      <div class="hint">最後一段寫「他今天要做的事」——六個人的今日目標互相排斥，張力就不必靠導演推。
+        不要寫數值（武功幾分是世界的屬性，不是他知道的事）。</div></div>
+  `;
+
+  // 綁定
+  document.querySelectorAll("#form [data-k]").forEach(el => {
+    const k = el.dataset.k;
+    el.oninput = () => {
+      let v = el.value;
+      if (k === "skill") { v = +v; document.getElementById("skv").textContent = v; }
+      if (k === "id") v = v.trim();
+      const old = cur().id;
+      cur()[k] = v;
+      if (k === "id" && old !== v) S.agents.forEach(b => b.kin = (b.kin||[]).map(x => x === old ? v : x));
+      touch(k === "name" || k === "id" || k === "skill");
+      if (k === "persona") plen();
+    };
+  });
+  document.querySelectorAll("#form [data-art]").forEach(el => {
+    el.oninput = () => {
+      cur().art[el.dataset.art] = el.value;
+      document.querySelectorAll(`#form [data-art="${el.dataset.art}"]`).forEach(o => { if (o !== el) o.value = el.value; });
+      touch(true);
+    };
+  });
+  document.querySelectorAll("#form [data-kin]").forEach(el => {
+    el.onclick = () => {
+      const id = el.dataset.kin, on = el.getAttribute("aria-pressed") === "true";
+      cur().kin = on ? cur().kin.filter(x => x !== id) : (cur().kin || []).concat([id]);
+      el.setAttribute("aria-pressed", String(!on)); touch(false);
+    };
+  });
+  document.querySelectorAll("#form [data-face]").forEach(el => {
+    el.onclick = () => { face = el.dataset.face; renderForm(); };
+  });
+  document.getElementById("walk").onclick = () => { walking = !walking; renderForm(); };
+  plen(); drawPreview();
+}
+function plen() {
+  const n = (cur().persona || "").length;
+  document.getElementById("plen").textContent = n + " 字" + (n < 60 ? "　（太短了，寫不出一個人）" : "");
+}
+
+/* 預覽 */
+let frame = 0;
+function drawPreview() {
+  const c = document.getElementById("prev"); if (!c) return;
+  const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
+  g.clearRect(0,0,112,112);
+  drawFigure(g, 56, 106, 106, cur().art, { face, frame: walking ? frame % 4 : 0 });
+}
+setInterval(() => { if (walking) { frame++; drawPreview(); } }, 130);
+
+/* ============================ 地圖 ============================ */
+const TS_ART = 48;
+const worldCv = buildWorldCanvas(ROWS, AREAS, TS_ART, DECOR_JIANGHU);
+const map = document.getElementById("map"), mg = map.getContext("2d");
+function drawMap() {
+  const cssW = document.getElementById("mapwrap").clientWidth || 330;
+  const t = Math.max(8, Math.floor(cssW / W));
+  map.width = t * W; map.height = t * H;
+  map.style.height = (t * H) + "px";
+  mg.imageSmoothingEnabled = false;
+  mg.drawImage(worldCv, 0, 0, worldCv.width, worldCv.height, 0, 0, map.width, map.height);
+  S.agents.forEach((a, i) => {
+    const cx = (a.start[0] + .5) * t, cy = (a.start[1] + .5) * t;
+    if (i === sel) {
+      mg.strokeStyle = "#d9a63c"; mg.lineWidth = 2;
+      mg.beginPath(); mg.ellipse(cx, cy + t*.3, t*.42, t*.2, 0, 0, 6.3); mg.stroke();
+    }
+    drawFigure(mg, cx, cy + t*.32, t*1.2, a.art, { face:"down", frame:0 });
+    if (!walkable(a.start[0], a.start[1])) {
+      mg.strokeStyle = "#c8483a"; mg.lineWidth = 2; mg.strokeRect(a.start[0]*t+1, a.start[1]*t+1, t-2, t-2);
+    }
+  });
+  const a = cur();
+  document.getElementById("maphint").innerHTML =
+    `<b>${esc(a.name)}</b> 站在 (${a.start[0]}, ${a.start[1]})　${esc(areaAt(a.start[0], a.start[1]))}
+     <span style="color:${walkable(a.start[0],a.start[1])?"var(--jade)":"var(--cinnabar)"}">${esc(terrainOf(a.start[0], a.start[1]))}</span><br>
+     在地圖上點一格，就把他放到那裡（不能走的格子會擋下來）。`;
+}
+document.getElementById("mapwrap").onclick = ev => {
+  const r = map.getBoundingClientRect(), t = r.width / W;
+  const x = Math.floor((ev.clientX - r.left) / t), y = Math.floor((ev.clientY - r.top) / t);
+  if (x < 0 || y < 0 || x >= W || y >= H) return;
+  const hit = S.agents.findIndex(a => a.start[0] === x && a.start[1] === y);
+  if (hit >= 0 && hit !== sel) { sel = hit; renderAll(); return; }   // 點到別人＝選他
+  if (!walkable(x, y)) {
+    document.getElementById("maphint").innerHTML =
+      `<b style="color:var(--cinnabar)">(${x}, ${y}) 是${esc(terrainOf(x,y))}，站不上去。</b>`;
+    return;
+  }
+  cur().start = [x, y];
+  cur().home_area = cur().home_area || areaAt(x, y);
+  touch(true);
+};
+
+/* ============================ 匯入匯出 ============================ */
+function payload() {
+  return { scenario: S.scenario, agents: S.agents.map(a => ({
+    id: a.id, name: a.name, role: a.role, home_area: a.home_area,
+    start: [a.start[0], a.start[1]], skill: a.skill, kin: (a.kin || []).slice(),
+    public: a.public || "", persona: a.persona || "", art: a.art,
+  })) };
+}
+const json = () => JSON.stringify(payload(), null, 2);
+function download() {
+  const blob = new Blob([json()], { type:"application/json" });
+  const url = URL.createObjectURL(blob), a = document.createElement("a");
+  a.href = url; a.download = S.scenario + ".json"; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function adopt(d) {
+  if (!d || !Array.isArray(d.agents) || !d.agents.length) { alert("這份 JSON 裡沒有 agents。"); return; }
+  const fb = DATA.art_defaults.fallback;
+  d.agents.forEach(a => { a.art = Object.assign({}, fb, a.art || {}); a.kin = a.kin || [];
+    a.start = a.start || [1,1]; a.skill = a.skill == null ? 5 : a.skill; a.role = a.role || "villager"; });
+  S = { scenario: d.scenario || DATA.scenario, agents: d.agents };
+  sel = 0; touch(true);
+}
+document.getElementById("btnSave").onclick = download;
+document.getElementById("btnCopy").onclick = () => {
+  navigator.clipboard.writeText(json()).then(
+    () => document.getElementById("saved").textContent = "JSON 已複製",
+    () => { const dlg = document.getElementById("pasteDlg");
+            document.getElementById("pasteBox").value = json(); dlg.showModal(); });
+};
+document.getElementById("btnLoad").onclick = () => document.getElementById("file").click();
+document.getElementById("file").onchange = ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { try { adopt(JSON.parse(rd.result)); } catch (e) { alert("讀不動：" + e.message); } };
+  rd.readAsText(f); ev.target.value = "";
+};
+document.getElementById("btnPaste").onclick = () => {
+  document.getElementById("pasteBox").value = ""; document.getElementById("pasteDlg").showModal();
+};
+document.getElementById("pasteCancel").onclick = () => document.getElementById("pasteDlg").close();
+document.getElementById("pasteOK").onclick = () => {
+  try { adopt(JSON.parse(document.getElementById("pasteBox").value)); document.getElementById("pasteDlg").close(); }
+  catch (e) { alert("不是合法的 JSON：" + e.message); }
+};
+document.getElementById("btnReset").onclick = () => {
+  if (!confirm("把所有人改回劇本 .py 裡的原設定？這會蓋掉你在這頁改的東西。")) return;
+  S = clone({ scenario:DATA.scenario, agents:DATA.agents }); sel = 0; touch(true);
+};
+document.getElementById("btnAdd").onclick = () => {
+  let n = 1; while (S.agents.some(a => a.id === "new_" + n)) n++;
+  const spot = [[1,5],[5,12],[18,12],[9,8],[21,4],[3,13]].find(p => walkable(p[0],p[1]) && !S.agents.some(a=>a.start[0]===p[0]&&a.start[1]===p[1])) || [1,4];
+  S.agents.push({ id:"new_"+n, name:"新人物"+n, role:"villager", home_area:DATA.street,
+    start:spot, skill:5, kin:[], public:"", persona:"",
+    art: Object.assign({}, DATA.art_defaults.fallback) });
+  sel = S.agents.length - 1; touch(true);
+};
+document.getElementById("btnDel").onclick = () => {
+  if (S.agents.length <= 1) { alert("至少要留一個人。"); return; }
+  const a = cur();
+  if (!confirm(`把「${a.name}」從這場移掉？`)) return;
+  S.agents.splice(sel, 1);
+  S.agents.forEach(b => b.kin = (b.kin || []).filter(k => k !== a.id));
+  sel = Math.max(0, sel - 1); touch(true);
+};
+document.getElementById("btnCmd").onclick = () => {
+  navigator.clipboard.writeText(cmdText()).then(() =>
+    document.getElementById("saved").textContent = "指令已複製");
+};
+const cmdText = () =>
+  `python -m truman.cli --scenario ${S.scenario} run --run-id NEW_ID --ticks 96 --seed 7 --cast cast/${S.scenario}.json`;
+
+/* ============================ 重畫 ============================ */
+function touch(rebuildList) { save(); if (rebuildList) renderWho(); renderChecks(); drawMap(); drawPreview();
+  document.getElementById("editing").textContent = cur().name || "（無名）"; }
+function renderAll() { renderWho(); renderForm(); renderChecks(); drawMap(); }
+
+document.getElementById("scenlab").textContent = "· " + (DATA.title || DATA.scenario) + (DATA.combat ? "（可動手）" : "");
+document.getElementById("fname").textContent = DATA.scenario;
+document.getElementById("cmd").innerHTML = esc(cmdText()).replace("--cast", "<b>--cast</b>");
+if (DATA.leftover_public && DATA.leftover_public.length) {
+  const d = document.createElement("div"); d.className = "err";
+  d.innerHTML = `<span>!</span><span>劇本的公開人物表有 ${DATA.leftover_public.length} 行對不到人，沒有帶進來：${esc(DATA.leftover_public.join(" / ").slice(0,120))}</span>`;
+  setTimeout(() => document.getElementById("checks").prepend(d), 0);
+}
+new ResizeObserver(() => drawMap()).observe(document.getElementById("mapwrap"));
+renderAll(); save();
+</script>
