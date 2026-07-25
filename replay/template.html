@@ -1,0 +1,1112 @@
+<title>衡山城 · 那一天</title>
+<style>
+  :root{
+    --bg:#12100c; --bg2:#1b1811; --panel:#211d15; --panel2:#2a251b;
+    --ink:#f0e6d0; --ink2:#a99b7e; --line:rgba(240,230,205,.13); --line2:rgba(240,230,205,.26);
+    --gold:#d9a63c; --cinnabar:#c8483a; --jade:#5aa38f;
+    --disp:"Songti SC","STSong","Source Han Serif SC","Noto Serif CJK SC","PMingLiU",serif;
+    --ui:"PingFang SC","Source Han Sans SC","Noto Sans CJK SC","Microsoft JhengHei",sans-serif;
+    --mono:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
+    --shadow:0 6px 22px rgba(0,0,0,.45);
+  }
+  :root[data-theme="light"]{
+    --bg:#e9dcbe; --bg2:#f2e8ce; --panel:#f6eeda; --panel2:#ece0c2;
+    --ink:#25211a; --ink2:#6d6350; --line:rgba(37,33,26,.14); --line2:rgba(37,33,26,.28);
+    --shadow:0 6px 20px rgba(60,48,26,.18);
+  }
+  @media (prefers-color-scheme:light){
+    :root:not([data-theme="dark"]){
+      --bg:#e9dcbe; --bg2:#f2e8ce; --panel:#f6eeda; --panel2:#ece0c2;
+      --ink:#25211a; --ink2:#6d6350; --line:rgba(37,33,26,.14); --line2:rgba(37,33,26,.28);
+      --shadow:0 6px 20px rgba(60,48,26,.18);
+    }
+  }
+  *{box-sizing:border-box}
+  .jh{font-family:var(--ui); color:var(--ink); background:
+      radial-gradient(120% 90% at 50% -20%, color-mix(in srgb,var(--panel) 60%,transparent), transparent 65%), var(--bg);
+      min-height:100%; padding:clamp(10px,1.6vw,22px); line-height:1.5; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1320px; margin:0 auto; display:flex; flex-direction:column; gap:12px}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex; align-items:center; gap:14px 20px; flex-wrap:wrap;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 16px; box-shadow:var(--shadow)}
+  .brand{display:flex; flex-direction:column; gap:2px; margin-right:auto}
+  .brand .k{font-size:10px; letter-spacing:.34em; color:var(--gold); font-weight:700}
+  .brand h1{margin:0; font-family:var(--disp); font-size:clamp(17px,2vw,24px); font-weight:600; letter-spacing:.04em}
+  .stat{display:flex; flex-direction:column; align-items:flex-end; line-height:1.25}
+  .stat .lab{font-size:10px; letter-spacing:.2em; color:var(--ink2)}
+  .stat .val{font-family:var(--disp); font-size:19px; font-weight:600; font-variant-numeric:tabular-nums}
+  .stat .val small{font-size:12px; color:var(--ink2); font-family:var(--ui)}
+  .shichen{color:var(--gold)}
+  .alive b{color:var(--jade)} .alive.bleed b{color:var(--cinnabar)}
+
+  /* ---------- layout ---------- */
+  .main{display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:12px; align-items:stretch}
+  @media(max-width:1000px){ .main{grid-template-columns:1fr} }
+
+  .stagewrap{position:relative; aspect-ratio:3/2; border:1px solid var(--line2); border-radius:12px; overflow:hidden;
+    background:#0d0b08; box-shadow:var(--shadow)}
+  canvas#board{display:block; width:100%; height:100%; image-rendering:pixelated}
+  .layer{position:absolute; inset:0; pointer-events:none; overflow:hidden}
+  .vig{position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 90px 20px rgba(0,0,0,.55); border-radius:12px}
+
+  .plate{position:absolute; transform:translate(-50%,0); white-space:nowrap; font-size:10.5px; font-weight:700;
+    padding:1px 6px; border-radius:20px; background:rgba(12,10,7,.72); color:#fdf6e4; letter-spacing:.06em;
+    border:1px solid rgba(255,255,255,.14); text-shadow:0 1px 2px #000}
+  .plate i{display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px; vertical-align:middle}
+  .plate.gone{opacity:.5; text-decoration:line-through}
+
+  .bubble{position:absolute; max-width:230px; transform:translate(0,-100%);
+    background:#fbf3df; color:#241f18; border-radius:10px; padding:6px 10px; font-size:12.5px; line-height:1.45;
+    box-shadow:0 4px 14px rgba(0,0,0,.4); animation:pop .2s ease-out}
+  .bubble b{font-family:var(--disp); font-weight:700; color:#7a2f26}
+  .bubble .tail{position:absolute; bottom:-7px; width:0; height:0; border:7px solid transparent; border-top-color:#fbf3df; transform:translateX(-50%)}
+  .bubble.below{transform:translate(0,0)}
+  .bubble.below .tail{bottom:auto; top:-7px; border-top-color:transparent; border-bottom-color:#fbf3df}
+  @keyframes pop{from{opacity:0; transform:translate(0,-92%) scale(.94)}}
+  .bubble.below.pop2{animation:pop2 .2s ease-out}
+  @keyframes pop2{from{opacity:0; transform:translate(0,6px) scale(.94)}}
+
+  .toast{position:absolute; left:50%; top:14%; transform:translateX(-50%); font-family:var(--disp); font-size:26px;
+    font-weight:700; letter-spacing:.28em; color:#ffe9c9; text-shadow:0 0 18px rgba(200,72,58,.9),0 3px 6px #000;
+    animation:toast 2.2s ease-out forwards; white-space:nowrap}
+  @keyframes toast{0%{opacity:0; transform:translateX(-50%) scale(.86)}18%{opacity:1; transform:translateX(-50%) scale(1)}70%{opacity:1}100%{opacity:0}}
+
+  .camhint{position:absolute; right:10px; top:9px; display:flex; gap:6px}
+  .chip{pointer-events:auto; font-family:var(--ui); font-size:11.5px; color:#f3e9d2; background:rgba(14,12,8,.66);
+    border:1px solid rgba(255,255,255,.16); border-radius:20px; padding:4px 10px; cursor:pointer; backdrop-filter:blur(3px)}
+  .chip:hover{background:rgba(217,166,60,.28)}
+  .chip[aria-pressed="true"]{background:rgba(217,166,60,.32); border-color:var(--gold)}
+
+  /* ---------- rail ---------- */
+  .rail{display:flex; flex-direction:column; gap:12px; min-height:0; position:relative}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column; min-height:0}
+  .card>h3{margin:0; padding:9px 13px; font-size:10.5px; font-weight:700; letter-spacing:.22em; color:var(--ink2);
+    border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px}
+  .card>h3 em{margin-left:auto; font-style:normal; color:var(--gold); letter-spacing:.08em}
+
+  .roster{list-style:none; margin:0; padding:4px}
+  .roster li{display:flex; gap:9px; align-items:center; padding:5px 7px; border-radius:8px; cursor:pointer; transition:background .15s}
+  .roster li:hover{background:var(--panel2)}
+  .roster li.sel{background:color-mix(in srgb,var(--gold) 20%,transparent)}
+  .rface{flex:none; width:30px; height:30px; border-radius:8px; background:#171410; display:block; image-rendering:pixelated}
+  .rname{font-family:var(--disp); font-weight:600; font-size:14px}
+  .rmeta{font-size:10.5px; color:var(--ink2)}
+  .rstat{margin-left:auto; text-align:right}
+  .tag{display:inline-block; padding:1px 7px; border-radius:20px; font-size:10.5px; font-weight:700}
+  .tag.ok{background:color-mix(in srgb,var(--jade) 24%,transparent); color:var(--jade)}
+  .tag.hurt{background:color-mix(in srgb,var(--gold) 26%,transparent); color:var(--gold)}
+  .tag.crit{background:color-mix(in srgb,var(--cinnabar) 26%,transparent); color:#e4705f}
+  .tag.dead{background:var(--line); color:var(--ink2)}
+  .roster li.gone .rname{color:var(--ink2); text-decoration:line-through}
+  .roster li.gone .rface{filter:grayscale(1) brightness(.6)}
+
+  .feed{flex:1 1 auto; overflow-y:auto; padding:6px; display:flex; flex-direction:column; gap:5px; min-height:190px; max-height:min(46vh,420px)}
+  .fe{display:flex; gap:8px; padding:5px 7px; border-radius:8px; font-size:12.2px; line-height:1.45; cursor:pointer; background:var(--panel2); border-left:3px solid transparent}
+  .fe:hover{outline:1px solid var(--line2)}
+  .fe .ic{flex:none; width:16px; text-align:center; opacity:.9}
+  .fe b{font-family:var(--disp); font-weight:600}
+  .fe .t{font-family:var(--mono); font-size:10px; color:var(--ink2); margin-left:auto; flex:none; padding-left:6px}
+  .fe.k-attack{border-left-color:var(--cinnabar)} .fe.k-death{border-left-color:#e4705f; background:color-mix(in srgb,var(--cinnabar) 15%,var(--panel2))}
+  .fe.k-world{border-left-color:var(--ink2); color:var(--ink2); font-style:italic}
+  .fe.k-reflection{border-left-color:var(--gold)}
+  .fe.now{outline:1px solid var(--gold)}
+  .feed::-webkit-scrollbar,.body::-webkit-scrollbar{width:8px} .feed::-webkit-scrollbar-thumb,.body::-webkit-scrollbar-thumb{background:var(--line2); border-radius:8px}
+
+  /* ---------- character card ---------- */
+  .sheet{position:absolute; inset:0; z-index:20; background:var(--panel); border:1px solid var(--line2); border-radius:12px;
+    display:flex; flex-direction:column; box-shadow:var(--shadow); overflow:hidden}
+  .sheet .hd{display:flex; gap:11px; align-items:center; padding:12px 13px; border-bottom:1px solid var(--line); background:var(--panel2)}
+  .sheet canvas{width:52px; height:52px; image-rendering:pixelated; border-radius:9px; background:#171410; flex:none}
+  .sheet .nm{font-family:var(--disp); font-size:19px; font-weight:600; line-height:1.2}
+  .sheet .sb{font-size:11px; color:var(--ink2)}
+  .sheet .x{margin-left:auto; background:none; border:1px solid var(--line2); color:var(--ink2); width:26px; height:26px;
+    border-radius:7px; cursor:pointer; font-size:14px; line-height:1}
+  .sheet .x:hover{color:var(--ink); border-color:var(--gold)}
+  .sheet .body{padding:11px 13px; overflow-y:auto; display:flex; flex-direction:column; gap:11px; font-size:12.5px}
+  .sec{display:flex; flex-direction:column; gap:4px}
+  .sec .lb{font-size:10px; letter-spacing:.2em; color:var(--gold); font-weight:700}
+  .sec .goal{font-family:var(--disp); font-size:14px; line-height:1.5}
+  .sec p{margin:0; color:var(--ink); line-height:1.62}
+  .sec p.q{color:var(--ink2); border-left:2px solid var(--line2); padding-left:8px}
+  .said{display:flex; flex-direction:column; gap:5px}
+  .said div{background:var(--panel2); border-radius:7px; padding:5px 8px; line-height:1.45; cursor:pointer}
+  .said div:hover{outline:1px solid var(--line2)}
+  .said em{font-style:normal; color:var(--ink2); font-family:var(--mono); font-size:10px}
+  .rel{display:flex; flex-wrap:wrap; gap:5px}
+  .rel span{font-size:11px; padding:2px 8px; border-radius:20px; background:var(--panel2); border:1px solid var(--line)}
+  .rel span.kin{border-color:var(--jade); color:var(--jade)}
+  .rel span.foe{border-color:var(--cinnabar); color:#e4705f}
+  .bars{display:flex; gap:3px; align-items:center}
+  .bars i{width:9px; height:12px; border-radius:2px; background:var(--line2); display:inline-block}
+  .bars i.on{background:var(--gold)}
+
+  /* ---------- transport ---------- */
+  .transport{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:11px 14px;
+    display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow)}
+  .ctrls{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  button.ct{font-family:var(--ui); font-size:12.5px; color:var(--ink); background:var(--panel2); border:1px solid var(--line2);
+    border-radius:8px; padding:7px 11px; cursor:pointer; transition:background .15s, transform .07s}
+  button.ct:hover{background:color-mix(in srgb,var(--gold) 18%,var(--panel2))}
+  button.ct:active{transform:translateY(1px)}
+  button.ct[disabled]{opacity:.38; cursor:default}
+  button.play{min-width:88px; font-weight:700}
+  .spd{display:flex; gap:2px} .spd button{padding:6px 8px; font-size:11.5px}
+  .spd button[aria-pressed="true"]{background:color-mix(in srgb,var(--gold) 32%,var(--panel2)); border-color:var(--gold)}
+  .sep{width:1px; height:22px; background:var(--line2); margin:0 2px}
+
+  .track{position:relative; height:30px; flex:1 1 240px; min-width:190px}
+  input.seek{position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; z-index:5}
+  .rail-bg{position:absolute; left:0; right:0; top:13px; height:6px; border-radius:4px; background:var(--line2)}
+  .fill{position:absolute; left:0; top:13px; height:6px; border-radius:4px; background:linear-gradient(90deg,var(--gold),var(--cinnabar))}
+  .knob{position:absolute; top:8px; width:16px; height:16px; border-radius:50%; background:var(--ink); border:3px solid var(--panel); transform:translateX(-50%); z-index:3}
+  .mk{position:absolute; top:2px; transform:translateX(-50%); font-size:11px; z-index:2; cursor:pointer; line-height:1}
+  .mk.a{top:3px; font-size:10px; opacity:.85}
+  .tickno{font-family:var(--mono); font-size:11.5px; color:var(--ink2); font-variant-numeric:tabular-nums}
+  .legend{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:10.5px; color:var(--ink2); align-items:center}
+  .legend span{display:inline-flex; align-items:center; gap:5px}
+  .legend i{width:9px; height:9px; border-radius:2px; display:inline-block}
+
+  /* ---------- overlays ---------- */
+  .over{position:fixed; inset:0; z-index:60; background:rgba(9,7,5,.86); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto; animation:fade .35s ease}
+  @keyframes fade{from{opacity:0}}
+  .over .in{max-width:940px; width:100%; display:flex; flex-direction:column; gap:16px; text-align:center; color:#f3e8ce}
+  .over .k{font-size:11px; letter-spacing:.4em; color:var(--gold); font-weight:700}
+  .over h2{margin:0; font-family:var(--disp); font-size:clamp(26px,4.4vw,44px); font-weight:600; letter-spacing:.06em}
+  .over .lede{margin:0 auto; max-width:44em; font-size:13.5px; line-height:1.85; color:#c9bda2}
+  .cast{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px}
+  .cc{background:rgba(255,247,228,.05); border:1px solid rgba(255,240,210,.14); border-radius:11px; padding:11px 9px;
+    display:flex; flex-direction:column; align-items:center; gap:5px; animation:rise .5s backwards}
+  @keyframes rise{from{opacity:0; transform:translateY(14px)}}
+  .cc canvas{width:46px; height:46px; image-rendering:pixelated}
+  .cc .n{font-family:var(--disp); font-size:15px; font-weight:600}
+  .cc .s{font-size:10px; color:var(--gold); letter-spacing:.1em}
+  .cc .g{font-size:11.5px; color:#c2b699; line-height:1.5; min-height:3em}
+  .over .btns{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+  button.big{font-family:var(--disp); font-size:15px; font-weight:600; letter-spacing:.16em; color:#1a1610;
+    background:linear-gradient(180deg,var(--gold),#b8842a); border:0; border-radius:9px; padding:11px 30px; cursor:pointer}
+  button.big.ghost{background:none; color:#c9bda2; border:1px solid rgba(255,240,210,.24)}
+  button.big:hover{filter:brightness(1.08)}
+  .tomb{display:flex; flex-direction:column; gap:6px; max-width:520px; margin:0 auto; width:100%}
+  .tomb div{display:flex; gap:10px; align-items:center; background:rgba(200,72,58,.12); border:1px solid rgba(200,72,58,.3);
+    border-radius:9px; padding:7px 12px; font-size:13px}
+  .tomb .who{font-family:var(--disp); font-size:15px; font-weight:600}
+  .tomb .by{margin-left:auto; color:#c9a08f; font-size:12px}
+  .nums{display:flex; gap:22px; justify-content:center; flex-wrap:wrap}
+  .nums div{display:flex; flex-direction:column}
+  .nums b{font-family:var(--disp); font-size:27px; font-weight:600; color:var(--gold)}
+  .nums span{font-size:10.5px; letter-spacing:.16em; color:#a1957c}
+
+  .foot{font-size:11px; color:var(--ink2); text-align:center; line-height:1.75}
+  .foot b{color:var(--ink)}
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px; border-radius:6px}
+  @media (prefers-reduced-motion:reduce){ *{animation-duration:.01ms!important} }
+</style>
+
+<div class="jh">
+ <div class="wrap">
+  <header class="topbar">
+   <div class="brand"><span class="k">TRUMAN · 生成式代理箱庭</span><h1>衡山城 · 劉正風金盆洗手</h1></div>
+   <div class="stat"><span class="lab">時辰</span><span class="val" id="clock">—</span></div>
+   <div class="stat"><span class="lab" id="phaselab">天色</span><span class="val" id="phase" style="font-size:15px">—</span></div>
+   <div class="stat alive" id="alivebox"><span class="lab">尚在人世</span><span class="val"><b id="surv">6</b><small> / 6</small></span></div>
+  </header>
+
+  <div class="main">
+   <div class="stagewrap" id="stage">
+    <canvas id="board"></canvas>
+    <div class="layer" id="ov"></div>
+    <div class="vig"></div>
+    <div class="camhint">
+     <button class="chip" id="camBtn" aria-pressed="true">🎥 跟隨</button>
+     <button class="chip" id="zoomOut">－</button><button class="chip" id="zoomIn">＋</button>
+    </div>
+   </div>
+
+   <aside class="rail">
+    <div class="card">
+     <h3>六人 · 上帝視角 <em id="deadcount"></em></h3>
+     <ul class="roster" id="roster"></ul>
+    </div>
+    <div class="card" style="flex:1 1 auto">
+     <h3>事件流 <em>點一則跳過去</em></h3>
+     <div class="feed" id="feed"></div>
+    </div>
+    <div id="sheetHost"></div>
+   </aside>
+  </div>
+
+  <div class="transport">
+   <div class="ctrls">
+    <button class="ct play" id="play">▶ 播放</button>
+    <button class="ct" id="stepB" title="上一刻">‹</button>
+    <button class="ct" id="stepF" title="下一刻">›</button>
+    <div class="spd" role="group" aria-label="速度">
+     <button class="ct" data-spd="0.6">慢</button>
+     <button class="ct" data-spd="1" aria-pressed="true">1×</button>
+     <button class="ct" data-spd="2">2×</button>
+     <button class="ct" data-spd="4">4×</button>
+    </div>
+    <div class="sep"></div>
+    <button class="ct" id="prevHit">⏮ 上一場衝突</button>
+    <button class="ct" id="nextHit">下一場衝突 ⏭</button>
+    <div class="sep"></div>
+    <div class="track" id="track">
+     <div class="rail-bg"></div><div class="fill" id="fill"></div><div class="knob" id="knob"></div>
+     <input class="seek" id="seek" type="range" min="0" max="96" step="1" value="0" aria-label="時間軸">
+    </div>
+    <div class="tickno" id="tickno">tick 0</div>
+   </div>
+   <div class="legend" id="legend"></div>
+  </div>
+
+  <p class="foot">
+   資料為 <b>gemini-3.1-flash-lite</b> 實跑一整個模擬日（96 個決策時刻、每刻 10 分鐘）的完整事件日誌，離線確定性重放，零 API 呼叫。<br>
+   沒有人寫劇本，六個 agent 只看得到自己看得到的東西。人物取自金庸《笑傲江湖》；武功數值只是模擬設定。
+  </p>
+ </div>
+</div>
+
+<script>
+"use strict";
+const DATA = /*__DATA__*/ null;
+const F = DATA.frames, ROWS = DATA.rows, W = ROWS[0].length, H = ROWS.length, MAXT = DATA.max_tick;
+const CAST = {}; DATA.cast.forEach(c => CAST[c.id] = c);
+const IDS = DATA.cast.map(c => c.id);
+const reduced = matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+/* ============================ 人物設定（美術 + 文案） ============================ */
+const P = {
+  liu_zhengfeng:{ch:"劉", name:"劉正風", sect:"衡山派", title:"劉三爺", color:"#4f9b86",
+    robe:"#3f7d6e", trim:"#25584c", hair:"#241d16", hat:"bun", beard:"short", weapon:"sword",
+    goal:"把這個手洗完。誰來說什麼，都忍。",
+    blurb:"衡山派掌門莫大先生的師弟，劍法極高，在城裡住了半輩子，人緣極好。他藏著一個會要命的秘密：最好的朋友曲洋是魔教長老。金盆洗手是他想了很久的辦法——洗了手就不再是五嶽劍派的人，往後和誰來往，誰也管不著。"},
+  fei_bin:{ch:"費", name:"費彬", sect:"嵩山派", title:"大嵩陽手", color:"#6f7a94",
+    robe:"#3d4457", trim:"#20242f", hair:"#191510", hat:"official", beard:"none", weapon:"sword",
+    goal:"攔下這場洗手。用什麼手段都可以。",
+    blurb:"左冷禪最信得過的心腹，奉密令而來：五嶽劍派要並成一派，衡山這根釘子不能鬆。他手上還有一件東西——有人密報劉正風私通魔教長老曲洋。他在等一個時機把它當眾抖出來。他辦事講究名正言順，要動手也要動得讓人說不出話。"},
+  linghu_chong:{ch:"沖", name:"令狐沖", sect:"華山派", title:"岳不群大弟子", color:"#c9903a",
+    robe:"#b07a1e", trim:"#7d5310", hair:"#241d16", hat:"bun", beard:"none", weapon:"sword",
+    goal:"少說話、別惹事——他自己也知道當不得真。",
+    blurb:"愛喝酒、愛開玩笑、不太守規矩。師父嫌他沒個正形，他自己覺得人活著總要對得起朋友。劍法在同輩裡算好的，可這城裡到處是成名多年的高手，真動起手來他打不過，他心裡有數。他最看不得以強欺弱，看到了就會插手，就算插手的下場是自己倒楣。"},
+  yi_lin:{ch:"琳", name:"儀琳", sect:"恆山派", title:"定逸師太弟子", color:"#cf8fa4",
+    robe:"#d9d0bd", trim:"#a58f8f", hair:"none", hat:"nun", beard:"none", weapon:null,
+    goal:"找到師父，或找個安全的地方待著。",
+    blurb:"十六歲的小尼姑，心軟、膽小、不會說謊。跟師父來衡山賀劉三爺洗手，路上走散了，現在一個人在城裡，有點怕。她武功很低，這裡任何一個人動起手來她都擋不住，她自己很清楚。遇到危險第一個念頭是逃，或者念經。有人對她好，她會記很久。"},
+  tian_boguang:{ch:"田", name:"田伯光", sect:"萬里獨行", title:"快刀無雙", color:"#b84a3c",
+    robe:"#8e3b31", trim:"#5c231d", hair:"#1b1610", hat:"band", beard:"stub", weapon:"blade",
+    goal:"把那個落單的小尼姑哄到沒人的地方去。",
+    blurb:"快刀是看家本事，十幾年沒人抓得住他，也是有名的採花大盜，正道人人喊打，他不在乎。他有他的規矩：不殺沒有還手之力的人，也不喜歡在人多的地方動手。他怕的東西不多，但他不想惹上整個五嶽劍派——能不當眾撕破臉，就不當眾撕破臉。"},
+  qu_yang:{ch:"曲", name:"曲洋", sect:"日月神教", title:"長老", color:"#8b6bab",
+    robe:"#6b4a86", trim:"#42295a", hair:"#ddd6c8", hat:"bun", beard:"long", weapon:"qin",
+    goal:"遠遠看他一眼就走。別連累他。",
+    blurb:"在旁人眼裡只是個愛琴的老人。這輩子在教中殺過不少人，到了這個年紀發現真正放不下的只有琴，還有一個懂琴的人。他和劉正風合譜了一曲《笑傲江湖》，那是他這輩子做過最好的事。正邪之分在他眼裡是笑話——可他知道，這個笑話會要人命。"},
+};
+const AREA_OF = {}; DATA.areas.forEach(a => AREA_OF[a.name] = a);
+
+/* ============================ 工具 ============================ */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+function hash(x, y, s) { let n = (x * 73856093) ^ (y * 19349663) ^ ((s || 0) * 83492791); n = (n < 0 ? ~n : n) % 65521; return n / 65521; }
+const ZHI = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+function clockOf(t) {
+  const m = 360 + t * 10, hh = Math.floor(m / 60) % 24, mm = m % 60;
+  const sc = ZHI[Math.floor(((hh + 1) % 24) / 2) % 12];
+  let ph = "午後 · 該了的事要了";
+  if (hh < 8) ph = "清晨 · 賓客陸續到"; else if (hh < 11) ph = "午前 · 吉時將近";
+  else if (hh < 14) ph = "正午 · 演武場最擠"; else if (hh < 18) ph = "午後 · 該了的事要了";
+  else if (hh < 20) ph = "黃昏 · 街店上門板"; else ph = "入夜 · 燈籠亮起";
+  return { hh, mm, sc, ph, str: String(hh).padStart(2,"0") + ":" + String(mm).padStart(2,"0") };
+}
+
+/* ============================ 像素地圖 ============================ */
+const ART = 16, TS_ART = 48;                       // 每格 16 個美術像素，貼圖每格 48px
+const world = document.createElement("canvas");
+world.width = W * TS_ART; world.height = H * TS_ART;
+const wx = world.getContext("2d");
+
+const PAL = {
+  street:["#c2a877","#b99f6e","#cbb181"], streetLine:"#a78d5f",
+  wall:"#5d5648", wallTop:"#7b7360", wallDark:"#3b3529",
+  plaza:["#9fa093","#96978a","#a8a99b"],
+  dirt:["#a08a5f","#977f55"],
+  gate:"#6b6252",
+};
+/* 室內是「掀了屋頂」的畫法（人在屋裡就看得見人），牆畫在區塊邊緣，南面留門。 */
+const INT = {
+  l:{floor:"#b58f57", plank:"#9c7743", wall:"#7c4331", wallHi:"#a35a3c", kind:"wood", name:"劉府"},
+  t:{floor:"#a87c46", plank:"#8d6434", wall:"#6b4425", wallHi:"#8b5c33", kind:"wood", name:"迴雁樓"},
+  p:{floor:"#a8767c", plank:"#8f5e66", wall:"#7d3f47", wallHi:"#a2545e", kind:"wood", name:"群玉院"},
+  c:{floor:"#8e8b7c", plank:"#7c7969", wall:"#5b5850", wallHi:"#767264", kind:"stone", name:"城隍廟"},
+  z:{floor:"#7b7566", plank:"#6a6456", wall:"#4c473b", wallHi:"#615c4c", kind:"stone", name:"荒祠", ruin:true},
+};
+const at = (x, y) => (x < 0 || y < 0 || x >= W || y >= H) ? "#" : ROWS[y][x];
+
+/* 同符號連通塊 → 知道自己在不在區塊邊緣、門開在哪一格 */
+const blockIdx = new Int16Array(W*H).fill(-1), blocks = [];
+(function findBlocks() {
+  for (let y=0; y<H; y++) for (let x=0; x<W; x++) {
+    const s = at(x,y);
+    if (s === "." || s === "#" || blockIdx[y*W+x] >= 0) continue;
+    const id = blocks.length, q = [[x,y]], b = { sym:s, x0:x, y0:y, x1:x, y1:y };
+    blockIdx[y*W+x] = id;
+    while (q.length) {
+      const [cx,cy] = q.pop();
+      b.x0 = Math.min(b.x0,cx); b.x1 = Math.max(b.x1,cx); b.y0 = Math.min(b.y0,cy); b.y1 = Math.max(b.y1,cy);
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy]) => {
+        const nx = cx+dx, ny = cy+dy;
+        if (nx<0 || ny<0 || nx>=W || ny>=H) return;
+        if (at(nx,ny) === s && blockIdx[ny*W+nx] < 0) { blockIdx[ny*W+nx] = id; q.push([nx,ny]); }
+      });
+    }
+    blocks.push(b);
+  }
+})();
+const blockAt = (x,y) => blocks[blockIdx[y*W+x]];
+
+function paintTile(x, y) {
+  const sym = at(x, y), T = TS_ART, u = T / ART;
+  const R = (ax, ay, aw, ah, c) => { wx.fillStyle = c; wx.fillRect(Math.round(x*T+ax*u), Math.round(y*T+ay*u), Math.max(1,Math.round(aw*u)), Math.max(1,Math.round(ah*u))); };
+  const h = (s) => hash(x, y, s);
+  const same = (dx, dy) => at(x+dx, y+dy) === sym;
+
+  if (sym === "#") {                                     // 城牆
+    R(0,0,16,16,PAL.wall);
+    for (let ry=0; ry<16; ry+=4) { R(0,ry,16,1,PAL.wallDark); const off = (ry/4)%2 ? 0 : 4; for (let rx=off; rx<16; rx+=8) R(rx,ry,1,4,PAL.wallDark); }
+    if (at(x,y+1) !== "#") R(0,13,16,3,PAL.wallDark);
+    if (at(x,y-1) !== "#") { R(0,0,16,3,PAL.wallTop); for (let rx=1; rx<16; rx+=6) R(rx,0,3,2,PAL.wall); }
+    if (h(3) > .86) R(3,6,4,3,"#4d5a3c");                // 苔
+    return;
+  }
+  if (INT[sym]) {                                        // 室內（掀頂）
+    const p = INT[sym], b = blockAt(x,y);
+    const N = y === b.y0, S = y === b.y1, WW = x === b.x0, E = x === b.x1;
+    const doorX = Math.floor((b.x0 + b.x1) / 2), tall = b.y1 > b.y0;
+    R(0,0,16,16,p.floor);
+    if (p.kind === "wood") { for (let ry=3; ry<16; ry+=4) R(0,ry,16,1,p.plank); if (h(9)>.6) R(2,7,7,1,p.plank); }
+    else { for (let ry=0; ry<16; ry+=8) R(0,ry,16,1,p.plank); for (let rx=0; rx<16; rx+=8) R(rx,0,1,16,p.plank); }
+    if (p.ruin && h(2) > .5) { R(3+Math.floor(h(3)*7), 5+Math.floor(h(4)*7), 3, 2, "#4a4438"); }
+    if (p.ruin && h(5) > .72) R(9,9,4,3,"#4d6a3e");
+
+    // 家什
+    if (sym === "l") {                                              // 劉府：紅氈、太師椅
+      if (x === doorX) { R(4,0,8,16,"#9d3a2f"); R(4,0,1,16,"#7e2c23"); R(11,0,1,16,"#7e2c23"); }
+      else if (!N && h(6) > .45) { R(3,6,4,5,"#6b4a2c"); R(3,5,4,2,"#8a6a3c"); }
+    } else if (sym === "t") {                                       // 迴雁樓：酒桌
+      if ((x + y) % 2 === 0 && !N) { R(4,6,8,6,"#7a5230"); R(5,5,6,2,"#94663c"); R(2,8,2,3,"#5d3a1c"); R(12,8,2,3,"#5d3a1c"); R(6,7,2,2,"#e6dcc4"); }
+    } else if (sym === "p") {                                       // 群玉院：屏風、坐榻
+      if (h(7) > .55 && !N) { R(2,5,12,4,"#8a4f57"); R(2,5,12,1,"#c2848c"); }
+      if (h(8) > .8) { R(5,10,6,4,"#6d3a41"); }
+    } else if (sym === "c") {                                       // 城隍廟：蒲團、香爐
+      if (h(6) > .6 && !N) { R(5,8,6,4,"#9a8a5c"); R(5,8,6,1,"#b7a675"); }
+    }
+
+    // 牆
+    if (N) {
+      R(0,0,16,5,p.wall); R(0,4,16,1,p.wallHi);
+      if (sym === "l" && x === doorX) { R(3,0,10,4,"#8c2b22"); R(3,0,10,1,"#d9a63c"); R(3,3,10,1,"#d9a63c"); R(6,1,4,2,"#d9a63c"); }
+      else if (sym === "t") { R(1,0,14,4,"#5d3a1c"); for (let rx=2; rx<14; rx+=3) { R(rx,1,2,3,"#8a6a3c"); R(rx,1,2,1,"#c8a02e"); } }
+      else if (sym === "p") { for (let rx=0; rx<16; rx+=3) R(rx,0,2,5,"#914b55"); R(0,4,16,1,"#d9a63c"); }
+      else if (sym === "c" && x === doorX) { R(5,0,6,5,"#b79a4c"); R(6,1,4,2,"#d9c07a"); R(6,3,4,2,"#8c7433"); }
+      else if (p.ruin) { if (h(1) > .5) R(4,1,6,4,p.floor); }
+    }
+    if (WW) { R(0,0,2,16,p.wall); R(2,0,1,16,p.wallHi); }
+    if (E) { R(14,0,2,16,p.wall); R(13,0,1,16,p.wallHi); }
+    if (S && tall) {
+      if (x === doorX) { R(0,14,4,2,p.wall); R(12,14,4,2,p.wall); R(0,13,4,1,p.wallHi); R(12,13,4,1,p.wallHi); }
+      else { R(0,14,16,2,p.wall); R(0,13,16,1,p.wallHi); }
+    }
+    // 室內壓暗一點，跟外面分開
+    R(0,0,16,16,"rgba(30,18,6,.10)");
+    return;
+  }
+  if (sym === "m") {                                     // 市集：北面布篷，其餘是攤位走道
+    const b = blockAt(x,y);
+    R(0,0,16,16,"#b09363");
+    for (let i=0; i<3; i++) if (hash(x,y,40+i) > .5) R(1+Math.floor(h(9+i)*11), 2+Math.floor(h(19+i)*12), 3, 2, "#9c8052");
+    if (y === b.y0) {                                    // 布篷
+      const A = ["#cdd6d8","#c05a4a","#dcc37a"][Math.floor(h(9)*3)];
+      R(0,0,16,9,"#f2ead6");
+      for (let rx=0; rx<16; rx+=4) R(rx,0,2,9,A);
+      R(0,8,16,2,"#6d5836"); R(0,0,16,1,"#6d5836");
+    } else {                                             // 攤位檯面
+      R(1,3,14,5,"#8a6a3c"); R(1,3,14,1,"#a5814a"); R(1,7,14,1,"#5e4526");
+      const g = ["#b8823a","#8fa05a","#c0574a","#d9c07a"][Math.floor(h(11)*4)];
+      R(3,4,3,2,g); R(8,4,2,2,"#d9c07a"); R(11,4,3,2,g);
+      R(2,11,2,4,"#6d5836"); R(12,11,2,4,"#6d5836");
+    }
+    return;
+  }
+  if (sym === "s") {                                     // 演武場青石
+    R(0,0,16,16,PAL.plaza[Math.floor(h(2)*3)]);
+    R(0,0,16,1,"#87887c"); R(0,0,1,16,"#87887c");
+    if (h(7) > .8) R(4,5,7,4,"#8b8c80");
+    return;
+  }
+  if (sym === "g") {                                     // 城門洞：石地，東面是包鐵大門
+    const b = blockAt(x,y);
+    R(0,0,16,16,PAL.gate);
+    for (let ry=0; ry<16; ry+=5) R(0,ry,16,1,"#544c3e");
+    if (y === b.y0) { R(0,0,16,4,"#4a4337"); R(0,3,16,1,"#7b7360"); }
+    if (y === b.y1) { R(0,13,16,3,"#4a4337"); }
+    if (x === b.x1) {
+      R(9,0,7,16,"#4a3627"); R(9,0,1,16,"#6b5238");
+      for (let ry=1; ry<16; ry+=4) { R(10,ry,6,1,"#33261a"); R(11,ry,2,2,"#8d8676"); }
+    }
+    return;
+  }
+  if (sym === "y") {                                     // 後院泥地
+    R(0,0,16,16,PAL.dirt[h(2)>.5?0:1]);
+    if (h(3) > .74) { R(2,7,10,6,"#7a5c33"); for (let ry=8; ry<13; ry+=2) R(2,ry,10,1,"#5e4526"); }
+    else if (h(4) > .62) { R(5,6,6,8,"#6d6355"); R(5,5,6,2,"#57503f"); }
+    else if (h(5) > .5) R(6,9,5,4,"#4d5a3c");
+    return;
+  }
+  // 長街
+  R(0,0,16,16,PAL.street[Math.floor(h(1)*3)]);
+  for (let i=0; i<4; i++) { const cx = Math.floor(h(10+i)*12)+1, cy = Math.floor(h(20+i)*12)+1;
+    if (hash(x,y,30+i) > .45) R(cx,cy,3,2,PAL.streetLine); }
+  if (h(6) > .93) { R(6,7,4,3,"#6e7a45"); R(7,6,2,2,"#7f8c4e"); }
+  if (h(8) > .96) R(3,3,2,2,"#a89b78");
+}
+
+/* 牆與屋身往南邊投影，讓建築離地 */
+function paintShadows() {
+  const T = TS_ART, u = T / ART;
+  const solid = s => s === "#" || (INT[s] !== undefined);
+  for (let y=0; y<H; y++) for (let x=0; x<W; x++) {
+    const me = at(x,y), up = at(x,y-1);
+    if (me === up || !solid(up) || me === "#") continue;
+    const upIsWallRow = INT[up] ? (y - 1 === blockAt(x,y-1).y1) : true;   // 只有屋子最南那排（有牆）才投影
+    if (!upIsWallRow) continue;
+    wx.fillStyle = "rgba(20,14,6,.26)";
+    wx.fillRect(Math.round(x*T), Math.round(y*T), T, Math.round(4*u));
+  }
+}
+
+/* 固定裝飾：紅氈、樹、井、旗、燈籠座 */
+const DECOR = [
+  {t:"carpet", x:2, y:4}, {t:"carpet", x:3, y:4}, {t:"carpet", x:4, y:4}, {t:"carpet", x:4, y:5},
+  {t:"tree", x:6, y:4}, {t:"tree", x:19, y:4}, {t:"tree", x:6, y:13}, {t:"tree", x:17, y:12}, {t:"tree", x:14, y:8},
+  {t:"well", x:8, y:12}, {t:"crate", x:16, y:5}, {t:"crate", x:9, y:13}, {t:"banner", x:17, y:4},
+];
+function paintDecor() {
+  const T = TS_ART, u = T / ART;
+  const at2 = (x,y) => (ax,ay,aw,ah,c) => { wx.fillStyle=c; wx.fillRect(Math.round(x*T+ax*u),Math.round(y*T+ay*u),Math.max(1,Math.round(aw*u)),Math.max(1,Math.round(ah*u))); };
+  DECOR.forEach(d => {
+    const R = at2(d.x, d.y);
+    if (d.t === "carpet") { R(0,0,16,16,"#9d3a2f"); R(0,0,16,2,"#7e2c23"); R(0,14,16,2,"#7e2c23"); R(2,7,12,2,"#c1a04a"); }
+    else if (d.t === "tree") { R(6,10,4,5,"#5b4325"); R(2,2,12,9,"#3f6b3a"); R(3,1,10,3,"#4d7f45"); R(5,4,5,3,"#5b9450"); R(4,9,8,2,"#31552d"); }
+    else if (d.t === "well") { R(3,5,10,9,"#7a7364"); R(4,6,8,7,"#3a4348"); R(3,4,10,2,"#8d8676"); R(5,1,2,5,"#5b4325"); R(9,1,2,5,"#5b4325"); R(4,0,8,2,"#5b4325"); }
+    else if (d.t === "crate") { R(3,6,10,8,"#8a6a3c"); R(3,9,10,1,"#5e4526"); R(7,6,1,8,"#5e4526"); }
+    else if (d.t === "banner") { R(7,0,2,10,"#5b4325"); R(9,1,6,9,"#c8a02e"); R(9,3,6,1,"#8c6a15"); R(9,6,6,1,"#8c6a15"); }
+  });
+}
+function buildWorld() {
+  wx.clearRect(0,0,world.width,world.height);
+  for (let y=0; y<H; y++) for (let x=0; x<W; x++) paintTile(x,y);
+  paintShadows(); paintDecor();
+  // 區域名：貼在區域上緣（北牆下方），免得壓到站在屋子中間的人
+  wx.textAlign="center"; wx.textBaseline="middle";
+  wx.font = `600 ${Math.round(TS_ART*0.38)}px "Songti SC",serif`;
+  DATA.areas.forEach(a => {
+    const cx = ((a.x0+a.x1)/2+0.5)*TS_ART, cy = a.y0*TS_ART + TS_ART*0.74;
+    wx.fillStyle = "rgba(10,8,4,.5)"; wx.fillText(a.name, cx, cy+2);
+    wx.fillStyle = "rgba(255,246,224,.44)"; wx.fillText(a.name, cx, cy);
+  });
+}
+buildWorld();
+
+/* ============================ 人物像素圖 ============================ */
+const SKIN = "#e4b98d", SKIN_D = "#c99a6f", DARK = "#1b1610";
+function drawFigure(g, cx, footY, T, prof, o) {
+  o = o || {};
+  const u = T / ART, face = o.face || "down", fr = o.frame || 0, hurt = o.wound || 0;
+  const bob = o.bob || 0;
+  const ox = cx - 8*u, oy = footY - 15*u + bob*u;
+  const R = (ax, ay, aw, ah, c) => { g.fillStyle = c; g.fillRect(Math.round(ox+ax*u), Math.round(oy+ay*u), Math.max(1,Math.round(aw*u)), Math.max(1,Math.round(ah*u))); };
+  const flip = face === "left";
+  const FX = (ax, aw) => flip ? 16 - ax - aw : ax;
+  const RX = (ax, ay, aw, ah, c) => R(FX(ax,aw), ay, aw, ah, c);
+  const side = face === "left" || face === "right";
+
+  // 影子
+  g.fillStyle = "rgba(0,0,0,.3)";
+  g.beginPath(); g.ellipse(cx, footY - u, 5.2*u, 2*u, 0, 0, 6.3); g.fill();
+
+  if (o.dead) { drawFallen(g, cx, footY, T, prof); return; }
+
+  const swing = (fr === 1 || fr === 3) ? 1 : 0, back = fr === 3 ? 1 : 0;
+  // 腿
+  R(5.5, 12 - swing, 2, 3 + swing, prof.trim); R(8.5, 12 - back, 2, 3 + back, prof.trim);
+  R(5.3, 14.6, 2.4, 1.2, DARK); R(8.3, 14.6, 2.4, 1.2, DARK);
+  // 身
+  const bw = side ? 6 : 8, bodyX = side ? 5 : 4;
+  R(bodyX, 6.4, bw, 6.4, prof.robe);
+  R(bodyX, 12.2, bw, 1.1, prof.trim);
+  R(bodyX, 9.4, bw, 1.1, prof.trim);
+  R(bodyX+1, 9.4, bw-2, 1.1, prof.hat === "official" ? "#c8a02e" : prof.trim);
+  // 袖
+  if (side) { RX(10.6, 7, 2, 4.6, prof.robe); RX(11, 11.2, 1.6, 1.4, SKIN); }
+  else { R(3, 7, 1.8, 4.6, prof.robe); R(11.2, 7, 1.8, 4.6, prof.robe);
+         R(3.1, 11.2, 1.6, 1.4, SKIN); R(11.3, 11.2, 1.6, 1.4, SKIN); }
+  // 頭
+  R(5.4, 2.2, 5.2, 5, SKIN); R(5.4, 6.6, 5.2, .8, SKIN_D);
+  if (face === "up") { R(5.4, 2.2, 5.2, 4, prof.hair === "none" ? "#efe7d5" : prof.hair); }
+  else {
+    if (prof.hat === "nun") { R(4.9, 1.7, 6.2, 2.6, "#efe7d5"); R(4.9, 3.9, 1, 2.6, "#efe7d5"); R(10.1, 3.9, 1, 2.6, "#efe7d5"); }
+    else { R(5.1, 1.6, 5.8, 2.2, prof.hair); R(5.1, 3.2, 1, 2.4, prof.hair); R(9.9, 3.2, 1, 2.4, prof.hair); }
+    if (prof.hat === "bun") { R(7.2, .2, 2.4, 1.8, prof.hair); R(7.4, -.3, 2, .8, prof.trim); }
+    if (prof.hat === "official") { R(4.4, .3, 7.2, 2.2, "#221d16"); R(3, 1, 1.6, 1.2, "#221d16"); R(11.4, 1, 1.6, 1.2, "#221d16"); R(7.4, .3, 1.2, 2.2, "#c8a02e"); }
+    if (prof.hat === "band") { R(5, 2.4, 6, 1, "#c8a02e"); }
+    // 眼
+    if (face === "down") { R(6.3, 4.3, 1, 1.1, DARK); R(8.8, 4.3, 1, 1.1, DARK); }
+    else if (side) { RX(8.6, 4.3, 1, 1.1, DARK); }
+    // 鬚
+    if (prof.beard === "long") { R(6.6, 6.6, 3, 2.6, "#e6e0d2"); R(6.2, 5.4, .9, 1.4, "#e6e0d2"); R(9, 5.4, .9, 1.4, "#e6e0d2"); }
+    else if (prof.beard === "short") { R(6.8, 6.4, 2.6, 1.2, prof.hair); }
+    else if (prof.beard === "stub") { R(6.4, 6.2, 3.4, 1.1, "rgba(30,24,16,.55)"); }
+  }
+  // 兵器
+  if (prof.weapon === "sword") { RX(11.4, 3.4, 1.1, 8, "#8a6a3c"); RX(11.2, 2.6, 1.6, 1.2, "#d9c07a"); }
+  else if (prof.weapon === "blade") { RX(11.2, 3.6, 1.4, 7.4, "#4a4a52"); RX(11, 3.2, 2, 1, "#cfd4da"); RX(11.3, 10.6, 1.2, 1.6, "#8a3a2f"); }
+  else if (prof.weapon === "qin") { RX(2.2, 8, 3, 5.4, "#6b4a2c"); RX(2.6, 8.4, .5, 4.6, "#d9c07a"); RX(3.6, 8.4, .5, 4.6, "#d9c07a"); }
+  // 傷
+  if (hurt >= 1) { R(6.4, 8, 2.2, 1.4, "#a32c22"); }
+  if (hurt >= 2) { R(5, 7, 1.6, 3.4, "#8c1f18"); R(9.4, 10.2, 2.4, 1.6, "#8c1f18"); R(6.2, 3.6, 1.4, .9, "#a32c22"); }
+}
+function drawFallen(g, cx, footY, T, prof) {
+  const u = T / ART, oy = footY - 6*u, ox = cx - 8*u;
+  const R = (ax, ay, aw, ah, c) => { g.fillStyle = c; g.fillRect(Math.round(ox+ax*u), Math.round(oy+ay*u), Math.max(1,Math.round(aw*u)), Math.max(1,Math.round(ah*u))); };
+  g.fillStyle = "rgba(120,20,14,.5)";
+  g.beginPath(); g.ellipse(cx, footY - 1.5*u, 6.6*u, 2.8*u, 0, 0, 6.3); g.fill();
+  R(3.4, 2.2, 8, 3.4, prof.robe); R(3.4, 4.2, 8, 1, prof.trim);
+  R(11.2, 2, 3.2, 3.4, SKIN);
+  R(12.4, 1.6, 2.4, 2, prof.hat === "nun" ? "#efe7d5" : (prof.hair === "none" ? "#efe7d5" : prof.hair));
+  R(2, 2.6, 2, 2.6, prof.trim);
+  R(5, 3, 3.4, 1.2, "#8c1f18");
+}
+/* 頭像（roster / 卡片 / 片頭） */
+function drawPortrait(g, size, prof, o) {
+  g.imageSmoothingEnabled = false;
+  drawFigure(g, size/2, size*.97, size*.94, prof, Object.assign({ face:"down", frame:0 }, o || {}));
+}
+function faceCanvas(id, px) {
+  const c = document.createElement("canvas"); c.width = c.height = px;
+  drawPortrait(c.getContext("2d"), px, P[id]); return c;
+}
+
+/* 圍觀百姓（純裝飾） */
+const CROWD = [];
+(function(){
+  const spots = [[6,6],[8,7],[11,6],[12,7],[7,8],[10,8],[9,4],[13,5],[9,2],[10,3],[18,7],[16,8]];
+  const robes = ["#7a6a52","#6b7a62","#8a7a5e","#5f6673","#7d6459"];
+  spots.forEach((s,i) => CROWD.push({ x:s[0]+ .5, y:s[1]+ .5, ph:i*1.7,
+    prof:{ robe:robes[i%robes.length], trim:"#4a4033", hair:"#241d16", hat:i%3?"bun":"band", beard:"none", weapon:null },
+    fx:s[0] < 12 ? -3 : W+3 }));
+})();
+
+/* ============================ 鏡頭 / 舞台 ============================ */
+const stage = document.getElementById("stage"), board = document.getElementById("board");
+const bx = board.getContext("2d"), ov = document.getElementById("ov");
+let SW = 900, SH = 600, DPR = 1, baseTile = 30;
+const cam = { x:W/2, y:H/2, z:1 }, camT = { x:W/2, y:H/2, z:1 };
+let camMode = "follow", userZoom = 0;
+
+function layout() {
+  const r = stage.getBoundingClientRect();
+  SW = Math.max(320, r.width); SH = Math.max(200, r.height);
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  board.width = Math.round(SW * DPR); board.height = Math.round(SH * DPR);
+  bx.setTransform(DPR, 0, 0, DPR, 0, 0); bx.imageSmoothingEnabled = false;
+  baseTile = Math.min(SW / W, SH / H);
+}
+const tileSize = () => baseTile * cam.z;
+function toScreen(wxx, wyy) { const t = tileSize(); return { sx:(wxx - cam.x) * t + SW/2, sy:(wyy - cam.y) * t + SH/2 }; }
+function clampCam(c) {
+  const t = baseTile * c.z, halfW = SW/2/t, halfH = SH/2/t;
+  c.x = (halfW * 2 >= W) ? W/2 : clamp(c.x, halfW, W - halfW);
+  c.y = (halfH * 2 >= H) ? H/2 : clamp(c.y, halfH, H - halfH);
+}
+
+/* ============================ 播放狀態 ============================ */
+let cur = 0, sub = 0, playing = false, speed = 1, last = 0, hold = 0, shake = 0, flash = 0;
+const TICK_MS = 1500;
+const fired = {};                                     // 這個 tick 的動手特效放過了沒
+let fxList = [], toastEl = null, selected = null, started = false;
+
+const posOf = (t, id) => { const a = F[t].agents[id]; return { x:a.x + .5, y:a.y + .5 }; };
+function animPos(id) {                                 // 依 sub 在本 tick 的路徑上內插
+  const a = F[cur].agents[id];
+  const prev = cur > 0 ? F[cur-1].agents[id] : a;
+  const steps = a.steps || null;
+  const path = [[prev.x, prev.y]].concat(steps || [[a.x, a.y]]);
+  const p = clamp(sub / .72, 0, 1) * (path.length - 1);
+  const i = Math.min(path.length - 2, Math.floor(p)), f = p - i;
+  if (path.length === 1) return { x:a.x + .5, y:a.y + .5, moving:false, dx:0, dy:0 };
+  const A = path[i], B = path[i+1];
+  return { x:lerp(A[0], B[0], f) + .5, y:lerp(A[1], B[1], f) + .5, moving:(A[0]!==B[0]||A[1]!==B[1]) && p < path.length-1, dx:B[0]-A[0], dy:B[1]-A[1] };
+}
+const faceOf = (m, id) => { if (!m.moving) return facing[id] || "down";
+  const f = Math.abs(m.dx) > Math.abs(m.dy) ? (m.dx > 0 ? "right" : "left") : (m.dy > 0 ? "down" : "up");
+  facing[id] = f; return f; };
+const facing = {};
+
+/* ============================ 每格畫面 ============================ */
+function tintFor(t) {
+  const h = 6 + t / 6;
+  if (h < 8) return { c:"rgba(255,168,96,.20)", night:0 };
+  if (h < 11) return { c:"rgba(255,240,205,.06)", night:0 };
+  if (h < 14) return { c:"rgba(255,255,235,.02)", night:0 };
+  if (h < 17) return { c:"rgba(255,204,132,.10)", night:0 };
+  if (h < 19) return { c:"rgba(255,124,52,.22)", night:.35 };
+  return { c:"rgba(26,42,92,.44)", night:1 };
+}
+const LANTERNS = [[12,11.2],[14.6,11.2],[16.5,3.4],[18.4,3.4],[1.6,3.4],[3.4,3.4],[19.4,10.2],[21.4,10.2]];
+
+function drawFrame(now) {
+  const t = tileSize();
+  bx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  bx.clearRect(0, 0, SW, SH);
+  let shx = 0, shy = 0;
+  if (shake > 0 && !reduced) { shx = (Math.random()-.5) * shake; shy = (Math.random()-.5) * shake; }
+  bx.save(); bx.translate(shx, shy);
+
+  // 地圖
+  const o = toScreen(0, 0);
+  bx.drawImage(world, 0, 0, world.width, world.height, o.sx, o.sy, W*t, H*t);
+
+  // 關係線
+  if (selected) drawRelations(t);
+
+  // 金盆（會閃）
+  const basin = toScreen(2.5, 2.5), gl = .5 + .5*Math.sin(now/380);
+  bx.fillStyle = "#e8c766"; bx.fillRect(Math.round(basin.sx - t*.2), Math.round(basin.sy - t*.12), Math.round(t*.4), Math.round(t*.22));
+  bx.fillStyle = `rgba(255,238,170,${.25+.35*gl})`; bx.beginPath(); bx.arc(basin.sx, basin.sy, t*.42, 0, 6.3); bx.fill();
+
+  // 燈籠（入夜變亮）
+  const tint = tintFor(cur);
+  LANTERNS.forEach((L, i) => {
+    const s = toScreen(L[0], L[1]), fl = .8 + .2*Math.sin(now/300 + i);
+    const a = (.35 + .65*tint.night) * fl;
+    bx.fillStyle = `rgba(255,150,80,${a*.32})`; bx.beginPath(); bx.arc(s.sx, s.sy, t*.7*fl, 0, 6.3); bx.fill();
+    bx.fillStyle = `rgba(214,70,50,${.75+.25*tint.night})`;
+    bx.fillRect(Math.round(s.sx - t*.11), Math.round(s.sy - t*.14), Math.round(t*.22), Math.round(t*.28));
+  });
+
+  // 圍觀百姓（見血後作鳥獸散）
+  const flee = deathTicks.length ? clamp((cur - deathTicks[0]) / 6, 0, 1) : 0;
+  CROWD.forEach((c, i) => {
+    if (flee >= 1) return;
+    const cxw = lerp(c.x, c.fx, flee), s = toScreen(cxw, c.y);
+    if (s.sx < -60 || s.sx > SW+60 || s.sy < -60 || s.sy > SH+60) return;
+    bx.globalAlpha = (1 - flee*.9) * .92;
+    drawFigure(bx, s.sx, s.sy + t*.3, t*.86, c.prof,
+      { face: flee>0 ? (c.fx<0?"left":"right") : "down", frame: flee>0 ? (Math.floor(now/130+i)%4) : 0, bob: Math.sin(now/520 + c.ph) > .8 ? -.4 : 0 });
+    bx.globalAlpha = 1;
+  });
+
+  // 六人（依 y 排序）
+  const drawn = IDS.map(id => ({ id, m:animPos(id), a:F[cur].agents[id] })).sort((p,q) => p.m.y - q.m.y);
+  drawn.forEach(d => {
+    const s = toScreen(d.m.x, d.m.y), prof = P[d.id];
+    const lunge = fxLunge[d.id] || 0;
+    const sx = s.sx + (fxLungeDir[d.id]?.x || 0) * lunge * t * .3;
+    const sy = s.sy + (fxLungeDir[d.id]?.y || 0) * lunge * t * .3;
+    if (selected === d.id) {
+      bx.strokeStyle = "rgba(217,166,60,.9)"; bx.lineWidth = 2;
+      bx.beginPath(); bx.ellipse(sx, sy + t*.28, t*.32, t*.14, 0, 0, 6.3); bx.stroke();
+    }
+    drawFigure(bx, sx, sy + t*.3, t*1.15, prof, {
+      face: faceOf(d.m, d.id), wound: d.a.wound, dead: !d.a.alive,
+      frame: d.m.moving ? Math.floor(now/110) % 4 : 0,
+      bob: (!d.m.moving && d.a.alive) ? (Math.sin(now/430 + d.m.x) > .6 ? -.5 : 0) : 0,
+    });
+  });
+
+  // 特效
+  fxList = fxList.filter(f => now - f.t0 < f.life);
+  fxList.forEach(f => {
+    const k = (now - f.t0) / f.life;
+    if (f.kind === "slash") {
+      const A = toScreen(f.ax, f.ay), B = toScreen(f.bx, f.by);
+      bx.save(); bx.globalAlpha = 1 - k; bx.lineCap = "round";
+      bx.strokeStyle = "#fff2d8"; bx.lineWidth = Math.max(2, t*.12*(1-k));
+      bx.beginPath(); bx.moveTo(lerp(A.sx,B.sx,.15), lerp(A.sy,B.sy,.15)); bx.lineTo(lerp(A.sx,B.sx,.95+k*.1), lerp(A.sy,B.sy,.95+k*.1)); bx.stroke();
+      bx.strokeStyle = "rgba(200,72,58,.8)"; bx.lineWidth = Math.max(1, t*.22*(1-k));
+      bx.stroke(); bx.restore();
+    } else if (f.kind === "blood") {
+      const B = toScreen(f.bx, f.by);
+      bx.save(); bx.globalAlpha = 1 - k;
+      for (let i = 0; i < 7; i++) { const a = f.seed + i*.9, r = t*.15 + k*t*.55;
+        bx.fillStyle = "#a32c22";
+        bx.fillRect(B.sx + Math.cos(a)*r, B.sy + Math.sin(a)*r - t*.1, Math.max(2, t*.07), Math.max(2, t*.07)); }
+      bx.restore();
+    }
+  });
+  bx.restore();
+
+  // 天光 + 血光
+  bx.fillStyle = tint.c; bx.fillRect(0, 0, SW, SH);
+  if (flash > 0) { bx.fillStyle = `rgba(178,42,32,${flash*.42})`; bx.fillRect(0, 0, SW, SH); }
+}
+
+const fxLunge = {}, fxLungeDir = {};
+function drawRelations(t) {
+  const me = F[cur].agents[selected]; if (!me) return;
+  const A = toScreen(me.x + .5, me.y + .5);
+  const link = (id, col, dash) => {
+    const b = F[cur].agents[id]; if (!b) return;
+    const B = toScreen(b.x + .5, b.y + .5);
+    bx.save(); bx.setLineDash(dash); bx.strokeStyle = col; bx.lineWidth = 2; bx.globalAlpha = .8;
+    bx.beginPath(); bx.moveTo(A.sx, A.sy - t*.2); bx.lineTo(B.sx, B.sy - t*.2); bx.stroke(); bx.restore();
+  };
+  (CAST[selected].kin || []).forEach(k => link(k, "#5aa38f", [6,5]));
+  rel.spoke[selected] && Object.keys(rel.spoke[selected]).forEach(k => { if (relSeen(selected,k)) link(k, "rgba(240,230,205,.5)", [2,6]); });
+  rel.foe[selected] && Object.keys(rel.foe[selected]).forEach(k => { if (rel.foe[selected][k] <= cur) link(k, "#c8483a", []); });
+}
+const relSeen = (a,b) => rel.spoke[a] && rel.spoke[a][b] !== undefined && rel.spoke[a][b] <= cur;
+
+/* ============================ 關係 / 事件流 / 關鍵時刻 ============================ */
+const rel = { spoke:{}, foe:{} }, saidBy = {}, deathTicks = [], deaths = [], moments = [];
+F.forEach(fr => fr.events.forEach(e => {
+  if (e.kind === "speech") {
+    (saidBy[e.agent] = saidBy[e.agent] || []).push({ t:fr.tick, to:e.to, text:e.text });
+    if (e.to && P[e.to]) { rel.spoke[e.agent] = rel.spoke[e.agent] || {}; if (rel.spoke[e.agent][e.to] === undefined) rel.spoke[e.agent][e.to] = fr.tick;
+      rel.spoke[e.to] = rel.spoke[e.to] || {}; if (rel.spoke[e.to][e.agent] === undefined) rel.spoke[e.to][e.agent] = fr.tick; }
+  } else if (e.kind === "attack") {
+    rel.foe[e.agent] = rel.foe[e.agent] || {}; if (rel.foe[e.agent][e.target] === undefined) rel.foe[e.agent][e.target] = fr.tick;
+    rel.foe[e.target] = rel.foe[e.target] || {}; if (rel.foe[e.target][e.agent] === undefined) rel.foe[e.target][e.agent] = fr.tick;
+    moments.push({ t:fr.tick, kind:"attack", label:e.line });
+  } else if (e.kind === "death") {
+    deathTicks.push(fr.tick); deaths.push({ t:fr.tick, id:e.agent, name:e.name, by:e.killed_by });
+    moments.push({ t:fr.tick, kind:"death", label:`${e.name} 歿` });
+  }
+}));
+const hitTicks = [...new Set(moments.map(m => m.t))].sort((a,b) => a-b);
+
+const feedEl = document.getElementById("feed");
+const FEED = [];
+F.forEach(fr => fr.events.forEach(e => {
+  const ck = clockOf(fr.tick), tm = `<span class="t">${ck.str}</span>`;
+  if (e.kind === "speech") FEED.push({ t:fr.tick, k:"speech",
+    html:`<span class="ic">💬</span><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b>${e.to&&P[e.to]?` → <b>${esc(P[e.to].name)}</b>`:""}：${esc(e.text.length>58?e.text.slice(0,56)+"…":e.text)}</span>${tm}` });
+  else if (e.kind === "attack") FEED.push({ t:fr.tick, k:"attack", html:`<span class="ic">⚔️</span><span>${esc(e.line)}</span>${tm}` });
+  else if (e.kind === "death") FEED.push({ t:fr.tick, k:"death", html:`<span class="ic">💀</span><span><b>${esc(e.name)}</b> 死了${e.by&&P[e.by]?`，死於 <b>${esc(P[e.by].name)}</b> 之手`:""}。</span>${tm}` });
+  else if (e.kind === "reflection") FEED.push({ t:fr.tick, k:"reflection", html:`<span class="ic">✨</span><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b> 想通了：${esc(e.insight.length>52?e.insight.slice(0,50)+"…":e.insight)}</span>${tm}` });
+  else if (e.kind === "world") FEED.push({ t:fr.tick, k:"world", html:`<span class="ic">📜</span><span>${esc(e.text.replace(/[（）]/g,""))}</span>${tm}` });
+}));
+let feedShown = -1;
+function renderFeed(force) {
+  const upto = FEED.filter(f => f.t <= cur).length;
+  if (!force && upto === feedShown) return;
+  feedShown = upto;
+  feedEl.innerHTML = FEED.slice(0, upto).map((f,i) =>
+    `<div class="fe k-${f.k} ${f.t===cur?"now":""}" data-t="${f.t}" data-i="${i}">${f.html}</div>`).join("")
+    || `<div class="fe" style="cursor:default"><span class="ic">·</span><span style="color:var(--ink2)">還沒有人做什麼。</span></div>`;
+  feedEl.scrollTop = feedEl.scrollHeight;
+}
+feedEl.onclick = e => { const d = e.target.closest(".fe"); if (d && d.dataset.t) seek(+d.dataset.t); };
+
+/* ============================ roster ============================ */
+const rosterEl = document.getElementById("roster");
+IDS.forEach(id => {
+  const p = P[id], li = document.createElement("li"); li.dataset.id = id;
+  const f = faceCanvas(id, 30); f.className = "rface";
+  li.appendChild(f);
+  const mid = document.createElement("span");
+  mid.innerHTML = `<span class="rname">${esc(p.name)}</span><br><span class="rmeta">${esc(p.sect)} · ${esc(p.title)}</span>`;
+  li.appendChild(mid);
+  const st = document.createElement("span"); st.className = "rstat"; li.appendChild(st);
+  li.onclick = () => openSheet(id);
+  rosterEl.appendChild(li);
+});
+function renderRoster() {
+  const fr = F[cur];
+  [...rosterEl.children].forEach(li => {
+    const id = li.dataset.id, a = fr.agents[id], st = li.querySelector(".rstat");
+    li.classList.toggle("gone", !a.alive); li.classList.toggle("sel", selected === id);
+    const d = deaths.find(x => x.id === id && x.t <= cur);
+    if (!a.alive) st.innerHTML = `<span class="tag dead">已歿</span><br><span class="rmeta">${d && P[d.by] ? "死於"+esc(P[d.by].name) : ""}</span>`;
+    else st.innerHTML = a.wound >= 2 ? `<span class="tag crit">重傷</span>` : a.wound === 1 ? `<span class="tag hurt">帶傷</span>` : `<span class="tag ok">無傷</span>`;
+  });
+  const dead = IDS.filter(id => !fr.agents[id].alive).length;
+  document.getElementById("deadcount").textContent = dead ? `已歿 ${dead}` : "";
+}
+
+/* ============================ 角色卡 ============================ */
+const sheetHost = document.getElementById("sheetHost");
+function openSheet(id) {
+  selected = id; const p = P[id], c = CAST[id], fr = F[cur].agents[id];
+  let thought = null; for (let k = cur; k >= 0; k--) { const th = F[k].agents[id].thought; if (th) { thought = { t:k, th }; break; } }
+  const said = (saidBy[id] || []).filter(s => s.t <= cur).slice(-4).reverse();
+  const kin = (c.kin || []).map(k => `<span class="kin">知音 · ${esc(P[k].name)}</span>`);
+  const spoke = Object.keys(rel.spoke[id] || {}).filter(k => relSeen(id,k)).map(k => `<span>說過話 · ${esc(P[k].name)}</span>`);
+  const foe = Object.keys(rel.foe[id] || {}).filter(k => rel.foe[id][k] <= cur).map(k => `<span class="foe">動過手 · ${esc(P[k].name)}</span>`);
+  const d = deaths.find(x => x.id === id && x.t <= cur);
+  const status = !fr.alive ? `<span class="tag dead">已歿 ${clockOf(d ? d.t : cur).str}${d && P[d.by] ? " · 死於"+esc(P[d.by].name) : ""}</span>`
+    : fr.wound >= 2 ? `<span class="tag crit">重傷</span>` : fr.wound === 1 ? `<span class="tag hurt">帶傷</span>` : `<span class="tag ok">無傷</span>`;
+  sheetHost.innerHTML = `<div class="sheet">
+    <div class="hd"><canvas id="sheetFace" width="52" height="52"></canvas>
+      <div><div class="nm">${esc(p.name)}</div><div class="sb">${esc(p.sect)} · ${esc(p.title)}　${status}</div></div>
+      <button class="x" id="sheetX" aria-label="關閉">✕</button></div>
+    <div class="body">
+      <div class="sec"><span class="lb">今日所求</span><div class="goal">「${esc(p.goal)}」</div></div>
+      <div class="sec"><span class="lb">武功 ${c.skill} / 10</span><div class="bars">${Array.from({length:10},(_,i)=>`<i class="${i<c.skill?"on":""}"></i>`).join("")}</div></div>
+      <div class="sec"><span class="lb">此人</span><p>${esc(p.blurb)}</p></div>
+      <div class="sec"><span class="lb">此刻在想（${thought?clockOf(thought.t).str:"—"}）</span>
+        <p class="q">${thought?esc(thought.th):"還沒起念。"}</p></div>
+      <div class="sec"><span class="lb">說過的話</span><div class="said">${said.length?said.map(s=>
+        `<div data-t="${s.t}"><em>${clockOf(s.t).str}${s.to&&P[s.to]?" → "+esc(P[s.to].name):""}</em><br>${esc(s.text)}</div>`).join(""):`<span style="color:var(--ink2);font-size:12px">還沒開過口。</span>`}</div></div>
+      <div class="sec"><span class="lb">關係（到此刻為止）</span><div class="rel">${[...kin,...foe,...spoke].join("")||`<span>還沒和誰打過交道</span>`}</div></div>
+      <div class="sec"><span class="lb">現在在</span><p style="color:var(--ink2)">${esc(fr.area||"長街")}${AREA_OF[fr.area]?"　"+esc(AREA_OF[fr.area].desc):""}</p></div>
+    </div></div>`;
+  drawPortrait(document.getElementById("sheetFace").getContext("2d"), 52, p, { wound:fr.wound, dead:!fr.alive });
+  document.getElementById("sheetX").onclick = closeSheet;
+  sheetHost.querySelectorAll(".said div").forEach(d2 => d2.onclick = () => seek(+d2.dataset.t));
+  renderRoster();
+}
+function closeSheet() { selected = null; sheetHost.innerHTML = ""; renderRoster(); }
+
+/* ============================ 覆蓋層（名牌 / 氣泡） ============================ */
+function syncOverlay() {
+  const t = tileSize(), fr = F[cur];
+  IDS.forEach(id => {
+    let pl = ov.querySelector(`.plate[data-id="${id}"]`);
+    if (!pl) { pl = document.createElement("div"); pl.className = "plate"; pl.dataset.id = id;
+      pl.innerHTML = `<i style="background:${P[id].color}"></i>${esc(P[id].name)}`; ov.appendChild(pl); }
+    const m = animPos(id), s = toScreen(m.x, m.y);
+    pl.style.left = s.sx + "px"; pl.style.top = (s.sy + t*.34) + "px";
+    pl.classList.toggle("gone", !fr.agents[id].alive);
+    pl.style.display = (s.sx < -80 || s.sx > SW+80 || s.sy < -60 || s.sy > SH+70) ? "none" : "";
+    pl.style.opacity = t < 26 ? .0 : 1;
+  });
+  // 氣泡
+  const want = {};
+  if (sub > .18) fr.events.forEach(e => { if (e.kind === "speech") want[e.agent] = e; });
+  [...ov.querySelectorAll(".bubble")].forEach(b => { if (!want[b.dataset.id]) b.remove(); });
+  Object.keys(want).forEach(id => {
+    const e = want[id];
+    let b = ov.querySelector(`.bubble[data-id="${id}"]`);
+    if (!b) { b = document.createElement("div"); b.className = "bubble"; b.dataset.id = id;
+      b.innerHTML = `<b>${esc(P[id].name)}${e.to && P[e.to] ? "→"+esc(P[e.to].name) : ""}：</b>${esc(e.text)}<span class="tail"></span>`;
+      ov.appendChild(b); }
+    const m = animPos(id), s = toScreen(m.x, m.y), bw = b.offsetWidth || 180;
+    const below = s.sy - t*.9 - b.offsetHeight < 4;
+    b.classList.toggle("below", below);
+    const left = clamp(s.sx - bw/2, 6, Math.max(6, SW - bw - 6));
+    b.style.left = left + "px";
+    b.style.top = (below ? s.sy + t*.55 : s.sy - t*.75) + "px";
+    b.querySelector(".tail").style.left = clamp(s.sx - left, 12, bw - 12) + "px";
+  });
+}
+function toast(text) {
+  if (toastEl) toastEl.remove();
+  toastEl = document.createElement("div"); toastEl.className = "toast"; toastEl.textContent = text;
+  ov.appendChild(toastEl);
+  const el = toastEl; setTimeout(() => { if (el.parentNode) el.remove(); if (toastEl === el) toastEl = null; }, 2300);
+}
+
+/* ============================ 每 tick 的節拍 ============================ */
+function enterTick(t, animate) {
+  cur = clamp(t, 0, MAXT); sub = 0;
+  for (const k in fired) delete fired[k];
+  renderHud(); renderRoster(); renderFeed(false);
+  if (selected) openSheet(selected);
+}
+function tickBeats(now) {
+  const fr = F[cur];
+  fr.events.forEach((e, i) => {
+    const key = cur + ":" + i;
+    if (fired[key]) return;
+    if (e.kind === "attack" && sub > .34) {
+      fired[key] = 1;
+      const A = F[cur].agents[e.agent], B = F[cur].agents[e.target];
+      fxList.push({ kind:"slash", t0:now, life:420, ax:A.x+.5, ay:A.y+.5, bx:B.x+.5, by:B.y+.5 });
+      fxList.push({ kind:"blood", t0:now+120, life:520, bx:B.x+.5, by:B.y+.5, seed:Math.random()*6 });
+      fxLunge[e.agent] = 1; fxLungeDir[e.agent] = { x:B.x-A.x, y:B.y-A.y };
+      setTimeout(() => { fxLunge[e.agent] = 0; }, 260);
+      if (!reduced) { shake = 9; flash = 1; hold = now + 260; }
+    } else if (e.kind === "death" && sub > .5) {
+      fired[key] = 1; toast(e.name + " 歿");
+      if (!reduced) { shake = 6; flash = .8; hold = now + 420; }
+    }
+  });
+}
+
+/* ============================ 鏡頭目標 ============================ */
+function camTarget() {
+  const fr = F[cur], live = IDS.filter(id => fr.agents[id].alive);
+  let focus = null, z = 1;
+  const att = fr.events.find(e => e.kind === "attack") || fr.events.find(e => e.kind === "death");
+  const sp = fr.events.find(e => e.kind === "speech");
+  if (att) {
+    const A = fr.agents[att.agent], B = att.target ? fr.agents[att.target] : A;
+    focus = { x:(A.x+B.x)/2 + .5, y:(A.y+B.y)/2 + .5 }; z = 2.1;
+  } else if (sp) {
+    const A = fr.agents[sp.agent], B = sp.to && fr.agents[sp.to] ? fr.agents[sp.to] : A;
+    focus = { x:(A.x+B.x)/2 + .5, y:(A.y+B.y)/2 + .5 }; z = 1.6;
+  } else if (live.length) {
+    let sx = 0, sy = 0, minx=99, maxx=-99, miny=99, maxy=-99;
+    live.forEach(id => { const a = fr.agents[id]; sx += a.x; sy += a.y;
+      minx=Math.min(minx,a.x); maxx=Math.max(maxx,a.x); miny=Math.min(miny,a.y); maxy=Math.max(maxy,a.y); });
+    focus = { x:sx/live.length + .5, y:sy/live.length + .5 };
+    const spread = Math.max((maxx-minx)/W, (maxy-miny)/H);
+    z = clamp(1 / Math.max(.42, spread + .28), 1, 1.7);
+  } else focus = { x:W/2, y:H/2 };
+  if (selected) { const a = fr.agents[selected]; focus = { x:a.x+.5, y:a.y+.5 }; z = Math.max(z, 1.8); }
+  camT.x = focus.x; camT.y = focus.y; camT.z = clamp(z * Math.pow(1.25, userZoom), 1, 3.4);
+}
+
+/* ============================ 主迴圈 ============================ */
+function loop(now) {
+  requestAnimationFrame(loop);
+  const dt = Math.min(90, now - (last || now)); last = now;
+  if (started && playing && now > hold) {
+    sub += dt / (TICK_MS / speed);
+    if (sub >= 1) { if (cur >= MAXT) { setPlay(false); sub = 1; showOutro(); } else { enterTick(cur + 1, true); } }
+  }
+  if (started) tickBeats(now);
+  if (camMode === "follow") camTarget();
+  else { camT.x = W/2; camT.y = H/2; camT.z = clamp(Math.pow(1.25, userZoom), 1, 3.4); }
+  clampCam(camT);
+  const k = reduced ? 1 : 1 - Math.pow(.001, dt/1000);
+  cam.x = lerp(cam.x, camT.x, k*0.9); cam.y = lerp(cam.y, camT.y, k*0.9); cam.z = lerp(cam.z, camT.z, k*0.7);
+  clampCam(cam);
+  shake *= Math.pow(.86, dt/16); if (shake < .3) shake = 0;
+  flash *= Math.pow(.9, dt/16); if (flash < .02) flash = 0;
+  drawFrame(now); syncOverlay();
+  const el = feedEl.querySelector(".fe.now");
+  document.getElementById("fill").style.width = (cur/MAXT*100) + "%";
+  document.getElementById("knob").style.left = (cur/MAXT*100) + "%";
+}
+
+/* ============================ HUD / 控制 ============================ */
+function renderHud() {
+  const ck = clockOf(cur);
+  document.getElementById("clock").innerHTML = `${ck.str} <span class="shichen">${ck.sc}時</span>`;
+  document.getElementById("phase").textContent = ck.ph;
+  const live = IDS.filter(id => F[cur].agents[id].alive).length;
+  document.getElementById("surv").textContent = live;
+  document.getElementById("alivebox").classList.toggle("bleed", live < 6);
+  document.getElementById("tickno").textContent = "tick " + cur;
+  document.getElementById("seek").value = cur;
+  const nx = hitTicks.find(t => t > cur), pv = [...hitTicks].reverse().find(t => t < cur);
+  document.getElementById("nextHit").disabled = nx === undefined;
+  document.getElementById("prevHit").disabled = pv === undefined;
+}
+function seek(t) { setPlay(false); enterTick(t, false); renderFeed(true); }
+const playBtn = document.getElementById("play");
+function setPlay(v) {
+  if (v && cur >= MAXT) { enterTick(0, false); renderFeed(true); }
+  playing = v; playBtn.textContent = v ? "⏸ 暫停" : "▶ 播放";
+}
+playBtn.onclick = () => setPlay(!playing);
+document.getElementById("stepF").onclick = () => seek(cur + 1);
+document.getElementById("stepB").onclick = () => seek(cur - 1);
+document.getElementById("nextHit").onclick = () => { const n = hitTicks.find(t => t > cur); if (n !== undefined) seek(n); };
+document.getElementById("prevHit").onclick = () => { const n = [...hitTicks].reverse().find(t => t < cur); if (n !== undefined) seek(n); };
+document.querySelectorAll(".spd button").forEach(b => b.onclick = () => {
+  speed = +b.dataset.spd;
+  document.querySelectorAll(".spd button").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+});
+document.getElementById("seek").oninput = e => seek(+e.target.value);
+document.getElementById("seek").max = MAXT;
+const camBtn = document.getElementById("camBtn");
+camBtn.onclick = () => { camMode = camMode === "follow" ? "wide" : "follow";
+  camBtn.textContent = camMode === "follow" ? "🎥 跟隨" : "🗺 全景";
+  camBtn.setAttribute("aria-pressed", camMode === "follow" ? "true" : "false"); };
+document.getElementById("zoomIn").onclick = () => { userZoom = clamp(userZoom + 1, -2, 4); };
+document.getElementById("zoomOut").onclick = () => { userZoom = clamp(userZoom - 1, -2, 4); };
+addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT" || document.querySelector(".over")) return;
+  if (e.key === " ") { e.preventDefault(); setPlay(!playing); }
+  else if (e.key === "ArrowRight") seek(cur + 1);
+  else if (e.key === "ArrowLeft") seek(cur - 1);
+  else if (e.key === "Escape") closeSheet();
+});
+// 點舞台選人
+stage.addEventListener("click", ev => {
+  if (ev.target.closest(".chip")) return;
+  const r = stage.getBoundingClientRect(), t = tileSize();
+  const mx = ev.clientX - r.left, my = ev.clientY - r.top;
+  let best = null, bd = 1e9;
+  IDS.forEach(id => { const m = animPos(id), s = toScreen(m.x, m.y);
+    const d = Math.hypot(s.sx - mx, s.sy - my); if (d < bd) { bd = d; best = id; } });
+  if (best && bd < t * .7) { if (selected === best) closeSheet(); else openSheet(best); }
+});
+
+/* 時間軸標記 */
+(function marks() {
+  const tr = document.getElementById("track");
+  moments.forEach(m => {
+    const d = document.createElement("div");
+    d.className = "mk" + (m.kind === "attack" ? " a" : "");
+    d.textContent = m.kind === "death" ? "💀" : "⚔️";
+    d.style.left = (m.t / MAXT * 100) + "%";
+    d.title = `${clockOf(m.t).str}　${m.label}`;
+    d.onclick = () => seek(m.t);
+    tr.appendChild(d);
+  });
+})();
+document.getElementById("legend").innerHTML =
+  IDS.map(id => `<span><i style="background:${P[id].color}"></i>${esc(P[id].name)} · ${esc(P[id].sect)}</span>`).join("")
+  + `<span>⚔️ 動手</span><span>💀 命殞</span><span style="margin-left:auto">空白鍵播放／暫停　←→ 逐刻　點人看他是誰</span>`;
+
+/* ============================ 片頭 / 片尾 ============================ */
+function overlay(html) {
+  const d = document.createElement("div"); d.className = "over"; d.innerHTML = `<div class="in">${html}</div>`;
+  document.body.appendChild(d); return d;
+}
+function showIntro() {
+  const cards = IDS.map((id, i) => `<div class="cc" style="animation-delay:${.12 + i*.08}s">
+      <canvas data-id="${id}" width="46" height="46"></canvas>
+      <div class="n">${esc(P[id].name)}</div><div class="s">${esc(P[id].sect)}</div>
+      <div class="g">${esc(P[id].goal)}</div></div>`).join("");
+  const d = overlay(`
+    <div class="k">TRUMAN · 生成式代理箱庭</div>
+    <h2>衡山城 · 劉正風金盆洗手</h2>
+    <p class="lede">六個 AI 被放進同一天的同一座城。沒有人寫劇本，每個人只看得見自己看得見的東西、
+      只記得自己記得的事。他們的目標互相排斥——而這個世界允許他們拔刀。<br>
+      以下是那一天的完整實錄，一刻十分鐘，共 ${MAXT} 刻。</p>
+    <div class="cast">${cards}</div>
+    <div class="btns"><button class="big" id="go">▶ 進　城</button>
+      <button class="big ghost" id="skip">直接看結局</button></div>`);
+  d.querySelectorAll(".cc canvas").forEach(c => drawPortrait(c.getContext("2d"), 46, P[c.dataset.id]));
+  d.querySelector("#go").onclick = () => { d.remove(); started = true; enterTick(0, false); renderFeed(true); setPlay(true); };
+  d.querySelector("#skip").onclick = () => { d.remove(); started = true; enterTick(MAXT, false); renderFeed(true); showOutro(); };
+}
+function showOutro() {
+  if (document.querySelector(".over")) return;
+  const live = IDS.filter(id => F[MAXT].agents[id].alive);
+  const tomb = deaths.map(d => `<div><span class="who" style="color:${P[d.id].color}">${esc(d.name)}</span>
+      <span style="color:#b9ac92">${clockOf(d.t).str}　${esc(P[d.id].sect)}</span>
+      <span class="by">死於 ${P[d.by] ? esc(P[d.by].name) : "不明"}</span></div>`).join("");
+  const s = DATA.stats || {};
+  const d = overlay(`
+    <div class="k">亥時 · 這一天結束了</div>
+    <h2>${live.length === 1 ? "只剩一個人站著" : "城裡靜下來了"}</h2>
+    <div class="tomb">${tomb}</div>
+    <p class="lede">活到最後的是 ${live.map(id => `<b style="color:${P[id].color}">${esc(P[id].name)}</b>`).join("、")}。
+      沒有人被劇本指使——每一刀都是某個 agent 自己算過之後決定的。</p>
+    <div class="nums">
+      <div><b>${s.speeches ?? "—"}</b><span>句對話</span></div>
+      <div><b>${s.attacks ?? moments.filter(m=>m.kind==="attack").length}</b><span>次動手</span></div>
+      <div><b>${deaths.length}</b><span>人死了</span></div>
+      <div><b>${MAXT}</b><span>個決策時刻</span></div>
+    </div>
+    <div class="btns"><button class="big" id="again">↻ 再看一次</button>
+      <button class="big ghost" id="stay">留在最後一刻</button></div>`);
+  d.querySelector("#again").onclick = () => { d.remove(); enterTick(0, false); renderFeed(true); setPlay(true); };
+  d.querySelector("#stay").onclick = () => d.remove();
+}
+
+/* ============================ 啟動 ============================ */
+new ResizeObserver(() => layout()).observe(stage);
+layout(); enterTick(0, false); renderFeed(true);
+cam.x = camT.x = W/2; cam.y = camT.y = H/2; cam.z = camT.z = 1;
+requestAnimationFrame(loop);
+showIntro();
+</script>

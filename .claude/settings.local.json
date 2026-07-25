@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Skill(claude-api)"
+      "Skill(claude-api)",
+      "PowerShell(git -C C:\\\\Users\\\\sora0\\\\Desktop\\\\truman log --oneline -8 --date=short --pretty='%h %ad %s')",
+      "PowerShell(git -C C:\\\\Users\\\\sora0\\\\Desktop\\\\truman status --short)"
     ]
   }
 }
