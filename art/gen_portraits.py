@@ -48,11 +48,25 @@ STYLE — apply identically to every image in this set:
 - Bold high-contrast inking, dramatic variation in line weight, heavy black shadows with sharp angular edges.
 - Hyper-saturated, unconventional colour choices; clashing complementary accents; a metallic sheen on fabric.
 - Extremely fashion-forward costume design: exaggerated ornament, layered fabric, theatrical drape, cloth caught mid-motion.
-- Hard chiselled facial structure: strong square jaw, deep brow ridge, sharp cheekbones, intense narrowed eyes, corded neck and shoulder muscle.
 - A theatrical twisted contrapposto pose, spine coiled like a spring, fingers splayed in an elegant deliberate gesture.
-- Halftone dots and cross-hatching for shading; radiating speed lines behind the figure.
-- Exactly ONE large stylised Chinese glyph floating behind the figure as a pure graphic element (sound-effect lettering, NOT a caption): 「%(onom)s」.
-- Flat two-tone background built on %(bg)s with a subtle radial burst.
+- Halftone dots and cross-hatching in the FABRIC shadows; speed lines radiating behind the figure.
+- Exactly ONE large stylised Chinese glyph floating behind the figure as a pure graphic element (sound-effect
+  lettering, NOT a caption): 「%(onom)s」. Render it in BOLD WHITE with a thick dark outline and a soft drop
+  shadow, placed in the upper-left corner. Never solid black, never a plain caption.
+- Flat two-tone background built on %(bg)s: a smooth vertical gradient from a lighter to a deeper shade of
+  that colour, plus a radial burst of thin rays behind the figure.
+
+BEAUTY — this is a cast of beautiful people; every face must be genuinely attractive:
+- Idealised leading-role good looks. Flawless luminous skin rendered with SMOOTH GRADIENTS (not flat fill),
+  elegant long neck, immaculate proportions, graceful hands with long fingers.
+- Men: handsome and charismatic — chiselled but refined bone structure, strong jaw, high cheekbones,
+  deep-set intense eyes, straight nose, broad shoulders, effortless confidence.
+- Women: beautiful and graceful — large luminous eyes with long lashes, soft refined features, delicate
+  poise, serene dignity. Depict with complete modesty: covering robes, no sexualised posing or framing.
+- Eyes rendered in high detail: coloured irises with visible gradient, crisp catchlights, defined lashes.
+- Hair with glossy specular highlights and individually inked strands catching the light.
+- Cinematic rim light tracing the whole silhouette, separating the figure from the background.
+- Polished, high-detail illustration finish — this should look like premium key art.
 
 SUBJECT WORLD: Ming-dynasty Chinese wuxia (martial arts) — hanfu robes, wide sleeves, sashes, topknots.
 No modern clothing. No lettering other than the single glyph. No watermark, no signature, no frame, no border.
@@ -63,50 +77,61 @@ No modern clothing. No lettering other than the single glyph. No watermark, no s
 POSE = {
     "liu_zhengfeng": dict(
         onom="鏘", who="""\
-A dignified swordmaster in his fifties. Neat short black beard, hair bound in a topknot pierced by a jade pin.
-Deep jade-green layered robe with dark teal trim and a gold-threaded sash; a jade pendant swings from his belt.
+A strikingly handsome swordmaster in his late forties — silver at the temples, a neatly groomed short beard
+framing a strong jaw, calm deep-set eyes with fine expression lines. Aristocratic bearing.
+Deep jade-green layered silk robe with dark teal trim and a gold-threaded sash; a jade pendant swings at his belt.
 POSE: standing tall, torso twisted, one arm swept across his chest in a formal farewell salute, the other hand
-open and lowered above a golden washing basin, sleeve billowing upward. EXPRESSION: serene, resolute, with grief
-held tight behind the eyes — a man publicly giving something up.""",
+open and lowered above a golden washing basin, sleeve billowing upward. EXPRESSION: serene, noble, resolute,
+with grief held tight behind the eyes — a man publicly giving something up.""",
     ),
     "fei_bin": dict(
         onom="轟", who="""\
-A powerful official-looking martial enforcer. Clean-shaven, severe. Black winged official's cap.
-Slate blue-grey robe, near-black, with a gold-embroidered belt and stiff high collar.
-POSE: leaning forward from the hips, chin lowered, one gloved hand raised with index finger extended in accusation,
-the other resting on a sheathed sword. EXPRESSION: cold, righteous, contemptuous — the face of a man who has already
-decided and is only waiting for the right moment.""",
+A coldly handsome martial enforcer in his thirties — sharp angular features, immaculate clean-shaven jaw,
+narrow piercing eyes, not a hair out of place. Severe, elegant, dangerous. Black winged official's cap.
+Slate blue-grey robe, near-black, with gold-embroidered collar and stiff high neck.
+POSE: leaning forward from the hips, chin lowered, one gloved hand raised with index finger extended in
+accusation, the other resting on a sheathed sword. EXPRESSION: cold, righteous, contemptuous — a beautiful
+face wearing an ugly certainty.""",
     ),
     "linghu_chong": dict(
         onom="嘩", who="""\
-A young swordsman in his twenties, messy topknot with loose strands, no beard, easy crooked grin.
+A very handsome young swordsman in his early twenties — bright warm eyes, an easy crooked grin, tousled
+topknot with loose strands falling across his brow, lean athletic build. Roguish and magnetic.
 Amber-gold robe worn carelessly open at the collar, sash tied loose; a wine gourd hangs at his hip.
 POSE: weight thrown onto one leg, hip cocked, one arm flung wide holding a wine gourd aloft, the other hand
-resting on a sword hilt behind him. EXPRESSION: reckless, laughing, warm — completely unbothered by the danger
-he is walking into.""",
+resting on a sword hilt behind him. EXPRESSION: reckless, laughing, warm — completely unbothered by danger.""",
     ),
     "yi_lin": dict(
-        onom="顫", who="""\
-A very young Buddhist nun, sixteen years old, shaven-headed under a pale monastic hood, no makeup, delicate features.
-Off-white grey monastic robe with an ochre kasaya sash across one shoulder, prayer beads wound around one wrist.
-POSE: shoulders drawn in, body half-turned away as if to flee, both hands clasped tight at her chest around the beads,
-fingers trembling and splayed. EXPRESSION: frightened, pleading, eyes wide and wet — a child who has understood
-she is somewhere she cannot survive.""",
+        onom="顫", who="""A beautiful young CHINESE BUDDHIST novice nun, sixteen — delicate luminous features, very large clear eyes
+with long lashes brimming with tears, a small soft mouth, smooth pale skin. Serene and innocent; her beauty
+is fragile and gentle, never sensual.
+IMPORTANT — she is a Chinese Buddhist nun, NOT a Western or Christian nun. Absolutely no white wimple, coif,
+veil or habit. Her head is shaven, bare or under a simple round grey Chinese monastic cap; the robe is a
+loose grey-brown Chinese 海青 with wide sleeves and a crossed collar, an ochre kasaya sash over the left
+shoulder, wooden prayer beads at her wrist.
+MODESTY IS MANDATORY: robes cover her completely to the throat and wrists. Straightforward bust framing —
+nothing suggestive in pose, camera angle or clothing.
+POSE: shoulders drawn in, body half-turned away as if to flee, both hands clasped tight at her chest around
+the beads, fingers trembling. EXPRESSION: frightened, pleading, eyes wide and wet — a child who has
+understood she is somewhere she cannot survive.""",
     ),
     "tian_boguang": dict(
         onom="颯", who="""\
-A lean, dangerous bandit swordsman, early thirties. Stubbled jaw, a thin scar down one cheek, a gold headband
-across his brow, hair loose and wind-blown. Dark crimson robe with the collar torn open, black under-robe beneath.
-POSE: crouched low and coiled sideways, one hand reversed on the hilt of a curved sabre mid-draw, the other hand
-splayed forward, fingers spread. EXPRESSION: a wolfish predatory smirk, eyes half-lidded and amused.""",
+A dangerously handsome bandit swordsman in his early thirties — lean hard face, stubbled jaw, a thin scar
+down one cheek that only makes him more striking, wind-blown hair loose beneath a gold headband, a wolfish
+grin showing a hint of teeth. Predatory charisma.
+Dark crimson robe with the collar torn open, black under-robe beneath, muscular forearms bare.
+POSE: crouched low and coiled sideways, one hand reversed on the hilt of a curved sabre mid-draw, the other
+hand splayed forward. EXPRESSION: amused, half-lidded, hungry.""",
     ),
     "qu_yang": dict(
         onom="錚", who="""\
-An old man with a long flowing white beard and long white hair, deep lines carved around the eyes, gaunt and elegant.
-Deep violet-purple robe with black trim, wide sleeves; he carries a long lacquered guqin (seven-string zither)
-under one arm. POSE: half-turned away, looking back over his shoulder, one hand raised with fingers curled as
-though he has just plucked a string that is still ringing. EXPRESSION: gentle, sorrowful, unafraid — an old killer
-who has stopped caring about anything except one friendship.""",
+A strikingly distinguished old man — long flowing silver-white hair and beard, a fine aquiline nose,
+deep-set gentle eyes, elegant gaunt cheekbones; the beauty of great age carried well. Refined and serene.
+Deep violet-purple silk robe with black trim and wide sleeves; a long lacquered guqin under one arm.
+POSE: half-turned away, looking back over his shoulder, one hand raised with fingers curled as though he has
+just plucked a string that is still ringing. EXPRESSION: gentle, sorrowful, unafraid — an old killer who has
+stopped caring about anything except one friendship.""",
     ),
 }
 
