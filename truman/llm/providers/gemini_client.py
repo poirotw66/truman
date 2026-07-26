@@ -59,6 +59,16 @@ class GeminiClient(BaseLLMClient):
 
             self._client = genai.Client()
 
+    def _gen_config(self, c: Call) -> dict:
+        """每個 agent 可以自帶 thinking_level 與 temperature（AgentState.llm）。"""
+        cfg = {
+            "thinking_level": c.thinking or self._thinking(c.tier),
+            "max_output_tokens": c.max_tokens,
+        }
+        if c.temperature is not None:
+            cfg["temperature"] = c.temperature
+        return cfg
+
     def _thinking(self, tier: str) -> str:
         override = getattr(self.cfg, "gemini_thinking", None) or {}
         return override.get(tier, DEFAULT_THINKING[tier])
@@ -73,16 +83,14 @@ class GeminiClient(BaseLLMClient):
                 system_instruction=system_instruction,
                 input=c.user_message,
                 store=False,
-                generation_config={
-                    "thinking_level": self._thinking(c.tier),
-                    "max_output_tokens": c.max_tokens,
-                },
+                generation_config=self._gen_config(c),
                 response_format=text_json_format(c.schema),
             )
         except Exception as e:  # noqa: BLE001
             if "thinking budget" in str(e):
                 raise ValueError(
-                    f"{model} 不接受 thinking_level={self._thinking(c.tier)!r}"
+                    f"{model} 不接受 thinking_level="
+                    f"{(c.thinking or self._thinking(c.tier))!r}"
                     f"（各模型的 budget 下限不同）。調高一級再試："
                     f" --thinking medium。原始錯誤：{e}"
                 ) from e

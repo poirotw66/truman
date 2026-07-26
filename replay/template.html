@@ -89,7 +89,8 @@
   .roster li{display:flex; gap:9px; align-items:center; padding:5px 7px; border-radius:8px; cursor:pointer; transition:background .15s}
   .roster li:hover{background:var(--panel2)}
   .roster li.sel{background:color-mix(in srgb,var(--gold) 20%,transparent)}
-  .rface{flex:none; width:30px; height:30px; border-radius:8px; background:#171410; display:block; image-rendering:pixelated}
+  .rface{flex:none; width:30px; height:30px; border-radius:8px; background:#171410; display:block;
+    image-rendering:pixelated; object-fit:cover; object-position:50% 14%}
   .rname{font-family:var(--disp); font-weight:600; font-size:14px}
   .rmeta{font-size:10.5px; color:var(--ink2)}
   .rstat{margin-left:auto; text-align:right}
@@ -104,7 +105,7 @@
   .feed{flex:1 1 auto; overflow-y:auto; padding:6px; display:flex; flex-direction:column; gap:5px; min-height:190px; max-height:min(46vh,420px)}
   .fe{display:flex; gap:8px; padding:5px 7px; border-radius:8px; font-size:12.2px; line-height:1.45; cursor:pointer; background:var(--panel2); border-left:3px solid transparent}
   .fe:hover{outline:1px solid var(--line2)}
-  .fe .ic{flex:none; width:16px; text-align:center; opacity:.9}
+  .fe .ic{flex:none; width:16px; height:16px; image-rendering:pixelated; margin-top:1px}
   .fe b{font-family:var(--disp); font-weight:600}
   .fe .t{font-family:var(--mono); font-size:10px; color:var(--ink2); margin-left:auto; flex:none; padding-left:6px}
   .fe.k-attack{border-left-color:var(--cinnabar)} .fe.k-death{border-left-color:#e4705f; background:color-mix(in srgb,var(--cinnabar) 15%,var(--panel2))}
@@ -116,8 +117,16 @@
   /* ---------- character card ---------- */
   .sheet{position:absolute; inset:0; z-index:20; background:var(--panel); border:1px solid var(--line2); border-radius:12px;
     display:flex; flex-direction:column; box-shadow:var(--shadow); overflow:hidden}
-  .sheet .hd{display:flex; gap:11px; align-items:center; padding:12px 13px; border-bottom:1px solid var(--line); background:var(--panel2)}
-  .sheet canvas{width:52px; height:52px; image-rendering:pixelated; border-radius:9px; background:#171410; flex:none}
+  .sheet .hd{display:flex; gap:12px; align-items:flex-start; padding:12px 13px; border-bottom:1px solid var(--line); background:var(--panel2)}
+  .sheet .bust{width:104px; height:139px; border-radius:7px; flex:none; object-fit:cover; display:block;
+    box-shadow:0 3px 10px rgba(0,0,0,.5); transition:filter .3s}
+  .sheet canvas.bust{image-rendering:pixelated}
+  .sheet img.bust{cursor:zoom-in}
+  .ptlb{position:fixed; inset:0; z-index:80; background:rgba(6,4,3,.92); display:flex; align-items:center;
+    justify-content:center; padding:24px; cursor:zoom-out; animation:fade .25s ease}
+  .ptlb img{max-width:min(560px,92vw); max-height:88vh; border-radius:10px; box-shadow:0 18px 60px rgba(0,0,0,.7)}
+  .ptlb .cap{position:absolute; bottom:22px; left:0; right:0; text-align:center; color:#e9dcbe;
+    font-family:var(--disp); font-size:17px; letter-spacing:.1em; text-shadow:0 2px 8px #000}
   .sheet .nm{font-family:var(--disp); font-size:19px; font-weight:600; line-height:1.2}
   .sheet .sb{font-size:11px; color:var(--ink2)}
   .sheet .x{margin-left:auto; background:none; border:1px solid var(--line2); color:var(--ink2); width:26px; height:26px;
@@ -160,12 +169,15 @@
   .rail-bg{position:absolute; left:0; right:0; top:13px; height:6px; border-radius:4px; background:var(--line2)}
   .fill{position:absolute; left:0; top:13px; height:6px; border-radius:4px; background:linear-gradient(90deg,var(--gold),var(--cinnabar))}
   .knob{position:absolute; top:8px; width:16px; height:16px; border-radius:50%; background:var(--ink); border:3px solid var(--panel); transform:translateX(-50%); z-index:3}
-  .mk{position:absolute; top:2px; transform:translateX(-50%); font-size:11px; z-index:2; cursor:pointer; line-height:1}
-  .mk.a{top:3px; font-size:10px; opacity:.85}
+  .mk{position:absolute; top:1px; transform:translateX(-50%); z-index:2; cursor:pointer; line-height:0}
+  .mk img{width:14px; height:14px; image-rendering:pixelated}
+  .mk.a{opacity:.9}
+  .mk.a img{width:12px; height:12px}
   .tickno{font-family:var(--mono); font-size:11.5px; color:var(--ink2); font-variant-numeric:tabular-nums}
   .legend{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:10.5px; color:var(--ink2); align-items:center}
   .legend span{display:inline-flex; align-items:center; gap:5px}
   .legend i{width:9px; height:9px; border-radius:2px; display:inline-block}
+  .legend .ic{width:13px; height:13px; image-rendering:pixelated; vertical-align:-2px}
 
   /* ---------- overlays ---------- */
   .over{position:fixed; inset:0; z-index:60; background:rgba(9,7,5,.86); backdrop-filter:blur(6px);
@@ -175,11 +187,13 @@
   .over .k{font-size:11px; letter-spacing:.4em; color:var(--gold); font-weight:700}
   .over h2{margin:0; font-family:var(--disp); font-size:clamp(26px,4.4vw,44px); font-weight:600; letter-spacing:.06em}
   .over .lede{margin:0 auto; max-width:44em; font-size:13.5px; line-height:1.85; color:#c9bda2}
-  .cast{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px}
+  .cast{display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:11px}
   .cc{background:rgba(255,247,228,.05); border:1px solid rgba(255,240,210,.14); border-radius:11px; padding:11px 9px;
     display:flex; flex-direction:column; align-items:center; gap:5px; animation:rise .5s backwards}
   @keyframes rise{from{opacity:0; transform:translateY(14px)}}
-  .cc canvas{width:46px; height:46px; image-rendering:pixelated}
+  .cc canvas{width:78px; height:104px; image-rendering:pixelated; border-radius:5px; box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .cc img.pt{width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:6px; display:block;
+    box-shadow:0 5px 16px rgba(0,0,0,.5)}
   .cc .n{font-family:var(--disp); font-size:15px; font-weight:600}
   .cc .s{font-size:10px; color:var(--gold); letter-spacing:.1em}
   .cc .g{font-size:11.5px; color:#c2b699; line-height:1.5; min-height:3em}
@@ -220,6 +234,7 @@
     <div class="vig"></div>
     <div class="camhint">
      <button class="chip" id="camBtn" aria-pressed="true">🎥 跟隨</button>
+     <button class="chip" id="fxBtn" title="景深與泛光很吃效能，卡的話關掉">✨ 特效</button>
      <button class="chip" id="zoomOut">－</button><button class="chip" id="zoomIn">＋</button>
     </div>
    </div>
@@ -279,31 +294,41 @@ const reduced = matchMedia("(prefers-reduced-motion:reduce)").matches;
 /* ============================ 人物設定（美術 + 文案） ============================ */
 const P = {
   liu_zhengfeng:{ch:"劉", name:"劉正風", sect:"衡山派", title:"劉三爺", color:"#4f9b86",
-    robe:"#3f7d6e", trim:"#25584c", hair:"#241d16", hat:"bun", beard:"short", weapon:"sword",
+    robe:"#3f7d6e", trim:"#25584c", hair:"#241d16", hat:"bun", beard:"short", weapon:"sword", acc:"jade", brow:"flat", mouth:"small",
     goal:"把這個手洗完。誰來說什麼，都忍。",
     blurb:"衡山派掌門莫大先生的師弟，劍法極高，在城裡住了半輩子，人緣極好。他藏著一個會要命的秘密：最好的朋友曲洋是魔教長老。金盆洗手是他想了很久的辦法——洗了手就不再是五嶽劍派的人，往後和誰來往，誰也管不著。"},
   fei_bin:{ch:"費", name:"費彬", sect:"嵩山派", title:"大嵩陽手", color:"#6f7a94",
-    robe:"#3d4457", trim:"#20242f", hair:"#191510", hat:"official", beard:"none", weapon:"sword",
+    robe:"#3d4457", trim:"#20242f", hair:"#191510", hat:"official", beard:"none", weapon:"sword", brow:"stern", mouth:"frown",
     goal:"攔下這場洗手。用什麼手段都可以。",
     blurb:"左冷禪最信得過的心腹，奉密令而來：五嶽劍派要並成一派，衡山這根釘子不能鬆。他手上還有一件東西——有人密報劉正風私通魔教長老曲洋。他在等一個時機把它當眾抖出來。他辦事講究名正言順，要動手也要動得讓人說不出話。"},
   linghu_chong:{ch:"沖", name:"令狐沖", sect:"華山派", title:"岳不群大弟子", color:"#c9903a",
-    robe:"#b07a1e", trim:"#7d5310", hair:"#241d16", hat:"bun", beard:"none", weapon:"sword",
+    robe:"#b07a1e", trim:"#7d5310", hair:"#241d16", hat:"bun", beard:"none", weapon:"sword", acc:"gourd", brow:"raise", mouth:"smirk",
     goal:"少說話、別惹事——他自己也知道當不得真。",
     blurb:"愛喝酒、愛開玩笑、不太守規矩。師父嫌他沒個正形，他自己覺得人活著總要對得起朋友。劍法在同輩裡算好的，可這城裡到處是成名多年的高手，真動起手來他打不過，他心裡有數。他最看不得以強欺弱，看到了就會插手，就算插手的下場是自己倒楣。"},
   yi_lin:{ch:"琳", name:"儀琳", sect:"恆山派", title:"定逸師太弟子", color:"#cf8fa4",
-    robe:"#d9d0bd", trim:"#a58f8f", hair:"none", hat:"nun", beard:"none", weapon:null,
+    robe:"#d9d0bd", trim:"#a58f8f", hair:"none", hat:"nun", beard:"none", weapon:null, acc:"kasaya", brow:"worry", mouth:"small",
     goal:"找到師父，或找個安全的地方待著。",
     blurb:"十六歲的小尼姑，心軟、膽小、不會說謊。跟師父來衡山賀劉三爺洗手，路上走散了，現在一個人在城裡，有點怕。她武功很低，這裡任何一個人動起手來她都擋不住，她自己很清楚。遇到危險第一個念頭是逃，或者念經。有人對她好，她會記很久。"},
   tian_boguang:{ch:"田", name:"田伯光", sect:"萬里獨行", title:"快刀無雙", color:"#b84a3c",
-    robe:"#8e3b31", trim:"#5c231d", hair:"#1b1610", hat:"band", beard:"stub", weapon:"blade",
+    robe:"#8e3b31", trim:"#5c231d", hair:"#1b1610", hat:"band", beard:"stub", weapon:"blade", brow:"raise", mouth:"smirk", extra:"scar",
     goal:"把那個落單的小尼姑哄到沒人的地方去。",
     blurb:"快刀是看家本事，十幾年沒人抓得住他，也是有名的採花大盜，正道人人喊打，他不在乎。他有他的規矩：不殺沒有還手之力的人，也不喜歡在人多的地方動手。他怕的東西不多，但他不想惹上整個五嶽劍派——能不當眾撕破臉，就不當眾撕破臉。"},
   qu_yang:{ch:"曲", name:"曲洋", sect:"日月神教", title:"長老", color:"#8b6bab",
-    robe:"#6b4a86", trim:"#42295a", hair:"#ddd6c8", hat:"bun", beard:"long", weapon:"qin",
+    robe:"#6b4a86", trim:"#42295a", hair:"#ddd6c8", hat:"bun", beard:"long", weapon:"qin", brow:"flat", mouth:"line",
     goal:"遠遠看他一眼就走。別連累他。",
     blurb:"在旁人眼裡只是個愛琴的老人。這輩子在教中殺過不少人，到了這個年紀發現真正放不下的只有琴，還有一個懂琴的人。他和劉正風合譜了一曲《笑傲江湖》，那是他這輩子做過最好的事。正邪之分在他眼裡是笑話——可他知道，這個笑話會要人命。"},
 };
 const AREA_OF = {}; DATA.areas.forEach(a => AREA_OF[a.name] = a);
+const PORTRAIT = DATA.portraits || {};          // Gemini 產的立繪；沒有就退回程式畫的像素立繪
+function lightbox(id) {
+  if (!PORTRAIT[id]) return;
+  const d = document.createElement("div"); d.className = "ptlb";
+  d.innerHTML = `<img src="${PORTRAIT[id]}" alt="${esc(P[id].name)}">
+    <div class="cap">${esc(P[id].name)}　${esc(P[id].sect)} · ${esc(P[id].title)}
+      <span style="opacity:.6;font-size:12px;letter-spacing:.06em">　（點任一處或按 Esc 關閉）</span></div>`;
+  d.onclick = () => d.remove();
+  document.body.appendChild(d);
+}
 
 /* ============================ 工具 ============================ */
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -322,6 +347,29 @@ function clockOf(t) {
 
 /* ============================ 像素美術（共用模組，注入自 web/pixelart.js） ============================ */
 /*__PIXELART__*/
+/* 事件流／時間軸的小圖示自己畫成像素圖——emoji 在每台機器長得不一樣，也跟像素美術打架 */
+const ICONS = (() => {
+  const S = 2, mk = fn => {
+    const c = document.createElement("canvas"); c.width = c.height = 16 * S;
+    const g = c.getContext("2d");
+    const R = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x*S, y*S, Math.max(1,w*S), Math.max(1,h*S)); };
+    const dia = (x, y, n, w, col, dir) => { for (let i = 0; i < n; i++) R(x + i, y + (dir > 0 ? i : n - 1 - i), w, w, col); };
+    fn(R, dia); return c.toDataURL();
+  };
+  return {
+    speech: mk(R => { R(1,2,14,9,"#171210"); R(2,3,12,7,"#f3ead3"); R(3,10,5,3,"#171210"); R(4,10,3,2,"#f3ead3"); }),
+    attack: mk((R, dia) => { dia(2,2,12,2,"#171210",1); dia(2,2,12,2,"#171210",-1);
+      dia(2.5,2.5,11,1.4,"#cfd4da",1); dia(2.5,2.5,11,1.4,"#c8483a",-1); }),
+    death:  mk(R => { R(3,2,10,9,"#171210"); R(4,3,8,7,"#e8e0cc"); R(5,5,2,3,"#171210"); R(9,5,2,3,"#171210");
+      R(4,10,8,3,"#171210"); R(5,10,6,2,"#e8e0cc"); R(7,10,1,2,"#171210"); }),
+    reflection: mk(R => { R(7,1,2,14,"#171210"); R(1,7,14,2,"#171210");
+      R(7.4,1.6,1.2,12.8,"#d9a63c"); R(1.6,7.4,12.8,1.2,"#d9a63c"); R(6,6,4,4,"#171210"); R(6.5,6.5,3,3,"#ffe9a8"); }),
+    world:  mk(R => { R(1,2,14,12,"#171210"); R(2,4,12,8,"#e6dcc0"); R(2,2,12,2,"#6b4a2c"); R(2,12,12,2,"#6b4a2c");
+      R(4,6,8,1,"#8a7a58"); R(4,8,6,1,"#8a7a58"); }),
+    interact: mk(R => { R(6,1,4,14,"#171210"); R(6.6,2,2.8,12,"#c0a45a"); }),
+  };
+})();
+
 const TS_ART = 48;                                  // 貼圖每格 48px（美術原生 16px × 3）
 const world = buildWorldCanvas(ROWS, DATA.areas, TS_ART, DECOR_JIANGHU);
 function faceCanvas(id, px) {
@@ -352,14 +400,20 @@ function layout() {
   DPR = Math.min(2, window.devicePixelRatio || 1);
   board.width = Math.round(SW * DPR); board.height = Math.round(SH * DPR);
   bx.setTransform(DPR, 0, 0, DPR, 0, 0); bx.imageSmoothingEnabled = false;
-  baseTile = Math.min(SW / W, SH / H);
+  [scene, sharpCv].forEach(c => { c.width = board.width; c.height = board.height; });
+  lightCv.width = Math.max(2, Math.round(board.width / 2));
+  lightCv.height = Math.max(2, Math.round(board.height / 2));
+  sc.imageSmoothingEnabled = false; shp.imageSmoothingEnabled = false;
+  baseTile = Math.min(SW / (W + OUT * 2), SH / (H + OUT * 2));   // 留一點郊野在畫面裡
 }
+const OUT = 1.9;
 const tileSize = () => baseTile * cam.z;
 function toScreen(wxx, wyy) { const t = tileSize(); return { sx:(wxx - cam.x) * t + SW/2, sy:(wyy - cam.y) * t + SH/2 }; }
 function clampCam(c) {
   const t = baseTile * c.z, halfW = SW/2/t, halfH = SH/2/t;
-  c.x = (halfW * 2 >= W) ? W/2 : clamp(c.x, halfW, W - halfW);
-  c.y = (halfH * 2 >= H) ? H/2 : clamp(c.y, halfH, H - halfH);
+  const x0 = -OUT, x1 = W + OUT, y0 = -OUT, y1 = H + OUT;      // 可以看到一點城外，但不會看到空白
+  c.x = (halfW * 2 >= x1 - x0) ? W/2 : clamp(c.x, x0 + halfW, x1 - halfW);
+  c.y = (halfH * 2 >= y1 - y0) ? H/2 : clamp(c.y, y0 + halfH, y1 - halfH);
 }
 
 /* ============================ 播放狀態 ============================ */
@@ -397,34 +451,119 @@ function tintFor(t) {
 }
 const LANTERNS = [[12,11.2],[14.6,11.2],[16.5,3.4],[18.4,3.4],[1.6,3.4],[3.4,3.4],[19.4,10.2],[21.4,10.2]];
 
+/* ============================ HD-2D 合成 ============================
+   場景先畫進離屏 canvas，再做三件事：移軸景深（上下模糊、中間清晰）、
+   光源泛光（燈籠／金盆／刀光發散開來）、暖亮冷暗的調色與暗角。
+   八方旅人的味道有一大半來自這三層，而不是圖磚本身。 */
+const scene = document.createElement("canvas"), sc = scene.getContext("2d");
+const sharpCv = document.createElement("canvas"), shp = sharpCv.getContext("2d");
+const lightCv = document.createElement("canvas"), lgx = lightCv.getContext("2d");
+const CAN_FILTER = (() => { const c = document.createElement("canvas").getContext("2d");
+  c.filter = "blur(2px)"; return c.filter === "blur(2px)"; })();
+let lights = [];
+let DOF = 1, BLOOM = 1;                               // 0 = 關掉（給效能不夠的機器）
+
+let frameCost = 16, slowFrames = 0, autoTuned = "";
 function drawFrame(now) {
+  const t0 = performance.now();
+  try { drawFrameInner(now); }
+  catch (e) {                                        // 合成掛了也不能讓整頁停住
+    DOF = BLOOM = 0; autoTuned = "特效已關（" + e.message + "）";
+    try { bx.setTransform(1,0,0,1,0,0); bx.drawImage(scene, 0, 0); } catch (e2) {}
+  }
+  // 自動降級：連續慢幀就把最貴的東西關掉，寧可醜也不能卡
+  frameCost = frameCost * .9 + (performance.now() - t0) * .1;
+  if (frameCost > 24) {
+    if (++slowFrames > 45) {
+      slowFrames = 0;
+      if (DOF) { DOF = 0; autoTuned = "偵測到掉幀，已關閉景深"; }
+      else if (BLOOM) { BLOOM = 0; autoTuned = "仍然掉幀，已關閉泛光"; }
+      const b = document.getElementById("fxBtn"); if (b) b.textContent = fxLabel();
+    }
+  } else slowFrames = 0;
+}
+function drawFrameInner(now) {
   const t = tileSize();
-  bx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  bx.clearRect(0, 0, SW, SH);
+  const tint = drawScene(now, t);
+  const w = board.width, h = board.height;
+  bx.setTransform(1, 0, 0, 1, 0, 0);
+  bx.clearRect(0, 0, w, h);
+
+  if (CAN_FILTER && DOF && !reduced) {
+    bx.save(); bx.filter = `blur(${Math.max(2, Math.round(h * .009))}px)`;
+    bx.drawImage(scene, 0, 0, w, h); bx.restore();     // 模糊底
+    shp.setTransform(1, 0, 0, 1, 0, 0);
+    shp.globalCompositeOperation = "source-over";
+    shp.clearRect(0, 0, w, h); shp.drawImage(scene, 0, 0);
+    shp.globalCompositeOperation = "destination-in";   // 只留中間那條清晰帶
+    const gy = shp.createLinearGradient(0, 0, 0, h), c0 = .5;
+    gy.addColorStop(Math.max(0, c0 - .40), "rgba(0,0,0,0)");
+    gy.addColorStop(Math.max(.02, c0 - .17), "rgba(0,0,0,1)");
+    gy.addColorStop(Math.min(.98, c0 + .17), "rgba(0,0,0,1)");
+    gy.addColorStop(Math.min(1, c0 + .42), "rgba(0,0,0,0)");
+    shp.fillStyle = gy; shp.fillRect(0, 0, w, h);
+    shp.globalCompositeOperation = "source-over";
+    bx.drawImage(sharpCv, 0, 0);
+  } else {
+    bx.drawImage(scene, 0, 0);
+  }
+
+  if (BLOOM && lights.length) {                        // 泛光：光源畫成放射漸層再疊上去
+    lgx.setTransform(DPR / 2, 0, 0, DPR / 2, 0, 0);
+    lgx.clearRect(0, 0, SW, SH);
+    lights.forEach(L => {
+      const g2 = lgx.createRadialGradient(L.x, L.y, 0, L.x, L.y, Math.max(4, L.r));
+      g2.addColorStop(0, L.c); g2.addColorStop(1, "rgba(0,0,0,0)");
+      lgx.fillStyle = g2;
+      lgx.fillRect(L.x - L.r, L.y - L.r, L.r * 2, L.r * 2);
+    });
+    bx.save(); bx.globalCompositeOperation = "lighter";
+    if (CAN_FILTER && !reduced) bx.filter = `blur(${Math.max(3, Math.round(h * .014))}px)`;
+    bx.drawImage(lightCv, 0, 0, w, h); bx.restore();
+  }
+
+  // 調色：中央偏暖、四周壓冷壓暗
+  const gr = bx.createRadialGradient(w * .5, h * .42, h * .1, w * .5, h * .5, h * .95);
+  gr.addColorStop(0, "rgba(255,206,140,.10)");
+  gr.addColorStop(.55, "rgba(255,190,120,.02)");
+  gr.addColorStop(1, "rgba(18,26,52,.30)");
+  bx.save(); bx.globalCompositeOperation = "overlay"; bx.fillStyle = gr; bx.fillRect(0, 0, w, h); bx.restore();
+  const vg = bx.createRadialGradient(w * .5, h * .5, h * .34, w * .5, h * .5, h * 1.02);
+  vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(6,4,3,.62)");
+  bx.fillStyle = vg; bx.fillRect(0, 0, w, h);
+  if (flash > 0) { bx.fillStyle = `rgba(178,42,32,${flash * .42})`; bx.fillRect(0, 0, w, h); }
+}
+
+function drawScene(now, t) {
+  sc.setTransform(DPR, 0, 0, DPR, 0, 0);
+  sc.clearRect(0, 0, SW, SH);
+  lights.length = 0;
   let shx = 0, shy = 0;
   if (shake > 0 && !reduced) { shx = (Math.random()-.5) * shake; shy = (Math.random()-.5) * shake; }
-  bx.save(); bx.translate(shx, shy);
+  sc.save(); sc.translate(shx, shy);
 
-  // 地圖
-  const o = toScreen(0, 0);
-  bx.drawImage(world, 0, 0, world.width, world.height, o.sx, o.sy, W*t, H*t);
+  // 地圖（含城外那一圈郊野）
+  const m = world.margin || 0, o = toScreen(-m, -m);
+  sc.drawImage(world, 0, 0, world.width, world.height, o.sx, o.sy, (W + m*2)*t, (H + m*2)*t);
 
   // 關係線
   if (selected) drawRelations(t);
 
   // 金盆（會閃）
   const basin = toScreen(2.5, 2.5), gl = .5 + .5*Math.sin(now/380);
-  bx.fillStyle = "#e8c766"; bx.fillRect(Math.round(basin.sx - t*.2), Math.round(basin.sy - t*.12), Math.round(t*.4), Math.round(t*.22));
-  bx.fillStyle = `rgba(255,238,170,${.25+.35*gl})`; bx.beginPath(); bx.arc(basin.sx, basin.sy, t*.42, 0, 6.3); bx.fill();
+  sc.fillStyle = "#e8c766"; sc.fillRect(Math.round(basin.sx - t*.2), Math.round(basin.sy - t*.12), Math.round(t*.4), Math.round(t*.22));
+  sc.fillStyle = `rgba(255,238,170,${.25+.35*gl})`; sc.beginPath(); sc.arc(basin.sx, basin.sy, t*.42, 0, 6.3); sc.fill();
+  lights.push({ x:basin.sx, y:basin.sy, r:t*1.5, c:`rgba(255,214,120,${.20+.16*gl})` });
 
   // 燈籠（入夜變亮）
   const tint = tintFor(cur);
   LANTERNS.forEach((L, i) => {
     const s = toScreen(L[0], L[1]), fl = .8 + .2*Math.sin(now/300 + i);
     const a = (.35 + .65*tint.night) * fl;
-    bx.fillStyle = `rgba(255,150,80,${a*.32})`; bx.beginPath(); bx.arc(s.sx, s.sy, t*.7*fl, 0, 6.3); bx.fill();
-    bx.fillStyle = `rgba(214,70,50,${.75+.25*tint.night})`;
-    bx.fillRect(Math.round(s.sx - t*.11), Math.round(s.sy - t*.14), Math.round(t*.22), Math.round(t*.28));
+    sc.fillStyle = `rgba(255,150,80,${a*.32})`; sc.beginPath(); sc.arc(s.sx, s.sy, t*.7*fl, 0, 6.3); sc.fill();
+    sc.fillStyle = `rgba(214,70,50,${.75+.25*tint.night})`;
+    sc.fillRect(Math.round(s.sx - t*.11), Math.round(s.sy - t*.14), Math.round(t*.22), Math.round(t*.28));
+    lights.push({ x:s.sx, y:s.sy, r:t*(2.2+1.6*tint.night)*fl, c:`rgba(255,146,70,${(.10+.42*tint.night)*fl})` });
   });
 
   // 圍觀百姓（見血後作鳥獸散）
@@ -433,10 +572,10 @@ function drawFrame(now) {
     if (flee >= 1) return;
     const cxw = lerp(c.x, c.fx, flee), s = toScreen(cxw, c.y);
     if (s.sx < -60 || s.sx > SW+60 || s.sy < -60 || s.sy > SH+60) return;
-    bx.globalAlpha = (1 - flee*.9) * .92;
+    sc.globalAlpha = (1 - flee*.9) * .92;
     drawFigure(bx, s.sx, s.sy + t*.3, t*.86, c.prof,
       { face: flee>0 ? (c.fx<0?"left":"right") : "down", frame: flee>0 ? (Math.floor(now/130+i)%4) : 0, bob: Math.sin(now/520 + c.ph) > .8 ? -.4 : 0 });
-    bx.globalAlpha = 1;
+    sc.globalAlpha = 1;
   });
 
   // 六人（依 y 排序）
@@ -447,8 +586,8 @@ function drawFrame(now) {
     const sx = s.sx + (fxLungeDir[d.id]?.x || 0) * lunge * t * .3;
     const sy = s.sy + (fxLungeDir[d.id]?.y || 0) * lunge * t * .3;
     if (selected === d.id) {
-      bx.strokeStyle = "rgba(217,166,60,.9)"; bx.lineWidth = 2;
-      bx.beginPath(); bx.ellipse(sx, sy + t*.28, t*.32, t*.14, 0, 0, 6.3); bx.stroke();
+      sc.strokeStyle = "rgba(217,166,60,.9)"; sc.lineWidth = 2;
+      sc.beginPath(); sc.ellipse(sx, sy + t*.28, t*.32, t*.14, 0, 0, 6.3); sc.stroke();
     }
     drawFigure(bx, sx, sy + t*.3, t*1.15, prof, {
       face: faceOf(d.m, d.id), wound: d.a.wound, dead: !d.a.alive,
@@ -463,25 +602,44 @@ function drawFrame(now) {
     const k = (now - f.t0) / f.life;
     if (f.kind === "slash") {
       const A = toScreen(f.ax, f.ay), B = toScreen(f.bx, f.by);
-      bx.save(); bx.globalAlpha = 1 - k; bx.lineCap = "round";
-      bx.strokeStyle = "#fff2d8"; bx.lineWidth = Math.max(2, t*.12*(1-k));
-      bx.beginPath(); bx.moveTo(lerp(A.sx,B.sx,.15), lerp(A.sy,B.sy,.15)); bx.lineTo(lerp(A.sx,B.sx,.95+k*.1), lerp(A.sy,B.sy,.95+k*.1)); bx.stroke();
-      bx.strokeStyle = "rgba(200,72,58,.8)"; bx.lineWidth = Math.max(1, t*.22*(1-k));
-      bx.stroke(); bx.restore();
+      sc.save(); sc.globalAlpha = 1 - k; sc.lineCap = "round";
+      sc.strokeStyle = "#fff2d8"; sc.lineWidth = Math.max(2, t*.12*(1-k));
+      sc.beginPath(); sc.moveTo(lerp(A.sx,B.sx,.15), lerp(A.sy,B.sy,.15)); sc.lineTo(lerp(A.sx,B.sx,.95+k*.1), lerp(A.sy,B.sy,.95+k*.1)); sc.stroke();
+      sc.strokeStyle = "rgba(200,72,58,.8)"; sc.lineWidth = Math.max(1, t*.22*(1-k));
+      sc.stroke(); sc.restore();
+      lights.push({ x:lerp(A.sx,B.sx,.6), y:lerp(A.sy,B.sy,.6), r:t*2.4*(1-k), c:`rgba(255,236,200,${.5*(1-k)})` });
     } else if (f.kind === "blood") {
       const B = toScreen(f.bx, f.by);
-      bx.save(); bx.globalAlpha = 1 - k;
+      sc.save(); sc.globalAlpha = 1 - k;
       for (let i = 0; i < 7; i++) { const a = f.seed + i*.9, r = t*.15 + k*t*.55;
-        bx.fillStyle = "#a32c22";
-        bx.fillRect(B.sx + Math.cos(a)*r, B.sy + Math.sin(a)*r - t*.1, Math.max(2, t*.07), Math.max(2, t*.07)); }
-      bx.restore();
+        sc.fillStyle = "#a32c22";
+        sc.fillRect(B.sx + Math.cos(a)*r, B.sy + Math.sin(a)*r - t*.1, Math.max(2, t*.07), Math.max(2, t*.07)); }
+      sc.restore();
     }
   });
-  bx.restore();
+  // 炊煙：市集與酒樓的灶，一整天都在冒
+  [[9.5,1.4],[11.5,2.3],[16.4,1.3]].forEach((sp, i) => {
+    for (let k = 0; k < 4; k++) {
+      const ph = ((now / 1500) + k * .25 + i * .37) % 1;
+      const s = toScreen(sp[0] + Math.sin((ph * 3 + i) * 2.1) * .3, sp[1] - ph * 2.4);
+      sc.globalAlpha = (1 - ph) * .26; sc.fillStyle = "#eae4d4";
+      const r = Math.max(2, Math.round(t * (.1 + ph * .2)));
+      sc.fillRect(Math.round(s.sx - r/2), Math.round(s.sy - r/2), r, r);
+    }
+  });
+  // 風裡的落葉
+  for (let i = 0; i < 10; i++) {
+    const sp = ((now / 11000) + i * .137) % 1;
+    const s = toScreen((i * 4.7) % (W + 2) - 1 + sp * 3.4 + Math.sin(now/1100 + i) * .4, sp * (H + 3) - 1.5);
+    sc.globalAlpha = .45; sc.fillStyle = ["#b5762f","#a8552f","#8f7a35"][i % 3];
+    const r = Math.max(2, Math.round(t * .06));
+    sc.fillRect(Math.round(s.sx), Math.round(s.sy), r, r);
+  }
+  sc.globalAlpha = 1;
+  sc.restore();
 
-  // 天光 + 血光
-  bx.fillStyle = tint.c; bx.fillRect(0, 0, SW, SH);
-  if (flash > 0) { bx.fillStyle = `rgba(178,42,32,${flash*.42})`; bx.fillRect(0, 0, SW, SH); }
+  sc.fillStyle = tint.c; sc.fillRect(0, 0, SW, SH);   // 天光
+  return tint;
 }
 
 const fxLunge = {}, fxLungeDir = {};
@@ -523,11 +681,11 @@ const FEED = [];
 F.forEach(fr => fr.events.forEach(e => {
   const ck = clockOf(fr.tick), tm = `<span class="t">${ck.str}</span>`;
   if (e.kind === "speech") FEED.push({ t:fr.tick, k:"speech",
-    html:`<span class="ic">💬</span><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b>${e.to&&P[e.to]?` → <b>${esc(P[e.to].name)}</b>`:""}：${esc(e.text.length>58?e.text.slice(0,56)+"…":e.text)}</span>${tm}` });
-  else if (e.kind === "attack") FEED.push({ t:fr.tick, k:"attack", html:`<span class="ic">⚔️</span><span>${esc(e.line)}</span>${tm}` });
-  else if (e.kind === "death") FEED.push({ t:fr.tick, k:"death", html:`<span class="ic">💀</span><span><b>${esc(e.name)}</b> 死了${e.by&&P[e.by]?`，死於 <b>${esc(P[e.by].name)}</b> 之手`:""}。</span>${tm}` });
-  else if (e.kind === "reflection") FEED.push({ t:fr.tick, k:"reflection", html:`<span class="ic">✨</span><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b> 想通了：${esc(e.insight.length>52?e.insight.slice(0,50)+"…":e.insight)}</span>${tm}` });
-  else if (e.kind === "world") FEED.push({ t:fr.tick, k:"world", html:`<span class="ic">📜</span><span>${esc(e.text.replace(/[（）]/g,""))}</span>${tm}` });
+    html:`<img class="ic" src="${ICONS.speech}" alt="說"><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b>${e.to&&P[e.to]?` → <b>${esc(P[e.to].name)}</b>`:""}：${esc(e.text.length>58?e.text.slice(0,56)+"…":e.text)}</span>${tm}` });
+  else if (e.kind === "attack") FEED.push({ t:fr.tick, k:"attack", html:`<img class="ic" src="${ICONS.attack}" alt="動手"><span>${esc(e.line)}</span>${tm}` });
+  else if (e.kind === "death") FEED.push({ t:fr.tick, k:"death", html:`<img class="ic" src="${ICONS.death}" alt="死"><span><b>${esc(e.name)}</b> 死了${e.by&&P[e.by]?`，死於 <b>${esc(P[e.by].name)}</b> 之手`:""}。</span>${tm}` });
+  else if (e.kind === "reflection") FEED.push({ t:fr.tick, k:"reflection", html:`<img class="ic" src="${ICONS.reflection}" alt="想通了"><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b> 想通了：${esc(e.insight.length>52?e.insight.slice(0,50)+"…":e.insight)}</span>${tm}` });
+  else if (e.kind === "world") FEED.push({ t:fr.tick, k:"world", html:`<img class="ic" src="${ICONS.world}" alt="世界"><span>${esc(e.text.replace(/[（）]/g,""))}</span>${tm}` });
 }));
 let feedShown = -1;
 function renderFeed(force) {
@@ -545,8 +703,9 @@ feedEl.onclick = e => { const d = e.target.closest(".fe"); if (d && d.dataset.t)
 const rosterEl = document.getElementById("roster");
 IDS.forEach(id => {
   const p = P[id], li = document.createElement("li"); li.dataset.id = id;
-  const f = faceCanvas(id, 30); f.className = "rface";
-  li.appendChild(f);
+  if (PORTRAIT[id]) { const im = document.createElement("img"); im.className = "rface"; im.src = PORTRAIT[id];
+    im.alt = ""; li.appendChild(im); }
+  else { const f = faceCanvas(id, 30); f.className = "rface"; li.appendChild(f); }
   const mid = document.createElement("span");
   mid.innerHTML = `<span class="rname">${esc(p.name)}</span><br><span class="rmeta">${esc(p.sect)} · ${esc(p.title)}</span>`;
   li.appendChild(mid);
@@ -580,26 +739,62 @@ function openSheet(id) {
   const status = !fr.alive ? `<span class="tag dead">已歿 ${clockOf(d ? d.t : cur).str}${d && P[d.by] ? " · 死於"+esc(P[d.by].name) : ""}</span>`
     : fr.wound >= 2 ? `<span class="tag crit">重傷</span>` : fr.wound === 1 ? `<span class="tag hurt">帶傷</span>` : `<span class="tag ok">無傷</span>`;
   sheetHost.innerHTML = `<div class="sheet">
-    <div class="hd"><canvas id="sheetFace" width="52" height="52"></canvas>
-      <div><div class="nm">${esc(p.name)}</div><div class="sb">${esc(p.sect)} · ${esc(p.title)}　${status}</div></div>
+    <div class="hd">${PORTRAIT[id]
+        ? `<img class="bust" id="sheetFace" src="${PORTRAIT[id]}" alt="${esc(p.name)}" title="點看大圖">`
+        : `<canvas id="sheetFace" class="bust" width="120" height="160"></canvas>`}
+      <div><div class="nm">${esc(p.name)}</div><div class="sb">${esc(p.sect)} · ${esc(p.title)}</div>
+        <div class="sb status" style="margin-top:5px">${status}</div></div>
       <button class="x" id="sheetX" aria-label="關閉">✕</button></div>
     <div class="body">
       <div class="sec"><span class="lb">今日所求</span><div class="goal">「${esc(p.goal)}」</div></div>
       <div class="sec"><span class="lb">武功 ${c.skill} / 10</span><div class="bars">${Array.from({length:10},(_,i)=>`<i class="${i<c.skill?"on":""}"></i>`).join("")}</div></div>
       <div class="sec"><span class="lb">此人</span><p>${esc(p.blurb)}</p></div>
-      <div class="sec"><span class="lb">此刻在想（${thought?clockOf(thought.t).str:"—"}）</span>
-        <p class="q">${thought?esc(thought.th):"還沒起念。"}</p></div>
-      <div class="sec"><span class="lb">說過的話</span><div class="said">${said.length?said.map(s=>
+      <div class="sec"><span class="lb thoughtLab">此刻在想（${thought?clockOf(thought.t).str:"—"}）</span>
+        <p class="q thoughtTxt">${thought?esc(thought.th):"還沒起念。"}</p></div>
+      <div class="sec"><span class="lb">說過的話</span><div class="said" data-n="${said.length}">${said.length?said.map(s=>
         `<div data-t="${s.t}"><em>${clockOf(s.t).str}${s.to&&P[s.to]?" → "+esc(P[s.to].name):""}</em><br>${esc(s.text)}</div>`).join(""):`<span style="color:var(--ink2);font-size:12px">還沒開過口。</span>`}</div></div>
       <div class="sec"><span class="lb">關係（到此刻為止）</span><div class="rel">${[...kin,...foe,...spoke].join("")||`<span>還沒和誰打過交道</span>`}</div></div>
-      <div class="sec"><span class="lb">現在在</span><p style="color:var(--ink2)">${esc(fr.area||"長街")}${AREA_OF[fr.area]?"　"+esc(AREA_OF[fr.area].desc):""}</p></div>
+      <div class="sec"><span class="lb">現在在</span><p class="areaTxt" style="color:var(--ink2)">${esc(fr.area||"長街")}${AREA_OF[fr.area]?"　"+esc(AREA_OF[fr.area].desc):""}</p></div>
     </div></div>`;
-  drawPortrait(document.getElementById("sheetFace").getContext("2d"), 52, p, { wound:fr.wound, dead:!fr.alive });
+  const face = document.getElementById("sheetFace");
+  if (face.tagName === "CANVAS") drawBust(face.getContext("2d"), 120, p, { wound:fr.wound, dead:!fr.alive });
+  else { face.style.filter = fr.alive ? "none" : "grayscale(1) brightness(.55)"; face.onclick = () => lightbox(id); }
   document.getElementById("sheetX").onclick = closeSheet;
   sheetHost.querySelectorAll(".said div").forEach(d2 => d2.onclick = () => seek(+d2.dataset.t));
   renderRoster();
 }
 function closeSheet() { selected = null; sheetHost.innerHTML = ""; renderRoster(); }
+
+/* 每 tick 只改「會變的那幾格」。整段 innerHTML 重建會讓瀏覽器把 78 KB 的立繪
+   重新解碼一次，播放中每秒好幾次——這是先前會卡的主因之一。 */
+function refreshSheet() {
+  const id = selected, host = sheetHost.querySelector(".sheet");
+  if (!id || !host) { if (id) openSheet(id); return; }
+  const fr = F[cur].agents[id], d = deaths.find(x => x.id === id && x.t <= cur);
+  const st = host.querySelector(".status");
+  if (st) st.innerHTML = !fr.alive
+      ? `<span class="tag dead">已歿 ${clockOf(d ? d.t : cur).str}${d && P[d.by] ? " · 死於"+esc(P[d.by].name) : ""}</span>`
+      : fr.wound >= 2 ? `<span class="tag crit">重傷</span>`
+      : fr.wound === 1 ? `<span class="tag hurt">帶傷</span>` : `<span class="tag ok">無傷</span>`;
+  const face = host.querySelector("#sheetFace");
+  if (face && face.tagName === "IMG") face.style.filter = fr.alive ? "none" : "grayscale(1) brightness(.55)";
+  let thought = null;
+  for (let k = cur; k >= 0; k--) { const th = F[k].agents[id].thought; if (th) { thought = { t:k, th }; break; } }
+  const tl = host.querySelector(".thoughtLab"), tp = host.querySelector(".thoughtTxt");
+  if (tl) tl.textContent = `此刻在想（${thought ? clockOf(thought.t).str : "—"}）`;
+  if (tp) tp.textContent = thought ? thought.th : "還沒起念。";
+  const said = (saidBy[id] || []).filter(s2 => s2.t <= cur).slice(-4).reverse();
+  const sd = host.querySelector(".said");
+  if (sd && sd.dataset.n !== String(said.length)) {
+    sd.dataset.n = String(said.length);
+    sd.innerHTML = said.length ? said.map(s2 =>
+      `<div data-t="${s2.t}"><em>${clockOf(s2.t).str}${s2.to && P[s2.to] ? " → " + esc(P[s2.to].name) : ""}</em><br>${esc(s2.text)}</div>`
+    ).join("") : `<span style="color:var(--ink2);font-size:12px">還沒開過口。</span>`;
+    sd.querySelectorAll("div").forEach(d2 => d2.onclick = () => seek(+d2.dataset.t));
+  }
+  const ar = host.querySelector(".areaTxt");
+  if (ar) ar.textContent = (fr.area || "長街") + (AREA_OF[fr.area] ? "　" + AREA_OF[fr.area].desc : "");
+}
 
 /* ============================ 覆蓋層（名牌 / 氣泡） ============================ */
 function syncOverlay() {
@@ -645,7 +840,7 @@ function enterTick(t, animate) {
   cur = clamp(t, 0, MAXT); sub = 0;
   for (const k in fired) delete fired[k];
   renderHud(); renderRoster(); renderFeed(false);
-  if (selected) openSheet(selected);
+  if (selected) refreshSheet();                      // 只更新會變的欄位，不動立繪
 }
 function tickBeats(now) {
   const fr = F[cur];
@@ -749,9 +944,17 @@ const camBtn = document.getElementById("camBtn");
 camBtn.onclick = () => { camMode = camMode === "follow" ? "wide" : "follow";
   camBtn.textContent = camMode === "follow" ? "🎥 跟隨" : "🗺 全景";
   camBtn.setAttribute("aria-pressed", camMode === "follow" ? "true" : "false"); };
+const fxLabel = () => (DOF || BLOOM) ? "✨ 特效" : "✨ 特效：關";
+document.getElementById("fxBtn").onclick = function () {
+  const on = DOF || BLOOM; DOF = BLOOM = on ? 0 : 1; autoTuned = ""; slowFrames = 0; frameCost = 16;
+  this.textContent = fxLabel(); this.setAttribute("aria-pressed", String(!on));
+};
+document.getElementById("fxBtn").setAttribute("aria-pressed", "true");
 document.getElementById("zoomIn").onclick = () => { userZoom = clamp(userZoom + 1, -2, 4); };
 document.getElementById("zoomOut").onclick = () => { userZoom = clamp(userZoom - 1, -2, 4); };
 addEventListener("keydown", e => {
+  const lb = document.querySelector(".ptlb");
+  if (lb) { lb.remove(); e.preventDefault(); return; }      // 大圖蓋住全畫面，任何鍵都先關掉它
   if (e.target.tagName === "INPUT" || document.querySelector(".over")) return;
   if (e.key === " ") { e.preventDefault(); setPlay(!playing); }
   else if (e.key === "ArrowRight") seek(cur + 1);
@@ -775,7 +978,7 @@ stage.addEventListener("click", ev => {
   moments.forEach(m => {
     const d = document.createElement("div");
     d.className = "mk" + (m.kind === "attack" ? " a" : "");
-    d.textContent = m.kind === "death" ? "💀" : "⚔️";
+    d.innerHTML = `<img src="${m.kind === "death" ? ICONS.death : ICONS.attack}" alt="">`;
     d.style.left = (m.t / MAXT * 100) + "%";
     d.title = `${clockOf(m.t).str}　${m.label}`;
     d.onclick = () => seek(m.t);
@@ -784,16 +987,25 @@ stage.addEventListener("click", ev => {
 })();
 document.getElementById("legend").innerHTML =
   IDS.map(id => `<span><i style="background:${P[id].color}"></i>${esc(P[id].name)} · ${esc(P[id].sect)}</span>`).join("")
-  + `<span>⚔️ 動手</span><span>💀 命殞</span><span style="margin-left:auto">空白鍵播放／暫停　←→ 逐刻　點人看他是誰</span>`;
+  + `<span><img class="ic" src="${ICONS.attack}" alt="">動手</span><span><img class="ic" src="${ICONS.death}" alt="">命殞</span><span style="margin-left:auto">空白鍵播放／暫停　←→ 逐刻　點人看他是誰</span>`;
 
 /* ============================ 片頭 / 片尾 ============================ */
-function overlay(html) {
+let CITY_URL = null;                                  // 片頭片尾拿整座城當底圖
+function cityBackdrop(tintTop, tintBottom) {
+  if (CITY_URL === null) { try { CITY_URL = world.toDataURL(); } catch (e) { CITY_URL = ""; } }
+  return CITY_URL ? `linear-gradient(${tintTop}, ${tintBottom}), url(${CITY_URL})` : "";
+}
+function overlay(html, tint) {
   const d = document.createElement("div"); d.className = "over"; d.innerHTML = `<div class="in">${html}</div>`;
+  const bg = cityBackdrop(tint ? tint[0] : "rgba(9,7,5,.80)", tint ? tint[1] : "rgba(9,7,5,.93)");
+  if (bg) { d.style.backgroundImage = bg; d.style.backgroundSize = "cover";
+    d.style.backgroundPosition = "center"; d.style.imageRendering = "pixelated"; }
   document.body.appendChild(d); return d;
 }
 function showIntro() {
   const cards = IDS.map((id, i) => `<div class="cc" style="animation-delay:${.12 + i*.08}s">
-      <canvas data-id="${id}" width="46" height="46"></canvas>
+      ${PORTRAIT[id] ? `<img class="pt" src="${PORTRAIT[id]}" alt="${esc(P[id].name)}">`
+                     : `<canvas data-id="${id}" width="90" height="120"></canvas>`}
       <div class="n">${esc(P[id].name)}</div><div class="s">${esc(P[id].sect)}</div>
       <div class="g">${esc(P[id].goal)}</div></div>`).join("");
   const d = overlay(`
@@ -805,7 +1017,7 @@ function showIntro() {
     <div class="cast">${cards}</div>
     <div class="btns"><button class="big" id="go">▶ 進　城</button>
       <button class="big ghost" id="skip">直接看結局</button></div>`);
-  d.querySelectorAll(".cc canvas").forEach(c => drawPortrait(c.getContext("2d"), 46, P[c.dataset.id]));
+  d.querySelectorAll(".cc canvas").forEach(c => drawBust(c.getContext("2d"), 90, P[c.dataset.id]));
   d.querySelector("#go").onclick = () => { d.remove(); started = true; enterTick(0, false); renderFeed(true); setPlay(true); };
   d.querySelector("#skip").onclick = () => { d.remove(); started = true; enterTick(MAXT, false); renderFeed(true); showOutro(); };
 }
@@ -829,7 +1041,8 @@ function showOutro() {
       <div><b>${MAXT}</b><span>個決策時刻</span></div>
     </div>
     <div class="btns"><button class="big" id="again">↻ 再看一次</button>
-      <button class="big ghost" id="stay">留在最後一刻</button></div>`);
+      <button class="big ghost" id="stay">留在最後一刻</button></div>`,
+    ["rgba(28,8,6,.86)", "rgba(9,7,5,.96)"]);
   d.querySelector("#again").onclick = () => { d.remove(); enterTick(0, false); renderFeed(true); setPlay(true); };
   d.querySelector("#stay").onclick = () => d.remove();
 }

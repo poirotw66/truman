@@ -575,6 +575,113 @@ def main() -> int:
         failures += not check("空的設定檔擋下來",
                               _raises(lambda: cast_mod.load(tmp / "does_not_exist.json")))
 
+        # 每個人可以自己掛模型／溫度：換一個人的腦袋是最乾淨的對照實驗
+        bad_llm = json.loads(json.dumps(base_cast))
+        bad_llm["agents"][0]["llm"] = {"temperature": 5}
+        bad_llm["agents"][1]["llm"] = {"thinking": "very-high"}
+        bad_llm["agents"][2]["llm"] = {"model": "gemini-does-not-exist"}
+        lp = cast_mod.validate(bad_llm, jgrid, "jianghu", "gemini")
+        failures += not check("溫度超範圍／thinking 打錯／模型不在目錄都抓得到",
+                              len(lp) >= 3, f"{len(lp)} 個問題")
+
+        ok_llm = json.loads(json.dumps(base_cast))
+        ok_llm["agents"][1]["llm"] = {"model": "gemini-3.5-flash", "temperature": 0.2}
+        failures += not check("合法的模型設定通過驗證",
+                              cast_mod.validate(ok_llm, jgrid, "jianghu", "gemini") == [])
+        w2 = jianghu.build_world("llm", 7)
+        cast_mod.apply(w2, ok_llm, jgrid)
+        fb2 = w2.agents["fei_bin"]
+        failures += not check("模型設定套進 AgentState",
+                              fb2.llm == {"model": "gemini-3.5-flash", "temperature": 0.2}, str(fb2.llm))
+        failures += not check("沒設的人保持乾淨（照分層路由）",
+                              w2.agents["liu_zhengfeng"].llm == {})
+        failures += not check("llm 欄位可序列化往返",
+                              AgentState.from_dict(fb2.to_dict()).llm == fb2.llm)
+
+        # Call 帶得動覆寫，而且計價會分桶——不然自帶模型的呼叫會被按預設模型計價
+        from truman.agents.cognition import agent_llm  # noqa: PLC0415
+        from truman.llm.base import Call  # noqa: PLC0415
+
+        failures += not check("agent.llm 轉成 Call 的覆寫欄位",
+                              agent_llm(fb2) == {"model": "gemini-3.5-flash",
+                                                 "temperature": 0.2, "thinking": None})
+        cfg_g = SimConfig(provider="gemini")
+        from truman.llm.base import BaseLLMClient  # noqa: PLC0415
+
+        llm_c = BaseLLMClient(cfg_g, EventLog(tmp / "bucket"))   # 只用統計那半邊，不送請求
+        default_model = cfg_g.models["routine"]
+        failures += not check("同模型不分桶", llm_c._bucket("routine", default_model) == "routine")
+        b2 = llm_c._bucket("routine", "gemini-3.5-flash")
+        failures += not check("自帶模型另外分桶", b2 == "routine·gemini-3.5-flash", b2)
+        failures += not check("分桶還原得回模型（計價用）",
+                              llm_c._model_of(b2) == "gemini-3.5-flash"
+                              and llm_c._model_of("routine") == default_model)
+        # 分桶之後計價要用各自的模型價目，不能全部按分層預設算
+        llm_c._usage(b2).add(inp=1_000_000, out=0)
+        llm_c._usage("routine").add(inp=1_000_000, out=0)
+        st = llm_c.stats()
+        failures += not check("兩個桶各自用自己的模型計價",
+                              st[b2]["model"] == "gemini-3.5-flash"
+                              and st["routine"]["model"] == default_model
+                              and st[b2]["cost_usd"] != st["routine"]["cost_usd"],
+                              f"{st[b2]['cost_usd']} vs {st['routine']['cost_usd']}")
+        c_ov = Call(key="k", tier="routine", system_blocks=["a"], user_message="u", schema={},
+                    model="gemini-3.5-flash", temperature=0.2)
+        failures += not check("Call 帶得動覆寫欄位",
+                              c_ov.model == "gemini-3.5-flash" and c_ov.temperature == 0.2)
+
+        # ---- 循序暖機：前綴進不了快取就別浪費那一趟來回 ----
+        print("")
+        print("批次排程")
+        short = Call(key="s", tier="routine", system_blocks=["短前綴"], user_message="u", schema={})
+        long_blocks = ["世界" * 4000]
+        long_c = Call(key="l", tier="routine", system_blocks=long_blocks, user_message="u", schema={})
+        m = cfg_g.models["routine"]
+        failures += not check("前綴太短 → 不暖機（整批並行）",
+                              llm_c._worth_warming(m, short) is False)
+        failures += not check("前綴夠長 → 照舊暖機",
+                              llm_c._worth_warming(m, long_c) is True)
+        cfg_nc = SimConfig(provider="gemini", use_cache=False)
+        llm_nc = BaseLLMClient(cfg_nc, EventLog(tmp / "nocache"))
+        failures += not check("關掉快取 → 一律不暖機",
+                              llm_nc._worth_warming(m, long_c) is False)
+
+        # 真的有並行嗎：用會記錄「同時在跑幾個」的假 client 量一次
+        class _Probe(BaseLLMClient):
+            provider = "probe"
+
+            def __init__(self, cfg, log):
+                super().__init__(cfg, log)
+                self.live = 0
+                self.peak = 0
+
+            async def _invoke(self, c, model):
+                self.live += 1
+                self.peak = max(self.peak, self.live)
+                await asyncio.sleep(0.01)
+                self.live -= 1
+                return {"ok": True}, None, {"inp": 1, "out": 1}
+
+        probe = _Probe(cfg_g, EventLog(tmp / "probe"))
+        batch = [Call(key=f"k{i}", tier="routine", system_blocks=["短"], user_message="u",
+                      schema={}) for i in range(6)]
+        got = asyncio.run(probe.run_batch(batch))
+        failures += not check("六個呼叫全部有結果", len(got) == 6)
+        failures += not check("不暖機時六個一起送", probe.peak == 6, f"峰值併發 {probe.peak}")
+
+        probe2 = _Probe(cfg_g, EventLog(tmp / "probe2"))
+        batch2 = [Call(key=f"L{i}", tier="routine", system_blocks=long_blocks,
+                       user_message="u", schema={}) for i in range(6)]
+        asyncio.run(probe2.run_batch(batch2))
+        failures += not check("要暖機時第一個獨自先跑", probe2.peak == 5, f"峰值併發 {probe2.peak}")
+
+        # 每人自帶模型時要分組暖機：拿 A 模型暖機救不了 B 模型
+        probe3 = _Probe(cfg_g, EventLog(tmp / "probe3"))
+        mixed = [Call(key=f"m{i}", tier="routine", system_blocks=long_blocks, user_message="u",
+                      schema={}, model=("gemini-3.5-flash" if i % 2 else None)) for i in range(6)]
+        asyncio.run(probe3.run_batch(mixed))
+        failures += not check("混模型時兩組各自暖機", probe3.peak == 4, f"峰值併發 {probe3.peak}")
+
         # ---- 記憶檢索 ----
         print("\n記憶檢索")
         p = engine.world.protagonist()

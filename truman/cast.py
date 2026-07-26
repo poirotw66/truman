@@ -13,6 +13,7 @@
          "home_area": "劉府", "start": [2, 2], "skill": 8, "kin": ["qu_yang"],
          "public": "劉正風，衡山派……",      ← 進世界區塊的公開人物表，人人看得見
          "persona": "你是劉正風……",         ← 只有他自己看得見
+         "llm": {"model": "gemini-3.1-flash", "temperature": 0.9, "thinking": "low"},
          "art": {...}}                      ← 純美術，引擎不看，回放頁才用
       ]
     }
@@ -25,8 +26,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from .config import PROVIDERS
 from .world.grid import Grid, Pos
 from .world.state import AgentState, WorldState
+
+THINKING = ("minimal", "low", "medium", "high", "off")
 
 
 class CastError(ValueError):
@@ -46,7 +50,33 @@ def load(path: str | Path) -> dict:
     return data
 
 
-def validate(cast: dict, grid: Grid, scenario_name: str | None = None) -> list[str]:
+def _check_llm(who: str, spec: dict, provider: str | None) -> list[str]:
+    """每個人可以自己掛模型與溫度。錯字要在開跑前抓到，不是跑到第 40 tick 才 404。"""
+    llm = spec.get("llm")
+    if not llm:
+        return []
+    out: list[str] = []
+    if not isinstance(llm, dict):
+        return [f"{who}：llm 必須是物件，例如 {{\"model\": ..., \"temperature\": 0.8}}"]
+    model = llm.get("model")
+    if model is not None and (not isinstance(model, str) or not model.strip()):
+        out.append(f"{who}：llm.model 要是模型 ID 字串")
+    elif model and provider:
+        known = set(PROVIDERS[provider]["prices"])
+        if model not in known:
+            out.append(f"{who}：{provider} 沒有列到模型 {model!r}，"
+                       f"價格會算成 0（跑得動但帳不準）。用 `truman.cli models` 對一次")
+    t = llm.get("temperature")
+    if t is not None and (not isinstance(t, (int, float)) or not 0 <= t <= 2):
+        out.append(f"{who}：溫度 {t!r} 要是 0–2 之間的數字")
+    th = llm.get("thinking")
+    if th is not None and th not in THINKING:
+        out.append(f"{who}：thinking {th!r} 不在 {list(THINKING)} 裡")
+    return out
+
+
+def validate(cast: dict, grid: Grid, scenario_name: str | None = None,
+             provider: str | None = None) -> list[str]:
     """回傳所有問題（不是丟第一個）——一次看完比修一個跑一次快。"""
     problems: list[str] = []
     agents = cast["agents"]
@@ -89,6 +119,7 @@ def validate(cast: dict, grid: Grid, scenario_name: str | None = None) -> list[s
         skill = a.get("skill")
         if skill is not None and not (isinstance(skill, int) and 1 <= skill <= 10):
             problems.append(f"{who}：武功 {skill!r} 必須是 1–10 的整數")
+        problems.extend(_check_llm(who, a, provider))
 
     for a in agents:
         for k in a.get("kin") or []:
@@ -141,6 +172,8 @@ def apply(world: WorldState, cast: dict, grid: Grid) -> None:
             base.skill = int(spec["skill"])
         if "kin" in spec:
             base.kin = list(spec["kin"])
+        if "llm" in spec:
+            base.llm = {k: v for k, v in (spec["llm"] or {}).items() if v not in (None, "")}
         world.agents[aid] = base
 
 

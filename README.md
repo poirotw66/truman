@@ -128,9 +128,14 @@ Event Log（JSONL）+ Checkpoint ── 可 replay、可分支
 那些 tick 一次 LLM 都不叫。只有下列情況才思考：動作做完、被搭話、聽見對話、
 看到新面孔、導演事件，或每 6 tick 的保底。report 會印出實際節流率。
 
-**2. 循序暖機** — 同一個 tick 平行送 N 個共享前綴的請求，會 N 個全部付全價：
-快取要等第一個 response 開始 streaming 後才可讀。`run_batch()` 先送一個、等它回來，
+**2. 循序暖機（只在划算時做）** — 同一個 tick 平行送 N 個共享前綴的請求，會 N 個全部付全價：
+快取要等第一個 response 開始 streaming 後才可讀。所以 `run_batch()` 會先送一個、等它回來，
 其餘才並行。
+
+但這只有在**前綴真的進得了快取**時才划算。前綴低於門檻時快取靜默失效，暖機那一趟就是
+每個 tick 白白多一次序列往返——96 個 tick 大約讓整場 run 慢一倍。所以 `_worth_warming()`
+會先比對前綴長度與該模型的門檻，進不去就整批並行（日誌裡會寫一筆 `warmup_skipped`）。
+每個 agent 可以自帶模型，所以是**依模型分組**各自判斷：拿 A 模型暖機救不了 B 模型的前綴。
 
 **3. 分層路由** — routine=Haiku 4.5、dialogue/judge=Sonnet 5、reflect=Opus 4.8。
 主角有 `protagonist_min_tier` 保底，永遠不走最便宜那層。
@@ -238,9 +243,28 @@ truman/
 scenarios/seahaven.py    地圖、六個人物、導演腳本
 tests/smoke.py           離線煙霧測試（不呼叫 API）
 web/pixelart.js          共用像素美術（地圖圖磚 + 人物），兩個網頁都注入它
+art/gen_portraits.py     用 Gemini 影像模型產生整組風格一致的人物立繪
+art/embed_portraits.py   把立繪縮圖壓成 data URI 內嵌進網頁
+art/portraits/<劇本>/    產出的立繪 PNG（原圖，約每張 700 KB）
 cast/build_editor.py     產生 cast_editor.html（人物工作室）＋ 劇本原設定 JSON
 replay/build_frames.py   事件日誌 → jianghu_replay.html（整日回放）
 ```
+
+## 人物立繪
+
+立繪是用 Gemini 影像模型畫的，整組風格一致：
+
+```powershell
+.\.venv\Scripts\python.exe art\gen_portraits.py            # 已存在的跳過
+.\.venv\Scripts\python.exe art\gen_portraits.py --force    # 全部重畫
+```
+
+一致性靠兩件事，缺一不可：**所有 prompt 共用同一段 `STYLE`**（一個字都不能改），
+以及**先畫一張風格錨，之後每張都把錨圖當參考影像餵進去**要求對齊線條與上色——
+單靠文字描述絕對對不齊。姿態寫在 `POSE`：姿勢要洩漏這個人今天想幹什麼。
+
+畫完重跑 `replay/build_frames.py` 與 `cast/build_editor.py`，圖會自動縮圖、
+壓成 data URI 內嵌進兩個網頁（單檔離線可開）。沒有立繪時網頁會自動退回程式畫的像素立繪。
 
 ## 開場之前：人物工作室
 
@@ -257,6 +281,22 @@ replay/build_frames.py   事件日誌 → jianghu_replay.html（整日回放）
 .\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run `
   --run-id j2 --ticks 96 --seed 7 --cast cast\jianghu.json
 ```
+
+### 每個人可以掛不同的腦袋
+
+工作室裡每個角色都能單獨指定 **模型／溫度／思考深度**（存進 cast.json 的 `llm` 欄位）：
+
+```json
+{"id": "fei_bin", "llm": {"model": "gemini-3.5-flash", "temperature": 0.15}}
+```
+
+不設就照原本的分層路由走（多數 tick 走 routine 的便宜模型，社交場合才升到 dialogue）。
+這是最乾淨的對照實驗手段：**同一個劇本、同一顆 seed，只換一個人的腦袋**，
+看結局會不會不一樣。報表會把自帶模型的呼叫**另外分桶計價**（`routine·gemini-3.5-flash`），
+不然那些呼叫會被按分層預設的價目算，帳直接錯。
+
+> Anthropic 開了 extended thinking 時不能同時給 temperature，這種情況會安靜忽略溫度，
+> 不會讓整場 run 掛在那裡。
 
 劇本 `.py` 一個字都不會動——設定檔只在那一次 run 生效，換一份就是另一場實驗。
 設定檔有問題（站在牆上、id 重複、人設空白、亂指親友）會在燒掉任何額度之前被擋下來，

@@ -29,6 +29,11 @@ class Call:
     user_message: str
     schema: dict
     max_tokens: int = 900
+    # --- 每個 agent 自己的模型設定（AgentState.llm）。None = 照分層預設走。---
+    # 讓不同角色掛不同模型／溫度是刻意留的實驗手段：同一個劇本，只換一個人的腦袋。
+    model: str | None = None
+    temperature: float | None = None
+    thinking: str | None = None
 
 
 @dataclass
@@ -79,6 +84,7 @@ class BaseLLMClient:
         self.replay = replay
         self.usage_by_tier: dict[str, Usage] = {}
         self.warned_prefix: set[str] = set()
+        self.warmup_note: set[str] = set()
 
     # ------------------------------------------------------------ 待實作
     async def _invoke(self, c: Call, model: str) -> tuple[dict | None, str | None, dict]:
@@ -86,19 +92,28 @@ class BaseLLMClient:
         raise NotImplementedError
 
     # ------------------------------------------------------------ 統計
-    def _usage(self, tier: str) -> Usage:
-        return self.usage_by_tier.setdefault(tier, Usage())
+    # 分桶的鍵是「層」，但有人自帶模型時就變成「層·模型」——不然那些呼叫會被
+    # 按分層預設模型的價目計價，帳直接算錯。
+    def _bucket(self, tier: str, model: str) -> str:
+        return tier if model == self.cfg.models.get(tier) else f"{tier}·{model}"
+
+    def _model_of(self, bucket: str) -> str:
+        tier, sep, model = bucket.partition("·")
+        return model if sep else self.cfg.models[tier]
+
+    def _usage(self, bucket: str) -> Usage:
+        return self.usage_by_tier.setdefault(bucket, Usage())
 
     def total_cost(self) -> float:
         return sum(
-            u.cost(self.cfg.price(self.cfg.models[t]), self.cache_write_multiplier)
-            for t, u in self.usage_by_tier.items()
+            u.cost(self.cfg.price(self._model_of(b)), self.cache_write_multiplier)
+            for b, u in self.usage_by_tier.items()
         )
 
     def stats(self) -> dict:
         out: dict = {"_provider": self.provider}
         for tier, u in self.usage_by_tier.items():
-            model = self.cfg.models[tier]
+            model = self._model_of(tier)
             cached = u.cache_read + u.cache_write
             out[tier] = {
                 "model": model,
@@ -141,10 +156,10 @@ class BaseLLMClient:
             )
             return rec
 
-        model = self.cfg.models[c.tier]
+        model = c.model or self.cfg.models[c.tier]
         self._warn_short_prefix(c.system_blocks, model)
         parsed, err, usage = await self._invoke(c, model)
-        self._usage(c.tier).add(**usage)
+        self._usage(self._bucket(c.tier, model)).add(**usage)
 
         self.log.write(
             "llm_call",
@@ -153,6 +168,7 @@ class BaseLLMClient:
                 "tier": c.tier,
                 "provider": self.provider,
                 "model": model,
+                "temperature": c.temperature,
                 "usage": usage,
                 "output": parsed,
                 "error": err,
@@ -162,24 +178,39 @@ class BaseLLMClient:
             raise ValueError(f"{c.key}: {err}")
         return parsed
 
+    def _worth_warming(self, model: str, sample: Call) -> bool:
+        """前綴進不了快取，暖機就只是白白多花一趟來回。
+
+        暖機的用意是「先送一個把共同前綴寫進快取，其餘才並行」。但前綴低於門檻時
+        快取根本不會生效（靜默失效），這一趟就純粹是每個 tick 多一次序列往返——
+        96 個 tick 累積起來很可觀。實測 jianghu 的前綴約 2215 tokens，
+        而 3.1 系列的門檻是 4096，所以這裡會直接全部並行。
+        """
+        if not self.cfg.use_cache:
+            return False
+        from .tokens import estimate
+
+        approx = estimate("".join(sample.system_blocks))
+        ok = approx >= self.cfg.cache_min(model)
+        if not ok and model not in self.warmup_note:
+            self.warmup_note.add(model)
+            self.log.write("warmup_skipped", {
+                "model": model, "approx_prefix_tokens": approx,
+                "min_cacheable": self.cfg.cache_min(model),
+                "note": "前綴進不了快取，跳過循序暖機，整批並行送出。",
+            })
+        return ok
+
     async def run_batch(self, calls: list[Call]) -> dict[str, dict | Exception]:
-        """循序暖機 + 並行。
+        """依模型分組；能快取的那一組才做循序暖機，其餘直接並行。
 
         兩家的快取都要等第一個回應開始產生之後才可讀，所以同一 tick 平行送 N 個
-        共享前綴的請求會 N 個全部落空。先送一個、等它回來，其餘才並行。
+        共享前綴的請求會 N 個全部落空——**前提是前綴真的進得了快取**。
+        進不了就沒有暖機的必要（見 `_worth_warming`）。
+        每個人可以自帶模型，所以要分組：拿 A 模型暖機救不了 B 模型的前綴。
         """
         results: dict[str, dict | Exception] = {}
         if not calls:
-            return results
-
-        first = calls[0]
-        try:
-            results[first.key] = await self.call(first)
-        except Exception as e:  # noqa: BLE001 - 單一 agent 失敗不該中斷整個 tick
-            results[first.key] = e
-
-        rest = calls[1:]
-        if not rest:
             return results
 
         sem = asyncio.Semaphore(self.cfg.max_concurrency)
@@ -188,9 +219,22 @@ class BaseLLMClient:
             async with sem:
                 try:
                     return c.key, await self.call(c)
-                except Exception as e:  # noqa: BLE001
+                except Exception as e:  # noqa: BLE001 - 單一 agent 失敗不該中斷整個 tick
                     return c.key, e
 
-        for key, val in await asyncio.gather(*(one(c) for c in rest)):
-            results[key] = val
+        groups: dict[str, list[Call]] = {}
+        for c in calls:
+            groups.setdefault(c.model or self.cfg.models[c.tier], []).append(c)
+
+        async def run_group(model: str, cs: list[Call]):
+            out = []
+            if len(cs) > 1 and self._worth_warming(model, cs[0]):
+                out.append(await one(cs[0]))      # 先送一個，把共同前綴寫進快取
+                cs = cs[1:]
+            out.extend(await asyncio.gather(*(one(c) for c in cs)))
+            return out
+
+        for pairs in await asyncio.gather(*(run_group(m, cs) for m, cs in groups.items())):
+            for key, val in pairs:
+                results[key] = val
         return results

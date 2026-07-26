@@ -120,7 +120,7 @@ def scenario_world_block(scen, grid, public_cast: str | None = None) -> str:
     )
 
 
-def apply_cast(world, scen, path: str):
+def apply_cast(world, scen, path: str, provider: str | None = None):
     """讀人物設定檔、驗證、套進世界。回傳要覆蓋的公開人物表。"""
     from . import cast as cast_mod
 
@@ -130,7 +130,7 @@ def apply_cast(world, scen, path: str):
     except cast_mod.CastError as e:
         console.print(f"[red]{e}[/red]")
         sys.exit(2)
-    problems = cast_mod.validate(data, grid, getattr(scen, "NAME", None))
+    problems = cast_mod.validate(data, grid, getattr(scen, "NAME", None), provider)
     if problems:
         console.print(f"[red]人物設定檔有 {len(problems)} 個問題，這次 run 不會開始：[/red]")
         for p in problems:
@@ -139,6 +139,10 @@ def apply_cast(world, scen, path: str):
     cast_mod.apply(world, data, grid)
     names = "、".join(a.name for a in world.agents.values())
     console.print(f"[dim]套用人物設定 {path}：{len(world.agents)} 人（{names}）[/dim]")
+    for a in world.agents.values():
+        if a.llm:
+            bits = "、".join(f"{k}={v}" for k, v in a.llm.items())
+            console.print(f"[dim]  · {a.name} 自帶模型設定：{bits}[/dim]")
     return cast_mod.public_cast_text(data, getattr(scen, "PUBLIC_CAST", ""))
 
 
@@ -224,7 +228,8 @@ def cmd_run(args) -> None:
     cfg = build_config(args, use_cache=not args.no_cache,
                        combat=getattr(scen, "COMBAT", False))
     world = scen.build_world(args.run_id, args.seed)
-    public_cast = apply_cast(world, scen, args.cast) if getattr(args, "cast", None) else None
+    public_cast = (apply_cast(world, scen, args.cast, cfg.provider)
+                   if getattr(args, "cast", None) else None)
     run_dir = RUNS / args.run_id
     engine, log, llm = make_engine(world, scen, cfg, run_dir, quiet=args.quiet, stub=args.stub,
                                    public_cast=public_cast)

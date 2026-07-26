@@ -57,7 +57,9 @@
   .who li{display:flex; gap:9px; align-items:center; padding:6px 7px; border-radius:9px; cursor:pointer}
   .who li:hover{background:var(--panel2)}
   .who li.sel{background:color-mix(in srgb,var(--gold) 22%,transparent); outline:1px solid var(--gold)}
-  .who canvas{width:34px; height:34px; image-rendering:pixelated; border-radius:8px; background:#171410; flex:none}
+  .who canvas, .who img{width:34px; height:34px; image-rendering:pixelated; border-radius:8px;
+    background:#171410; flex:none; object-fit:cover; object-position:50% 14%}
+  .who img{image-rendering:auto}
   .who .n{font-family:var(--disp); font-size:14.5px; font-weight:600; line-height:1.25}
   .who .s{font-size:10.5px; color:var(--ink2)}
   .who .bad{margin-left:auto; color:var(--cinnabar); font-size:13px}
@@ -86,9 +88,13 @@
   .chip.none{opacity:.6; cursor:default}
 
   .look{display:flex; gap:12px; align-items:flex-start}
-  .look .prev{flex:none; width:132px; background:var(--field); border:1px solid var(--line2); border-radius:10px;
+  .look .prev{flex:none; width:150px; background:var(--field); border:1px solid var(--line2); border-radius:10px;
     padding:8px; display:flex; flex-direction:column; align-items:center; gap:7px}
   .look .prev canvas{width:112px; height:112px; image-rendering:pixelated}
+  .look .prev canvas.bustcv{width:132px; height:176px; border-radius:6px; box-shadow:0 3px 12px rgba(0,0,0,.45)}
+  .look .prev .ptcv{width:132px; aspect-ratio:3/4; object-fit:cover; border-radius:6px; display:block;
+    box-shadow:0 4px 14px rgba(0,0,0,.5)}
+  .look .prev .lbl{font-size:9.5px; letter-spacing:.18em; color:var(--ink2)}
   .look .prev .fbtn{display:flex; gap:3px}
   .look .fields{flex:1; display:flex; flex-direction:column; gap:9px}
   .swatch{display:flex; align-items:center; gap:7px}
@@ -199,6 +205,7 @@ const terrainOf = (x,y) => ((LEGEND[ROWS[y][x]] || {}).name) || "?";
 const areaAt = (x,y) => (AREAS.find(a => x>=a.x0 && x<=a.x1 && y>=a.y0 && y<=a.y1) || {name:DATA.street}).name;
 
 let S = load() || clone({ scenario:DATA.scenario, agents:DATA.agents });
+S.agents.forEach(a => { a.llm = a.llm || {}; });
 let sel = 0, face = "down", walking = false;
 
 function load() {
@@ -244,6 +251,17 @@ function renderChecks() {
 }
 
 /* ============================ 名單 ============================ */
+const THUMBS = {};                    // id → 已經建好的縮圖節點，重複使用
+function thumbFor(a) {
+  const url = (DATA.portraits || {})[a.id];
+  const key = a.id + "|" + (url ? "p" : JSON.stringify(a.art));
+  if (THUMBS[key]) return THUMBS[key];
+  let el;
+  if (url) { el = document.createElement("img"); el.src = url; el.alt = ""; }
+  else { el = document.createElement("canvas"); el.width = el.height = 34;
+    drawPortrait(el.getContext("2d"), 34, a.art); }
+  THUMBS[key] = el; return el;
+}
 function renderWho() {
   const ps = problems(), bad = new Set(ps.map(([a]) => a.id));
   const ul = document.getElementById("who");
@@ -251,12 +269,11 @@ function renderWho() {
   S.agents.forEach((a, i) => {
     const li = document.createElement("li");
     li.className = i === sel ? "sel" : "";
-    const c = document.createElement("canvas"); c.width = c.height = 34;
-    drawPortrait(c.getContext("2d"), 34, a.art);
-    li.appendChild(c);
+    li.appendChild(thumbFor(a));
     const box = document.createElement("span");
     box.innerHTML = `<span class="n">${esc(a.name || "（無名）")}</span><br>
-      <span class="s">${esc(a.art.sect || "—")}${a.art.title ? " · " + esc(a.art.title) : ""}　武功 ${a.skill}</span>`;
+      <span class="s">${esc(a.art.sect || "—")}${a.art.title ? " · " + esc(a.art.title) : ""}　武功 ${a.skill}
+        ${a.llm && a.llm.model ? `<br><span style="color:var(--gold)">🧠 ${esc(a.llm.model)}</span>` : ""}</span>`;
     li.appendChild(box);
     if (bad.has(a.id)) { const w = document.createElement("span"); w.className = "bad"; w.textContent = "!"; li.appendChild(w); }
     li.onclick = () => { sel = i; renderAll(); };
@@ -269,6 +286,32 @@ function renderWho() {
 const HATS = [["bun","髮髻"],["official","官帽"],["nun","僧帽"],["band","抹額"],["none","不戴"]];
 const BEARDS = [["none","無"],["short","短鬚"],["long","長白鬚"],["stub","鬍碴"]];
 const WEAPONS = [["","空手"],["sword","劍"],["blade","刀"],["qin","琴"]];
+const ACCS = [["","無"],["gourd","酒葫蘆"],["jade","玉佩"],["kasaya","袈裟"]];
+const BROWS = [["flat","平"],["stern","壓眉（狠）"],["worry","八字（怯）"],["raise","挑眉（散漫）"]];
+const MOUTHS = [["line","抿著"],["smirk","似笑非笑"],["small","小口"],["frown","下撇"]];
+const EXTRAS = [["","無"],["scar","臉上有疤"]];
+const THINKS = [["","跟隨預設"],["minimal","minimal"],["low","low"],["medium","medium"],["high","high"],["off","關閉"]];
+const PROV = DATA.providers || {};
+function modelOptions(sel) {
+  let html = `<option value="" ${!sel ? "selected" : ""}>跟隨分層預設</option>`;
+  Object.keys(PROV).forEach(pv => {
+    html += `<optgroup label="${esc(pv)}">` + PROV[pv].models.map(m =>
+      `<option value="${esc(m)}" ${m === sel ? "selected" : ""}>${esc(m)}</option>`).join("") + `</optgroup>`;
+  });
+  if (sel && !Object.values(PROV).some(p => p.models.includes(sel)))
+    html += `<option value="${esc(sel)}" selected>${esc(sel)}（不在目錄裡）</option>`;
+  return html;
+}
+function llmHintText(a) {
+  const m = a.llm.model;
+  if (!m) return "照分層路由：多數 tick 走 routine 的便宜模型，社交場合才升到 dialogue。";
+  for (const pv of Object.keys(PROV)) {
+    const pr = PROV[pv].prices[m];
+    if (pr) return `${pv}：輸入 $${pr[0]}／輸出 $${pr[1]}／快取輸入 $${pr[2]} 每 MTok。`
+      + "　這個人所有的呼叫都會走這個模型（包含 reflection）。";
+  }
+  return "這個模型不在目錄裡——跑得動，但報表會把成本算成 0。";
+}
 const ROLES = [["villager","一般人物"],["protagonist","主角（會被評覺察）"]];
 
 function opt(list, v) { return list.map(([k,t]) => `<option value="${k}" ${k===(v||"")?"selected":""}>${t}</option>`).join(""); }
@@ -289,6 +332,8 @@ function renderForm() {
 
     <div class="look">
       <div class="prev">
+        <img id="portrait" class="ptcv" alt="" hidden>
+        <canvas id="bust" class="bustcv" width="132" height="176"></canvas>
         <canvas id="prev" width="112" height="112"></canvas>
         <div class="fbtn">
           ${["down","left","right","up"].map(f=>`<button class="b mini" data-face="${f}" ${f===face?'style="border-color:var(--gold)"':""}>${{down:"↓",left:"←",right:"→",up:"↑"}[f]}</button>`).join("")}
@@ -312,6 +357,12 @@ function renderForm() {
           <div class="f"><label>頭上</label><select data-art="hat">${opt(HATS, a.art.hat)}</select></div>
           <div class="f"><label>鬚</label><select data-art="beard">${opt(BEARDS, a.art.beard)}</select></div>
           <div class="f"><label>隨身兵器</label><select data-art="weapon">${opt(WEAPONS, a.art.weapon)}</select></div>
+          <div class="f"><label>身上帶著</label><select data-art="acc">${opt(ACCS, a.art.acc)}</select></div>
+        </div>
+        <div class="row">
+          <div class="f"><label>眉 <span>立繪的底色</span></label><select data-art="brow">${opt(BROWS, a.art.brow)}</select></div>
+          <div class="f"><label>嘴</label><select data-art="mouth">${opt(MOUTHS, a.art.mouth)}</select></div>
+          <div class="f"><label>臉上</label><select data-art="extra">${opt(EXTRAS, a.art.extra)}</select></div>
         </div>
       </div>
     </div>
@@ -321,6 +372,25 @@ function renderForm() {
         <div class="sk"><input type="range" min="1" max="10" step="1" data-k="skill" value="${a.skill}"><b id="skv">${a.skill}</b></div></div>
       <div class="f"><label>家 <span>沒事會回去的地方</span></label><select data-k="home_area">${areaOpts}</select></div>
       <div class="f" style="flex:0 0 190px"><label>角色類型</label><select data-k="role">${opt(ROLES, a.role)}</select></div>
+    </div>
+
+    <div class="f wide" style="border-top:1px solid var(--line); padding-top:12px">
+      <label>這個人的腦袋 <span>不設就照分層路由走（routine/dialogue 各自的預設模型）</span></label>
+      <div class="row" style="margin-top:4px">
+        <div class="f" style="flex:2 1 240px"><label style="color:var(--ink2)">模型</label>
+          <select data-llm="model">${modelOptions(a.llm.model)}</select></div>
+        <div class="f"><label style="color:var(--ink2)">溫度 <span>越高越跳</span></label>
+          <div class="sk"><input type="range" min="0" max="2" step="0.05" data-llm="temperature"
+            value="${a.llm.temperature == null ? 1 : a.llm.temperature}"
+            ${a.llm.temperature == null ? "disabled" : ""}>
+            <b id="tv">${a.llm.temperature == null ? "預設" : (+a.llm.temperature).toFixed(2)}</b></div>
+          <label style="font-weight:400;letter-spacing:0;color:var(--ink2);font-size:11px">
+            <input type="checkbox" data-llm="tempOn" ${a.llm.temperature == null ? "" : "checked"}
+              style="width:auto;vertical-align:-2px"> 自訂溫度</label></div>
+        <div class="f" style="flex:0 0 150px"><label style="color:var(--ink2)">思考深度</label>
+          <select data-llm="thinking">${opt(THINKS, a.llm.thinking)}</select></div>
+      </div>
+      <div class="hint" id="llmHint"></div>
     </div>
 
     <div class="f wide"><label>在意的人 <span>他們死了，噩耗會傳到這個人眼前，逼他面對要不要討公道</span></label>
@@ -363,6 +433,28 @@ function renderForm() {
       touch(true);
     };
   });
+  document.querySelectorAll("#form [data-llm]").forEach(el => {
+    const k = el.dataset.llm;
+    el.oninput = el.onchange = () => {
+      const a = cur();
+      if (k === "tempOn") {
+        const on = el.checked;
+        const r = document.querySelector('#form [data-llm="temperature"]');
+        r.disabled = !on;
+        a.llm.temperature = on ? +r.value : undefined;
+        if (!on) delete a.llm.temperature;
+        document.getElementById("tv").textContent = on ? (+r.value).toFixed(2) : "預設";
+      } else if (k === "temperature") {
+        a.llm.temperature = +el.value;
+        document.getElementById("tv").textContent = (+el.value).toFixed(2);
+      } else {
+        if (el.value) a.llm[k] = el.value; else delete a.llm[k];
+        if (k === "model") document.getElementById("llmHint").textContent = llmHintText(a);
+      }
+      touch(k === "model");
+    };
+  });
+  document.getElementById("llmHint").textContent = llmHintText(cur());
   document.querySelectorAll("#form [data-kin]").forEach(el => {
     el.onclick = () => {
       const id = el.dataset.kin, on = el.getAttribute("aria-pressed") === "true";
@@ -384,6 +476,10 @@ function plen() {
 /* 預覽 */
 let frame = 0;
 function drawPreview() {
+  const im = document.getElementById("portrait"), url = (DATA.portraits || {})[cur().id];
+  if (im) { im.hidden = !url; if (url && im.dataset.for !== cur().id) { im.src = url; im.dataset.for = cur().id; } }
+  const b = document.getElementById("bust");
+  if (b) drawBust(b.getContext("2d"), 132, cur().art, {});
   const c = document.getElementById("prev"); if (!c) return;
   const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
   g.clearRect(0,0,112,112);
@@ -401,7 +497,8 @@ function drawMap() {
   map.width = t * W; map.height = t * H;
   map.style.height = (t * H) + "px";
   mg.imageSmoothingEnabled = false;
-  mg.drawImage(worldCv, 0, 0, worldCv.width, worldCv.height, 0, 0, map.width, map.height);
+  const m = worldCv.margin || 0;                     // 工作室只顯示城內，點格子的座標才對得上
+  mg.drawImage(worldCv, m * TS_ART, m * TS_ART, W * TS_ART, H * TS_ART, 0, 0, map.width, map.height);
   S.agents.forEach((a, i) => {
     const cx = (a.start[0] + .5) * t, cy = (a.start[1] + .5) * t;
     if (i === sel) {
@@ -440,7 +537,7 @@ function payload() {
   return { scenario: S.scenario, agents: S.agents.map(a => ({
     id: a.id, name: a.name, role: a.role, home_area: a.home_area,
     start: [a.start[0], a.start[1]], skill: a.skill, kin: (a.kin || []).slice(),
-    public: a.public || "", persona: a.persona || "", art: a.art,
+    public: a.public || "", persona: a.persona || "", llm: a.llm || {}, art: a.art,
   })) };
 }
 const json = () => JSON.stringify(payload(), null, 2);
@@ -453,7 +550,7 @@ function download() {
 function adopt(d) {
   if (!d || !Array.isArray(d.agents) || !d.agents.length) { alert("這份 JSON 裡沒有 agents。"); return; }
   const fb = DATA.art_defaults.fallback;
-  d.agents.forEach(a => { a.art = Object.assign({}, fb, a.art || {}); a.kin = a.kin || [];
+  d.agents.forEach(a => { a.art = Object.assign({}, fb, a.art || {}); a.kin = a.kin || []; a.llm = a.llm || {};
     a.start = a.start || [1,1]; a.skill = a.skill == null ? 5 : a.skill; a.role = a.role || "villager"; });
   S = { scenario: d.scenario || DATA.scenario, agents: d.agents };
   sel = 0; touch(true);
@@ -488,7 +585,7 @@ document.getElementById("btnAdd").onclick = () => {
   let n = 1; while (S.agents.some(a => a.id === "new_" + n)) n++;
   const spot = [[1,5],[5,12],[18,12],[9,8],[21,4],[3,13]].find(p => walkable(p[0],p[1]) && !S.agents.some(a=>a.start[0]===p[0]&&a.start[1]===p[1])) || [1,4];
   S.agents.push({ id:"new_"+n, name:"新人物"+n, role:"villager", home_area:DATA.street,
-    start:spot, skill:5, kin:[], public:"", persona:"",
+    start:spot, skill:5, kin:[], public:"", persona:"", llm:{},
     art: Object.assign({}, DATA.art_defaults.fallback) });
   sel = S.agents.length - 1; touch(true);
 };

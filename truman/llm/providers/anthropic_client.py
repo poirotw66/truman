@@ -52,13 +52,22 @@ class AnthropicClient(BaseLLMClient):
         return cfg
 
     async def _invoke(self, c: Call, model: str):
+        thinking = TIER_PARAMS[c.tier]["thinking"]
+        if c.thinking:                       # agent 自帶的設定蓋過分層預設
+            thinking = {"type": "disabled"} if c.thinking in ("off", "disabled", "minimal")                 else {"type": "adaptive"}
+        kw = {}
+        # 開了 extended thinking 就不能同時給 temperature（API 會直接拒絕），
+        # 這種情況安靜忽略溫度，不要讓整場 run 掛在這裡。
+        if c.temperature is not None and thinking.get("type") == "disabled":
+            kw["temperature"] = c.temperature
         resp = await self._client.messages.create(
             model=model,
             max_tokens=c.max_tokens,
             system=self._system(c.system_blocks),
             messages=[{"role": "user", "content": c.user_message}],
             output_config=self._output_config(c.tier, c.schema),
-            thinking=TIER_PARAMS[c.tier]["thinking"],
+            thinking=thinking,
+            **kw,
         )
         usage = {
             "inp": resp.usage.input_tokens,

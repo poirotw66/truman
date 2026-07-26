@@ -21,29 +21,32 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from art.embed_portraits import portrait_map  # noqa: E402
+from truman.config import PROVIDERS  # noqa: E402
+
 # 長相：劇本 .py 裡沒有這一層（引擎不需要），預設值放這裡，之後以 cast.json 為準。
 ART_DEFAULTS = {
     "liu_zhengfeng": {"sect":"衡山派","title":"劉三爺","color":"#4f9b86","robe":"#3f7d6e","trim":"#25584c",
-                      "hair":"#241d16","hat":"bun","beard":"short","weapon":"sword",
-                      "goal":"把這個手洗完。誰來說什麼，都忍。"},
+                      "hair":"#241d16","hat":"bun","beard":"short","weapon":"sword","acc":"jade",
+                      "brow":"flat","mouth":"small","goal":"把這個手洗完。誰來說什麼，都忍。"},
     "fei_bin": {"sect":"嵩山派","title":"大嵩陽手","color":"#6f7a94","robe":"#3d4457","trim":"#20242f",
                 "hair":"#191510","hat":"official","beard":"none","weapon":"sword",
-                "goal":"攔下這場洗手。用什麼手段都可以。"},
+                "brow":"stern","mouth":"frown","goal":"攔下這場洗手。用什麼手段都可以。"},
     "linghu_chong": {"sect":"華山派","title":"岳不群大弟子","color":"#c9903a","robe":"#b07a1e","trim":"#7d5310",
-                     "hair":"#241d16","hat":"bun","beard":"none","weapon":"sword",
-                     "goal":"少說話、別惹事——他自己也知道當不得真。"},
+                     "hair":"#241d16","hat":"bun","beard":"none","weapon":"sword","acc":"gourd",
+                     "brow":"raise","mouth":"smirk","goal":"少說話、別惹事——他自己也知道當不得真。"},
     "yi_lin": {"sect":"恆山派","title":"定逸師太弟子","color":"#cf8fa4","robe":"#d9d0bd","trim":"#a58f8f",
-               "hair":"none","hat":"nun","beard":"none","weapon":None,
-               "goal":"找到師父，或找個安全的地方待著。"},
+               "hair":"none","hat":"nun","beard":"none","weapon":None,"acc":"kasaya",
+               "brow":"worry","mouth":"small","goal":"找到師父，或找個安全的地方待著。"},
     "tian_boguang": {"sect":"萬里獨行","title":"快刀無雙","color":"#b84a3c","robe":"#8e3b31","trim":"#5c231d",
                      "hair":"#1b1610","hat":"band","beard":"stub","weapon":"blade",
-                     "goal":"把那個落單的小尼姑哄到沒人的地方去。"},
+                     "brow":"raise","mouth":"smirk","extra":"scar","goal":"把那個落單的小尼姑哄到沒人的地方去。"},
     "qu_yang": {"sect":"日月神教","title":"長老","color":"#8b6bab","robe":"#6b4a86","trim":"#42295a",
                 "hair":"#ddd6c8","hat":"bun","beard":"long","weapon":"qin",
-                "goal":"遠遠看他一眼就走。別連累他。"},
+                "brow":"flat","mouth":"line","goal":"遠遠看他一眼就走。別連累他。"},
 }
 FALLBACK_ART = {"sect":"","title":"","color":"#8a8272","robe":"#6f6455","trim":"#463f34",
-                "hair":"#241d16","hat":"bun","beard":"none","weapon":None,"goal":""}
+                "hair":"#241d16","hat":"bun","beard":"none","weapon":None,"acc":None,"brow":"flat","mouth":"line","extra":None,"goal":""}
 
 
 def split_public_cast(text: str, names: list[str]) -> tuple[dict[str, str], list[str]]:
@@ -81,6 +84,7 @@ def main(scenario: str = "jianghu") -> None:
             "skill": a.get("skill", 5), "kin": list(a.get("kin", [])),
             "public": public.get(a["name"], ""),
             "persona": a["persona"].rstrip(),
+            "llm": {},
             "art": art,
         })
 
@@ -96,6 +100,15 @@ def main(scenario: str = "jianghu") -> None:
         "agents": agents,
         "leftover_public": leftover,
         "art_defaults": {"fallback": FALLBACK_ART},
+        "portraits": portrait_map(scen.NAME),
+        # 模型目錄：讓工作室的下拉選單有東西可選，並且能就地估價
+        "providers": {
+            name: {
+                "tiers": p["models"],
+                "models": sorted(p["prices"]),
+                "prices": {m: list(v) for m, v in p["prices"].items()},
+            } for name, p in PROVIDERS.items()
+        },
     }
 
     # 劇本原設定也存成一份 cast.json：可以直接拿去 --cast 跑，也方便 diff 自己改了什麼

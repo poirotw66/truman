@@ -53,9 +53,18 @@ def pick_tier(agent, reason: str, obs, cfg) -> str:
 # ---------------------------------------------------------------- 請求組裝
 
 
+def agent_llm(agent) -> dict:
+    """這個人自帶的模型設定；沒設就是空的，Call 上是 None，一切照分層預設。"""
+    d = getattr(agent, "llm", None) or {}
+    return {"model": d.get("model") or None,
+            "temperature": d.get("temperature"),
+            "thinking": d.get("thinking") or None}
+
+
 def action_call(agent, obs, world_block_text: str, cfg, tier: str, tick: int) -> Call:
     memories = agent.memory.retrieve(obs.retrieval_query(), tick, cfg.retrieval_k, cfg)
     return Call(
+        **agent_llm(agent),
         key=f"{tick}:{agent.id}:act",
         tier=tier,
         # 順序即快取層級：世界（全共用）→ 人設＋信念（每人一份，只在 reflection 變）
@@ -69,6 +78,7 @@ def action_call(agent, obs, world_block_text: str, cfg, tier: str, tick: int) ->
 def reflection_call(agent, world_block_text: str, cfg, tick: int) -> Call:
     memories = agent.memory.recent(cfg.reflection_window)
     return Call(
+        **agent_llm(agent),
         key=f"{tick}:{agent.id}:reflect",
         tier="reflect",
         system_blocks=[world_block_text, persona_block(agent)],

@@ -41,6 +41,9 @@ class AgentState:
     # 這個人在意的人（師門／親友／知音）的 id。他們死了，噩耗會傳到這個人眼前，
     # 逼他面對「要不要討公道」——見 Engine._notify_kin。江湖上沒有白死的人。
     kin: list[str] = field(default_factory=list)
+    # 這個人自己的模型設定：{"model":..., "temperature":..., "thinking":...}。
+    # 空的就照 SimConfig 的分層路由走。可序列化，所以 checkpoint / fork 都帶得過去。
+    llm: dict = field(default_factory=dict)
 
     @property
     def is_protagonist(self) -> bool:
@@ -74,6 +77,7 @@ class AgentState:
             "killed_by": self.killed_by,
             "fury": self.fury,
             "kin": self.kin,
+            "llm": self.llm,
         }
 
     @staticmethod
@@ -97,6 +101,7 @@ class AgentState:
             killed_by=d.get("killed_by", ""),
             fury=d.get("fury", 0),
             kin=list(d.get("kin", [])),
+            llm=dict(d.get("llm", {})),
         )
 
 

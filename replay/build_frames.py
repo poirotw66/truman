@@ -1,19 +1,21 @@
 """把一場 run 的事件日誌重建成回放用的逐 tick frames，並產出自帶資料的 HTML。
 
-沒有 API 呼叫。座標是把日誌裡的 move_to 意圖丟回引擎同一套 BFS 重放出來的，
-再拿每 12 tick 的 checkpoint 對答案（不合就 snap 到真值）。
+沒有 API 呼叫。座標優先讀日誌裡的 `snapshot` 事件——引擎每個 tick 記一次全員位置／
+傷勢／生死，那是**真值**。舊的 run（snapshot 是後來才加的）才退回「把 move_to 意圖
+丟回同一套 BFS 重放、再拿 checkpoint 對答案」的近似法。
 其餘（心裡話／對話／動手／死亡／導演旁白）直接從事件日誌撈。
 
 用法：
-    python replay/build_frames.py            # 預設 j1(0-47) + j1b(48-)
+    python replay/build_frames.py                 # 預設 j1(0-47) + j1b(48-)
+    python replay/build_frames.py --run j2        # 單一 run
+    python replay/build_frames.py --run j2 --out j2_replay.html
 輸出：
     replay/frames.json      中繼資料
-    jianghu_replay.html     自帶資料、離線可開的回放頁
-
-要換別場 run，改下面的 SOURCES。
+    <out>                   自帶資料、離線可開的回放頁（預設 jianghu_replay.html）
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -22,14 +24,57 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scenarios import jianghu  # noqa: E402
+from art.embed_portraits import portrait_map  # noqa: E402
 from truman.world.grid import Pos  # noqa: E402
 
 # (run 名稱, 取這個 run 的 tick 範圍 [起, 迄))：j1 跑了前半天，j1b 從 checkpoint fork 續跑
 SOURCES = [("j1", 0, 48), ("j1b", 48, 10**9)]
 CHECKPOINTS = [("j1", (12, 24, 36, 48)), ("j1b", (60, 72, 84, 96))]
 
+_ap = argparse.ArgumentParser(description="事件日誌 → 回放頁")
+_ap.add_argument("--run", action="append", help="改用這個 run（可重複，依序接起來）")
+_ap.add_argument("--out", default="jianghu_replay.html", help="輸出的 HTML 檔名")
+ARGS = _ap.parse_args()
+if ARGS.run:
+    SOURCES = [(ARGS.run[0], 0, 10**9)] if len(ARGS.run) == 1 else         [(r, 0, 10**9) for r in ARGS.run]
+    # 單一 run 的 checkpoint 對答案：有幾個就撿幾個
+    CHECKPOINTS = [(r, tuple(int(p.stem[1:]) for p in
+                             sorted((ROOT / "runs" / r / "checkpoints").glob("t*.json"))))
+                   for r, _, _ in SOURCES
+                   if (ROOT / "runs" / r / "checkpoints").exists()]
+
 MOVE_SPEED = 3
 grid = jianghu.build_grid()
+
+
+def walk_between(a: Pos, b: Pos, limit: int = 8) -> list[list[int]]:
+    """兩個已知位置之間的最短路徑（不含起點）。
+
+    snapshot 只記每個 tick 結束時站在哪，中間怎麼走沒記。回放要一格一格走才好看，
+    所以這裡補一條最短路——反正兩端都是真值，中間只是視覺上的補間。
+    """
+    if a == b:
+        return []
+    from collections import deque
+
+    prev = {a: None}
+    q = deque([a])
+    while q:
+        cur = q.popleft()
+        if cur == b:
+            out = []
+            node = cur
+            while node is not None and node != a:
+                out.append([node.x, node.y])
+                node = prev[node]
+            out.reverse()
+            return out if len(out) <= limit else [[b.x, b.y]]
+        for d in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nxt = Pos(cur.x + d[0], cur.y + d[1])
+            if nxt not in prev and grid.walkable(nxt):
+                prev[nxt] = cur
+                q.append(nxt)
+    return [[b.x, b.y]]                      # 不可達（例如被 snap 過）就直接跳過去
 
 AGENTS = {a["id"]: a for a in jianghu.AGENTS}
 START = {a["id"]: Pos(*a["start"]) for a in jianghu.AGENTS}
@@ -54,6 +99,15 @@ print("merged events:", len(events), "max_tick:", max_tick)
 by_tick: dict[int, list] = {}
 for r in events:
     by_tick.setdefault(r["tick"], []).append(r)
+
+# 逐 tick 真值快照（引擎在每個 tick 結尾寫的）。舊 run 沒有這個事件，就退回 BFS 重建。
+snaps: dict[int, dict] = {}
+for r in events:
+    if r["type"] == "snapshot":
+        snaps[r["tick"]] = r["data"]["agents"]
+USE_SNAPSHOT = len(snaps) > max_tick * 0.9
+print(f"snapshot 事件：{len(snaps)} / {max_tick + 1} tick"
+      f" → 位置來源：{'snapshot（真值）' if USE_SNAPSHOT else 'BFS 重建（近似，舊 run）'}")
 
 # 心裡話：llm_call 的 output，key 是 "<tick>:<aid>:act|reply"
 thought_at: dict[tuple[int, str], str] = {}
@@ -133,25 +187,38 @@ for t in range(0, max_tick + 1):
         elif ty == "director" and d.get("fired") and d.get("text"):
             tick_events.append({"kind": "world", "area": d.get("area", ""), "text": d["text"]})
 
-    # 走位：每 tick 最多走 MOVE_SPEED 格，逐格記下來（回放要一格一格走）
     steps: dict[str, list[list[int]]] = {}
-    for aid in AGENTS:
-        act = action[aid]
-        if alive[aid] and act and act["path"]:
-            taken = act["path"][:MOVE_SPEED]
-            steps[aid] = [[p.x, p.y] for p in taken]
-            walked[aid] += len(taken)
-            pos[aid] = taken[-1]
-            act["path"] = act["path"][MOVE_SPEED:]
-            if not act["path"]:
-                action[aid] = None
+    if USE_SNAPSHOT and t in snaps:
+        # 真值：位置／傷勢／生死全部照引擎當時記的來，中間補一條最短路讓人一格一格走
+        for aid, snap in snaps[t].items():
+            if aid not in AGENTS:
+                continue
+            nxt = Pos.of(snap["pos"])
+            if nxt != pos[aid]:
+                steps[aid] = walk_between(pos[aid], nxt)
+                walked[aid] += len(steps[aid])
+                pos[aid] = nxt
+            wound[aid] = snap.get("wound", wound[aid])
+            alive[aid] = snap.get("alive", alive[aid])
+    else:
+        # 舊 run：把 move_to 意圖丟回 BFS 重放，每 tick 最多走 MOVE_SPEED 格
+        for aid in AGENTS:
+            act = action[aid]
+            if alive[aid] and act and act["path"]:
+                taken = act["path"][:MOVE_SPEED]
+                steps[aid] = [[p.x, p.y] for p in taken]
+                walked[aid] += len(taken)
+                pos[aid] = taken[-1]
+                act["path"] = act["path"][MOVE_SPEED:]
+                if not act["path"]:
+                    action[aid] = None
 
-    if t in checkpoints:
-        for aid, cp_pos in checkpoints[t].items():
-            if pos[aid] != cp_pos:
-                drift += 1
-                pos[aid] = cp_pos
-                steps[aid] = [[cp_pos.x, cp_pos.y]]  # snap 到真值，走位以 checkpoint 為準
+        if t in checkpoints:
+            for aid, cp_pos in checkpoints[t].items():
+                if pos[aid] != cp_pos:
+                    drift += 1
+                    pos[aid] = cp_pos
+                    steps[aid] = [[cp_pos.x, cp_pos.y]]  # snap 到真值
 
     agents_frame = {}
     for aid in AGENTS:
@@ -165,7 +232,15 @@ for t in range(0, max_tick + 1):
         agents_frame[aid] = cell
     frames.append({"tick": t, "agents": agents_frame, "events": tick_events})
 
-print(f"drift vs checkpoints: {drift} cell-mismatches (snapped)")
+if USE_SNAPSHOT:
+    # 有真值就順便拿 checkpoint 再對一次——兩邊都對得上才敢說這條時間線是準的
+    bad = sum(1 for t, cp in checkpoints.items()
+              for aid, cp_pos in cp.items()
+              if t < len(frames) and Pos.of([frames[t]["agents"][aid]["x"],
+                                             frames[t]["agents"][aid]["y"]]) != cp_pos)
+    print(f"snapshot vs checkpoint：{bad} 處不一致" + ("（完全吻合）" if not bad else " ⚠"))
+else:
+    print(f"drift vs checkpoints: {drift} cell-mismatches (snapped)")
 
 legend = {sym: {"name": n, "walk": w} for sym, (n, w) in jianghu.LEGEND.items()}
 areas = [{"name": a.name, "x0": a.x0, "y0": a.y0, "x1": a.x1, "y1": a.y1, "desc": a.description}
@@ -186,6 +261,7 @@ out = {
     "max_tick": max_tick,
     "stats": {"speeches": n_speech, "attacks": n_attack, "deaths": n_death,
               "walked": sum(walked.values())},
+    "portraits": portrait_map("jianghu"),
 }
 
 outp = Path(__file__).with_name("frames.json")
@@ -200,7 +276,7 @@ for marker in ("/*__DATA__*/ null", "/*__PIXELART__*/"):
 art = (ROOT / "web" / "pixelart.js").read_text(encoding="utf-8")
 html = tpl.replace("/*__PIXELART__*/", art)
 html = html.replace("/*__DATA__*/ null", json.dumps(out, ensure_ascii=False, separators=(",", ":")))
-htmlp = ROOT / "jianghu_replay.html"
+htmlp = ROOT / ARGS.out
 htmlp.write_text(html, encoding="utf-8")
 print("wrote", htmlp, f"{htmlp.stat().st_size / 1024:.1f} KB")
 
