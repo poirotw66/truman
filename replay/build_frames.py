@@ -35,12 +35,35 @@ _ap = argparse.ArgumentParser(description="事件日誌 → 回放頁")
 _ap.add_argument("--run", action="append", help="改用這個 run（可重複，依序接起來）")
 _ap.add_argument("--out", default="jianghu_replay.html", help="輸出的 HTML 檔名")
 ARGS = _ap.parse_args()
+
+
+def fork_tick(run: str) -> int | None:
+    """這個 run 是從第幾拍 fork 出來的（沒有 fork 事件就是從頭跑的原始 run）。"""
+    for line in (ROOT / "runs" / run / "events.jsonl").open(encoding="utf-8"):
+        if '"fork"' not in line:
+            continue
+        r = json.loads(line)
+        if r["type"] == "fork":
+            return r["data"]["at_tick"]
+    return None
+
+
 if ARGS.run:
-    SOURCES = [(ARGS.run[0], 0, 10**9)] if len(ARGS.run) == 1 else         [(r, 0, 10**9) for r in ARGS.run]
-    # 單一 run 的 checkpoint 對答案：有幾個就撿幾個
-    CHECKPOINTS = [(r, tuple(int(p.stem[1:]) for p in
-                             sorted((ROOT / "runs" / r / "checkpoints").glob("t*.json"))))
-                   for r, _, _ in SOURCES
+    # 接力的 run 之間 tick 是重疊的：j2 記到 26，但 j2b 從 24 fork 出去，
+    # 24–26 那三拍在 j2 裡是被丟掉的舊分支。所以前一段的界線 = 後一段的 fork 點，
+    # 直接用每個 run 自己記的 fork 事件推，不要人工指定（指定錯了畫面會鬼影重疊）。
+    starts = [fork_tick(r) or 0 for r in ARGS.run]
+    bounds = starts[1:] + [10**9]
+    SOURCES = [(r, lo, hi) for r, lo, hi in zip(ARGS.run, starts, bounds)]
+    for r, lo, hi in SOURCES:
+        print(f"  {r}: tick [{lo}, {'∞' if hi > 10**8 else hi})")
+    # checkpoint 對答案只撿落在該段範圍內的，否則會拿別條分支的答案來對。
+    # 範圍要用「它描述的那一拍」(t-1) 來判斷，不是檔名——見下面 checkpoints 的註解。
+    CHECKPOINTS = [(r, tuple(t for t in
+                             (int(p.stem[1:]) for p in
+                              sorted((ROOT / "runs" / r / "checkpoints").glob("t*.json")))
+                             if lo <= t - 1 < hi))
+                   for r, lo, hi in SOURCES
                    if (ROOT / "runs" / r / "checkpoints").exists()]
 
 MOVE_SPEED = 3
@@ -128,12 +151,16 @@ def load_cp(run: str, t: int):
     return {aid: Pos.of(a["pos"]) for aid, a in d["agents"].items()}
 
 
+# checkpoint 檔名比它描述的狀態晚一拍：engine.tick() 是先寫 snapshot（此時 w.tick 還是 t）、
+# 再 w.tick += 1、然後才用**已經加一**的 w.tick 當檔名存檔。所以 t00012.json 記的是
+# 第 11 拍結束的世界。這裡改以「它真正描述的那一拍」當鍵，底下對答案與 BFS 校正才不會差一步
+# （差一步 = 差一個 MOVE_SPEED = 3 格，在畫面上就是人物瞬移）。
 checkpoints = {}
 for run, ts in CHECKPOINTS:
     for t in ts:
         cp = load_cp(run, t)
-        if cp:
-            checkpoints[t] = cp
+        if cp and t > 0:
+            checkpoints[t - 1] = cp
 
 # ---- 重放 ----
 pos = {aid: START[aid] for aid in AGENTS}

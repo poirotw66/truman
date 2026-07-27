@@ -10,6 +10,7 @@ import json
 import shutil
 import sys
 import tempfile
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -474,6 +475,37 @@ def main() -> int:
                 hits += 1
         failures += not check("重傷者拼死一擊能傷到武功更高的人", hits > 0, f"{hits}/60 命中")
 
+        # 機制對了還不夠：角色要在「此刻」讀得到，否則永遠不會去用它。
+        # j2 全程 13 次動手只有 1 次是帶傷者發動——因為 observation 只講傷的壞處。
+        wo = jianghu.build_world("obs_wound", 7)
+        wo.tick = 5
+        who = wo.agents["linghu_chong"]
+        grid_j = jianghu.build_grid()
+        txt0 = build_observations(wo, grid_j, [], {}, SimConfig())[who.id].render()
+        failures += not check("沒傷沒怒時完全不提（和平劇本讀起來一樣）",
+                              "門戶" not in txt0 and "更狠" not in txt0)
+        who.wound = 1
+        txt1 = build_observations(wo, grid_j, [], {}, SimConfig())[who.id].render()
+        failures += not check("輕傷要講守勢變弱", "防身" in txt1)
+        failures += not check("輕傷不能只講壞處（攻擊還使得上力）", "還使得上力" in txt1)
+        who.wound = 2
+        txt2 = build_observations(wo, grid_j, [], {}, SimConfig())[who.id].render()
+        failures += not check("重傷要講這一刀更狠", "更狠" in txt2)
+        failures += not check("重傷也要講門戶大開（不能只講強）", "門戶大開" in txt2)
+
+        # fury 先前只進骰子沒進眼前，角色不知道自己在憤怒（儀琳封頂 4 到死沒動手）
+        wf = jianghu.build_world("obs_fury", 7)
+        wf.tick = 5
+        whf = wf.agents["yi_lin"]
+        f0 = build_observations(wf, grid_j, [], {}, SimConfig())[whf.id].render()
+        failures += not check("fury 0 時不提", "義憤" not in f0 and "這股火" not in f0)
+        whf.fury = 2
+        f2 = build_observations(wf, grid_j, [], {}, SimConfig())[whf.id].render()
+        failures += not check("見過一次殺人：眼前讀得到", "比平時狠" in f2)
+        whf.fury = 4
+        f4 = build_observations(wf, grid_j, [], {}, SimConfig())[whf.id].render()
+        failures += not check("義憤封頂時語氣更重", "不會再留餘地" in f4)
+
         print("\n尋仇")
         # 有人死了，噩耗＋尋仇的念頭下一拍傳到不在場的知音眼前（obs.injected → needs_llm）。
         w = jianghu.build_world("revenge", 7)
@@ -681,6 +713,66 @@ def main() -> int:
                       schema={}, model=("gemini-3.5-flash" if i % 2 else None)) for i in range(6)]
         asyncio.run(probe3.run_batch(mixed))
         failures += not check("混模型時兩組各自暖機", probe3.peak == 4, f"峰值併發 {probe3.peak}")
+
+        # ---- 逾時與重試：一條吊住的連線不該讓整場模擬停住（j2 卡了半小時的那個 bug）----
+        print("")
+        print("逾時與重試")
+        cfg_t = SimConfig(provider="gemini", call_timeout=0.05, max_retries=3)
+
+        class _Hang(BaseLLMClient):
+            provider = "hang"
+
+            def __init__(self, cfg, log):
+                super().__init__(cfg, log)
+                self.tries = 0
+
+            async def _invoke(self, c, model):
+                self.tries += 1
+                await asyncio.sleep(60)   # 永遠不回來
+
+        hang = _Hang(cfg_t, EventLog(tmp / "hang"))
+        one = Call(key="h", tier="routine", system_blocks=["短"], user_message="u", schema={})
+        t0 = time.monotonic()
+        failures += not check("吊住的呼叫會逾時，不會永遠等下去",
+                              _raises(lambda: asyncio.run(hang.call(one))))
+        failures += not check("逾時會重試到上限就放棄", hang.tries == 3, f"送了 {hang.tries} 次")
+        failures += not check("逾時不是靠等自然結束", time.monotonic() - t0 < 20,
+                              f"{time.monotonic() - t0:.1f}s")
+
+        class _Flaky(BaseLLMClient):
+            provider = "flaky"
+
+            def __init__(self, cfg, log):
+                super().__init__(cfg, log)
+                self.tries = 0
+
+            async def _invoke(self, c, model):
+                self.tries += 1
+                if self.tries < 3:
+                    raise RuntimeError("503 Service Unavailable")
+                return {"ok": True}, None, {"inp": 1, "out": 1}
+
+        flaky = _Flaky(cfg_t, EventLog(tmp / "flaky"))
+        failures += not check("暫時性錯誤重試後救得回來",
+                              asyncio.run(flaky.call(one)) == {"ok": True}
+                              and flaky.tries == 3, f"送了 {flaky.tries} 次")
+
+        class _Bad(BaseLLMClient):
+            provider = "bad"
+
+            def __init__(self, cfg, log):
+                super().__init__(cfg, log)
+                self.tries = 0
+
+            async def _invoke(self, c, model):
+                self.tries += 1
+                raise ValueError("schema 不合法")
+
+        bad = _Bad(cfg_t, EventLog(tmp / "bad"))
+        failures += not check("非暫時性錯誤直接丟出",
+                              _raises(lambda: asyncio.run(bad.call(one))))
+        failures += not check("非暫時性錯誤不重試（不白花錢）", bad.tries == 1,
+                              f"送了 {bad.tries} 次")
 
         # ---- 記憶檢索 ----
         print("\n記憶檢索")

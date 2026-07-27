@@ -28,6 +28,7 @@ class Observation:
     plan: str = ""
     rejection: str = ""  # 上一步被世界駁回的理由，只出現一次
     wound: int = 0  # 自己的傷勢
+    fury: int = 0  # 義憤：親眼見人被殺會漲，出手更狠（和平劇本永遠是 0）
 
     # -------------------------------------------------------- 顯著度
     def new_faces(self, previously_seen: list[str]) -> list[str]:
@@ -73,11 +74,34 @@ class Observation:
         if self.rejection:
             lines.append(f"你上一步沒有做成：{self.rejection}")
 
-        if self.wound:
+        # 傷勢：要講**不對稱**，不能只講壞處。機制上傷只扣守勢、重傷反而讓攻擊更狠，
+        # 但先前這裡只寫「使不上力／再挨一下就完了」，角色讀完的合理結論是「別打」——
+        # 於是背水一戰整條規則從來沒被觸發過（j2 全程 13 次動手只有 1 次是帶傷者發動）。
+        if self.wound == 1:
             lines.append(
-                "你自己身上有傷，動作使不上力。" if self.wound == 1
-                else "你傷得很重，站著都吃力，再挨一下就完了。"
+                "你身上有傷。出手還使得上力，但防身已經不如平時——"
+                "對方要傷你，比先前容易得多。"
             )
+        elif self.wound:
+            lines.append(
+                "你傷得很重，站著都吃力，再挨一下就完了。"
+                "但也正因為命都豁出去了，你這一刀會比平時更狠——"
+                "只是門戶大開，對方若擋得住，你就沒有下一次。"
+            )
+
+        # 義憤：先前只進骰子、沒進眼前，角色根本不知道自己在憤怒
+        # （儀琳 fury 封頂 4 到死都沒動過手）。
+        if self.fury >= 4:
+            lines.append(
+                "你已經見過不只一條人命在你眼前沒了。這股火燒得你手都在抖，"
+                "真動起手來，你不會再留餘地。"
+            )
+        elif self.fury:
+            lines.append(
+                "你親眼見過有人在你面前被殺。那一幕壓在心口散不掉，"
+                "真動起手來，你會比平時狠。"
+            )
+
         lines.append(f"你正在做的事：{self.doing}")
         lines.append(f"你原本的打算：{self.plan}")
         return "\n".join(lines)
@@ -180,5 +204,6 @@ def build_observations(
             plan=a.plan,
             rejection=a.last_rejection,
             wound=a.wound,
+            fury=a.fury,
         )
     return obs
