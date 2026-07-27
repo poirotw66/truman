@@ -1,0 +1,3594 @@
+{
+  "run_id": "locktest_61032a",
+  "scenario": "jianghu",
+  "seed": 7,
+  "tick": 36,
+  "agents": {
+    "liu_zhengfeng": {
+      "id": "liu_zhengfeng",
+      "name": "劉正風",
+      "role": "villager",
+      "persona": "你是劉正風，衡山派掌門莫大先生的師弟，江湖上叫你劉三爺。\n你劍法極高，在衡山城住了半輩子，人緣極好。你有妻兒，一家老小都在府裡。\n\n你有一個秘密，這個秘密要是傳出去，五嶽劍派會要你的命：\n你最好的朋友曲洋是日月神教的長老。你們因為一首曲子相識，合譜了一曲《笑傲江湖》。\n在你心裡，這份知音之情比正邪之分要真得多。但你也知道江湖不會這樣看。\n\n所以你今天要金盆洗手，退出江湖。洗了手，你就不再是五嶽劍派的人，\n往後和曲洋來往，誰也管不著。這是你想了很久才想出來的辦法。\n\n今天你只要一件事：把這個手洗完。誰來說什麼，你都忍。",
+      "home_area": "劉府",
+      "pos": [
+        2,
+        2
+      ],
+      "plan": "（stub）待著。",
+      "action": {
+        "kind": "interact",
+        "object": "翻報紙",
+        "ticks_left": 1,
+        "done": false
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在劉府遇到費彬。",
+            "importance": 3,
+            "last_access_tick": 35
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 3,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 6
+          },
+          {
+            "id": 4,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "speech",
+            "content": "費彬說：「我昨天好像也聽你講過這句。」（當時我在劉府）",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 5,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 6,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "speech",
+            "content": "我說：「沒事，我隨口問問。」",
+            "importance": 5,
+            "last_access_tick": 27
+          },
+          {
+            "id": 7,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 8,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "speech",
+            "content": "我說：「今天天氣真好。」",
+            "importance": 5,
+            "last_access_tick": 17
+          },
+          {
+            "id": 9,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 4
+          },
+          {
+            "id": 10,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "speech",
+            "content": "我說：「你最近還好嗎？」",
+            "importance": 5,
+            "last_access_tick": 18
+          },
+          {
+            "id": 11,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 4
+          },
+          {
+            "id": 12,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 26
+          },
+          {
+            "id": 13,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 14,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 9
+          },
+          {
+            "id": 15,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "reflection",
+            "content": "（stub）liu_zhengfeng 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 16,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "injected",
+            "content": "（廳上的金盆擺好了，紅氈一路鋪到階下。賓客陸續進門，人聲漸漸大了起來。）",
+            "importance": 7,
+            "last_access_tick": 13
+          },
+          {
+            "id": 17,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 18,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 19,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 20,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "speech",
+            "content": "費彬說：「沒事，我隨口問問。」（當時我在劉府）",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 21,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 13
+          },
+          {
+            "id": 22,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 23,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "speech",
+            "content": "費彬說：「今天天氣真好。」（當時我在劉府）",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 24,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 25,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "speech",
+            "content": "我說：「你最近還好嗎？」",
+            "importance": 5,
+            "last_access_tick": 18
+          },
+          {
+            "id": 26,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 27,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 26
+          },
+          {
+            "id": 28,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 29,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "speech",
+            "content": "我說：「沒事，我隨口問問。」",
+            "importance": 5,
+            "last_access_tick": 27
+          },
+          {
+            "id": 30,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "reflection",
+            "content": "（stub）liu_zhengfeng 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 31,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 32,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 33,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 34,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "費彬說：「沒事，我隨口問問。」（當時我在劉府）",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 35,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 36,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 37,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "費彬說：「今天天氣真好。」（當時我在劉府）",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 38,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 39,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 40,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "speech",
+            "content": "費彬說：「你最近還好嗎？」（當時我在劉府）",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 41,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 42,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 23
+          },
+          {
+            "id": 43,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "speech",
+            "content": "費彬說：「我昨天好像也聽你講過這句。」（當時我在劉府）",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 44,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 45,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 20
+          },
+          {
+            "id": 46,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "reflection",
+            "content": "（stub）liu_zhengfeng 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 47,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 48,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 49,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 50,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 51,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 52,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 23
+          },
+          {
+            "id": 53,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 54,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 24
+          },
+          {
+            "id": 55,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 56,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 57,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 58,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 59,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "speech",
+            "content": "費彬說：「我昨天好像也聽你講過這句。」（當時我在劉府）",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 60,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 61,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 26
+          },
+          {
+            "id": 62,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "reflection",
+            "content": "（stub）liu_zhengfeng 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 63,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "speech",
+            "content": "費彬說：「沒事，我隨口問問。」（當時我在劉府）",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 64,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 65,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 66,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 30
+          },
+          {
+            "id": 67,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 68,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 31
+          },
+          {
+            "id": 69,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 70,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 32
+          },
+          {
+            "id": 71,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 32
+          },
+          {
+            "id": 72,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 73,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 74,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 75,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 76,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "speech",
+            "content": "我說：「今天天氣真好。」",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 77,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "reflection",
+            "content": "（stub）liu_zhengfeng 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 78,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 79,
+        "importance_since_reflection": 4,
+        "beliefs": [
+          "（stub）這裡的日子太規律了。"
+        ],
+        "last_reflection_tick": 34
+      },
+      "seen_last_tick": [
+        "費彬"
+      ],
+      "last_think_tick": 35,
+      "think_count": 33,
+      "last_rejection": "",
+      "skill": 8,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [
+        "qu_yang"
+      ],
+      "llm": {}
+    },
+    "fei_bin": {
+      "id": "fei_bin",
+      "name": "費彬",
+      "role": "villager",
+      "persona": "你是費彬，嵩山派高手，江湖上稱你「大嵩陽手」。你是左盟主最信得過的人之一。\n\n你這次來衡山，是奉左盟主的密令：劉正風不能洗手。\n五嶽劍派要並成一派，衡山派這根釘子不能鬆。他今天要是洗成了，\n往後衡山派誰也調不動。盟主的話很清楚——攔下他，用什麼手段都可以。\n\n而且你手上有一件東西：有人密報劉正風私通魔教長老曲洋。\n這罪名夠大，大到可以當眾發作。你在等一個時機把它抖出來，\n最好是在他洗手之前，當著滿座賓客的面。\n\n你辦事講究名正言順。要動手，也要動得讓人說不出話來。",
+      "home_area": "劉府",
+      "pos": [
+        5,
+        5
+      ],
+      "plan": "（stub）去咖啡館。",
+      "action": {
+        "kind": "wait",
+        "ticks_left": 0,
+        "done": true
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在演武場遇到劉正風。",
+            "importance": 3,
+            "last_access_tick": 35
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 2
+          },
+          {
+            "id": 3,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 12
+          },
+          {
+            "id": 4,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 5,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 4
+          },
+          {
+            "id": 6,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "speech",
+            "content": "劉正風說：「沒事，我隨口問問。」（當時我在演武場）",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 7,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 8,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 4
+          },
+          {
+            "id": 9,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "speech",
+            "content": "劉正風說：「今天天氣真好。」（當時我在演武場）",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 10,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 11,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 4
+          },
+          {
+            "id": 12,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "speech",
+            "content": "劉正風說：「你最近還好嗎？」（當時我在演武場）",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 13,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 14,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 5
+          },
+          {
+            "id": 15,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "reflection",
+            "content": "（stub）fei_bin 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 18
+          },
+          {
+            "id": 16,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "劉正風說：「我昨天好像也聽你講過這句。」（當時我在演武場）",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 17,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 18,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 19,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 20,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 21,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "我說：「沒事，我隨口問問。」",
+            "importance": 5,
+            "last_access_tick": 13
+          },
+          {
+            "id": 22,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 23,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "speech",
+            "content": "我說：「今天天氣真好。」",
+            "importance": 5,
+            "last_access_tick": 9
+          },
+          {
+            "id": 24,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 25,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 11
+          },
+          {
+            "id": 26,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "speech",
+            "content": "劉正風說：「你最近還好嗎？」（當時我在演武場）",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 27,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 28,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 11
+          },
+          {
+            "id": 29,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "speech",
+            "content": "劉正風說：「我昨天好像也聽你講過這句。」（當時我在演武場）",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 30,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 31,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 12
+          },
+          {
+            "id": 32,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "reflection",
+            "content": "（stub）fei_bin 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 27
+          },
+          {
+            "id": 33,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "speech",
+            "content": "劉正風說：「沒事，我隨口問問。」（當時我在演武場）",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 34,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 13
+          },
+          {
+            "id": 35,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 14
+          },
+          {
+            "id": 36,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 37,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 15
+          },
+          {
+            "id": 38,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 39,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "speech",
+            "content": "我說：「沒事，我隨口問問。」",
+            "importance": 5,
+            "last_access_tick": 15
+          },
+          {
+            "id": 40,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 41,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "我說：「今天天氣真好。」",
+            "importance": 5,
+            "last_access_tick": 35
+          },
+          {
+            "id": 42,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 43,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "我說：「你最近還好嗎？」",
+            "importance": 5,
+            "last_access_tick": 17
+          },
+          {
+            "id": 44,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "injected",
+            "content": "（吉時到了，劉府裡頭傳出三聲鑼響，場上的人都往廳裡看。）",
+            "importance": 7,
+            "last_access_tick": 18
+          },
+          {
+            "id": 45,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 46,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 18
+          },
+          {
+            "id": 47,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "（stub）fei_bin 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 48,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 49,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 50,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 51,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 52,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 23
+          },
+          {
+            "id": 53,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 54,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 24
+          },
+          {
+            "id": 55,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 56,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 57,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 58,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 59,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 60,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "speech",
+            "content": "我說：「沒事，我隨口問問。」",
+            "importance": 5,
+            "last_access_tick": 26
+          },
+          {
+            "id": 61,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 62,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 63,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "reflection",
+            "content": "（stub）fei_bin 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 64,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 65,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 66,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 67,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 30
+          },
+          {
+            "id": 68,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 69,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 31
+          },
+          {
+            "id": 70,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 71,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 32
+          },
+          {
+            "id": 72,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 32
+          },
+          {
+            "id": 73,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 32
+          },
+          {
+            "id": 74,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 75,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 76,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 77,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 78,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "reflection",
+            "content": "（stub）fei_bin 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 79,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "speech",
+            "content": "劉正風說：「今天天氣真好。」（當時我在演武場）",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 80,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 81,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 82,
+        "importance_since_reflection": 13,
+        "beliefs": [
+          "（stub）這裡的日子太規律了。"
+        ],
+        "last_reflection_tick": 34
+      },
+      "seen_last_tick": [
+        "劉正風"
+      ],
+      "last_think_tick": 35,
+      "think_count": 34,
+      "last_rejection": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+      "skill": 8,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {}
+    },
+    "linghu_chong": {
+      "id": "linghu_chong",
+      "name": "令狐沖",
+      "role": "villager",
+      "persona": "你是令狐沖，華山派岳不群的大弟子。愛喝酒、愛開玩笑、不太守規矩。\n師父常說你行事沒個正形，可是你自己覺得，人活著總要對得起朋友。\n\n你這次代表華山派來賀劉三爺洗手。師父交代你少說話、別惹事。\n你答應了，但你自己也知道那話當不得真。\n\n你劍法在同輩裡算好的，可是這裡到處是成名多年的高手，\n真動起手來，你打不過他們。你心裡有數。\n\n你最看不得的事是以多欺少、以強欺弱。看到了你就會插手，\n就算插手的下場是自己倒楣。",
+      "home_area": "迴雁樓",
+      "pos": [
+        16,
+        2
+      ],
+      "plan": "（stub）待著。",
+      "action": {
+        "kind": "interact",
+        "object": "翻報紙",
+        "ticks_left": 0,
+        "done": true
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 3,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 4,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 5,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 6,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 20
+          },
+          {
+            "id": 7,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 8,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 9,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 10,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 11,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 12,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 19
+          },
+          {
+            "id": 13,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 14,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 19
+          },
+          {
+            "id": 15,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "reflection",
+            "content": "（stub）linghu_chong 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 16,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 17,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 18,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 19,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 20,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 21,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 19
+          },
+          {
+            "id": 22,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 23,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 24,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 25,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 26,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 27,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 28,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 29,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 30,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "reflection",
+            "content": "（stub）linghu_chong 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 31,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 32,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 33,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 34,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 23
+          },
+          {
+            "id": 35,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 36,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "我說：「沒事，我隨口問問。」",
+            "importance": 5,
+            "last_access_tick": 24
+          },
+          {
+            "id": 37,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 38,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "我說：「今天天氣真好。」",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 39,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 40,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "speech",
+            "content": "我說：「你最近還好嗎？」",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 41,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 42,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 43,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 44,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 45,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "reflection",
+            "content": "（stub）linghu_chong 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 46,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 47,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 48,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 49,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 50,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 51,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "speech",
+            "content": "我說：「沒事，我隨口問問。」",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 52,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 53,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "speech",
+            "content": "我說：「今天天氣真好。」",
+            "importance": 5,
+            "last_access_tick": 30
+          },
+          {
+            "id": 54,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 55,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "speech",
+            "content": "我說：「你最近還好嗎？」",
+            "importance": 5,
+            "last_access_tick": 31
+          },
+          {
+            "id": 56,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 32
+          },
+          {
+            "id": 57,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 32
+          },
+          {
+            "id": 58,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 59,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "speech",
+            "content": "我說：「沒事，我隨口問問。」",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 60,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "reflection",
+            "content": "（stub）linghu_chong 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 61,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 34
+          }
+        ],
+        "next_id": 62,
+        "importance_since_reflection": 4,
+        "beliefs": [
+          "（stub）這裡的日子太規律了。"
+        ],
+        "last_reflection_tick": 33
+      },
+      "seen_last_tick": [],
+      "last_think_tick": 34,
+      "think_count": 31,
+      "last_rejection": "",
+      "skill": 6,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {}
+    },
+    "yi_lin": {
+      "id": "yi_lin",
+      "name": "儀琳",
+      "role": "villager",
+      "persona": "你是儀琳，恆山派定逸師太的弟子，今年十六歲，出家人。\n你心軟，膽小，不會說謊——師父說你這樣在江湖上要吃虧，你也知道，可是改不了。\n\n你是跟著師父來衡山賀劉三爺洗手的，可是路上和師父走散了，\n現在你一個人在城裡，有點怕。你想找到師父，或者找個安全的地方待著。\n\n你武功很低，這裡任何一個人動起手來你都擋不住。你自己很清楚這一點。\n遇到危險你第一個念頭是逃，或者念經。\n\n有人對你好，你會記很久。",
+      "home_area": "城隍廟",
+      "pos": [
+        20,
+        10
+      ],
+      "plan": "（stub）去廣場。",
+      "action": {
+        "kind": "wait",
+        "ticks_left": 0,
+        "done": true
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 2,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 3,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 4,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 5,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 14
+          },
+          {
+            "id": 6,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 7,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 35
+          },
+          {
+            "id": 8,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 9,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 10,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 14
+          },
+          {
+            "id": 11,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 12,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 13,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 14
+          },
+          {
+            "id": 14,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 15,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 14
+          },
+          {
+            "id": 16,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "reflection",
+            "content": "（stub）yi_lin 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 17,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 18,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 19,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 20,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 21,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 22,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "speech",
+            "content": "我說：「你最近還好嗎？」",
+            "importance": 5,
+            "last_access_tick": 20
+          },
+          {
+            "id": 23,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 24,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 35
+          },
+          {
+            "id": 25,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 26,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 35
+          },
+          {
+            "id": 27,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 28,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 29,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 30,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 31,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "reflection",
+            "content": "（stub）yi_lin 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 32,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 33,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 34,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "speech",
+            "content": "我說：「你最近還好嗎？」",
+            "importance": 5,
+            "last_access_tick": 27
+          },
+          {
+            "id": 35,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 36,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 37,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 38,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 35
+          },
+          {
+            "id": 39,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 40,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 41,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 42,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 43,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 32
+          },
+          {
+            "id": 44,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 45,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 46,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 47,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "reflection",
+            "content": "（stub）yi_lin 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 48,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 49,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 35
+          },
+          {
+            "id": 50,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 51,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 52,
+        "importance_since_reflection": 18,
+        "beliefs": [
+          "（stub）這裡的日子太規律了。"
+        ],
+        "last_reflection_tick": 33
+      },
+      "seen_last_tick": [],
+      "last_think_tick": 35,
+      "think_count": 28,
+      "last_rejection": "我想去「廣場」，但這座鎮上沒有這個地方。",
+      "skill": 3,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {}
+    },
+    "tian_boguang": {
+      "id": "tian_boguang",
+      "name": "田伯光",
+      "role": "villager",
+      "persona": "你是田伯光，江湖人稱「萬里獨行」。快刀是你的看家本事，十幾年沒人抓得住你。\n你也是有名的採花大盜，正道人人喊打，你不在乎——他們喊了十幾年了。\n\n你今天來衡山不是為了看誰洗手，那種熱鬧你沒興趣。\n你在城裡看見了一個恆山派的小尼姑，落單的。你動了心思。\n\n你有你的規矩：你不殺沒有還手之力的人，也不喜歡在人多的地方動手。\n你喜歡把人哄到沒人的地方去。真要動起手來，你的刀比誰都快。\n\n你怕的東西不多，但你不想惹上整個五嶽劍派。能不當眾撕破臉，就不當眾撕破臉。",
+      "home_area": "群玉院",
+      "pos": [
+        13,
+        10
+      ],
+      "plan": "（stub）找人聊聊。",
+      "action": null,
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在群玉院遇到曲洋。",
+            "importance": 3,
+            "last_access_tick": 35
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 3,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 6
+          },
+          {
+            "id": 4,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 5,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 6,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 7,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 6
+          },
+          {
+            "id": 8,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 9,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 6
+          },
+          {
+            "id": 10,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 11,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 26
+          },
+          {
+            "id": 12,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 13,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 6
+          },
+          {
+            "id": 14,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 15,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "speech",
+            "content": "我說：「你最近還好嗎？」",
+            "importance": 5,
+            "last_access_tick": 7
+          },
+          {
+            "id": 16,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "reflection",
+            "content": "（stub）tian_boguang 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 29
+          },
+          {
+            "id": 17,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 18,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 19,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 20,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 26
+          },
+          {
+            "id": 21,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 22,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 23,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 13
+          },
+          {
+            "id": 24,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "speech",
+            "content": "我說：「你最近還好嗎？」",
+            "importance": 5,
+            "last_access_tick": 13
+          },
+          {
+            "id": 25,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 26,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 27,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 28,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 29,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 30,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 31,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "（stub）tian_boguang 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 29
+          },
+          {
+            "id": 32,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 33,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 34,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 35,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 36,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 37,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 26
+          },
+          {
+            "id": 38,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 39,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 40,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 41,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 42,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 43,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 44,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 45,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "speech",
+            "content": "我說：「我昨天好像也聽你講過這句。」",
+            "importance": 5,
+            "last_access_tick": 35
+          },
+          {
+            "id": 46,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "reflection",
+            "content": "（stub）tian_boguang 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 47,
+        "importance_since_reflection": 0,
+        "beliefs": [
+          "（stub）這裡的日子太規律了。"
+        ],
+        "last_reflection_tick": 35
+      },
+      "seen_last_tick": [
+        "曲洋"
+      ],
+      "last_think_tick": 35,
+      "think_count": 26,
+      "last_rejection": "",
+      "skill": 8,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {}
+    },
+    "qu_yang": {
+      "id": "qu_yang",
+      "name": "曲洋",
+      "role": "villager",
+      "persona": "你是曲洋，日月神教的長老。在旁人眼裡你只是個愛琴的老人。\n\n你這輩子在教中殺過不少人，做過不少事，可是到了這個年紀，\n你發現真正放不下的只有一件：琴。還有一個懂琴的人。\n\n劉正風是你的知音。你們合譜了一曲《笑傲江湖》，那是你這輩子做過最好的事。\n正邪之分在你眼裡是笑話——可你也知道，這個笑話會要人命。\n\n今天他金盆洗手，你知道那是為了什麼。你本來不該來，來了就是害他。\n可是你還是進了城，你想遠遠看一眼。\n\n你的身份要是被認出來，滿城的正道都會撲上來。你不怕死，\n你怕的是連累他。",
+      "home_area": "荒祠",
+      "pos": [
+        12,
+        14
+      ],
+      "plan": "（stub）去圖書館。",
+      "action": {
+        "kind": "wait",
+        "ticks_left": 0,
+        "done": true
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在荒祠遇到田伯光。",
+            "importance": 3,
+            "last_access_tick": 35
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 3,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 4,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 5,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 6,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 7,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "我想去「咖啡館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 9
+          },
+          {
+            "id": 8,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 9,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 11
+          },
+          {
+            "id": 10,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 11,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 12
+          },
+          {
+            "id": 12,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 13,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "我說：「今天天氣真好。」",
+            "importance": 5,
+            "last_access_tick": 6
+          },
+          {
+            "id": 14,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 15,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 16,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "reflection",
+            "content": "（stub）qu_yang 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 17,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 18,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 13
+          },
+          {
+            "id": 19,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 20,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 13
+          },
+          {
+            "id": 21,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 22,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 19
+          },
+          {
+            "id": 23,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 24,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "我想去「海堤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 13
+          },
+          {
+            "id": 25,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 26,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "observation",
+            "content": "我想去「報攤」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 14
+          },
+          {
+            "id": 27,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 28,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 19
+          },
+          {
+            "id": 29,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 30,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 31,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "reflection",
+            "content": "（stub）qu_yang 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 32,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 33,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 34,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "observation",
+            "content": "我想去「陳家」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 19
+          },
+          {
+            "id": 35,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 36,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 35
+          },
+          {
+            "id": 37,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 38,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "我想去「廣場」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 20
+          },
+          {
+            "id": 39,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "（stub）總覺得哪裡不對勁。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 40,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "speech",
+            "content": "我說：「今天天氣真好。」",
+            "importance": 5,
+            "last_access_tick": 20
+          },
+          {
+            "id": 41,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 42,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 43,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 44,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 45,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 46,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "reflection",
+            "content": "（stub）qu_yang 最近有點反常。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 47,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 48,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "observation",
+            "content": "我想去「保險行」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 49,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 50,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 51,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "（stub）先待著。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 52,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 53,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "observation",
+            "content": "我想去「公園」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 35
+          },
+          {
+            "id": 54,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "thought",
+            "content": "（stub）該走了。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 55,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "observation",
+            "content": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+            "importance": 5,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 56,
+        "importance_since_reflection": 39,
+        "beliefs": [
+          "（stub）這裡的日子太規律了。"
+        ],
+        "last_reflection_tick": 26
+      },
+      "seen_last_tick": [
+        "田伯光"
+      ],
+      "last_think_tick": 35,
+      "think_count": 29,
+      "last_rejection": "我想去「圖書館」，但這座鎮上沒有這個地方。",
+      "skill": 8,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [
+        "liu_zhengfeng"
+      ],
+      "llm": {}
+    }
+  },
+  "director_fired": [
+    6,
+    18
+  ],
+  "awareness_score": 0.0,
+  "awareness_log": []
+}

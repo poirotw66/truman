@@ -26,6 +26,9 @@ copy .env.example .env      # 填你要用的那一家的 key
 .\.venv\Scripts\python.exe -m truman.cli run --run-id dry --ticks 30 --stub
 .\.venv\Scripts\python.exe -m truman.cli report --run-id dry     # 整條管線走一遍
 
+# Demo 前端：回放既有 run，或現場開一場（預設 stub）
+.\.venv\Scripts\python.exe -m truman.demo                        # http://127.0.0.1:8765
+
 # 看地圖、看快取前綴夠不夠大、對帳模型 ID 有沒有過期
 .\.venv\Scripts\python.exe -m truman.cli map
 .\.venv\Scripts\python.exe -m truman.cli tokens

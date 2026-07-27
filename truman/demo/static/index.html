@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>TRUMAN · Demo</title>
+<style>
+  :root{
+    --bg:#12100c; --bg2:#1b1811; --panel:#211d15; --panel2:#2a251b;
+    --ink:#f0e6d0; --ink2:#a99b7e; --line:rgba(240,230,205,.13); --line2:rgba(240,230,205,.26);
+    --gold:#d9a63c; --cinnabar:#c8483a; --jade:#5aa38f;
+    --disp:"Songti SC","STSong","Source Han Serif SC","Noto Serif CJK TC","PMingLiU",serif;
+    --ui:"PingFang TC","Source Han Sans TC","Noto Sans CJK TC","Microsoft JhengHei",sans-serif;
+    --mono:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
+    --shadow:0 6px 22px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{
+    font-family:var(--ui); color:var(--ink);
+    background:
+      radial-gradient(110% 70% at 50% -10%, color-mix(in srgb,var(--gold) 16%,transparent), transparent 55%),
+      radial-gradient(90% 60% at 100% 100%, color-mix(in srgb,var(--cinnabar) 10%,transparent), transparent 50%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;
+  }
+  .stage{min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:clamp(20px,4vw,48px); gap:28px}
+  .brand{text-align:center; display:flex; flex-direction:column; gap:10px; max-width:34em}
+  .brand .k{font-size:11px; letter-spacing:.42em; color:var(--gold); font-weight:700}
+  .brand h1{margin:0; font-family:var(--disp); font-size:clamp(42px,8vw,72px); font-weight:600; letter-spacing:.08em}
+  .brand p{margin:0; font-size:15px; line-height:1.75; color:var(--ink2)}
+
+  .modes{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; width:min(920px,100%)}
+  .mode{
+    flex:1 1 280px; max-width:420px; text-align:left; cursor:pointer;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 22px 20px;
+    box-shadow:var(--shadow); transition:border-color .15s, transform .12s, background .15s;
+  }
+  .mode:hover{border-color:color-mix(in srgb,var(--gold) 45%,var(--line)); transform:translateY(-2px)}
+  .mode[aria-pressed="true"]{border-color:var(--gold); background:color-mix(in srgb,var(--gold) 10%,var(--panel))}
+  .mode .t{font-family:var(--disp); font-size:22px; font-weight:600; letter-spacing:.04em; margin:0 0 6px}
+  .mode .d{margin:0; font-size:13px; line-height:1.65; color:var(--ink2)}
+
+  .panel{
+    width:min(720px,100%); background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:20px 22px; box-shadow:var(--shadow); display:none; flex-direction:column; gap:14px;
+    animation:rise .35s ease;
+  }
+  .panel.on{display:flex}
+  @keyframes rise{from{opacity:0; transform:translateY(10px)}}
+
+  .panel h2{margin:0; font-family:var(--disp); font-size:20px; font-weight:600}
+  .hint{margin:0; font-size:12.5px; color:var(--ink2); line-height:1.55}
+
+  .runs{display:flex; flex-direction:column; gap:6px; max-height:280px; overflow:auto; padding:4px 0}
+  .run{
+    display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:9px;
+    background:var(--panel2); border:1px solid transparent; cursor:pointer;
+  }
+  .run:hover{border-color:var(--line2)}
+  .run input{accent-color:var(--gold)}
+  .run .id{font-family:var(--mono); font-size:13px; flex:1}
+  .run .meta{font-size:11.5px; color:var(--ink2)}
+
+  .row{display:flex; flex-wrap:wrap; gap:10px}
+  .f{display:flex; flex-direction:column; gap:4px; flex:1 1 140px; min-width:0}
+  label{font-size:11px; letter-spacing:.12em; color:var(--ink2)}
+  input[type=text], input[type=number], select{
+    font-family:var(--ui); font-size:13.5px; color:var(--ink); background:var(--panel2);
+    border:1px solid var(--line2); border-radius:8px; padding:8px 10px;
+  }
+  .check{display:flex; align-items:center; gap:8px; font-size:13px; padding-top:18px}
+  .check input{accent-color:var(--gold)}
+
+  .warn{font-size:12px; color:var(--cinnabar); line-height:1.5; margin:0; display:none}
+  .warn.on{display:block}
+
+  .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  button.big{
+    font-family:var(--disp); font-size:15px; font-weight:600; letter-spacing:.14em; color:#1a1610;
+    background:linear-gradient(180deg,var(--gold),#b8842a); border:0; border-radius:9px;
+    padding:11px 26px; cursor:pointer;
+  }
+  button.big:hover{filter:brightness(1.06)}
+  button.big:disabled{opacity:.4; cursor:default; filter:none}
+  button.ghost{
+    font-family:var(--ui); font-size:13px; color:var(--ink2); background:transparent;
+    border:1px solid var(--line2); border-radius:9px; padding:10px 16px; cursor:pointer;
+  }
+  .err{color:var(--cinnabar); font-size:13px; margin:0; display:none}
+  .err.on{display:block}
+  .ok{color:var(--jade); font-size:13px; margin:0; display:none}
+  .ok.on{display:block}
+
+  .prog{
+    display:none; flex-direction:column; gap:10px; padding:12px 14px; border-radius:10px;
+    background:var(--panel2); border:1px solid var(--line);
+  }
+  .prog.on{display:flex}
+  .prog .bar{height:6px; border-radius:4px; background:var(--line2); overflow:hidden}
+  .prog .fill{height:100%; width:0; background:linear-gradient(90deg,var(--gold),var(--cinnabar)); transition:width .3s}
+  .prog .stat{display:flex; justify-content:space-between; font-size:13px}
+  .prog .stat b{font-family:var(--disp); font-size:18px; color:var(--gold); font-weight:600}
+  .feed{display:flex; flex-direction:column; gap:5px; max-height:180px; overflow:auto}
+  .fe{font-size:12.5px; line-height:1.45; padding:6px 8px; border-radius:7px; background:color-mix(in srgb,var(--bg) 35%,var(--panel2));
+    border-left:3px solid var(--line2)}
+  .fe.speech{border-left-color:var(--gold)}
+  .fe.death,.fe.attack{border-left-color:var(--cinnabar)}
+  .fe .t{font-family:var(--mono); font-size:10.5px; color:var(--ink2); margin-right:6px}
+
+  .foot{font-size:11px; color:var(--ink2); text-align:center}
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px; border-radius:6px}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <header class="brand">
+      <span class="k">GENERATIVE AGENT SANDBOX</span>
+      <h1>TRUMAN</h1>
+      <p>一座格子小鎮、六個語言模型代理。五個知情，一個不知道——主角要多久才會開始懷疑？</p>
+    </header>
+
+    <div class="modes" role="group" aria-label="模式">
+      <button type="button" class="mode" id="pickReplay" aria-pressed="false">
+        <div class="t">回放既有軌跡</div>
+        <p class="d">選一場（或接力多場）已跑完的 run，打開完整地圖回放。不燒 API，適合上台。</p>
+      </button>
+      <button type="button" class="mode" id="pickLive" aria-pressed="false">
+        <div class="t">現場開一場</div>
+        <p class="d">現在就跑模擬。預設用 stub（假 LLM）快速演示；也可切成真模型。</p>
+      </button>
+    </div>
+
+    <section class="panel" id="panelReplay" aria-label="回放">
+      <h2>選擇 run</h2>
+      <p class="hint">可多選接力（例如 j2 再加 j2b）。順序依勾選後的清單由上到下。</p>
+      <div class="runs" id="runList"></div>
+      <p class="err" id="replayErr"></p>
+      <div class="actions">
+        <button type="button" class="big" id="btnReplay">開啟回放</button>
+        <button type="button" class="ghost" id="btnRefresh">重新整理清單</button>
+      </div>
+    </section>
+
+    <section class="panel" id="panelLive" aria-label="現場開跑">
+      <h2>開跑設定</h2>
+      <div class="row">
+        <div class="f"><label for="runId">run id</label><input id="runId" type="text" value="demo_live"/></div>
+        <div class="f"><label for="ticks">ticks</label><input id="ticks" type="number" min="1" max="96" value="24"/></div>
+        <div class="f"><label for="seed">seed</label><input id="seed" type="number" value="7"/></div>
+      </div>
+      <div class="row">
+        <div class="f">
+          <label for="scenario">scenario</label>
+          <select id="scenario">
+            <option value="jianghu" selected>jianghu（完整回放）</option>
+            <option value="seahaven">seahaven（無完整回放頁）</option>
+            <option value="hakoniwa">hakoniwa（無完整回放頁）</option>
+          </select>
+        </div>
+        <div class="f">
+          <label for="provider">provider</label>
+          <select id="provider">
+            <option value="gemini" selected>gemini</option>
+            <option value="anthropic">anthropic</option>
+          </select>
+        </div>
+        <div class="f"><label for="cast">cast 路徑（可空）</label><input id="cast" type="text" placeholder="cast/jianghu.json"/></div>
+        <label class="check"><input id="stub" type="checkbox" checked/> stub（不花錢）</label>
+      </div>
+      <p class="warn" id="liveWarn">真 LLM 會燒錢且可能跑很久；上台建議先用 stub。</p>
+      <p class="err" id="liveErr"></p>
+      <p class="ok" id="liveOk"></p>
+      <div class="actions">
+        <button type="button" class="big" id="btnRun">開始模擬</button>
+        <button type="button" class="big" id="btnOpenReplay" style="display:none">進入完整回放</button>
+      </div>
+      <div class="prog" id="prog">
+        <div class="stat"><span>進度</span><span><b id="progWhen">—</b> · tick <span id="progTick">0</span>/<span id="progTotal">0</span></span></div>
+        <div class="bar"><div class="fill" id="progFill"></div></div>
+        <div class="feed" id="feed"></div>
+      </div>
+    </section>
+
+    <p class="foot">本機入口 · <code>python -m truman.demo</code></p>
+  </div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const panelReplay = $("panelReplay");
+const panelLive = $("panelLive");
+const pickReplay = $("pickReplay");
+const pickLive = $("pickLive");
+let es = null;
+let replayUrl = "";
+
+function show(mode) {
+  const replay = mode === "replay";
+  pickReplay.setAttribute("aria-pressed", String(replay));
+  pickLive.setAttribute("aria-pressed", String(!replay));
+  panelReplay.classList.toggle("on", replay);
+  panelLive.classList.toggle("on", !replay);
+  if (replay) loadRuns();
+}
+
+pickReplay.onclick = () => show("replay");
+pickLive.onclick = () => show("live");
+
+async function loadRuns() {
+  const box = $("runList");
+  box.innerHTML = "<p class='hint'>載入中…</p>";
+  try {
+    const r = await fetch("/api/runs");
+    const data = await r.json();
+    const runs = data.runs || [];
+    if (!runs.length) {
+      box.innerHTML = "<p class='hint'>runs/ 底下還沒有事件日誌。先跑一場，或改用「現場開一場」。</p>";
+      return;
+    }
+    box.innerHTML = "";
+    for (const run of runs) {
+      const lab = document.createElement("label");
+      lab.className = "run";
+      lab.innerHTML = `<input type="checkbox" value="${run.id}"/>
+        <span class="id">${run.id}</span>
+        <span class="meta">${run.when || "—"} · ${run.max_tick + 1} ticks · ${run.events} events</span>`;
+      box.appendChild(lab);
+    }
+  } catch (e) {
+    box.innerHTML = `<p class="err on">讀取失敗：${e}</p>`;
+  }
+}
+
+$("btnRefresh").onclick = loadRuns;
+
+$("btnReplay").onclick = async () => {
+  const err = $("replayErr");
+  err.classList.remove("on");
+  const runs = [...$("runList").querySelectorAll("input:checked")].map((el) => el.value);
+  if (!runs.length) {
+    err.textContent = "請至少勾選一個 run。";
+    err.classList.add("on");
+    return;
+  }
+  $("btnReplay").disabled = true;
+  try {
+    const r = await fetch("/api/replay", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({runs}),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || r.statusText);
+    location.href = data.url;
+  } catch (e) {
+    err.textContent = String(e.message || e);
+    err.classList.add("on");
+  } finally {
+    $("btnReplay").disabled = false;
+  }
+};
+
+$("stub").onchange = () => {
+  $("liveWarn").classList.toggle("on", !$("stub").checked);
+};
+$("stub").onchange();
+
+$("btnRun").onclick = async () => {
+  const err = $("liveErr");
+  const ok = $("liveOk");
+  err.classList.remove("on");
+  ok.classList.remove("on");
+  $("btnOpenReplay").style.display = "none";
+  replayUrl = "";
+  if (es) { es.close(); es = null; }
+
+  const body = {
+    run_id: $("runId").value.trim(),
+    ticks: Number($("ticks").value),
+    seed: Number($("seed").value),
+    scenario: $("scenario").value,
+    provider: $("provider").value,
+    stub: $("stub").checked,
+    cast: $("cast").value.trim() || null,
+  };
+  $("btnRun").disabled = true;
+  $("prog").classList.add("on");
+  $("progTotal").textContent = String(body.ticks);
+  $("progTick").textContent = "0";
+  $("progWhen").textContent = "啟動中";
+  $("progFill").style.width = "0%";
+  $("feed").innerHTML = "";
+
+  try {
+    const r = await fetch("/api/run", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(body),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || r.statusText);
+    watchJob(data.job_id);
+  } catch (e) {
+    err.textContent = String(e.message || e);
+    err.classList.add("on");
+    $("btnRun").disabled = false;
+  }
+};
+
+function watchJob(jobId) {
+  es = new EventSource(`/api/job/${jobId}/events`);
+  es.onmessage = (ev) => {
+    const data = JSON.parse(ev.data);
+    renderProgress(data);
+    if (data.status === "done") {
+      es.close();
+      es = null;
+      $("btnRun").disabled = false;
+      if (data.replay_url) {
+        replayUrl = data.replay_url;
+        $("btnOpenReplay").style.display = "";
+        $("liveOk").textContent = "跑完了。可以進入完整回放。";
+      } else {
+        $("liveOk").textContent = `跑完了。日誌在 runs/${data.run_id}/（此劇本尚無完整回放頁）。`;
+      }
+      $("liveOk").classList.add("on");
+    } else if (data.status === "error" || data.status === "gone") {
+      es.close();
+      es = null;
+      $("btnRun").disabled = false;
+      $("liveErr").textContent = data.error || "job 消失了";
+      $("liveErr").classList.add("on");
+    }
+  };
+  es.onerror = () => {
+    // 瀏覽器會自動重連；結束時 server 關連線即可
+  };
+}
+
+function renderProgress(data) {
+  const total = data.ticks_total || 1;
+  const tick = data.tick || 0;
+  $("progTick").textContent = String(tick);
+  $("progTotal").textContent = String(total);
+  $("progWhen").textContent = data.when || "—";
+  $("progFill").style.width = `${Math.min(100, (tick / total) * 100)}%`;
+  const feed = $("feed");
+  feed.innerHTML = "";
+  for (const row of (data.recent || []).slice().reverse()) {
+    const div = document.createElement("div");
+    div.className = `fe ${row.type || ""}`;
+    div.innerHTML = `<span class="t">t${row.tick ?? "—"}</span>${escapeHtml(row.text || "")}`;
+    feed.appendChild(div);
+  }
+}
+
+$("btnOpenReplay").onclick = () => {
+  if (replayUrl) location.href = replayUrl;
+};
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+</script>
+</body>
+</html>
