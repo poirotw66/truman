@@ -57,7 +57,11 @@ class GeminiClient(BaseLLMClient):
         if replay is None:
             from google import genai
 
-            self._client = genai.Client()
+            # http_options 的 timeout 是毫秒。base 那層的 wait_for 是保險，
+            # 這一層才是真的把吊住的連線斷掉（wait_for 只取消 task）。
+            self._client = genai.Client(
+                http_options={"timeout": int(getattr(cfg, "call_timeout", 180.0) * 1000)}
+            )
 
     def _gen_config(self, c: Call) -> dict:
         """每個 agent 可以自帶 thinking_level 與 temperature（AgentState.llm）。"""

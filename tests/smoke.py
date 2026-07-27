@@ -10,6 +10,7 @@ import json
 import shutil
 import sys
 import tempfile
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -681,6 +682,66 @@ def main() -> int:
                       schema={}, model=("gemini-3.5-flash" if i % 2 else None)) for i in range(6)]
         asyncio.run(probe3.run_batch(mixed))
         failures += not check("混模型時兩組各自暖機", probe3.peak == 4, f"峰值併發 {probe3.peak}")
+
+        # ---- 逾時與重試：一條吊住的連線不該讓整場模擬停住（j2 卡了半小時的那個 bug）----
+        print("")
+        print("逾時與重試")
+        cfg_t = SimConfig(provider="gemini", call_timeout=0.05, max_retries=3)
+
+        class _Hang(BaseLLMClient):
+            provider = "hang"
+
+            def __init__(self, cfg, log):
+                super().__init__(cfg, log)
+                self.tries = 0
+
+            async def _invoke(self, c, model):
+                self.tries += 1
+                await asyncio.sleep(60)   # 永遠不回來
+
+        hang = _Hang(cfg_t, EventLog(tmp / "hang"))
+        one = Call(key="h", tier="routine", system_blocks=["短"], user_message="u", schema={})
+        t0 = time.monotonic()
+        failures += not check("吊住的呼叫會逾時，不會永遠等下去",
+                              _raises(lambda: asyncio.run(hang.call(one))))
+        failures += not check("逾時會重試到上限就放棄", hang.tries == 3, f"送了 {hang.tries} 次")
+        failures += not check("逾時不是靠等自然結束", time.monotonic() - t0 < 20,
+                              f"{time.monotonic() - t0:.1f}s")
+
+        class _Flaky(BaseLLMClient):
+            provider = "flaky"
+
+            def __init__(self, cfg, log):
+                super().__init__(cfg, log)
+                self.tries = 0
+
+            async def _invoke(self, c, model):
+                self.tries += 1
+                if self.tries < 3:
+                    raise RuntimeError("503 Service Unavailable")
+                return {"ok": True}, None, {"inp": 1, "out": 1}
+
+        flaky = _Flaky(cfg_t, EventLog(tmp / "flaky"))
+        failures += not check("暫時性錯誤重試後救得回來",
+                              asyncio.run(flaky.call(one)) == {"ok": True}
+                              and flaky.tries == 3, f"送了 {flaky.tries} 次")
+
+        class _Bad(BaseLLMClient):
+            provider = "bad"
+
+            def __init__(self, cfg, log):
+                super().__init__(cfg, log)
+                self.tries = 0
+
+            async def _invoke(self, c, model):
+                self.tries += 1
+                raise ValueError("schema 不合法")
+
+        bad = _Bad(cfg_t, EventLog(tmp / "bad"))
+        failures += not check("非暫時性錯誤直接丟出",
+                              _raises(lambda: asyncio.run(bad.call(one))))
+        failures += not check("非暫時性錯誤不重試（不白花錢）", bad.tries == 1,
+                              f"送了 {bad.tries} 次")
 
         # ---- 記憶檢索 ----
         print("\n記憶檢索")

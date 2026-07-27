@@ -172,6 +172,10 @@ class SimConfig:
     cache_ttl: str = "5m"  # "5m" (1.25x 寫入) 或 "1h" (2x 寫入)
     protagonist_min_tier: str = "dialogue"  # 主角至少用這一層
     max_concurrency: int = 8
+    # 單次呼叫的上限。沒有這個，一條吊住的連線會讓整批 gather 永遠等下去，
+    # 看起來跟「還在跑」一模一樣（j2 就是這樣卡了半小時才被發現）。
+    call_timeout: float = 180.0
+    max_retries: int = 3  # 逾時／連線類錯誤的重試次數（指數退避）
 
     # --- 覺察偵測關鍵詞（樣式法，LLM judge 之外的廉價哨兵）---
     suspicion_markers: list[str] = field(

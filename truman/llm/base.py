@@ -72,6 +72,19 @@ class Usage:
         }
 
 
+_TRANSIENT = (
+    "timeout", "timed out", "connection", "connect", "reset by peer",
+    "temporarily unavailable", "unavailable", "overloaded", "rate limit",
+    "resource_exhausted", "too many requests", "429",
+    "500", "502", "503", "504", "internal error", "bad gateway",
+)
+
+
+def _transient(e: Exception) -> bool:
+    """字串比對是刻意的：兩家 SDK 的例外型別不同，也不保證跨版本穩定。"""
+    return any(m in str(e).lower() for m in _TRANSIENT)
+
+
 class BaseLLMClient:
     """子類別只需要實作 `_invoke()` 與 `cache_write_multiplier`。"""
 
@@ -145,6 +158,37 @@ class BaseLLMClient:
                 },
             )
 
+    # ------------------------------------------------------------ 逾時與重試
+    async def _invoke_guarded(self, c: Call, model: str):
+        """給 `_invoke` 套上逾時與重試。
+
+        兩家 SDK 的預設都可能讓一條連線無限期吊住，而 `run_batch` 的 gather 要等
+        整批到齊——一個請求不回來，整場模擬就停在那裡，還不會報錯。所以逾時要在
+        這一層強制，不能只靠 provider 的設定。
+
+        只重試「等一下可能就好了」的錯（逾時、連線、429、5xx）。schema 錯、
+        thinking budget 不合法這種重試幾次都一樣的，直接往上丟。
+        """
+        timeout = getattr(self.cfg, "call_timeout", 180.0)
+        attempts = max(1, getattr(self.cfg, "max_retries", 3))
+
+        for attempt in range(1, attempts + 1):
+            try:
+                return await asyncio.wait_for(self._invoke(c, model), timeout)
+            except Exception as e:  # noqa: BLE001
+                last = attempt == attempts
+                timed_out = isinstance(e, (asyncio.TimeoutError, TimeoutError))
+                if last or not (timed_out or _transient(e)):
+                    raise
+                delay = min(2.0 ** (attempt - 1), 8.0)
+                self.log.write("llm_retry", {
+                    "key": c.key, "model": model, "attempt": attempt,
+                    "of": attempts, "wait_s": delay,
+                    "reason": "timeout" if timed_out else type(e).__name__,
+                    "error": str(e)[:200],
+                })
+                await asyncio.sleep(delay)
+
     # ------------------------------------------------------------ 送出
     async def call(self, c: Call) -> dict:
         if self.replay is not None:
@@ -158,7 +202,7 @@ class BaseLLMClient:
 
         model = c.model or self.cfg.models[c.tier]
         self._warn_short_prefix(c.system_blocks, model)
-        parsed, err, usage = await self._invoke(c, model)
+        parsed, err, usage = await self._invoke_guarded(c, model)
         self._usage(self._bucket(c.tier, model)).add(**usage)
 
         self.log.write(
