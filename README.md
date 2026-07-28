@@ -18,6 +18,21 @@
 
 和平對照本是 `hakoniwa`（同一張海晏鎮地圖、無動手）。`seahaven` 仍保留為早期楚門劇本，有主角時才啟用覺察評審；箱庭劇本沒有主角，該層整層不存在。
 
+### 目前狀態（本輪收尾）
+
+這一輪停在「可以 demo、可以重現、主線問題寫清楚」：
+
+| 已到位 | 說明 |
+|---|---|
+| **anti-snowball 全日驗證** | `j2`→`j2b`→`j2c`：費彬先死於曲洋，「玻璃刀」守勢懲罰確實打破強者通吃 |
+| **本機 demo 入口** | `python -m truman.demo`：回放既有 run，或現場開跑（SSE 進度含時辰／phase／已花時間／平均每 tick／預估剩餘） |
+| **接力回放** | `replay/build_frames.py` 可串多段 fork；checkpoint 差一拍已修 |
+| **預設 provider** | `gemini` · 全層 `gemini-3.1-flash-lite`（格式較穩；快取門檻 4096，常見前綴常進不去） |
+
+**上台建議先播回放，不要賭現場燒一整天。** 真 LLM 全日（96 ticks）本來就慢，前端只能誠實顯示進度，無法變快。推薦串：`j2` + `j2b` + `j2c`。
+
+還沒做、仍貼主線的兩條（見 `todo.md`）：傷勢／義憤進 prompt，否則機制寫了角色感受不到。
+
 ---
 
 ## 快速開始
@@ -41,7 +56,7 @@ copy .env.example .env      # 填你要用的那一家的 key
 .\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run --run-id dry --ticks 30 --stub
 .\.venv\Scripts\python.exe -m truman.cli report --run-id dry
 
-# Demo 前端：回放既有 run，或現場開一場（見下方「前端跑全日」）
+# Demo 前端：回放既有 run（上台推薦），或現場開一場（見下方「Demo 前端」）
 .\.venv\Scripts\python.exe -m truman.demo                        # http://127.0.0.1:8765
 
 # 看地圖、快取前綴、對帳模型 ID
@@ -66,37 +81,36 @@ copy .env.example .env      # 填你要用的那一家的 key
 
 長跑請用 `nohup … & disown` 脫離互動 session，否則 event loop 可能被掛住。
 
-### 前端跑全日（96 ticks）
-
-用 Demo 頁現場開一場完整模擬日（預設模型 `gemini-3.1-flash-lite`）：
+### Demo 前端
 
 ```powershell
-# 1. 確認 .env 有 GEMINI_API_KEY（或 GOOGLE_API_KEY）
-# 2. 開 demo（保持這個終端開著，不要關）
+# 1. 確認 .env 有 GEMINI_API_KEY（或 GOOGLE_API_KEY）——現場開跑才需要
+# 2. 開 demo（保持這個終端開著；改 static 後要重啟才吃到）
 .\.venv\Scripts\python.exe -m truman.demo
 ```
 
-瀏覽器 `http://127.0.0.1:8765/` → **現場開一場**，表單填：
+瀏覽器 `http://127.0.0.1:8765/`：
 
-| 欄位 | 建議值 |
+1. **回放既有軌跡（推薦上台）** — 勾 `j2` / `j2b` / `j2c` → 產出完整回放頁。內容已驗證、不燒 API。
+2. **現場開一場** — 真 LLM 預設全日 96 ticks；`stub` 僅測管線（對話會鬼打牆，沒模擬價值）。
+
+現場進度會顯示：時辰、phase、最近對話、**已花時間／平均每 tick／本刻已等／預估剩餘**。單一 tick 等 LLM 可能數十秒，進度停住不代表掛了。關掉分頁或關掉 `truman.demo` 會中斷；同時只能跑一場。
+
+| 欄位 | 建議值（現場） |
 |---|---|
-| run id | 新名字，例如 `j3`（不能跟 `runs/` 裡已有的撞名） |
-| ticks | **96**（一天；頁面上限也是 96） |
-| seed | `7`（或任意整數） |
+| run id | 新名字（不能跟 `runs/` 裡已有的撞名） |
+| ticks | **96**（一天；頁面上限也是 96）；試水管線可先 12–24 |
+| seed | `7` |
 | scenario | `jianghu（完整回放）` |
 | provider | `gemini` |
-| cast | 可空；要用人物檔就填 `cast/jianghu.json` |
-| stub | **不要勾**（預設已關；勾了只會鬼打牆） |
+| cast | 可空；或 `cast/jianghu.json` |
+| stub | **不要勾** |
 
-按「開始模擬」。進度區會顯示時辰／最近對話；跑完出現「進入完整回放」即可開地圖播放器。日誌在 `runs/<run-id>/`，回放 HTML 在 `runs/_demo/<run-id>_replay.html`。
-
-粗估全日約 **$0.3–0.6**（有快取時）；關掉視窗或關掉 `truman.demo` 進程會中斷。同時只能跑一場。跑完可對帳：
+日誌在 `runs/<run-id>/`，回放 HTML 在 `runs/_demo/<run-id>_replay.html`。粗估全日 **$0.3–0.6**（有快取時）；3.1-flash-lite 門檻高，命中率常偏低、帳單會往上。對帳：
 
 ```powershell
 .\.venv\Scripts\python.exe -m truman.cli report --run-id j3
 ```
-
-看成本表的「快取讀／命中率」與總成本；3.1-flash-lite 的快取門檻較高，命中率可能仍偏低。
 
 ---
 

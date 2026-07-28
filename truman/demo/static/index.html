@@ -345,7 +345,7 @@ $("btnRun").onclick = async () => {
 
 function watchJob(jobId) {
   if (heartbeatTimer) clearInterval(heartbeatTimer);
-  heartbeatTimer = setInterval(updateHeartbeatLabel, 1000);
+  heartbeatTimer = setInterval(updateProgressStats, 1000);
   es = new EventSource(`/api/job/${jobId}/events`);
   es.onmessage = (ev) => {
     const data = JSON.parse(ev.data);
