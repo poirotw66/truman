@@ -32,13 +32,9 @@ import json
 
 from ..base import BaseLLMClient, Call
 
-# thinking_level 合法值：minimal | low | medium | high（SDK 內省確認）。
-#
-# ⚠ 各層級換算出的 thinking budget 下限**隨模型而異**：
-#   gemini-3.1-flash-lite  "low" 可用
-#   gemini-2.5-flash-lite  "low" → budget 256，低於該模型下限 512，直接 400
-# 換模型時如果撞到 "thinking budget N is invalid"，就把該層調高一級
-# （`--thinking medium`，或改 SimConfig.gemini_thinking）。
+# thinking_level：SDK 列了 minimal|low|medium|high，但每個模型只接受子集。
+# 目前預設模型是 gemini-3.1-flash-lite，實跑上 low / high 都可用；先用 low 壓成本。
+# 若使用 2.5-flash-lite，可能要另外覆寫到 high。
 DEFAULT_THINKING = {
     "routine": "low",
     "dialogue": "low",
@@ -63,10 +59,11 @@ class GeminiClient(BaseLLMClient):
                 http_options={"timeout": int(getattr(cfg, "call_timeout", 180.0) * 1000)}
             )
 
-    def _gen_config(self, c: Call) -> dict:
+    def _gen_config(self, c: Call, model: str) -> dict:
         """每個 agent 可以自帶 thinking_level 與 temperature（AgentState.llm）。"""
+        level = c.thinking or self._thinking(c.tier)
         cfg = {
-            "thinking_level": c.thinking or self._thinking(c.tier),
+            "thinking_level": level,
             "max_output_tokens": c.max_tokens,
         }
         if c.temperature is not None:
@@ -87,16 +84,18 @@ class GeminiClient(BaseLLMClient):
                 system_instruction=system_instruction,
                 input=c.user_message,
                 store=False,
-                generation_config=self._gen_config(c),
+                generation_config=self._gen_config(c, model),
                 response_format=text_json_format(c.schema),
             )
         except Exception as e:  # noqa: BLE001
-            if "thinking budget" in str(e):
+            msg = str(e).lower()
+            if "thinking budget" in msg or "thinking level" in msg:
                 raise ValueError(
                     f"{model} 不接受 thinking_level="
-                    f"{(c.thinking or self._thinking(c.tier))!r}"
-                    f"（各模型的 budget 下限不同）。調高一級再試："
-                    f" --thinking medium。原始錯誤：{e}"
+                    f"{(c.thinking or self._thinking(c.tier))!r}。"
+                    f"請改用這個模型支援的等級（例如 3.1-flash-lite 用 low/high；"
+                    f"2.5-flash-lite 可能需要 high）。"
+                    f"原始錯誤：{e}"
                 ) from e
             raise
         return (*_parse(resp), _usage(resp))
@@ -133,6 +132,7 @@ def _parse(resp) -> tuple[dict | None, str | None]:
     text = getattr(resp, "output_text", None)
     if not text:
         return None, f"empty output_text (status={status})"
+    text = _strip_fence(text)
     try:
         return json.loads(text), None
     except json.JSONDecodeError as e:
@@ -144,3 +144,16 @@ def _parse(resp) -> tuple[dict | None, str | None]:
                 f"reflect 這類長輸出尤其容易撞到。原始錯誤：{e}"
             )
         return None, f"json decode: {e} | head={text[:120]!r}"
+
+
+def _strip_fence(text: str) -> str:
+    """模型有時會包 ```json ... ```；schema 已要求 JSON，但仍要防呆。"""
+    s = text.strip()
+    if not s.startswith("```"):
+        return s
+    lines = s.splitlines()
+    if lines and lines[0].startswith("```"):
+        lines = lines[1:]
+    if lines and lines[-1].strip() == "```":
+        lines = lines[:-1]
+    return "\n".join(lines).strip()

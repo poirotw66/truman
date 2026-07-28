@@ -89,7 +89,7 @@ class JobRunner:
             job.finished_at = time.time()
 
     async def _drive(self, job: Job, params: dict) -> int:
-        stub = bool(params.get("stub", True))
+        stub = bool(params.get("stub", False))
         provider = params.get("provider") or "gemini"
         scenario = params.get("scenario") or "jianghu"
         seed = int(params.get("seed", 7))

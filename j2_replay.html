@@ -221,7 +221,7 @@
 <div class="jh">
  <div class="wrap">
   <header class="topbar">
-   <div class="brand"><span class="k">TRUMAN · 生成式代理箱庭</span><h1>衡山城 · 劉正風金盆洗手</h1></div>
+   <div class="brand"><span class="k">TRUMAN · LLM 箱庭</span><h1>衡山城 · 劉正風金盆洗手</h1></div>
    <div class="stat"><span class="lab">時辰</span><span class="val" id="clock">—</span></div>
    <div class="stat"><span class="lab" id="phaselab">天色</span><span class="val" id="phase" style="font-size:15px">—</span></div>
    <div class="stat alive" id="alivebox"><span class="lab">尚在人世</span><span class="val"><b id="surv">6</b><small> / 6</small></span></div>
@@ -277,8 +277,8 @@
   </div>
 
   <p class="foot">
-   資料為 <b>gemini-3.1-flash-lite</b> 實跑一整個模擬日（96 個決策時刻、每刻 10 分鐘）的完整事件日誌，離線確定性重放，零 API 呼叫。<br>
-   沒有人寫劇本，六個 agent 只看得到自己看得到的東西。人物取自金庸《笑傲江湖》；武功數值只是模擬設定。
+   箱庭實錄：目標互相排斥的多智能體，知識對稱、世界允許拔刀；沒有預寫結局。<br>
+   離線確定性重放（預設模型 <b>gemini-2.5-flash-lite</b>；歷史 run 可能不同），零 API 呼叫。人物取自金庸《笑傲江湖》。
   </p>
  </div>
 </div>
@@ -1592,10 +1592,10 @@ function showIntro() {
       <div class="n">${esc(P[id].name)}</div><div class="s">${esc(P[id].sect)}</div>
       <div class="g">${esc(P[id].goal)}</div></div>`).join("");
   const d = overlay(`
-    <div class="k">TRUMAN · 生成式代理箱庭</div>
+    <div class="k">TRUMAN · LLM 箱庭</div>
     <h2>衡山城 · 劉正風金盆洗手</h2>
-    <p class="lede">六個 AI 被放進同一天的同一座城。沒有人寫劇本，每個人只看得見自己看得見的東西、
-      只記得自己記得的事。他們的目標互相排斥——而這個世界允許他們拔刀。<br>
+    <p class="lede">六個 AI 被放進同一天的同一座城。沒有人寫結局——目標互相排斥，張力自己會長出來。<br>
+      知識對稱，每個人只看得見自己看得見的、只記得自己記得的；而這個世界允許他們拔刀。<br>
       以下是那一天的完整實錄，一刻十分鐘，共 ${MAXT} 刻。</p>
     <div class="cast">${cards}</div>
     <div class="btns"><button class="big" id="go">▶ 進　城</button>
@@ -1616,7 +1616,7 @@ function showOutro() {
     <h2>${live.length === 1 ? "只剩一個人站著" : "城裡靜下來了"}</h2>
     <div class="tomb">${tomb}</div>
     <p class="lede">活到最後的是 ${live.map(id => `<b style="color:${P[id].color}">${esc(P[id].name)}</b>`).join("、")}。
-      沒有人被劇本指使——每一刀都是某個 agent 自己算過之後決定的。</p>
+      每一刀、每一句話都是 agent 自己算過後的決定——箱庭要看的就是這種結構性衝突下長出來的軌跡。</p>
     <div class="nums">
       <div><b>${s.speeches ?? "—"}</b><span>句對話</span></div>
       <div><b>${s.attacks ?? moments.filter(m=>m.kind==="attack").length}</b><span>次動手</span></div>

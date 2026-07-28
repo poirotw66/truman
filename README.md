@@ -28,10 +28,10 @@ python -m venv .venv
 copy .env.example .env      # 填你要用的那一家的 key
 ```
 
-支援兩家 provider，用全域旗標切換（預設 `anthropic`）：
+支援兩家 provider，用全域旗標切換（**預設 `gemini`**，全層 `gemini-3.1-flash-lite`）：
 
 ```powershell
-.\.venv\Scripts\python.exe -m truman.cli --provider gemini --scenario jianghu run `
+.\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run `
   --run-id j2 --ticks 96 --seed 7
 ```
 
@@ -41,7 +41,7 @@ copy .env.example .env      # 填你要用的那一家的 key
 .\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run --run-id dry --ticks 30 --stub
 .\.venv\Scripts\python.exe -m truman.cli report --run-id dry
 
-# Demo 前端：回放既有 run，或現場開一場（預設 stub；真內容請關 stub）
+# Demo 前端：回放既有 run，或現場開一場（見下方「前端跑全日」）
 .\.venv\Scripts\python.exe -m truman.demo                        # http://127.0.0.1:8765
 
 # 看地圖、快取前綴、對帳模型 ID
@@ -65,6 +65,38 @@ copy .env.example .env      # 填你要用的那一家的 key
 ```
 
 長跑請用 `nohup … & disown` 脫離互動 session，否則 event loop 可能被掛住。
+
+### 前端跑全日（96 ticks）
+
+用 Demo 頁現場開一場完整模擬日（預設模型 `gemini-3.1-flash-lite`）：
+
+```powershell
+# 1. 確認 .env 有 GEMINI_API_KEY（或 GOOGLE_API_KEY）
+# 2. 開 demo（保持這個終端開著，不要關）
+.\.venv\Scripts\python.exe -m truman.demo
+```
+
+瀏覽器 `http://127.0.0.1:8765/` → **現場開一場**，表單填：
+
+| 欄位 | 建議值 |
+|---|---|
+| run id | 新名字，例如 `j3`（不能跟 `runs/` 裡已有的撞名） |
+| ticks | **96**（一天；頁面上限也是 96） |
+| seed | `7`（或任意整數） |
+| scenario | `jianghu（完整回放）` |
+| provider | `gemini` |
+| cast | 可空；要用人物檔就填 `cast/jianghu.json` |
+| stub | **不要勾**（預設已關；勾了只會鬼打牆） |
+
+按「開始模擬」。進度區會顯示時辰／最近對話；跑完出現「進入完整回放」即可開地圖播放器。日誌在 `runs/<run-id>/`，回放 HTML 在 `runs/_demo/<run-id>_replay.html`。
+
+粗估全日約 **$0.3–0.6**（有快取時）；關掉視窗或關掉 `truman.demo` 進程會中斷。同時只能跑一場。跑完可對帳：
+
+```powershell
+.\.venv\Scripts\python.exe -m truman.cli report --run-id j3
+```
+
+看成本表的「快取讀／命中率」與總成本；3.1-flash-lite 的快取門檻較高，命中率可能仍偏低。
 
 ---
 
@@ -169,8 +201,9 @@ Event Log（JSONL）+ Checkpoint ── 可 replay、可分支
 
 ### 快取門檻（實測摘要）
 
-前綴約 **2200 tokens**。2048 門檻跨得過、4096 跨不過 → Gemini 高流量層宜用能命中快取的型號；
-jianghu 現行 3.x 前綴往往進不了 4096，暖機會被跳過（這是對的）。
+前綴約 **2200 tokens**。Gemini 預設 `gemini-3.1-flash-lite` 門檻 **4096**，常常跨不過；
+這代表格式通常較穩，但快取常靜默失效、成本較高。若要省錢，可覆寫回 2.5 系列；若要較強推理，
+可用 `--model reflect=gemini-3.5-flash` 單層覆寫。
 
 ### 粗估
 

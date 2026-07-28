@@ -21,7 +21,7 @@ def main(argv: list[str] | None = None) -> None:
     httpd = serve(args.host, args.port)
     url = f"http://{args.host}:{args.port}/"
     print(f"Truman demo → {url}", flush=True)
-    print("  回放既有 run，或現場開一場（預設 stub）。Ctrl+C 結束。", flush=True)
+    print("  箱庭入口：回放既有軌跡，或現場開一場（預設真 LLM · 96 ticks）。Ctrl+C 結束。", flush=True)
     if not args.no_open:
         webbrowser.open(url)
     try:

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>TRUMAN · Demo</title>
+<title>TRUMAN · 箱庭 Demo</title>
 <style>
   :root{
     --bg:#12100c; --bg2:#1b1811; --panel:#211d15; --panel2:#2a251b;
@@ -26,7 +26,7 @@
   }
   .stage{min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
     padding:clamp(20px,4vw,48px); gap:28px}
-  .brand{text-align:center; display:flex; flex-direction:column; gap:10px; max-width:34em}
+  .brand{text-align:center; display:flex; flex-direction:column; gap:10px; max-width:36em}
   .brand .k{font-size:11px; letter-spacing:.42em; color:var(--gold); font-weight:700}
   .brand h1{margin:0; font-family:var(--disp); font-size:clamp(42px,8vw,72px); font-weight:600; letter-spacing:.08em}
   .brand p{margin:0; font-size:15px; line-height:1.75; color:var(--ink2)}
@@ -75,6 +75,7 @@
 
   .warn{font-size:12px; color:var(--cinnabar); line-height:1.5; margin:0; display:none}
   .warn.on{display:block}
+  .note{font-size:12px; color:var(--jade); line-height:1.5; margin:0}
 
   .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
   button.big{
@@ -109,7 +110,7 @@
   .fe.death,.fe.attack{border-left-color:var(--cinnabar)}
   .fe .t{font-family:var(--mono); font-size:10.5px; color:var(--ink2); margin-right:6px}
 
-  .foot{font-size:11px; color:var(--ink2); text-align:center}
+  .foot{font-size:11px; color:var(--ink2); text-align:center; line-height:1.7}
   :focus-visible{outline:2px solid var(--gold); outline-offset:2px; border-radius:6px}
   @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 </style>
@@ -117,25 +118,26 @@
 <body>
   <div class="stage">
     <header class="brand">
-      <span class="k">MULTI-AGENT SANDBOX</span>
+      <span class="k">LLM MULTI-AGENT SANDBOX</span>
       <h1>TRUMAN</h1>
-      <p>把目標互相排斥的 AI 放進世界，看社交與動手會不會自己長出來。現役主線：江湖箱庭 · 金盆洗手那一天。</p>
+      <p>箱庭：把目標互相排斥的 AI 放進世界，看社交與動手會不會自己長出來。<br>
+         現役劇本是江湖 · 劉正風金盆洗手那一天——知識對稱、可拔刀、沒有預寫結局。</p>
     </header>
 
     <div class="modes" role="group" aria-label="模式">
       <button type="button" class="mode" id="pickReplay" aria-pressed="false">
         <div class="t">回放既有軌跡</div>
-        <p class="d">選一場（或接力多場）已跑完的 run，打開完整地圖回放。不燒 API，適合上台。</p>
+        <p class="d">選一場（或接力多場）已跑完的 run，打開完整地圖回放。零 API、結局可預期，適合上台。</p>
       </button>
       <button type="button" class="mode" id="pickLive" aria-pressed="false">
         <div class="t">現場開一場</div>
-        <p class="d">現在就跑模擬。預設用 stub（假 LLM）快速演示；也可切成真模型。</p>
+        <p class="d">現在就跑箱庭。預設真 LLM、全日 96 ticks；要測管線可勾 stub（內容會鬼打牆）。</p>
       </button>
     </div>
 
     <section class="panel" id="panelReplay" aria-label="回放">
       <h2>選擇 run</h2>
-      <p class="hint">可多選接力（例如 j2 再加 j2b）。順序依勾選後的清單由上到下。</p>
+      <p class="hint">可多選接力（例如 j2 → j2b → j2c）。清單由上到下依序串接；切點由各 run 的 fork 事件推算。</p>
       <div class="runs" id="runList"></div>
       <p class="err" id="replayErr"></p>
       <div class="actions">
@@ -146,31 +148,33 @@
 
     <section class="panel" id="panelLive" aria-label="現場開跑">
       <h2>開跑設定</h2>
+      <p class="hint">預設模型：Gemini 全層 <b>gemini-3.1-flash-lite</b>（格式較穩、成本較高）。run id 不能跟 <code>runs/</code> 裡已有的撞名。</p>
       <div class="row">
-        <div class="f"><label for="runId">run id</label><input id="runId" type="text" value="demo_live"/></div>
-        <div class="f"><label for="ticks">ticks</label><input id="ticks" type="number" min="1" max="96" value="24"/></div>
+        <div class="f"><label for="runId">run id</label><input id="runId" type="text" value="j3"/></div>
+        <div class="f"><label for="ticks">ticks</label><input id="ticks" type="number" min="1" max="96" value="96"/></div>
         <div class="f"><label for="seed">seed</label><input id="seed" type="number" value="7"/></div>
       </div>
       <div class="row">
         <div class="f">
           <label for="scenario">scenario</label>
           <select id="scenario">
-            <option value="jianghu" selected>jianghu（完整回放）</option>
-            <option value="seahaven">seahaven（無完整回放頁）</option>
-            <option value="hakoniwa">hakoniwa（無完整回放頁）</option>
+            <option value="jianghu" selected>jianghu · 武林箱庭（現役）</option>
+            <option value="hakoniwa">hakoniwa · 和平箱庭</option>
+            <option value="seahaven">seahaven · 早期楚門（遺留）</option>
           </select>
         </div>
         <div class="f">
           <label for="provider">provider</label>
           <select id="provider">
             <option value="gemini" selected>gemini</option>
-            <option value="anthropic">anthropic</option>
+            <option value="anthropic">anthropic（較貴）</option>
           </select>
         </div>
         <div class="f"><label for="cast">cast 路徑（可空）</label><input id="cast" type="text" placeholder="cast/jianghu.json"/></div>
-        <label class="check"><input id="stub" type="checkbox" checked/> stub（不花錢）</label>
+        <label class="check"><input id="stub" type="checkbox"/> stub（假 LLM，僅測管線）</label>
       </div>
-      <p class="warn" id="liveWarn">真 LLM 會燒錢且可能跑很久；上台建議先用 stub。</p>
+      <p class="note" id="liveNote">真 LLM · 全日 96 ticks。關掉本頁或中斷 demo server 會停跑。</p>
+      <p class="warn" id="liveWarn">stub 開著：對話會輪播鬼打牆，沒有模擬價值——只適合確認水管沒漏。</p>
       <p class="err" id="liveErr"></p>
       <p class="ok" id="liveOk"></p>
       <div class="actions">
@@ -184,7 +188,8 @@
       </div>
     </section>
 
-    <p class="foot">本機入口 · <code>python -m truman.demo</code></p>
+    <p class="foot">本機箱庭入口 · <code>python -m truman.demo</code><br>
+      主線不是「誰先懷疑世界是假的」，而是結構性衝突下的社交／殺戮動力學。</p>
   </div>
 
 <script>
@@ -216,7 +221,7 @@ async function loadRuns() {
     const data = await r.json();
     const runs = data.runs || [];
     if (!runs.length) {
-      box.innerHTML = "<p class='hint'>runs/ 底下還沒有事件日誌。先跑一場，或改用「現場開一場」。</p>";
+      box.innerHTML = "<p class='hint'>runs/ 底下還沒有事件日誌。先現場開一場，或用 CLI 跑完再回來。</p>";
       return;
     }
     box.innerHTML = "";
@@ -262,10 +267,13 @@ $("btnReplay").onclick = async () => {
   }
 };
 
-$("stub").onchange = () => {
-  $("liveWarn").classList.toggle("on", !$("stub").checked);
-};
-$("stub").onchange();
+function syncStubCopy() {
+  const stub = $("stub").checked;
+  $("liveWarn").classList.toggle("on", stub);
+  $("liveNote").style.display = stub ? "none" : "block";
+}
+$("stub").onchange = syncStubCopy;
+syncStubCopy();
 
 $("btnRun").onclick = async () => {
   const err = $("liveErr");
@@ -321,7 +329,7 @@ function watchJob(jobId) {
       if (data.replay_url) {
         replayUrl = data.replay_url;
         $("btnOpenReplay").style.display = "";
-        $("liveOk").textContent = "跑完了。可以進入完整回放。";
+        $("liveOk").textContent = "這一天跑完了。可以進入完整回放。";
       } else {
         $("liveOk").textContent = `跑完了。日誌在 runs/${data.run_id}/（此劇本尚無完整回放頁）。`;
       }
@@ -334,9 +342,7 @@ function watchJob(jobId) {
       $("liveErr").classList.add("on");
     }
   };
-  es.onerror = () => {
-    // 瀏覽器會自動重連；結束時 server 關連線即可
-  };
+  es.onerror = () => {};
 }
 
 function renderProgress(data) {

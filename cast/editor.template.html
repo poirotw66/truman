@@ -1,4 +1,4 @@
-<title>人物工作室 · 開場之前</title>
+<title>人物工作室 · 箱庭開場</title>
 <style>
   :root{
     --bg:#12100c; --panel:#211d15; --panel2:#2a251b; --field:#181510;
@@ -122,7 +122,7 @@
 <div class="st">
  <div class="wrap">
   <header class="topbar">
-   <div class="brand"><span class="k">TRUMAN · 開場之前</span>
+   <div class="brand"><span class="k">TRUMAN · 箱庭開場</span>
      <h1>人物工作室<small id="scenlab"></small></h1></div>
    <span class="saved" id="saved"></span>
    <button class="b" id="btnLoad">載入 cast.json</button>
@@ -171,7 +171,7 @@
       <p class="hint">存成 <b>cast/<span id="fname">jianghu</span>.json</b>，然後：</p>
       <div class="cmd" id="cmd"></div>
       <button class="b mini" id="btnCmd" style="align-self:flex-start">複製指令</button>
-      <p class="hint">劇本的 .py 一個字都不會動——設定檔只在這次 run 生效，隨時可以換一份重跑。</p>
+      <p class="hint">劇本的 .py 一個字都不會動——設定檔只在這次 run 生效。箱庭主線看的是目標衝突下會長出什麼，不是誰先懷疑世界。</p>
      </div>
     </div>
    </div>
@@ -312,7 +312,7 @@ function llmHintText(a) {
   }
   return "這個模型不在目錄裡——跑得動，但報表會把成本算成 0。";
 }
-const ROLES = [["villager","一般人物"],["protagonist","主角（會被評覺察）"]];
+const ROLES = [["villager","一般人物"],["protagonist","主角（僅早期 seahaven 覺察用）"]];
 
 function opt(list, v) { return list.map(([k,t]) => `<option value="${k}" ${k===(v||"")?"selected":""}>${t}</option>`).join(""); }
 

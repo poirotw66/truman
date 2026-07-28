@@ -207,7 +207,7 @@ class DemoHandler(BaseHTTPRequestHandler):
                 "seed": int(body.get("seed", 7)),
                 "scenario": (body.get("scenario") or "jianghu").strip(),
                 "provider": (body.get("provider") or "gemini").strip(),
-                "stub": bool(body.get("stub", True)),
+                "stub": bool(body.get("stub", False)),
                 "cast": (body.get("cast") or "").strip() or None,
             }
             try:

@@ -64,11 +64,9 @@ PROVIDERS = {
         },
     },
     "gemini": {
-        # 全層統一 gemini-3.1-flash-lite（使用者指定）。
-        # 統一單一模型的副作用：四層共用同一條快取線，前綴命中率反而更好。
-        # 代價是 reflect 也跑在 flash-lite 上——那是最吃推理深度的一層，
-        # 若 insights 顯得空泛，優先把它換成 gemini-3.5-flash 或 gemini-3.1-pro-preview：
-        #   python -m truman.cli --provider gemini --model reflect=gemini-3.5-flash run ...
+        # 全層統一 gemini-3.1-flash-lite：格式穩定性比 2.5-flash-lite 好，適合當預設。
+        # 代價是快取門檻 4096，我們常見前綴（~2200）跨不過，成本會高一些。
+        # 若要省錢，可單層或全層覆寫回 2.5 系列；若要更強推理，覆寫 reflect 即可。
         "models": {
             "routine": "gemini-3.1-flash-lite",
             "dialogue": "gemini-3.1-flash-lite",
@@ -99,7 +97,7 @@ PROVIDERS = {
     },
 }
 
-DEFAULT_PROVIDER = "anthropic"
+DEFAULT_PROVIDER = "gemini"
 
 # 為什麼 Anthropic 的 routine 層留在 Haiku 而不換 Sonnet：
 #
@@ -108,7 +106,7 @@ DEFAULT_PROVIDER = "anthropic"
 #
 # Sonnet 划算的條件是 O·10 < P·0.7 − V·2，V=400 / O=200 時約為 P > 4000。
 # 但 P 一旦到 4096，Haiku 自己也開始快取，所以 Haiku 一路領先。
-# Gemini 那邊的取捨相反（2.5 系列門檻低到我們跨得過），所以預設就選會快取的那一檔。
+# Gemini 預設用 3.1-flash-lite：較穩，但門檻 4096，前綴常進不了快取。
 
 
 def provider_models(provider: str) -> dict:
