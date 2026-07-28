@@ -103,6 +103,11 @@
   .prog .fill{height:100%; width:0; background:linear-gradient(90deg,var(--gold),var(--cinnabar)); transition:width .3s}
   .prog .stat{display:flex; justify-content:space-between; font-size:13px}
   .prog .stat b{font-family:var(--disp); font-size:18px; color:var(--gold); font-weight:600}
+  .substat{display:flex; justify-content:space-between; gap:10px; font-size:11.5px; color:var(--ink2)}
+  .substat strong{color:var(--ink); font-weight:600}
+  .metrics{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; font-size:11.5px; color:var(--ink2)}
+  .metrics span{display:inline-flex; gap:4px}
+  .metrics strong{color:var(--ink); font-weight:600}
   .feed{display:flex; flex-direction:column; gap:5px; max-height:180px; overflow:auto}
   .fe{font-size:12.5px; line-height:1.45; padding:6px 8px; border-radius:7px; background:color-mix(in srgb,var(--bg) 35%,var(--panel2));
     border-left:3px solid var(--line2)}
@@ -183,6 +188,13 @@
       </div>
       <div class="prog" id="prog">
         <div class="stat"><span>進度</span><span><b id="progWhen">—</b> · tick <span id="progTick">0</span>/<span id="progTotal">0</span></span></div>
+        <div class="substat"><span id="progPhase">等待開始</span><span id="progHeartbeat">尚未收到更新</span></div>
+        <div class="metrics">
+          <span><strong>已花</strong><span id="progElapsed">—</span></span>
+          <span><strong>平均每 tick</strong><span id="progAvg">—</span></span>
+          <span><strong>本刻已等</strong><span id="progCurrentWait">—</span></span>
+          <span><strong>預估剩餘</strong><span id="progEta">—</span></span>
+        </div>
         <div class="bar"><div class="fill" id="progFill"></div></div>
         <div class="feed" id="feed"></div>
       </div>
@@ -200,6 +212,11 @@ const pickReplay = $("pickReplay");
 const pickLive = $("pickLive");
 let es = null;
 let replayUrl = "";
+let lastHeartbeatAt = 0;
+let heartbeatTimer = null;
+let currentJobData = null;
+let lastTickSeen = null;
+let tickChangedAt = 0;
 
 function show(mode) {
   const replay = mode === "replay";
@@ -298,8 +315,17 @@ $("btnRun").onclick = async () => {
   $("progTotal").textContent = String(body.ticks);
   $("progTick").textContent = "0";
   $("progWhen").textContent = "啟動中";
+  $("progPhase").textContent = "正在送出第一批請求";
+  $("progHeartbeat").textContent = "等待 server 回報…";
+  $("progElapsed").textContent = "0s";
+  $("progAvg").textContent = "—";
+  $("progCurrentWait").textContent = "0s";
+  $("progEta").textContent = "—";
   $("progFill").style.width = "0%";
   $("feed").innerHTML = "";
+  currentJobData = null;
+  lastTickSeen = null;
+  tickChangedAt = Date.now();
 
   try {
     const r = await fetch("/api/run", {
@@ -318,13 +344,18 @@ $("btnRun").onclick = async () => {
 };
 
 function watchJob(jobId) {
+  if (heartbeatTimer) clearInterval(heartbeatTimer);
+  heartbeatTimer = setInterval(updateHeartbeatLabel, 1000);
   es = new EventSource(`/api/job/${jobId}/events`);
   es.onmessage = (ev) => {
     const data = JSON.parse(ev.data);
+    lastHeartbeatAt = Date.now();
+    currentJobData = data;
     renderProgress(data);
     if (data.status === "done") {
       es.close();
       es = null;
+      if (heartbeatTimer) { clearInterval(heartbeatTimer); heartbeatTimer = null; }
       $("btnRun").disabled = false;
       if (data.replay_url) {
         replayUrl = data.replay_url;
@@ -337,21 +368,30 @@ function watchJob(jobId) {
     } else if (data.status === "error" || data.status === "gone") {
       es.close();
       es = null;
+      if (heartbeatTimer) { clearInterval(heartbeatTimer); heartbeatTimer = null; }
       $("btnRun").disabled = false;
       $("liveErr").textContent = data.error || "job 消失了";
       $("liveErr").classList.add("on");
     }
   };
-  es.onerror = () => {};
+  es.onerror = () => {
+    $("progHeartbeat").textContent = "連線重試中…若長時間不變，請看終端或 runs/<run-id>/events.jsonl";
+  };
 }
 
 function renderProgress(data) {
   const total = data.ticks_total || 1;
   const tick = data.tick || 0;
+  if (tick !== lastTickSeen) {
+    lastTickSeen = tick;
+    tickChangedAt = Date.now();
+  }
   $("progTick").textContent = String(tick);
   $("progTotal").textContent = String(total);
   $("progWhen").textContent = data.when || "—";
+  $("progPhase").textContent = data.phase || "執行中";
   $("progFill").style.width = `${Math.min(100, (tick / total) * 100)}%`;
+  updateProgressStats();
   const feed = $("feed");
   feed.innerHTML = "";
   for (const row of (data.recent || []).slice().reverse()) {
@@ -360,6 +400,51 @@ function renderProgress(data) {
     div.innerHTML = `<span class="t">t${row.tick ?? "—"}</span>${escapeHtml(row.text || "")}`;
     feed.appendChild(div);
   }
+}
+
+function updateHeartbeatLabel() {
+  if (!lastHeartbeatAt) return;
+  const sec = Math.max(0, Math.floor((Date.now() - lastHeartbeatAt) / 1000));
+  if (sec <= 1) {
+    $("progHeartbeat").textContent = "剛更新";
+    return;
+  }
+  if (sec < 15) {
+    $("progHeartbeat").textContent = `${sec} 秒前更新`;
+    return;
+  }
+  $("progHeartbeat").textContent = `${sec} 秒前更新 · 仍在跑，真 LLM 某些刻會卡很久`;
+}
+
+function updateProgressStats() {
+  updateHeartbeatLabel();
+  if (!currentJobData) return;
+  const nowMs = Date.now();
+  const startedMs = Math.round((currentJobData.started_at || 0) * 1000);
+  const tick = currentJobData.tick || 0;
+  const total = currentJobData.ticks_total || 0;
+  const elapsedSec = startedMs ? Math.max(0, Math.floor((nowMs - startedMs) / 1000)) : 0;
+  const currentWaitSec = tickChangedAt ? Math.max(0, Math.floor((nowMs - tickChangedAt) / 1000)) : 0;
+  $("progElapsed").textContent = fmtSpan(elapsedSec);
+  $("progCurrentWait").textContent = fmtSpan(currentWaitSec);
+  if (tick > 0) {
+    const avgSec = elapsedSec / tick;
+    $("progAvg").textContent = `${avgSec.toFixed(avgSec >= 10 ? 0 : 1)}s`;
+    const remainTicks = Math.max(0, total - tick);
+    $("progEta").textContent = fmtSpan(Math.round(avgSec * remainTicks));
+  } else {
+    $("progAvg").textContent = "—";
+    $("progEta").textContent = "—";
+  }
+}
+
+function fmtSpan(sec) {
+  if (sec < 60) return `${sec}s`;
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  if (m < 60) return `${m}m ${s}s`;
+  const h = Math.floor(m / 60);
+  return `${h}h ${m % 60}m`;
 }
 
 $("btnOpenReplay").onclick = () => {

@@ -28,11 +28,13 @@ class Job:
     tick: int = 0
     ticks_total: int = 0
     when: str = ""
+    phase: str = "queued"
     error: str = ""
     replay_url: str = ""
     recent: list[dict] = field(default_factory=list)
     started_at: float = 0.0
     finished_at: float = 0.0
+    updated_at: float = 0.0
 
 
 class JobRunner:
@@ -61,6 +63,7 @@ class JobRunner:
                 run_id=params["run_id"],
                 ticks_total=int(params["ticks"]),
                 started_at=time.time(),
+                updated_at=time.time(),
             )
             self._job = job
             self._thread = threading.Thread(
@@ -71,22 +74,30 @@ class JobRunner:
 
     def _run_thread(self, job: Job, params: dict) -> None:
         job.status = "running"
+        job.phase = "啟動中"
+        job.updated_at = time.time()
         try:
             code = asyncio.run(self._drive(job, params))
             if code != 0 and not job.error:
                 job.error = "模擬結束但沒有有效決策（可能全部呼叫失敗）。"
                 job.status = "error"
+                job.phase = "失敗"
                 job.finished_at = time.time()
+                job.updated_at = job.finished_at
                 return
             if (params.get("scenario") or "jianghu") == "jianghu":
                 slug = self._build_replay(job.run_id)
                 job.replay_url = f"/replay/{slug}"
             job.status = "done"
+            job.phase = "已完成"
             job.finished_at = time.time()
+            job.updated_at = job.finished_at
         except Exception as e:  # noqa: BLE001 - 邊界：回報給 UI
             job.error = f"{type(e).__name__}: {e}"
             job.status = "error"
+            job.phase = "失敗"
             job.finished_at = time.time()
+            job.updated_at = job.finished_at
 
     async def _drive(self, job: Job, params: dict) -> int:
         stub = bool(params.get("stub", False))
@@ -158,6 +169,8 @@ class JobRunner:
             for _ in range(ticks):
                 job.tick = world.tick
                 job.when = clock_str(world.tick)
+                job.phase = f"正在跑第 {world.tick}/{ticks} 刻"
+                job.updated_at = time.time()
                 await engine.tick()
                 self._pull_recent(job, run_dir)
             await engine.finish()
@@ -178,6 +191,7 @@ class JobRunner:
             log.close()
             job.tick = world.tick
             job.when = clock_str(max(0, world.tick - 1))
+            job.updated_at = time.time()
         if ok == 0 and bad:
             job.error = engine.last_error or "全部呼叫失敗"
             return 1
@@ -199,6 +213,7 @@ class JobRunner:
                     continue
                 recent.append(self._summarize(rec))
         job.recent = recent[-limit:]
+        job.updated_at = time.time()
 
     @staticmethod
     def _summarize(rec: dict) -> dict:

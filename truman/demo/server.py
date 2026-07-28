@@ -89,9 +89,13 @@ def job_public(job) -> dict:
         "tick": job.tick,
         "ticks_total": job.ticks_total,
         "when": job.when,
+        "phase": getattr(job, "phase", ""),
         "error": job.error,
         "replay_url": job.replay_url,
         "recent": job.recent,
+        "started_at": getattr(job, "started_at", 0.0),
+        "updated_at": getattr(job, "updated_at", 0.0),
+        "server_now": time.time(),
     }
 
 
@@ -236,9 +240,10 @@ class DemoHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "text/event-stream; charset=utf-8")
         self.send_header("Cache-Control", "no-cache")
         self.send_header("Connection", "keep-alive")
+        self.send_header("X-Accel-Buffering", "no")
         self.end_headers()
-        last_len = -1
-        last_status = ""
+        last_payload = None
+        last_push = 0.0
         try:
             while True:
                 job = RUNNER.get(job_id)
@@ -246,10 +251,11 @@ class DemoHandler(BaseHTTPRequestHandler):
                     self._sse_event({"status": "gone"})
                     break
                 payload = job_public(job)
-                if len(job.recent) != last_len or job.status != last_status:
+                now = time.time()
+                if payload != last_payload or now - last_push >= 1.0:
                     self._sse_event(payload)
-                    last_len = len(job.recent)
-                    last_status = job.status
+                    last_payload = payload
+                    last_push = now
                 if job.status in ("done", "error"):
                     break
                 time.sleep(0.4)
