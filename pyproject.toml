@@ -1,7 +1,7 @@
 [project]
 name = "truman"
 version = "0.1.0"
-description = "單主角楚門式 LLM 多智能體社會模擬"
+description = "LLM 多智能體箱庭：結構性衝突下的社交與戰鬥動力學"
 requires-python = ">=3.11"
 dependencies = [
     "python-dotenv>=1.0",

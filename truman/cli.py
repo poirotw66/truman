@@ -1,10 +1,10 @@
 """CLI：跑模擬、重放、分支、出報告。
 
-  python -m truman.cli run     --ticks 48 --run-id demo
-  python -m truman.cli replay  --run-id demo               # 零成本重放
-  python -m truman.cli fork    --from-latest demo --run-id demo_b --ticks 24 \\
-                               --inject "chen_yuan:（你在抽屜深處找到一張沒見過的船票。）"
-  python -m truman.cli report  --run-id demo
+  python -m truman.cli --scenario jianghu run --ticks 96 --run-id j2
+  python -m truman.cli replay  --run-id j2
+  python -m truman.cli fork    --from-latest j2 --run-id j2_x --ticks 24 \\
+                               --inject "liu_zhengfeng:（廳外忽然傳來一陣急驟的馬蹄聲。）"
+  python -m truman.cli report  --run-id j2
   python -m truman.cli map
 """
 
@@ -587,8 +587,15 @@ def cmd_models(args) -> None:
 # ---------------------------------------------------------------- entry
 def main() -> None:
     load_dotenv()
-    p = argparse.ArgumentParser(prog="truman", description="單主角楚門式 LLM 社會模擬")
-    p.add_argument("--scenario", default="seahaven")
+    p = argparse.ArgumentParser(
+        prog="truman",
+        description="LLM 多智能體箱庭（現役主線：jianghu；seahaven 為早期楚門劇本）",
+    )
+    p.add_argument(
+        "--scenario",
+        default="jianghu",
+        help="劇本（預設 jianghu；另有 hakoniwa、seahaven）",
+    )
     p.add_argument(
         "--thinking",
         choices=["minimal", "low", "medium", "high"],
