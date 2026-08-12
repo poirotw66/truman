@@ -1314,8 +1314,16 @@ F.forEach(fr => fr.events.forEach(e => {
   else if (e.kind === "death") FEED.push({ t:fr.tick, k:"death", html:`<img class="ic" src="${ICONS.death}" alt="死"><span><b>${esc(e.name)}</b> 死了${e.by&&P[e.by]?`，死於 <b>${esc(P[e.by].name)}</b> 之手`:""}。</span>${tm}` });
   else if (e.kind === "reflection") FEED.push({ t:fr.tick, k:"reflection", html:`<img class="ic" src="${ICONS.reflection}" alt="想通了"><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b> 想通了：${esc(e.insight.length>52?e.insight.slice(0,50)+"…":e.insight)}</span>${tm}` });
   else if (e.kind === "world") FEED.push({ t:fr.tick, k:"world", html:`<img class="ic" src="${ICONS.world}" alt="世界"><span>${esc(e.text.replace(/[（）]/g,""))}</span>${tm}` });
-  else if (e.kind === "art") FEED.push({ t:fr.tick, k:"art",
-    html:`<img class="ic" src="${ICONS.art}" alt="絕技"><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b> 使出 <b style="color:var(--violet)">${esc(e.art)}</b>${e.left>=0?`<span style="color:var(--ink2)">（還剩 ${e.left} 次）</span>`:""}${e.line?`　${esc(e.line)}`:""}</span>${tm}` });
+  else if (e.kind === "art") {
+    // line 本身已經是完整句子（引擎的句子都以人名開頭），把那截人名包成不斷行的
+    // 色塊，其餘照描述句原樣顯示——不再把「人名／招式名」各講第二次。
+    const nm = P[e.agent].name, ln = e.line || `${nm}使出${e.art}。`;
+    const body = ln.startsWith(nm)
+      ? `<b style="color:${P[e.agent].color}; white-space:nowrap">${esc(nm)}</b>${esc(ln.slice(nm.length))}`
+      : esc(ln);
+    FEED.push({ t:fr.tick, k:"art",
+      html:`<img class="ic" src="${ICONS.art}" alt="絕技"><span>${body}${e.left>=0?`<span style="color:var(--ink2); font-size:10.5px">　（還剩 ${e.left} 次）</span>`:""}</span>${tm}` });
+  }
   else if (e.kind === "note") FEED.push({ t:fr.tick, k:"note",
     html:`<img class="ic" src="${ICONS.world}" alt="只有他知道"><span><b style="color:${P[e.agent]?P[e.agent].color:"var(--ink2)"}">${esc(P[e.agent]?P[e.agent].name:"某人")}</b> 眼前：${esc(e.text.replace(/[（）]/g,""))}<span style="color:var(--ink2)">　（只有他看得見）</span></span>${tm}` });
   else if (e.kind === "goal") FEED.push({ t:fr.tick, k:e.done?"goal":"goalx",
