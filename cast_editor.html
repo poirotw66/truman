@@ -86,6 +86,23 @@
     cursor:pointer; user-select:none}
   .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--jade) 26%,transparent); border-color:var(--jade); color:var(--jade)}
   .chip.none{opacity:.6; cursor:default}
+  /* 目的 */
+  .goalbox{border:1px solid var(--line2); border-radius:8px; padding:10px; margin-bottom:8px;
+    background:color-mix(in srgb,var(--panel2) 55%,transparent)}
+  /* 絕技：一門一張卡，點下去就是配上。滑鼠移上去的 title 是它真正的 prompt 說明。 */
+  .artgroup{margin-bottom:10px}
+  .artkind{font-size:10px; letter-spacing:.24em; color:var(--ink2); font-weight:700; margin-bottom:5px}
+  .artcard{display:inline-flex; flex-direction:column; gap:3px; text-align:left; width:224px;
+    min-height:78px; vertical-align:top; padding:8px 11px; margin:0 6px 6px 0; border-radius:8px;
+    cursor:pointer; background:var(--panel2); border:1px solid var(--line2); color:var(--ink); font:inherit}
+  .artcard u{margin-top:auto}
+  .artcard:hover{border-color:var(--gold)}
+  .artcard b{font-size:12.5px; letter-spacing:.04em}
+  .artcard i{font-style:normal; font-size:10.5px; color:var(--ink2); line-height:1.45}
+  .artcard u{text-decoration:none; font-size:10px; color:var(--gold); opacity:.85}
+  .artcard[aria-pressed="true"]{background:color-mix(in srgb,var(--jade) 22%,transparent);
+    border-color:var(--jade)}
+  .artcard[aria-pressed="true"] b{color:var(--jade)}
 
   .look{display:flex; gap:12px; align-items:flex-start}
   .look .prev{flex:none; width:150px; background:var(--field); border:1px solid var(--line2); border-radius:10px;
@@ -821,6 +838,43 @@ function problems() {
   S.agents.forEach(a => (a.kin || []).forEach(k => {
     if (!S.agents.some(b => b.id === k)) out.push([a, `${a.name} 在意的人 ${k} 已經不在名單裡`]);
   }));
+  // 目的：參數指到不存在的人或地方，世界會安靜地永遠判不成立——那比報錯難查得多。
+  // 這裡的檢查要和 truman/cast.py 的 _check_goals 對得上。
+  S.agents.forEach(a => {
+    const who = a.name || a.id;
+    if (!(a.goals || []).length) out.push([a, `${who} 沒有目的，世界不會替他判定任何事`]);
+    (a.goals || []).forEach((g, i) => {
+      const tag = `${who} 的第 ${i+1} 個目的`;
+      const spec = GOAL_SPEC[g.kind];
+      if (!spec) { out.push([a, `${tag}：不認得的判定器 ${g.kind}`]); return; }
+      if (!(g.text || "").trim()) out.push([a, `${tag}：沒寫給他自己讀的那句話`]);
+      const p = g.params || {};
+      spec.params.forEach(([key, lab, type]) => {
+        const v = p[key];
+        const need = (type === "agents" || type === "areas")
+          ? !(v || []).length : (v == null || v === "");
+        if (need && !(g.kind === "ritual" && key === "by_tick")) {
+          out.push([a, `${tag}：還沒指定「${lab}」`]); return;
+        }
+        const list = (type === "agents" || type === "areas") ? v : [v];
+        if (type === "agent" || type === "agents")
+          list.forEach(x => { if (!S.agents.some(b => b.id === x))
+            out.push([a, `${tag}：指到的 ${x} 不在名單裡`]); });
+        if (type === "area" || type === "areas")
+          list.forEach(x => { if (x !== DATA.street && !AREAS.some(y => y.name === x))
+            out.push([a, `${tag}：${x} 不在這張地圖上`]); });
+      });
+      if (g.kind === "prevent" && p.agent) {
+        const tgt = S.agents.find(b => b.id === p.agent);
+        const idx = +(p.goal || 0);
+        if (tgt && !(tgt.goals || [])[idx])
+          out.push([a, `${tag}：${tgt.name} 沒有第 ${idx} 個目的（他只有 ${(tgt.goals||[]).length} 個）`]);
+        if (p.agent === a.id) out.push([a, `${tag}：不能阻止自己`]);
+      }
+      if ((g.kind === "isolate" && p.target === a.id) || (g.kind === "meet" && p.who === a.id))
+        out.push([a, `${tag}：對象不能是自己`]);
+    });
+  });
   const at = {};
   S.agents.forEach(a => { const k = a.start.join(",");
     if (at[k]) out.push([a, `${a.name} 和 ${at[k]} 都站在 (${k})`]); else at[k] = a.name; });
@@ -898,6 +952,104 @@ function llmHintText(a) {
 const ROLES = [["villager","一般人物"],["protagonist","主角（僅早期 seahaven 覺察用）"]];
 
 function opt(list, v) { return list.map(([k,t]) => `<option value="${k}" ${k===(v||"")?"selected":""}>${t}</option>`).join(""); }
+
+/* ---- 目的與絕技 ----------------------------------------------------------
+   絕技就是這個世界的工具。這一段是整個工作室的重點：挑角色、給目的、配工具，
+   然後看它自己跑。說明文字直接來自 world/arts.py 的目錄，和角色真正讀到的
+   prompt 是同一份字——工作室上寫什麼，模型就看到什麼。                        */
+
+// 每種判定器要填哪些參數。世界那邊的判定器加了新的，這裡也要跟著加一筆。
+const GOAL_SPEC = {
+  survive: {label:"活著",         params:[]},
+  reach:   {label:"走到某個地方", params:[["area","地點","area"]]},
+  ritual:  {label:"當眾辦成儀式", params:[["rite","儀式名","text"],["by_tick","期限（第幾刻）","num"]]},
+  protect: {label:"別讓某些人出事", params:[["who","要護的人","agents"]]},
+  prevent: {label:"阻止某人達成目的", params:[["agent","對手","agent"],["goal","他的第幾個目的（從 0 起算）","num"]]},
+  isolate: {label:"把某人帶到僻靜處", params:[["target","對象","agent"],["areas","算數的地點","areas"]]},
+  conceal: {label:"別被當眾說破",  params:[]},
+  meet:    {label:"見到某人一面",  params:[["who","要見的人","agent"]]},
+};
+
+function goalsHTML(a) {
+  const gs = a.goals || [];
+  if (!gs.length) return `<div class="hint" style="padding:6px 0">還沒有目的。沒有目的的人，世界不會替他判定任何事。</div>`;
+  const others = S.agents.filter(b => b.id !== a.id);
+  const areaNames = [DATA.street].concat(AREAS.map(x => x.name));
+  return gs.map((g, i) => {
+    const spec = GOAL_SPEC[g.kind] || GOAL_SPEC.survive;
+    const p = g.params || {};
+    const fields = spec.params.map(([key, lab, type]) => {
+      const v = p[key];
+      if (type === "num")
+        return `<div class="f"><label style="color:var(--ink2)">${esc(lab)}</label>
+          <input type="number" data-gp="${i}:${key}" value="${v == null ? "" : esc(String(v))}"></div>`;
+      if (type === "text")
+        return `<div class="f"><label style="color:var(--ink2)">${esc(lab)}</label>
+          <input type="text" data-gp="${i}:${key}" value="${esc(v || "")}"></div>`;
+      if (type === "area" || type === "areas") {
+        const chosen = type === "areas" ? (v || []) : [v];
+        if (type === "area")
+          return `<div class="f"><label style="color:var(--ink2)">${esc(lab)}</label>
+            <select data-gp="${i}:${key}">${areaNames.map(n =>
+              `<option ${n===v?"selected":""}>${esc(n)}</option>`).join("")}</select></div>`;
+        return `<div class="f wide"><label style="color:var(--ink2)">${esc(lab)}</label>
+          <div class="chips">${areaNames.map(n =>
+            `<button class="chip" data-gm="${i}:${key}:${esc(n)}" aria-pressed="${chosen.includes(n)}">${esc(n)}</button>`).join("")}</div></div>`;
+      }
+      // agent / agents
+      const chosen = type === "agents" ? (v || []) : [v];
+      if (type === "agent")
+        return `<div class="f"><label style="color:var(--ink2)">${esc(lab)}</label>
+          <select data-gp="${i}:${key}"><option value="">（未指定）</option>${others.map(b =>
+            `<option value="${esc(b.id)}" ${b.id===v?"selected":""}>${esc(b.name)}</option>`).join("")}</select></div>`;
+      return `<div class="f wide"><label style="color:var(--ink2)">${esc(lab)}</label>
+        <div class="chips">${others.length ? others.map(b =>
+          `<button class="chip" data-gm="${i}:${key}:${esc(b.id)}" aria-pressed="${chosen.includes(b.id)}">${esc(b.name)}</button>`).join("")
+          : `<span class="chip none">名單上只有這一個人</span>`}</div></div>`;
+    }).join("");
+    return `<div class="goalbox">
+      <div class="row">
+        <div class="f" style="flex:0 0 178px"><label style="color:var(--ink2)">怎麼判定</label>
+          <select data-gk="${i}">${Object.entries(GOAL_SPEC).map(([k, s]) =>
+            `<option value="${k}" ${k===g.kind?"selected":""}>${esc(s.label)}</option>`).join("")}</select></div>
+        <div class="f"><label style="color:var(--ink2)">給他自己讀的一句話</label>
+          <input type="text" data-gt="${i}" value="${esc(g.text || "")}"></div>
+        <button class="b mini danger" data-gdel="${i}" style="align-self:flex-end">刪掉</button>
+      </div>
+      ${fields ? `<div class="row" style="margin-top:8px">${fields}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+function artsHTML(a) {
+  const equipped = a.arts || [];
+  const combat = DATA.combat;
+  const byKind = {};
+  (DATA.arts_catalog || []).forEach(d => {
+    if (d.combat_only && !combat) return;   // 和平劇本連看都不該看到動手的功夫
+    (byKind[d.kind] = byKind[d.kind] || []).push(d);
+  });
+  return Object.entries(byKind).map(([kind, list]) => `
+    <div class="artgroup">
+      <div class="artkind">${esc((DATA.art_kinds || {})[kind] || kind)}</div>
+      ${list.map(d => {
+        const on = equipped.includes(d.id);
+        return `<button class="artcard" data-art-id="${esc(d.id)}" aria-pressed="${on}">
+          <b>${esc(d.name)}</b>
+          <i>${esc(d.tagline)}</i>
+          <u>${esc(d.cost || "不限次數")}</u>
+        </button>`;
+      }).join("")}
+    </div>`).join("");
+}
+
+function artsHintText(a) {
+  const n = (a.arts || []).length;
+  if (!n) return "這個人手上沒有工具。他仍然可以走、可以說話，但不會有 use_art 這個選項。";
+  const names = (DATA.arts_catalog || []).filter(d => (a.arts || []).includes(d.id)).map(d => d.name);
+  return `配了 ${n} 門：${names.join("、")}。點一下卡片就是配上或拿掉；` +
+         `滑鼠移上去看「什麼時候該用」——那段字會原封不動進到他的 prompt 裡。`;
+}
 
 function renderForm() {
   const a = cur();
@@ -981,7 +1133,20 @@ function renderForm() {
         `<button class="chip" data-kin="${esc(b.id)}" aria-pressed="${(a.kin||[]).includes(b.id)}">${esc(b.name)}</button>`).join("")
         : `<span class="chip none">名單上只有這一個人</span>`}</div></div>
 
-    <div class="f wide"><label>今日所求 <span>一句話。只出現在回放頁，不進 prompt</span></label>
+    <div class="f wide" style="border-top:1px solid var(--line); padding-top:12px">
+      <label>今天要做到的事 <span>世界會判定成敗，報表算得出達成率</span></label>
+      <div id="goals">${goalsHTML(a)}</div>
+      <button class="b mini" id="btnAddGoal" style="align-self:flex-start; margin-top:6px">＋ 加一個目的</button>
+      <div class="hint">目的要和下面的人設說同一件事——人設是給他自己讀的，這裡是給世界判的。
+        「要做到某件事」（走到、辦成、帶走）沒做到就是失敗；
+        「不要出事」（活著、護住、別被說破）撐到最後就是達成。</div></div>
+
+    <div class="f wide">
+      <label>配備的絕技 <span>他手上的工具。挑對他的目的真的有用的</span></label>
+      <div id="arts">${artsHTML(a)}</div>
+      <div class="hint" id="artsHint"></div></div>
+
+    <div class="f wide"><label>今日所求 <span>一句話文案，只出現在回放頁的片頭，不進 prompt、不判定</span></label>
       <input type="text" data-art="goal" value="${esc(a.art.goal)}"></div>
 
     <div class="f wide"><label>江湖傳聞 <span>公開人物表：這一段所有人都看得見</span></label>
@@ -1045,6 +1210,72 @@ function renderForm() {
       el.setAttribute("aria-pressed", String(!on)); touch(false);
     };
   });
+  // --- 目的 ---
+  const reGoals = () => {
+    document.getElementById("goals").innerHTML = goalsHTML(cur());
+    bindGoals(); touch(false);
+  };
+  function bindGoals() {
+    document.querySelectorAll("#goals [data-gk]").forEach(el => {
+      el.onchange = () => {
+        const g = cur().goals[+el.dataset.gk];
+        g.kind = el.value;
+        g.params = {};   // 換了判定器，舊參數一定對不上，清掉比留著誤導好
+        reGoals();
+      };
+    });
+    document.querySelectorAll("#goals [data-gt]").forEach(el => {
+      el.oninput = () => { cur().goals[+el.dataset.gt].text = el.value; touch(false); };
+    });
+    document.querySelectorAll("#goals [data-gp]").forEach(el => {
+      el.oninput = el.onchange = () => {
+        const [i, key] = el.dataset.gp.split(":");
+        const g = cur().goals[+i];
+        g.params = g.params || {};
+        if (el.type === "number") {
+          if (el.value === "") delete g.params[key]; else g.params[key] = +el.value;
+        } else if (el.value === "") { delete g.params[key]; }
+        else g.params[key] = el.value;
+        touch(false);
+      };
+    });
+    document.querySelectorAll("#goals [data-gm]").forEach(el => {
+      el.onclick = () => {
+        const [i, key, val] = el.dataset.gm.split(":");
+        const g = cur().goals[+i];
+        g.params = g.params || {};
+        const list = g.params[key] || [];
+        g.params[key] = list.includes(val) ? list.filter(x => x !== val) : list.concat([val]);
+        el.setAttribute("aria-pressed", String(g.params[key].includes(val)));
+        touch(false);
+      };
+    });
+    document.querySelectorAll("#goals [data-gdel]").forEach(el => {
+      el.onclick = () => { cur().goals.splice(+el.dataset.gdel, 1); reGoals(); };
+    });
+  }
+  bindGoals();
+  document.getElementById("btnAddGoal").onclick = () => {
+    const a2 = cur();
+    a2.goals = (a2.goals || []).concat([{kind:"survive", text:"活著", params:{}}]);
+    reGoals();
+  };
+
+  // --- 絕技：點卡片配上或拿掉 ---
+  document.querySelectorAll("#form [data-art-id]").forEach(el => {
+    el.onclick = () => {
+      const id = el.dataset.artId, a2 = cur();
+      const on = (a2.arts || []).includes(id);
+      a2.arts = on ? a2.arts.filter(x => x !== id) : (a2.arts || []).concat([id]);
+      el.setAttribute("aria-pressed", String(!on));
+      document.getElementById("artsHint").textContent = artsHintText(a2);
+      touch(true);
+    };
+    const d = (DATA.arts_catalog || []).find(x => x.id === el.dataset.artId);
+    if (d) el.title = d.when + (d.cost ? `\n（${d.cost}）` : "");
+  });
+  document.getElementById("artsHint").textContent = artsHintText(a);
+
   document.querySelectorAll("#form [data-face]").forEach(el => {
     el.onclick = () => { face = el.dataset.face; renderForm(); };
   });
@@ -1120,6 +1351,9 @@ function payload() {
   return { scenario: S.scenario, agents: S.agents.map(a => ({
     id: a.id, name: a.name, role: a.role, home_area: a.home_area,
     start: [a.start[0], a.start[1]], skill: a.skill, kin: (a.kin || []).slice(),
+    goals: (a.goals || []).map(g => ({kind: g.kind, text: g.text || "",
+                                      params: g.params || {}})),
+    arts: (a.arts || []).slice(),
     public: a.public || "", persona: a.persona || "", llm: a.llm || {}, art: a.art,
   })) };
 }
@@ -1133,8 +1367,14 @@ function download() {
 function adopt(d) {
   if (!d || !Array.isArray(d.agents) || !d.agents.length) { alert("這份 JSON 裡沒有 agents。"); return; }
   const fb = DATA.art_defaults.fallback;
+  const known = new Set((DATA.arts_catalog || []).map(x => x.id));
   d.agents.forEach(a => { a.art = Object.assign({}, fb, a.art || {}); a.kin = a.kin || []; a.llm = a.llm || {};
-    a.start = a.start || [1,1]; a.skill = a.skill == null ? 5 : a.skill; a.role = a.role || "villager"; });
+    a.start = a.start || [1,1]; a.skill = a.skill == null ? 5 : a.skill; a.role = a.role || "villager";
+    a.goals = Array.isArray(a.goals) ? a.goals.map(g => ({kind:g.kind || "survive",
+      text:g.text || "", params:g.params || {}})) : [];
+    // 目錄裡沒有的絕技 id 直接丟掉：留著只會在開跑時被 --cast 擋下來，
+    // 而那時候人已經在終端機前面等了。
+    a.arts = Array.isArray(a.arts) ? a.arts.filter(x => known.has(x)) : []; });
   S = { scenario: d.scenario || DATA.scenario, agents: d.agents };
   sel = 0; touch(true);
 }
