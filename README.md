@@ -15,8 +15,68 @@
 - 結構性衝突下，對話／站位／動手是否可信？
 - 「強者通吃」能不能被機制打破？（anti-snowball：傷勢非對稱、義憤、親友尋仇）
 - 角色能不能感受到自己身上的狀態？（傷勢、憤怒——機制寫了卻進不了 prompt 就不算數）
+- **給了明確的目的與趁手的工具，agent 會不會用？用得對不對？**
 
 和平對照本是 `hakoniwa`（同一張海晏鎮地圖、無動手）。`seahaven` 仍保留為早期楚門劇本，有主角時才啟用覺察評審；箱庭劇本沒有主角，該層整層不存在。
+
+### 目的與絕技：每個人都知道自己要什麼，也帶著能達成它的東西
+
+每個角色身上有兩樣結構化、世界看得懂的東西：
+
+| | 是什麼 | 在哪 |
+|---|---|---|
+| **目的（goal）** | 今天要做到的事，寫成世界判定得出來的形式 | `truman/world/goals.py` |
+| **絕技（art）** | 他手上的工具：有說明、有使用時機、有前提、有配額 | `truman/world/arts.py` |
+
+**絕技就是這個世界的 tool。** 它有名字、有「什麼時候該用」的說明、有前提條件、有次數與冷卻；
+角色自己決定何時拿出來，用不用得成由世界判定——和 `attack` 同一條原則：agent 只提交 intent。
+這個對照是刻意的，它把 agent 的運作攤開來給人看：
+
+```
+tool definition   ArtDef（名字／說明／使用時機／配額）  → system[1]，整場不變
+tool state        Art（還剩幾次／冷卻到哪一拍）        → observation，每拍都變
+tool call         action.kind = "use_art"
+tool runtime      Engine._apply_art → _resolve_art     → 驗參數、執行、把結果回給他
+```
+
+六個人的目的互相咬合，這是整個劇本的重點：
+
+```
+劉正風要洗完手      ←→  費彬的目的就是「讓他洗不成」（prevent 直接讀劉的目的）
+劉正風怕事情被說破  ←→  費彬的「名正言順」正好是說破用的
+曲洋怕被認出來      ←→  同一門「名正言順」也可以指向他
+田伯光要把儀琳帶走  ←→  儀琳要活著走到城門，令狐沖要她不死
+```
+
+**費彬的「名正言順」一天只能用一次**，可以指劉正風、也可以指曲洋——兩個都是他要的，
+只能挑一個。那一次選擇是這場箱庭最有看頭的地方，也是「工具有配額」最好的示範。
+
+絕技刻意不只有戰鬥（目前四類十五門：戰鬥／社交／情報／身法）。六個人裡只有兩個的目的
+靠打架達成；只給刀劍的話，儀琳、劉正風、曲洋會拿著一身用不上的武功，去追一個打不出來的目的。
+
+判定一律是**純函式、不呼叫 LLM**。理由和戰鬥把隨機源綁死在 `(seed, tick, 攻, 守)` 上一樣：
+replay 必須重現同一個結局，否則「達成率」這個數字沒有意義。八個判定器：
+`survive` / `reach` / `ritual` / `protect` / `prevent` / `isolate` / `conceal` / `meet`。
+
+沒配目的、沒配絕技的角色，這兩層**整層不存在**——`use_art` 連 schema 的 enum 都不會出現。
+和平劇本讀起來和以前一模一樣。
+
+### 最乾淨的對照實驗：同劇本、同 seed，只改配裝
+
+```powershell
+# 1. 開工作室，改目的、換絕技（點卡片就是配上／拿掉）
+.\.venv\Scripts\python.exe cast\build_editor.py jianghu
+
+# 2. 拿下載的 cast.json 開跑
+.\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run `
+  --run-id j5 --ticks 96 --seed 7 --cast cast\jianghu.json
+
+# 3. 看達成率與絕技使用統計
+.\.venv\Scripts\python.exe -m truman.cli report --run-id j5
+```
+
+把費彬的「名正言順」拿掉，他還攔得住嗎？給儀琳多一門輕功，她走得到城門嗎？
+這類問題現在有數字可以回答，不必靠讀對話猜。
 
 ### 目前狀態（本輪收尾）
 
@@ -25,13 +85,17 @@
 | 已到位 | 說明 |
 |---|---|
 | **anti-snowball 全日驗證** | `j2`→`j2b`→`j2c`：費彬先死於曲洋，「玻璃刀」守勢懲罰確實打破強者通吃 |
+| **目的與絕技** | 六人各有可判定的目的與配備的絕技；工作室可配裝、report 出達成率、回放頁有任務卡與成績單 |
+| **傷勢／義憤進 prompt** | 兩條 anti-snowball 機制原本只進骰子，角色感受不到；現在寫進 observation |
 | **本機 demo 入口** | `python -m truman.demo`：回放既有 run，或現場開跑（SSE 進度含時辰／phase／已花時間／平均每 tick／預估剩餘） |
 | **接力回放** | `replay/build_frames.py` 可串多段 fork；checkpoint 差一拍已修 |
 | **預設 provider** | `gemini` · 全層 `gemini-3.1-flash-lite`（格式較穩；快取門檻 4096，常見前綴常進不去） |
 
 **上台建議先播回放，不要賭現場燒一整天。** 真 LLM 全日（96 ticks）本來就慢，前端只能誠實顯示進度，無法變快。推薦串：`j2` + `j2b` + `j2c`。
 
-還沒做、仍貼主線的兩條（見 `todo.md`）：傷勢／義憤進 prompt，否則機制寫了角色感受不到。
+⚠ **目的與絕技這一層還沒用真 LLM 跑過一整天。** 引擎、判定、prompt 分層、前端都通過離線
+測試（含一段照劇本走的 18 拍全迴圈驗證），但「LLM 拿到這些工具會不會用、用得對不對」
+還沒有實跑數據——那正是這一層最想問的問題。見 `todo.md`。
 
 ---
 
@@ -247,10 +311,11 @@ reflection 佔大頭。要砍成本先動 `reflection_threshold`。實跑請以 
 
 ## 已知問題／主線待辦
 
-詳見 [`todo.md`](todo.md)。最貼主線的兩條：
+詳見 [`todo.md`](todo.md)。最貼主線的一條：
 
-- **背水一戰幾乎不觸發**：帶傷者很少出手；機制要進 observation／prompt，否則白寫。
-- **義憤累積了卻沒轉成行動**：`fury` 只進骰子、不進 prompt；角色不知道自己在憤怒。
+- **目的與絕技還沒實跑驗證**：LLM 會不會在對的時機把工具拿出來？配了卻從不用，
+  代表說明沒寫清楚或那門功夫對他的目的沒用；每次都用，代表配額給太鬆。
+  `report` 的絕技表就是為了看出這件事，但還沒有真 LLM 的數據可看。
 
 其餘：
 
@@ -258,6 +323,10 @@ reflection 佔大頭。要砍成本先動 `reflection_threshold`。實跑請以 
 - **記憶膨脹**：`memory_cap=400`；reflection 永不丟。
 - **replay 一致性**：依賴 `(tick, agent, 用途)` key；改節流或人員後舊日誌會對不上。
 - **尋仇的 fork 韌性**：runtime inject 不進 WorldState；checkpoint 卡在死亡與觸發之間可能漏報。
+- **回放頁的絕技清單取自劇本模組**：用 `--cast` 換過配裝的話，角色卡上那張清單會是劇本
+  預設。實際使出來的絕技與目的判定不受影響——那些讀的是日誌。
+- **全滅的 run 不會提早中止**：`j3` 96 拍全部失敗（`thinking_level` 不合）仍跑完才回報。
+  400 錯誤不花錢，但真 LLM 遇到這種情形會空燒一整天。
 
 ## 檔案地圖
 
@@ -267,7 +336,9 @@ truman/
   world/grid.py          格子地圖、區域、BFS 尋路
   world/state.py         WorldState / AgentState（完全可序列化）
   world/observation.py   每 agent 的過濾投影 ← 導演的掛載點
-  world/engine.py        tick 迴圈、intent 驗證、對話追加輪、戰鬥
+  world/arts.py          絕技目錄（＝這個世界的 tool）：說明、使用時機、配額
+  world/goals.py         目的判定器（八個，純函式、不呼叫 LLM）
+  world/engine.py        tick 迴圈、intent 驗證、對話追加輪、戰鬥、絕技、目的判定
   agents/memory.py       memory stream + 三要素檢索
   agents/cognition.py    節流閥、模型選層、prompt 組裝、記憶寫入
   director/director.py   inject / broadcast / summon / cue
@@ -305,12 +376,18 @@ todo.md                  主線待辦與實跑紀錄
 .\.venv\Scripts\python.exe cast\build_editor.py jianghu   # 產出 cast_editor.html
 ```
 
-改名字／人設／武功／起始位置／在意的人／長相，下載 `cast/jianghu.json` 後：
+改名字／人設／武功／起始位置／在意的人／長相／**今天要做到的事**／**配備的絕技**，
+下載 `cast/jianghu.json` 後：
 
 ```powershell
 .\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run `
   --run-id j2 --ticks 96 --seed 7 --cast cast\jianghu.json
 ```
+
+絕技那一區是一門一張卡，點下去就是配上或拿掉；卡片上的說明與滑鼠移上去的「什麼時候該用」
+**就是角色真正讀到的那段字**（同一份 `ArtDef`，不是另抄一份），所以工作室上看到什麼，
+模型就看到什麼。「出門前檢查」會擋掉指到不存在的人或地方的目的——那種錯不會報錯，
+只會讓判定永遠不成立，比報錯難查得多。
 
 ### 每個人可以掛不同的腦袋
 
