@@ -174,6 +174,14 @@ class SimConfig:
     # 看起來跟「還在跑」一模一樣（j2 就是這樣卡了半小時才被發現）。
     call_timeout: float = 180.0
     max_retries: int = 3  # 逾時／連線類錯誤的重試次數（指數退避）
+    # 開跑前先送一個極小的試探呼叫，驗證每一組（模型, thinking_level）真的收得下。
+    # j3 就是死在這裡：2.5-flash-lite 不吃 thinking_level=medium，96 拍、576 次呼叫
+    # 全部 400，32 秒「跑完」，零對話零意圖，而且要等全部跑完才回報。
+    # 一次試探幾十個 token，比燒掉一整天便宜太多。
+    preflight: bool = True
+    # 跑到一半全軍覆沒也要停：累積這麼多次失敗、而且一次都沒成功過，就中止。
+    # 12 大約是一拍的呼叫量，夠讓偶發的單點失敗過去，又不會讓全掛的 run 跑完全程。
+    abort_after_failures: int = 12
 
     # --- 覺察偵測關鍵詞（樣式法，LLM judge 之外的廉價哨兵）---
     suspicion_markers: list[str] = field(

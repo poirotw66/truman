@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from ..config import clock_str
+from . import arts, goals
 from .grid import Grid
 from .state import AgentState, WorldState
 
@@ -29,6 +30,12 @@ class Observation:
     rejection: str = ""  # 上一步被世界駁回的理由，只出現一次
     wound: int = 0  # 自己的傷勢
     fury: int = 0  # 義憤：親眼見人被殺會漲，出手更狠（和平劇本永遠是 0）
+    # 絕技此刻的狀態：[{"name": 招式名, "ready": bool, "left": 剩幾次, "wait": 還要幾刻}]。
+    # 招式做什麼、什麼時候該用寫在 system[1]（整場不變）；會變的只有這幾個數字，
+    # 所以只有這幾個數字放在這裡。
+    arts: list[dict] = field(default_factory=list)
+    goals: str = ""  # 目的進度，一句話（見 goals.progress_line）
+    buffs: list[str] = field(default_factory=list)  # 身上還生效的絕技效果
 
     # -------------------------------------------------------- 顯著度
     def new_faces(self, previously_seen: list[str]) -> list[str]:
@@ -101,6 +108,26 @@ class Observation:
                 "你親眼見過有人在你面前被殺。那一幕壓在心口散不掉，"
                 "真動起手來，你會比平時狠。"
             )
+
+        # 絕技的配額。招式說明在 system[1]，這裡只講「現在還使不使得出來」——
+        # 沒有這幾個數字，角色會一直去使已經用盡或還在冷卻的功夫，然後每次都被駁回。
+        if self.arts:
+            bits = []
+            for x in self.arts:
+                if not x["ready"]:
+                    state = "已經用盡" if x["left"] == 0 else f"還要 {x['wait']} 刻才緩得過來"
+                elif x["left"] < 0:
+                    state = "隨時可用"
+                else:
+                    state = f"還能使 {x['left']} 次"
+                bits.append(f"{x['name']}（{state}）")
+            lines.append(f"你的絕技：{'、'.join(bits)}。")
+        if self.buffs:
+            lines.append(f"此刻你身上還在的：{'、'.join(self.buffs)}。")
+
+        # 目的進度。做到了或沒指望了都要講——不然角色會朝一件已經結束的事繼續使力。
+        if self.goals:
+            lines.append(f"你今天要做到的事：{self.goals}")
 
         lines.append(f"你正在做的事：{self.doing}")
         lines.append(f"你原本的打算：{self.plan}")
@@ -205,5 +232,37 @@ def build_observations(
             rejection=a.last_rejection,
             wound=a.wound,
             fury=a.fury,
+            arts=_art_status(a, world.tick),
+            goals=goals.progress_line(a),
+            buffs=_buff_words(a, world.tick),
         )
     return obs
+
+
+_BUFF_WORDS = {
+    "atk": "運起的勁力（出手更重）",
+    "def": "擺開的守勢（比較擋得住）",
+    "dash": "提著的輕功（腳程加倍）",
+    "veil": "收起的行止（一時認不出來歷）",
+}
+
+
+def _art_status(a, tick: int) -> list[dict]:
+    out = []
+    for slot in a.arts:
+        d = arts.get(slot.id)
+        if d is None:
+            continue
+        ready, _ = slot.available(tick)
+        out.append({
+            "id": slot.id,
+            "name": d.name,
+            "ready": ready,
+            "left": slot.uses_left,
+            "wait": max(0, slot.ready_at - tick),
+        })
+    return out
+
+
+def _buff_words(a, tick: int) -> list[str]:
+    return [w for k, w in _BUFF_WORDS.items() if a.buff(k, tick)]

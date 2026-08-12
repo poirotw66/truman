@@ -16,7 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from scenarios import seahaven  # noqa: E402
+from scenarios import seahaven, jianghu  # noqa: E402
 from truman.config import PROVIDERS, SimConfig, clock_str  # noqa: E402
 from truman.director.director import Director  # noqa: E402
 from truman.llm.client import make_client  # noqa: E402
@@ -184,6 +184,52 @@ def main() -> int:
             floors = sorted({c.cache_min(m) for m in c.models.values()})
             print(f"          {prov:<10} 門檻 {floors}")
         print("        逐層判定與真值量測請跑：python -m truman.cli tokens --provider ...")
+
+        # ---- 江湖劇本的公開常識 ----
+        print("\n江湖劇本世界區塊")
+        from scenarios import hakoniwa as hakoniwa_mod  # noqa: PLC0415
+        from scenarios import jianghu as jianghu_mod  # noqa: PLC0415
+        from truman import cli as cli_mod  # noqa: PLC0415
+        from truman.world import arts as arts_mod_t  # noqa: PLC0415
+        jh_grid = jianghu_mod.build_grid()
+        # 沒給目錄就不該生出一個空的名號段（劇本開了絕技、但這場沒人配的情況）
+        jh_no_cat = world_block(
+            jh_grid, jianghu_mod.BRIEF, jianghu_mod.NORMS, jianghu_mod.PUBLIC_CAST,
+            setting=jianghu_mod.SETTING, examples=jianghu_mod.EXAMPLES,
+            combat=jianghu_mod.COMBAT, arts=True,
+        )
+        failures += not check("沒給目錄就沒有名號段（不會留一個空標題）",
+                              "# 江湖上有名的功夫" not in jh_no_cat)
+        # 招式的**名號**是公開常識，走 CLI 那條真正的組裝路徑來驗
+        # （直接呼叫 world_block 而不給 arts_catalog 的話，這段本來就不會出現，
+        #  而「大嵩陽手」「快刀」在 PUBLIC_CAST 裡本來就有——那樣測等於沒測）。
+        jh_full = cli_mod.scenario_world_block(jianghu_mod, jh_grid)
+        failures += not check("世界區塊有招式名號那一段",
+                              "# 江湖上有名的功夫" in jh_full and "名正言順" in jh_full)
+        failures += not check("同一門招式只列一次（順序一變快取就沒了）",
+                              jh_full.count("- 打聽：") == 1)
+        # 使用時機是給持有者的說明，屬於 system[1]。攤進共用區塊等於把底牌連用法一起發給所有人。
+        failures += not check(
+            "使用時機不進共用區塊",
+            "什麼時候用" not in jh_full
+            and arts_mod_t.CATALOG["ming_zheng_yan_shun"].when[:12] not in jh_full)
+        # 誰配了什麼是私有的：世界區塊不該把人名和招式綁在一起
+        one_line = jh_full.replace("\n", " ")
+        import re as _re  # noqa: PLC0415
+        failures += not check(
+            "世界區塊沒把人名和招式綁在一起",
+            not any(_re.search(f"{n}[^。]{{0,40}}{a}", one_line)
+                    for n, a in (("費彬", "名正言順"), ("田伯光", "花言巧語"),
+                                 ("曲洋", "廣陵散"))))
+        # 劇本專屬的背景要留在劇本檔裡，不能寫死在共用的 prompts 模組
+        failures += not check("公開背景由劇本提供", "PUBLIC_LORE" in dir(jianghu_mod)
+                              and jianghu_mod.PUBLIC_LORE[:8] in jh_full)
+        # 和平劇本不該收到任何武林設定——hakoniwa 之後配了絕技也一樣
+        for peace in (seahaven, hakoniwa_mod):
+            pw = cli_mod.scenario_world_block(peace, peace.build_grid())
+            failures += not check(f"{peace.NAME} 不含武林設定",
+                                  not any(x in pw for x in
+                                          ("大嵩陽手", "五嶽劍派", "江湖上有名的功夫")))
 
         # ---- tick 迴圈 ----
         print("\ntick 迴圈")
@@ -773,6 +819,610 @@ def main() -> int:
                               _raises(lambda: asyncio.run(bad.call(one))))
         failures += not check("非暫時性錯誤不重試（不白花錢）", bad.tries == 1,
                               f"送了 {bad.tries} 次")
+
+        # ---- 絕技（＝這個世界的 tool）----
+        # 驗的是「工具契約」那幾件事：不在身上的用不出來、配額會扣、冷卻擋得住、
+        # 距離不夠打不到、前提不成立就駁回、效果真的兌現。
+        print("\n絕技")
+        from truman.world import arts as arts_mod  # noqa: PLC0415
+        from truman.world import goals as goals_mod  # noqa: PLC0415
+
+        def art_world(tick: int = 0):
+            w = jianghu.build_world("arts", 7)
+            w.tick = tick
+            return w, war_engine(w, run="arts")
+
+        w, eng = art_world()
+        fei = w.agents["fei_bin"]
+        liu = w.agents["liu_zhengfeng"]
+        failures += not check("劇本有替角色配上絕技", len(fei.arts) == 3,
+                              str([x.id for x in fei.arts]))
+        failures += not check("每個人都有明確的目的",
+                              all(a.goals for a in w.agents.values()),
+                              str({a.name: len(a.goals) for a in w.agents.values()}))
+
+        # 沒配的功夫使不出來，而且駁回理由要列出他實際會的——不然他會一直猜。
+        eng._apply_intent(fei, {"kind": "use_art", "art": "獨孤九劍"})
+        failures += not check("沒學過的絕技使不出來",
+                              "大嵩陽手" in fei.last_rejection, fei.last_rejection)
+
+        # 配額：大嵩陽手三次、冷卻 6 拍。
+        slot = fei.art("da_song_yang")
+        eng._apply_intent(fei, {"kind": "use_art", "art": "大嵩陽手"})
+        failures += not check("使出絕技會扣配額", slot.uses_left == 2, str(slot.uses_left))
+        failures += not check("絕技效果真的掛上身", fei.buff("atk", 0) == 3,
+                              str(fei.buffs))
+        fei.last_rejection = ""
+        eng._apply_intent(fei, {"kind": "use_art", "art": "大嵩陽手"})
+        failures += not check("冷卻中使不出來",
+                              "緩一緩" in fei.last_rejection and slot.uses_left == 2,
+                              fei.last_rejection)
+
+        # 加成要真的進戰鬥判定，否則絕技就只是文字。
+        w2, eng2 = art_world(tick=3)
+        fb, yl = w2.agents["fei_bin"], w2.agents["yi_lin"]
+        yl.pos = Pos(fb.pos.x + 1, fb.pos.y)
+        base_margin = []
+        eng2.log = type("L", (), {"write": lambda s, k, d: base_margin.append(d)
+                                  if k == "attack" else None})()
+        eng2._apply_intent(fb, {"kind": "attack", "target_agent": "儀琳"})
+        w3, eng3 = art_world(tick=3)
+        fb3, yl3 = w3.agents["fei_bin"], w3.agents["yi_lin"]
+        yl3.pos = Pos(fb3.pos.x + 1, fb3.pos.y)
+        buffed = []
+        eng3.log = type("L", (), {"write": lambda s, k, d: buffed.append(d)
+                                  if k == "attack" else None})()
+        fb3.buffs["atk"] = {"amount": 3, "until": 99}
+        eng3._apply_intent(fb3, {"kind": "attack", "target_agent": "儀琳"})
+        failures += not check("攻勢加成真的進了戰鬥判定",
+                              buffed[0]["margin"] == base_margin[0]["margin"] + 3,
+                              f"{base_margin[0]['margin']} → {buffed[0]['margin']}")
+
+        # 距離：名正言順要在聽力範圍內才使得出來。
+        w4, eng4 = art_world()
+        fb4, liu4 = w4.agents["fei_bin"], w4.agents["liu_zhengfeng"]
+        liu4.pos = Pos(fb4.pos.x + 9, fb4.pos.y)
+        eng4._apply_intent(fb4, {"kind": "use_art", "art": "名正言順",
+                                 "target_agent": "劉正風"})
+        failures += not check("對象太遠就使不出來",
+                              "使不出" in fb4.last_rejection
+                              and fb4.art("ming_zheng_yan_shun").uses_left == 1,
+                              fb4.last_rejection)
+
+        # 前提：酒膽只在帶傷時使得上。
+        w5, eng5 = art_world()
+        lh5 = w5.agents["linghu_chong"]
+        eng5._apply_intent(lh5, {"kind": "use_art", "art": "酒膽"})
+        failures += not check("前提不成立就駁回（沒傷不能喝酒膽）",
+                              "用不著" in lh5.last_rejection
+                              and lh5.art("jiu_dan").uses_left == 2, lh5.last_rejection)
+        lh5.wound = 1
+        lh5.last_rejection = ""
+        eng5._apply_intent(lh5, {"kind": "use_art", "art": "酒膽"})
+        failures += not check("帶傷就使得出來",
+                              lh5.buff("atk", 0) == 4 and lh5.art("jiu_dan").uses_left == 1,
+                              str(lh5.buffs))
+
+        # ---- 絕技怎麼推動目的 ----
+        print("\n絕技推動目的")
+        # 金盆洗手：要在劉府、要有人觀禮，辦成了 ritual 目的就結案。
+        w6, eng6 = art_world()
+        liu6, fei6 = w6.agents["liu_zhengfeng"], w6.agents["fei_bin"]
+        fei6.pos = Pos(20, 6)  # 先把人支開，湊不足觀禮的人
+        for other in w6.agents.values():
+            if other is not liu6:
+                other.pos = Pos(20, 6)
+        eng6._apply_intent(liu6, {"kind": "use_art", "art": "金盆洗手"})
+        failures += not check("沒人觀禮就辦不成",
+                              "沒有人" in liu6.last_rejection
+                              and liu6.art("jin_pen_xi_shou").uses_left == 1,
+                              liu6.last_rejection)
+        fei6.pos = Pos(liu6.pos.x + 1, liu6.pos.y)
+        liu6.last_rejection = ""
+        eng6._apply_intent(liu6, {"kind": "use_art", "art": "金盆洗手"})
+        failures += not check("有人觀禮就辦得成",
+                              "金盆洗手" in eng6._signals.rites.get("liu_zhengfeng", []),
+                              str(eng6._signals.rites))
+        goals_mod.evaluate(w6, jianghu.build_grid(), SimConfig(combat=True),
+                           eng6._signals)
+        failures += not check("辦成了，ritual 目的就結案",
+                              liu6.goals[0].status == "done", liu6.goals[0].note)
+        failures += not check("對手的 prevent 目的跟著失敗",
+                              fei6.goals[0].status == "failed", fei6.goals[0].note)
+
+        # 名正言順：說破了，被指的人 conceal 目的失敗。
+        w7, eng7 = art_world()
+        fb7, qu7 = w7.agents["fei_bin"], w7.agents["qu_yang"]
+        qu7.pos = Pos(fb7.pos.x + 1, fb7.pos.y)
+        eng7._apply_intent(fb7, {"kind": "use_art", "art": "名正言順",
+                                 "target_agent": "曲洋",
+                                 "utterance": "「這位可是日月神教的曲長老。」"})
+        goals_mod.evaluate(w7, jianghu.build_grid(), SimConfig(combat=True),
+                           eng7._signals)
+        failures += not check("當眾說破，conceal 目的失敗",
+                              qu7.goals[0].status == "failed", qu7.goals[0].note)
+
+        # 隱匿行藏擋得掉一次，而且擋完就沒了。
+        w8, eng8 = art_world()
+        fb8, qu8 = w8.agents["fei_bin"], w8.agents["qu_yang"]
+        qu8.pos = Pos(fb8.pos.x + 1, fb8.pos.y)
+        eng8._apply_intent(qu8, {"kind": "use_art", "art": "隱匿行藏"})
+        eng8._apply_intent(fb8, {"kind": "use_art", "art": "名正言順",
+                                 "target_agent": "曲洋", "utterance": "「他是魔教的。」"})
+        goals_mod.evaluate(w8, jianghu.build_grid(), SimConfig(combat=True),
+                           eng8._signals)
+        failures += not check("隱匿行藏擋得掉一次指證",
+                              qu8.goals[0].status == "open", qu8.goals[0].note)
+        failures += not check("擋掉之後隱匿就失效了", qu8.buff("veil", 0) == 0,
+                              str(qu8.buffs))
+        failures += not check("被擋掉也照樣消耗指證的配額",
+                              fb8.art("ming_zheng_yan_shun").uses_left == 0)
+
+        # 輕功：腳程真的加倍。
+        w9, eng9 = art_world()
+        yl9 = w9.agents["yi_lin"]
+        yl9.action = {"kind": "move_to", "target_area": "城門",
+                      "path": [[x, 10] for x in range(1, 13)], "done": False}
+        eng9._advance(yl9)
+        plain = 12 - len(yl9.action["path"])
+        w10, eng10 = art_world()
+        yl10 = w10.agents["yi_lin"]
+        yl10.buffs["dash"] = {"amount": 2, "until": 99}
+        yl10.action = {"kind": "move_to", "target_area": "城門",
+                       "path": [[x, 10] for x in range(1, 13)], "done": False}
+        eng10._advance(yl10)
+        dashed = 12 - len(yl10.action["path"])
+        failures += not check("輕功讓腳程加倍", dashed == plain * 2,
+                              f"{plain} 格 → {dashed} 格")
+
+        # ---- 目的判定器 ----
+        print("\n目的判定")
+        cfgw = SimConfig(combat=True)
+        gridw = jianghu.build_grid()
+
+        w11, _ = art_world()
+        yl11 = w11.agents["yi_lin"]
+        yl11.pos = Pos(21, 6)  # 城門
+        goals_mod.evaluate(w11, gridw, cfgw, goals_mod.Signals.empty(1))
+        failures += not check("走到目的地就達成 reach",
+                              yl11.goals[0].status == "done", yl11.goals[0].note)
+
+        w12, _ = art_world()
+        yl12, lh12 = w12.agents["yi_lin"], w12.agents["linghu_chong"]
+        yl12.wound = 3
+        goals_mod.evaluate(w12, gridw, cfgw, goals_mod.Signals.empty(1))
+        failures += not check("要護的人死了，protect 就失敗",
+                              lh12.goals[0].status == "failed", lh12.goals[0].note)
+        failures += not check("人死了，他自己的目的一律失敗",
+                              all(g.status == "failed" for g in yl12.goals),
+                              str([g.note for g in yl12.goals]))
+
+        # isolate：同一個僻靜處、而且沒有第三個活人看得見。
+        w13, _ = art_world()
+        tb13, yl13, lh13 = (w13.agents["tian_boguang"], w13.agents["yi_lin"],
+                            w13.agents["linghu_chong"])
+        for other in w13.agents.values():  # 先把不相干的人清出視野（曲洋起始就在荒祠）
+            other.pos = Pos(1, 1)
+        tb13.pos, yl13.pos = Pos(12, 14), Pos(13, 14)  # 荒祠
+        lh13.pos = Pos(13, 13)  # 就在旁邊看著
+        goals_mod.evaluate(w13, gridw, cfgw, goals_mod.Signals.empty(1))
+        failures += not check("有人看著就不算把人帶走了",
+                              tb13.goals[0].status == "open")
+        lh13.pos = Pos(1, 1)
+        goals_mod.evaluate(w13, gridw, cfgw, goals_mod.Signals.empty(2))
+        failures += not check("沒人看見才算 isolate 達成",
+                              tb13.goals[0].status == "done", tb13.goals[0].note)
+
+        # ritual 有時限，過了就沒指望。
+        w14, _ = art_world()
+        liu14, fei14 = w14.agents["liu_zhengfeng"], w14.agents["fei_bin"]
+        goals_mod.evaluate(w14, gridw, cfgw, goals_mod.Signals.empty(61))
+        failures += not check("過了時辰，ritual 目的失敗",
+                              liu14.goals[0].status == "failed", liu14.goals[0].note)
+        failures += not check("拖過時辰，費彬的 prevent 就達成",
+                              fei14.goals[0].status == "done", fei14.goals[0].note)
+
+        # 收工結算：主動目的沒做到算失敗，被動目的沒出事算達成。
+        w15, _ = art_world()
+        goals_mod.finalize(w15, gridw, cfgw, 96)
+        failures += not check("收工時主動目的沒做到就是失敗",
+                              w15.agents["yi_lin"].goals[0].status == "failed")
+        failures += not check("收工時被動目的沒出事就是達成",
+                              w15.agents["yi_lin"].goals[1].status == "done")
+        failures += not check("結了案就不會再被翻盤",
+                              all(not g.open for a in w15.agents.values()
+                                  for g in a.goals))
+        # 迴歸：收工時 prevent 要在對手結案之後才判，否則「他沒洗成」和「我沒攔住」
+        # 會同時成立，報表上兩個人都失敗。
+        failures += not check("收工時洗手沒辦成，攔阻的人就算贏",
+                              w15.agents["liu_zhengfeng"].goals[0].status == "failed"
+                              and w15.agents["fei_bin"].goals[0].status == "done",
+                              w15.agents["fei_bin"].goals[0].note)
+
+        # ---- 序列化：目的與絕技要撐得過 checkpoint / fork ----
+        print("\n目的與絕技的序列化")
+        w16, eng16 = art_world()
+        fb16 = w16.agents["fei_bin"]
+        eng16._apply_intent(fb16, {"kind": "use_art", "art": "大嵩陽手"})
+        fb16.goals[0].status = "done"
+        fb16.goals[0].note = "測試"
+        back = WorldState.from_dict(json.loads(json.dumps(w16.to_dict())))
+        fb17 = back.agents["fei_bin"]
+        failures += not check("目的序列化往返",
+                              fb17.goals[0].status == "done" and fb17.goals[0].note == "測試")
+        failures += not check("絕技的剩餘次數與冷卻撐得過往返",
+                              fb17.art("da_song_yang").uses_left == 2
+                              and fb17.art("da_song_yang").ready_at
+                              == fb16.art("da_song_yang").ready_at)
+        failures += not check("絕技效果撐得過往返", fb17.buff("atk", 0) == 3)
+        old = {k: v for k, v in w16.agents["yi_lin"].to_dict().items()
+               if k not in ("goals", "arts", "buffs")}
+        failures += not check("舊 checkpoint（沒有這三個欄位）照樣讀得回來",
+                              AgentState.from_dict(old).goals == []
+                              and AgentState.from_dict(old).arts == [])
+
+        # ---- 絕技與目的怎麼進 prompt ----
+        print("\n絕技與目的進 prompt")
+        from truman.llm.prompts import persona_block as pb  # noqa: PLC0415
+
+        blk = pb(w16.agents["tian_boguang"])
+        failures += not check("角色看得到自己的目的",
+                              "把那個小尼姑帶到沒有人的地方" in blk)
+        failures += not check("角色看得到自己會的絕技與使用時機",
+                              "花言巧語" in blk and "什麼時候用" in blk)
+        failures += not check("看不到別人的絕技", "廣陵散" not in blk)
+        failures += not check("配額不進 system[1]（那會每 tick 打掉快取前綴）",
+                              "還能使" not in blk)
+
+        w18 = seahaven.build_world("nop", 1)
+        failures += not check("沒配絕技的人整段不存在",
+                              "你會的絕技" not in pb(w18.protagonist())
+                              and "你會的絕技" in blk)
+        failures += not check("沒有目的的人整段不存在",
+                              "你今天要做到的事" not in pb(w18.protagonist()))
+
+        arts_kinds = action_schema(True, True)["properties"]["action"]["properties"]
+        failures += not check("use_art 只出現在有絕技的人的 schema",
+                              "use_art" in arts_kinds["kind"]["enum"]
+                              and "use_art" not in action_schema(True, False)
+                              ["properties"]["action"]["properties"]["kind"]["enum"])
+        failures += not check("絕技規則只進有絕技的劇本的世界區塊",
+                              "use_art" in cli_mod.scenario_world_block(
+                                  jianghu, jianghu.build_grid())
+                              and "use_art" not in cli_mod.scenario_world_block(
+                                  seahaven, grid))
+
+        # 配額與目的進度走 observation 這一層（每 tick 都變的東西只能放這裡）。
+        obs_a = build_observations(w16, jianghu.build_grid(), [], {}, cfgw)
+        rendered = obs_a["fei_bin"].render()
+        # w16 的費彬剛使過大嵩陽手，所以這裡看到的是「還剩幾次」與「還要幾刻」兩種狀態。
+        failures += not check("剩餘次數每 tick 出現在眼前",
+                              "打聽（還能使 4 次）" in rendered, rendered[-400:])
+        failures += not check("冷卻中的絕技會標明還要多久",
+                              "大嵩陽手（還要 6 刻才緩得過來）" in rendered, rendered[-400:])
+        failures += not check("身上還在的效果看得見", "出手更重" in rendered)
+        failures += not check("目的進度看得見", "已經做到" in rendered)
+
+        # ---- 設定檔驗證 ----
+        print("\n設定檔裡的目的與絕技")
+        bad_cast = {"scenario": "jianghu", "agents": [
+            {"id": "a", "name": "甲", "persona": "測試", "start": [1, 1],
+             "arts": ["不存在的絕技"],
+             "goals": [{"kind": "reach", "text": "去", "params": {"area": "台北"}},
+                       {"kind": "protect", "text": "護", "params": {"who": ["查無此人"]}},
+                       {"kind": "亂寫", "text": "亂"}]},
+        ]}
+        probs = cast_mod.validate(bad_cast, jianghu.build_grid(), "jianghu")
+        failures += not check("絕技 id 打錯字會被擋下",
+                              any("絕技目錄裡沒有" in p for p in probs))
+        failures += not check("目的指到不存在的區域會被擋下",
+                              any("不是這張地圖上的區域" in p for p in probs))
+        failures += not check("目的指到不存在的人會被擋下",
+                              any("不在這份名單裡" in p for p in probs))
+        failures += not check("不認得的判定器會被擋下",
+                              any("不認得的判定器" in p for p in probs))
+
+        good_cast = {"scenario": "jianghu", "agents": [
+            {"id": "fei_bin", "name": "費彬", "persona": "測試", "start": [5, 5],
+             "arts": ["kuai_dao"], "goals": [{"kind": "survive", "text": "活著"}]},
+        ]}
+        failures += not check("合法的目的與絕技不會誤報",
+                              cast_mod.validate(good_cast, jianghu.build_grid(),
+                                                "jianghu") == [])
+        w19 = jianghu.build_world("cast", 7)
+        cast_mod.apply(w19, good_cast, jianghu.build_grid())
+        failures += not check("設定檔換得掉絕技",
+                              [x.id for x in w19.agents["fei_bin"].arts] == ["kuai_dao"])
+        failures += not check("設定檔換得掉目的",
+                              [g.kind for g in w19.agents["fei_bin"].goals] == ["survive"])
+
+        # ---- 絕技走完一整個 tick 迴圈 ----
+        # 前面都是直接戳 _apply_intent。這一段用一個照劇本回答的假 LLM 跑真的
+        # engine.tick()，驗的是 _apply_intent 單獨測不到的東西：每拍的訊號有沒有
+        # 重置、目的判定有沒有在迴圈裡跑、被指證的人有沒有拿到同一拍的回話機會。
+        print("\n絕技跑完整個 tick")
+
+        class _Scripted:
+            """照 {tick: {agent: action}} 回答，其餘一律 wait。"""
+
+            provider = "scripted"
+
+            def __init__(self, script):
+                self.script = script
+                self.seen: list[str] = []
+
+            def stats(self):
+                return {"_provider": "scripted", "_total_cost_usd": 0.0}
+
+            def total_cost(self):
+                return 0.0
+
+            async def run_batch(self, calls):
+                out = {}
+                for c in calls:
+                    tick, who = int(c.key.split(":")[0]), c.key.split(":")[1]
+                    self.seen.append(c.key)
+                    if c.key.endswith(":reflect"):
+                        out[c.key] = {"insights": [], "beliefs": []}
+                        continue
+                    act = self.script.get(tick, {}).get(who) or {
+                        "kind": "wait", "target_area": "", "target_agent": "",
+                        "utterance": "", "object": "", "art": "",
+                    }
+                    out[c.key] = {"thought": "（測試）", "action": act, "plan": "（測試）"}
+                return out
+
+        w20 = jianghu.build_world("loop", 7)
+        liu20, fei20 = w20.agents["liu_zhengfeng"], w20.agents["fei_bin"]
+        fei20.pos = Pos(liu20.pos.x + 1, liu20.pos.y)  # 費彬就在廳上
+        elog = EventLog(tmp / "loop")
+        elog.bind_tick(lambda: w20.tick)
+        scripted = _Scripted({
+            0: {"fei_bin": {"kind": "use_art", "art": "大嵩陽手", "target_area": "",
+                            "target_agent": "", "utterance": "", "object": ""}},
+            1: {"liu_zhengfeng": {"kind": "use_art", "art": "金盆洗手",
+                                  "target_area": "", "target_agent": "",
+                                  "utterance": "", "object": ""}},
+        })
+        eng20 = Engine(
+            world=w20, grid=jianghu.build_grid(), cfg=SimConfig(combat=True),
+            llm=scripted, director=Director(script=[], log=elog), log=elog,
+            world_block_text="", run_dir=tmp / "loop",
+        )
+        asyncio.run(eng20.tick())
+        failures += not check("tick 迴圈裡使得出絕技",
+                              fei20.art("da_song_yang").uses_left == 2
+                              and fei20.buff("atk", 0) == 3, str(fei20.buffs))
+        asyncio.run(eng20.tick())
+        failures += not check("tick 迴圈裡辦成的儀式會結案",
+                              liu20.goals[0].status == "done", liu20.goals[0].note)
+        failures += not check("對手的目的在同一拍跟著失敗",
+                              fei20.goals[0].status == "failed", fei20.goals[0].note)
+        failures += not check("每拍的訊號會重置（上一拍的儀式不會重複計）",
+                              eng20._signals.tick == 1
+                              and "liu_zhengfeng" in eng20._signals.rites)
+        asyncio.run(eng20.tick())
+        failures += not check("下一拍訊號清空", eng20._signals.rites == {},
+                              str(eng20._signals.rites))
+        failures += not check("結案的目的會寫進當事人的記憶",
+                              any("這件事了了" in m.content
+                                  for m in liu20.memory.entries[-12:]))
+        elog.close()
+        loop_events = list(EventLog.read(tmp / "loop"))
+        failures += not check("art_used 有寫進日誌",
+                              any(e["type"] == "art_used" for e in loop_events))
+        failures += not check("goal_done 有寫進日誌",
+                              any(e["type"] == "goal_done" for e in loop_events))
+
+        # 指證要走 speech 那條路，被指的人才有機會在同一拍回嘴。
+        w21 = jianghu.build_world("loop2", 7)
+        fei21, qu21 = w21.agents["fei_bin"], w21.agents["qu_yang"]
+        qu21.pos = Pos(fei21.pos.x + 1, fei21.pos.y)
+        elog2 = EventLog(tmp / "loop2")
+        elog2.bind_tick(lambda: w21.tick)
+        sc2 = _Scripted({0: {"fei_bin": {
+            "kind": "use_art", "art": "名正言順", "target_agent": "曲洋",
+            "utterance": "「這位是日月神教的曲長老。」", "target_area": "", "object": ""}}})
+        eng21 = Engine(
+            world=w21, grid=jianghu.build_grid(), cfg=SimConfig(combat=True),
+            llm=sc2, director=Director(script=[], log=elog2), log=elog2,
+            world_block_text="", run_dir=tmp / "loop2",
+        )
+        asyncio.run(eng21.tick())
+        failures += not check("當眾指證讓被指的人當場有機會回話",
+                              any(k.endswith("qu_yang:reply") for k in sc2.seen),
+                              str([k for k in sc2.seen if "reply" in k]))
+        failures += not check("指證在同一拍就打掉對方的 conceal 目的",
+                              qu21.goals[0].status == "failed", qu21.goals[0].note)
+        elog2.close()
+
+        # ---- 全滅要提早收手 ----
+        # 由 j3 逼出來的：96 拍、576 次呼叫全部失敗（2.5-flash-lite 不吃
+        # thinking_level=medium），32 秒「跑完」，零對話零意圖，而且要等全部跑完才回報。
+        print("\n全滅時的 fail-fast")
+
+        class _AlwaysFails:
+            provider = "broken"
+
+            def stats(self):
+                return {"_provider": "broken", "_total_cost_usd": 0.0}
+
+            def total_cost(self):
+                return 0.0
+
+            async def run_batch(self, calls):
+                return {c.key: RuntimeError("400 thinking level 不合") for c in calls}
+
+        wf = jianghu.build_world("faildemo", 7)
+        flog = EventLog(tmp / "faildemo")
+        flog.bind_tick(lambda: wf.tick)
+        engf = Engine(
+            world=wf, grid=jianghu.build_grid(),
+            cfg=SimConfig(combat=True, abort_after_failures=12),
+            llm=_AlwaysFails(), director=Director(script=[], log=flog), log=flog,
+            world_block_text="", run_dir=tmp / "faildemo",
+        )
+        for _ in range(10):
+            if engf.aborted:
+                break
+            asyncio.run(engf.tick())
+        failures += not check("全部呼叫失敗就中止", engf.aborted, engf.abort_reason[:60])
+        failures += not check("中止得夠早（沒有把 10 拍跑完）", wf.tick < 10,
+                              f"停在第 {wf.tick} 拍")
+        failures += not check("中止有寫進日誌",
+                              any(e["type"] == "run_aborted"
+                                  for e in EventLog.read(tmp / "faildemo")))
+        flog.close()
+
+        # 只要成功過一次就不該中止——跑到一半遇到壞天氣是重試那層的事。
+        class _FailsAfterOne(_AlwaysFails):
+            def __init__(self):
+                self.n = 0
+
+            async def run_batch(self, calls):
+                out = {}
+                for c in calls:
+                    self.n += 1
+                    out[c.key] = ({"thought": "好", "plan": "好",
+                                   "action": {"kind": "wait", "target_area": "",
+                                              "target_agent": "", "utterance": "",
+                                              "object": "", "art": ""}}
+                                  if self.n == 1 else RuntimeError("503"))
+                return out
+
+        wg = jianghu.build_world("flaky", 7)
+        glog = EventLog(tmp / "flaky")
+        glog.bind_tick(lambda: wg.tick)
+        engg = Engine(
+            world=wg, grid=jianghu.build_grid(),
+            cfg=SimConfig(combat=True, abort_after_failures=12),
+            llm=_FailsAfterOne(), director=Director(script=[], log=glog), log=glog,
+            world_block_text="", run_dir=tmp / "flaky",
+        )
+        for _ in range(6):
+            asyncio.run(engg.tick())
+        failures += not check("成功過就不中止（壞天氣交給重試那層）",
+                              not engg.aborted and engg.failed_calls > 12,
+                              f"失敗 {engg.failed_calls} 次仍繼續")
+        glog.close()
+
+        # 開跑前的試探呼叫：把每一組（模型, thinking）各送一次，錯的當場報出來。
+        # 假 client 要帶著 `_thinking`，才和真的 GeminiClient 一樣——
+        # preflight 就是靠這個方法把每一層的等級解析出來的。
+        from truman.llm.providers.gemini_client import (  # noqa: PLC0415
+            DEFAULT_THINKING,
+        )
+
+        class _PickyModel(BaseLLMClient):
+            provider = "picky"
+            cache_write_multiplier = 0.0
+
+            def _thinking(self, tier):
+                return (getattr(self.cfg, "gemini_thinking", None)
+                        or {}).get(tier, DEFAULT_THINKING[tier])
+
+            async def _invoke(self, c, model):
+                if (c.thinking or "") == "medium":
+                    raise ValueError("'medium' is not a supported thinking level")
+                return {"ok": "1"}, None, {"inp": 1, "out": 1}
+
+        cfg_p = SimConfig(provider="gemini")
+        picky = _PickyModel(cfg_p, EventLog(tmp / "pf"))
+        failures += not check("設定沒問題時開跑前檢查會過",
+                              asyncio.run(picky.preflight()) == [])
+
+        # 迴歸：四層預設同一個模型但 thinking 不同（reflect 是 high，其餘 low）。
+        # 只按模型去重會塌成一組，reflect 那層永遠試不到——那正是 j3 死掉的那一類。
+        class _RecordsProbes(_PickyModel):
+            def __init__(self, cfg, log):
+                super().__init__(cfg, log)
+                self.seen = []
+
+            async def _invoke(self, c, model):
+                self.seen.append((model, c.thinking))
+                return await super()._invoke(c, model)
+
+        rec = _RecordsProbes(cfg_p, EventLog(tmp / "pf3"))
+        asyncio.run(rec.preflight())
+        levels = {th for _, th in rec.seen}
+        failures += not check("每個實際會用到的 thinking 等級都試過",
+                              levels == {"low", "high"}, str(sorted(levels)))
+
+        # 只有 reflect 那層的等級不合時，也要抓得到。
+        class _RejectsHigh(_RecordsProbes):
+            async def _invoke(self, c, model):
+                self.seen.append((model, c.thinking))
+                if c.thinking == "high":
+                    raise ValueError("'high' is not a supported thinking level")
+                return {"ok": "1"}, None, {"inp": 1, "out": 1}
+
+        only_reflect = asyncio.run(_RejectsHigh(cfg_p, EventLog(tmp / "pf4")).preflight())
+        failures += not check("只有 reflect 那層設定壞掉也抓得到",
+                              len(only_reflect) == 1 and only_reflect[0][1] == "high",
+                              str(only_reflect))
+        w_p = jianghu.build_world("pf", 7)
+        w_p.agents["fei_bin"].llm = {"thinking": "medium"}
+        bad_pf = asyncio.run(picky.preflight(w_p))
+        failures += not check("agent 自帶的壞設定會在開跑前被抓到",
+                              len(bad_pf) == 1 and bad_pf[0][1] == "medium",
+                              str(bad_pf))
+        failures += not check("replay 模式不做開跑前檢查（不會呼叫任何東西）",
+                              asyncio.run(
+                                  _PickyModel(cfg_p, EventLog(tmp / "pf2"),
+                                              replay={}).preflight(w_p)) == [])
+
+        # ---- demo 現場畫面的資料 ----
+        # 現場跑本來只看得到「第幾刻、誰說了什麼」，看不出組出來的 agent 在幹嘛。
+        print("\ndemo 現場的目的與絕技")
+        from truman.demo.jobs import Job, JobRunner  # noqa: PLC0415
+
+        wb = jianghu.build_world("board", 7)
+        wb.tick = 5
+        wb.agents["fei_bin"].arts[0].uses_left = 0      # 名正言順用掉了
+        wb.agents["fei_bin"].arts[0].used = 1
+        wb.agents["yi_lin"].goals[0].status = "done"
+        wb.agents["yi_lin"].goals[0].note = "走到了城門"
+        wb.agents["liu_zhengfeng"].wound = 3
+        jb = Job(id="t", run_id="t")
+        JobRunner._pull_board(jb, wb)
+        by_name = {r["name"]: r for r in jb.board}
+        failures += not check("board 帶上每個有目的或絕技的人", len(jb.board) == 6,
+                              str(sorted(by_name)))
+        failures += not check("board 看得到目的達成",
+                              by_name["儀琳"]["goals"][0]["status"] == "done")
+        failures += not check("board 看得到絕技用掉了",
+                              by_name["費彬"]["arts"][0]["left"] == 0
+                              and by_name["費彬"]["arts"][0]["used"] == 1)
+        failures += not check("board 標得出死者", by_name["劉正風"]["alive"] is False)
+        wp = seahaven.build_world("board2", 1)
+        jb2 = Job(id="t2", run_id="t2")
+        JobRunner._pull_board(jb2, wp)
+        failures += not check("沒有目的也沒有絕技的劇本，board 是空的", jb2.board == [])
+
+        # 事件摘要：絕技與目的要進得了現場的事件流
+        summ = JobRunner._summarize
+        failures += not check(
+            "絕技進得了現場事件流",
+            "名正言順" in summ({"type": "art_used", "tick": 3, "data": {
+                "name": "費彬", "art_name": "名正言順", "uses_left": 0}})["text"])
+        failures += not check(
+            "目的結案進得了現場事件流",
+            "做到了" in summ({"type": "goal_done", "tick": 9, "data": {
+                "name": "劉正風", "text": "洗完手", "note": "辦成了"}})["text"])
+        failures += not check(
+            "只有一個人看得見的注入會標明",
+            "只有" in summ({"type": "director", "tick": 2, "data": {
+                "kind": "inject", "agent": "曲洋", "text": "（有人急奔來報……）"}})["text"])
+        failures += not check(
+            "目的結案的注入不重複顯示",
+            summ({"type": "director", "tick": 2, "data": {
+                "kind": "inject", "tag": "goal", "agent": "曲洋",
+                "text": "（……）"}})["type"] == "skip")
+        failures += not check(
+            "全場都聽得見的世界旁白照舊",
+            summ({"type": "director", "tick": 2, "data": {
+                "kind": "broadcast", "text": "廳上的金盆擺好了。"}})["text"]
+            == "廳上的金盆擺好了。")
 
         # ---- 記憶檢索 ----
         print("\n記憶檢索")

@@ -93,6 +93,7 @@ def job_public(job) -> dict:
         "error": job.error,
         "replay_url": job.replay_url,
         "recent": job.recent,
+        "board": getattr(job, "board", []),
         "started_at": getattr(job, "started_at", 0.0),
         "updated_at": getattr(job, "updated_at", 0.0),
         "server_now": time.time(),

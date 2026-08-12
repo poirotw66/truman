@@ -24,10 +24,15 @@ class Director:
     log: object | None = None
     runtime_injections: list[dict] = field(default_factory=list)
 
-    def add_runtime(self, agent_id: str, text: str, tick: int) -> None:
-        """CLI / 分支時臨時注入。"""
+    def add_runtime(self, agent_id: str, text: str, tick: int, tag: str = "") -> None:
+        """CLI / 分支時臨時注入，引擎也用它把只有某個人知道的事送到他眼前。
+
+        `tag` 標明這則是為了什麼（`revenge` 噩耗、`goal` 目的結案、`scout` 打聽到的
+        消息……）。引擎不看它，是給回放頁分辨用的：注入是**只有一個人看得見**的事，
+        和 broadcast 那種全場都聽得見的世界旁白不能混為一談。
+        """
         self.runtime_injections.append(
-            {"tick": tick, "kind": "inject", "agent": agent_id, "text": text}
+            {"tick": tick, "kind": "inject", "agent": agent_id, "text": text, "tag": tag}
         )
 
     def cues_for_tick(self, tick: int) -> list[dict]:

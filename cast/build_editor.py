@@ -23,6 +23,8 @@ sys.path.insert(0, str(ROOT))
 
 from art.embed_portraits import portrait_map  # noqa: E402
 from truman.config import PROVIDERS  # noqa: E402
+from truman.world import arts as arts_mod  # noqa: E402
+from truman.world import goals as goals_mod  # noqa: E402
 
 # 長相：劇本 .py 裡沒有這一層（引擎不需要），預設值放這裡，之後以 cast.json 為準。
 ART_DEFAULTS = {
@@ -77,15 +79,21 @@ def main(scenario: str = "jianghu") -> None:
 
     agents = []
     for a in scen.AGENTS:
-        art = dict(FALLBACK_ART, **ART_DEFAULTS.get(a["id"], {}))
+        look = dict(FALLBACK_ART, **ART_DEFAULTS.get(a["id"], {}))
         agents.append({
             "id": a["id"], "name": a["name"], "role": a.get("role", "villager"),
             "home_area": a["home_area"], "start": list(a["start"]),
             "skill": a.get("skill", 5), "kin": list(a.get("kin", [])),
             "public": public.get(a["name"], ""),
             "persona": a["persona"].rstrip(),
+            # 目的與絕技：劇本給的預設。工作室改完存回來，--cast 就能直接跑。
+            "goals": [dict(g) for g in a.get("goals", [])],
+            "arts": list(a.get("arts", [])),
             "llm": {},
-            "art": art,
+            # 長相。舊檔案裡這個欄位叫 `art`，和絕技的 `arts` 只差一個 s，
+            # 兩個都在同一份 JSON 裡，看走眼是遲早的事——所以改叫 `look`。
+            # 讀的那一邊仍然收得下舊名（見工作室的 adopt()）。
+            "look": look,
         })
 
     data = {
@@ -100,6 +108,17 @@ def main(scenario: str = "jianghu") -> None:
         "agents": agents,
         "leftover_public": leftover,
         "art_defaults": {"fallback": FALLBACK_ART},
+        # 絕技目錄與目的判定器：工作室要靠這兩份才做得出「挑工具」的介面。
+        # 說明文字直接取自 ArtDef，和角色實際讀到的 prompt 是同一份字，不會走鐘。
+        "arts_catalog": [
+            {"id": d.id, "name": d.name, "kind": d.kind, "tagline": d.tagline,
+             "when": d.when, "uses": d.uses, "cooldown": d.cooldown,
+             "target": d.target, "reach": d.reach, "combat_only": d.combat_only,
+             "cost": d.cost_line()}
+            for d in sorted(arts_mod.CATALOG.values(), key=lambda x: (x.kind, x.id))
+        ],
+        "art_kinds": {"combat": "戰鬥", "social": "社交", "info": "情報", "move": "身法"},
+        "goal_kinds": sorted(goals_mod.CHECKERS),
         "portraits": portrait_map(scen.NAME),
         # 模型目錄：讓工作室的下拉選單有東西可選，並且能就地估價
         "providers": {

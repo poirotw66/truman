@@ -21,6 +21,8 @@ from ..agents import cognition
 from ..config import clock_str
 from ..director import awareness
 from ..obs import checkpoint
+from . import arts as arts_mod
+from . import goals as goals_mod
 from .grid import Grid, Pos
 from .observation import build_observations
 from .state import WorldState
@@ -42,7 +44,15 @@ class Engine:
     ok_calls: int = 0
     failed_calls: int = 0
     last_error: str = ""
+    # 全軍覆沒時由 _check_fail_fast 立起來，外層的 tick 迴圈看到就收工。
+    # 用旗標不用例外：兩個驅動迴圈（CLI 與 demo）都有 finally 在存檔與寫 run_summary，
+    # 例外會讓那段在「已經決定放棄」的情況下還是照跑一遍，讀日誌的人會更困惑。
+    aborted: bool = False
+    abort_reason: str = ""
     _last_judge_tick: int = -999  # 收工強制評審用來避免重複評
+    # 這一拍發生的、目的判定看得到但世界狀態上看不出來的事（儀式、指證、死亡）。
+    # 每 tick 開頭重置，tick 結束前交給 goals.evaluate。
+    _signals: goals_mod.Signals = field(default_factory=lambda: goals_mod.Signals.empty(0))
 
     # ------------------------------------------------------------ 主迴圈
     async def run(self, ticks: int) -> None:
@@ -58,10 +68,13 @@ class Engine:
         tick 24 那一次）。CLI 有自己的 tick 迴圈，不走 run()，所以那邊也要呼叫。
         """
         await self._awareness_phase(force=True)
+        # 收工結算：還開著的目的照主動／被動的預設結局收掉，報表才有完整的達成率。
+        goals_mod.finalize(self.world, self.grid, self.cfg, self.world.tick, self.log)
 
     async def tick(self) -> None:
         w, t = self.world, self.world.tick
         self.log.write("tick_start", {"tick": t, "when": clock_str(t)})
+        self._signals = goals_mod.Signals.empty(t)
 
         injections = self.director.apply(w, self.grid)
         obs = build_observations(w, self.grid, self.pending_speech, injections, self.cfg)
@@ -103,6 +116,16 @@ class Engine:
         for a in w.agents.values():
             if a.alive:
                 self._advance(a)
+
+        # 過期的絕技效果清掉。讀的時候本來就會比對 tick，清不清都不影響判定，
+        # 但留著會讓 checkpoint 和日誌難讀——分不出「還在生效」和「早就過了」。
+        for a in w.agents.values():
+            for name in [k for k, v in a.buffs.items() if t > v.get("until", -1)]:
+                a.buffs.pop(name)
+
+        # 目的判定要在動作推進之後、快照之前：這一拍走到城門的人，這一拍就算數。
+        for closed in goals_mod.evaluate(w, self.grid, self.cfg, self._signals, self.log):
+            self._on_goal_closed(closed)
 
         await self._reflect_phase()
         await self._awareness_phase()
@@ -154,6 +177,7 @@ class Engine:
                 self.last_error = str(res)
                 self.log.write("think_failed", {"agent": aid, "error": str(res)})
                 a.action = {"kind": "wait", "ticks_left": 1, "done": False}
+                self._check_fail_fast()
                 continue
 
             self.ok_calls += 1
@@ -178,6 +202,33 @@ class Engine:
             if self.console:
                 self._echo(a, res)
         return speech
+
+    def _check_fail_fast(self) -> None:
+        """一次都沒成功過、又已經失敗這麼多次，就別再跑下去了。
+
+        條件刻意寫成「從頭到尾一次都沒成功」而不是「連續失敗 N 次」：
+        跑到一半遇到一段壞天氣（429、5xx）是暫時的，重試那層會處理，
+        不該把一個已經跑出東西的 run 砍掉。真正要擋的是 j3 那種——
+        設定就是錯的，每一次呼叫都會失敗，跑完 96 拍也只是把同一個錯誤重複 576 次。
+        """
+        cap = getattr(self.cfg, "abort_after_failures", 0)
+        if not cap or self.aborted or self.ok_calls:
+            return
+        if self.failed_calls < cap:
+            return
+        self.aborted = True
+        self.abort_reason = (
+            f"連續 {self.failed_calls} 次呼叫全部失敗，一次都沒有成功過——"
+            f"這通常是設定錯了（模型 ID、thinking_level、憑證），不是運氣不好。"
+            f"最後一個錯誤：{self.last_error[:300]}"
+        )
+        self.log.write("run_aborted", {
+            "reason": "all_calls_failing",
+            "failed_calls": self.failed_calls,
+            "last_error": self.last_error,
+        })
+        if self.console:
+            self.console.print(f"\n[bold red]✕ 中止：{self.abort_reason}[/bold red]")
 
     def _burst_targets(self, speech: list[dict]) -> list[tuple[str, list[dict]]]:
         """回傳 [(被指名的人, 指名他的那幾句)]。
@@ -293,6 +344,9 @@ class Engine:
                 )
             return self._resolve_attack(a, target)
 
+        if kind == "use_art":
+            return self._apply_art(a, act, reject)
+
         if kind == "interact":
             obj = (act.get("object") or "").strip() or "發呆"
             a.action = {"kind": "interact", "object": obj, "ticks_left": 2, "done": False}
@@ -325,8 +379,12 @@ class Engine:
         # 攻方：本事＋義憤＋先手＋背水－傷勢＋運氣；守方：本事＋義憤－傷勢×2＋運氣。
         # 攻擊只扣一份傷勢、又被背水抵掉（重傷還倒賺），守勢扣兩份——傷者是玻璃刀。
         desperate = 3 if a.wound >= 2 else 0
-        atk = a.skill + a.fury + 1 + desperate - a.wound + rng.randint(0, 5)
-        dfn = target.skill + target.fury - 2 * target.wound + rng.randint(0, 5)
+        # 絕技給的加成。運了功卻不出手就會過期——這是刻意的：
+        # 工具要配合時機才有價值，光是「持有」不會讓誰變強。
+        atk_art = a.buff("atk", t)
+        def_art = target.buff("def", t)
+        atk = a.skill + a.fury + 1 + desperate - a.wound + atk_art + rng.randint(0, 5)
+        dfn = target.skill + target.fury - 2 * target.wound + def_art + rng.randint(0, 5)
         margin = atk - dfn
 
         hurt_target = 3 if margin >= 6 else 2 if margin >= 3 else 1 if margin >= 1 else 0
@@ -360,9 +418,11 @@ class Engine:
         self.log.write("attack", {
             "attacker": a.id, "target": target.id, "margin": margin,
             "target_wound": target.wound, "attacker_wound": a.wound,
+            "atk_art": atk_art, "def_art": def_art,
             "line": line,
         })
         for x in died:
+            self._signals.deaths.append(x.id)
             self.log.write("death", {
                 "agent": x.id, "name": x.name, "killed_by": x.killed_by, "when": when,
             })
@@ -392,6 +452,231 @@ class Engine:
         a.action = None if a.alive else {"kind": "wait", "ticks_left": 1, "done": False}
         return None
 
+    # ------------------------------------------------------------ 絕技
+    def _apply_art(self, a, act: dict, reject):
+        """驗證一次絕技的使用。所有「用不出來」的理由都在這裡擋掉。
+
+        絕技就是這個世界的 tool，所以這一段其實是 tool call 的參數驗證：
+        招式在不在、你身上有沒有、還剩幾次、冷卻完了沒、對象夠不夠近、
+        前提成不成立。任何一條不過就駁回，理由會寫回它眼前——
+        和 `move_to` 走不到、`speak` 喊不到是同一套處理。
+        """
+        w, t = self.world, self.world.tick
+        if not a.arts:
+            return reject("我沒有什麼拿得出手的絕技。")
+
+        raw = (act.get("art") or "").strip()
+        art_id = arts_mod.resolve_name(raw)
+        if art_id is None:
+            mine = "、".join(arts_mod.CATALOG[x.id].name for x in a.arts if x.id in arts_mod.CATALOG)
+            return reject(f"我沒有「{raw}」這門功夫。我會的是：{mine}。")
+
+        slot = a.art(art_id)
+        d = arts_mod.get(art_id)
+        if slot is None or d is None:
+            mine = "、".join(arts_mod.CATALOG[x.id].name for x in a.arts if x.id in arts_mod.CATALOG)
+            return reject(f"我不會「{raw}」。我會的是：{mine}。")
+
+        if d.combat_only and not getattr(self.cfg, "combat", False):
+            return reject("這種事在這裡不會發生。")
+
+        ok, why = slot.available(t)
+        if not ok:
+            if why == "used_up":
+                return reject(f"{d.name}今天已經用盡了，再使不出來。")
+            return reject(f"{d.name}剛使過，這會兒運不上勁，還得緩一緩。")
+
+        if d.params.get("require_wound") and a.wound <= 0:
+            return reject(f"{d.name}是帶著傷才使得上的，我這會兒好端端的，用不著。")
+
+        # --- 對象 ---
+        target = None
+        if d.target == arts_mod.TARGET_AGENT:
+            name = (act.get("target_agent") or "").strip()
+            for oid, o in w.agents.items():
+                if o.name == name or oid == name:
+                    target = o
+                    break
+            if target is None:
+                return reject(f"我想對「{name}」使{d.name}，但這裡沒有這個人。")
+            if target.id == a.id:
+                return reject(f"{d.name}沒有對自己使的道理。")
+            if not target.alive:
+                return reject(f"{target.name}已經沒氣了，這時候使{d.name}沒有意義。")
+            if d.reach:
+                dist = target.pos.chebyshev(a.pos)
+                if dist > d.reach:
+                    return reject(
+                        f"{target.name}離我還有 {dist} 步，這個距離使不出{d.name}，"
+                        f"得再近一些（{d.reach} 格以內）。",
+                        dist=dist,
+                    )
+        return self._resolve_art(a, slot, d, target, act, reject)
+
+    def _resolve_art(self, a, slot, d, target, act: dict, reject):
+        """效果真的發生。到這裡為止所有前提都驗過了。
+
+        除了 `rite`（辦不成就整個不算）以外，走到這裡就一定會消耗配額——
+        用了沒達到預期效果也是結果的一部分，那正是我們想讓角色學到的事。
+        """
+        w, t, when = self.world, self.world.tick, clock_str(self.world.tick)
+        p = d.params
+        detail: dict = {}
+        speech_ev = None
+        line = f"{a.name}使出了{d.name}。"
+
+        def spend():
+            if slot.uses_left > 0:
+                slot.uses_left -= 1
+            slot.used += 1
+            slot.ready_at = t + d.cooldown if d.cooldown else -1
+
+        def remember(who, text, importance=8):
+            who.memory.add(t, when, "observation", text, importance=importance)
+
+        def bystanders(radius):
+            return [
+                o for o in w.agents.values()
+                if o.alive and o is not a and o.pos.chebyshev(a.pos) <= radius
+            ]
+
+        if d.effect in ("atk_up", "def_up", "dash", "veil"):
+            name = {"atk_up": "atk", "def_up": "def", "dash": "dash", "veil": "veil"}[d.effect]
+            amount = int(p.get("amount", p.get("multiplier", 1)))
+            ticks = int(p.get("ticks", 3))
+            a.buffs[name] = {"amount": amount, "until": t + ticks - 1}
+            detail = {"buff": name, "amount": amount, "until": t + ticks - 1}
+            line = {
+                "atk_up": f"{a.name}運起{d.name}，氣勢陡然一變。",
+                "def_up": f"{a.name}擺開{d.name}的架式，守得滴水不漏。",
+                "dash": f"{a.name}提氣使出{d.name}，腳下快了不止一倍。",
+                "veil": f"{a.name}不著痕跡地收拾了一下行止，一時看不出來歷。",
+            }[d.effect]
+            remember(a, f"我使了{d.name}。", importance=5)
+
+        elif d.effect == "soothe":
+            amount, radius = int(p.get("amount", 2)), int(p.get("radius", 3))
+            cooled = []
+            for o in [a, *bystanders(radius)]:
+                if o.fury > 0:
+                    o.fury = max(0, o.fury - amount)
+                    cooled.append(o.id)
+                if o is not a:
+                    remember(o, f"{a.name}的{d.name}傳進耳裡，心裡那股躁動平了些。", 6)
+            detail = {"cooled": cooled, "radius": radius}
+            line = f"{a.name}使出{d.name}，四下的火氣淡了下來。"
+            remember(a, f"我使了{d.name}。", importance=5)
+
+        elif d.effect == "denounce":
+            claim = p.get("claim", "")
+            # veil 擋得掉一次：擋掉之後就失效，不會一直擋。
+            landed = target.buff("veil", t) == 0
+            if not landed:
+                target.buffs.pop("veil", None)
+            witnesses = [o.id for o in bystanders(self.cfg.hearing_radius)]
+            utterance = (act.get("utterance") or "").strip() or (
+                f"「各位看清楚了，{target.name}{claim}，這事我有實據。」"
+            )
+            self._signals.exposures.append({
+                "by": a.id, "target": target.id, "claim": claim,
+                "landed": landed, "witnesses": witnesses,
+            })
+            if landed:
+                line = f"{a.name}當眾指證{target.name}{claim}。"
+                for o in [target, *bystanders(self.cfg.hearing_radius)]:
+                    remember(o, f"{a.name}當眾指證{target.name}{claim}。", 10)
+            else:
+                line = f"{a.name}指著{target.name}說了幾句，卻沒人聽出個所以然來。"
+                remember(a, f"我指證{target.name}，話卻沒有落到實處。", 8)
+            detail = {"target": target.id, "claim": claim,
+                      "landed": landed, "witnesses": witnesses}
+            # 指證是當眾說出來的話——讓它走 speech 這條路，被指的人才有機會當場回嘴。
+            speech_ev = {
+                "speaker": a.id, "speaker_name": a.name, "to": target.id,
+                "utterance": utterance, "tick": t, "consumed_by": [],
+            }
+
+        elif d.effect == "lure":
+            utterance = (act.get("utterance") or "").strip()
+            if not utterance:
+                return reject(f"我要使{d.name}，卻沒想好要說什麼。")
+            remember(
+                target,
+                f"{a.name}對我說：「{utterance}」這話聽起來竟然頗有道理。",
+                importance=int(p.get("weight", 8)),
+            )
+            detail = {"target": target.id}
+            line = f"{a.name}對{target.name}說了一番話，聽的人神色鬆動。"
+            speech_ev = {
+                "speaker": a.id, "speaker_name": a.name, "to": target.id,
+                "utterance": utterance, "tick": t, "consumed_by": [],
+            }
+
+        elif d.effect == "scout":
+            area = self.grid.area_at(target.pos) or "路上"
+            text = f"（打聽到了：{target.name}這會兒在{area}。）"
+            remember(a, text, importance=8)
+            # 記憶不保證被檢索到，所以也直接送到他下一拍的眼前——和報噩耗同一條路。
+            if self.director is not None:
+                self.director.add_runtime(a.id, text, t + 1, tag="scout")
+            detail = {"target": target.id, "area": area}
+            line = f"{a.name}向路邊的人打聽了幾句。"
+
+        elif d.effect == "rite":
+            area = p.get("area", "")
+            here = self.grid.area_at(a.pos)
+            if area and here != area:
+                return reject(f"{d.name}得在{area}才辦得成，我人還在{here or '路上'}。")
+            need = int(p.get("witnesses", 0))
+            watching = bystanders(self.cfg.vision_radius)
+            if len(watching) < need:
+                return reject(
+                    f"{d.name}是做給人看的大禮，這會兒身邊沒有人，辦了也不算數。"
+                    "我得等人到齊。"
+                )
+            rite = p.get("rite", d.name)
+            self._signals.rites.setdefault(a.id, []).append(rite)
+            line = f"{a.name}當眾行了{rite}之禮。"
+            for o in watching:
+                remember(o, line, 10)
+            remember(a, f"我把{rite}做完了。", 10)
+            detail = {"rite": rite, "area": here, "witnesses": [o.id for o in watching]}
+
+        else:  # 目錄裡有、引擎沒實作——設定錯誤，不要靜靜吞掉
+            return reject(f"{d.name}我一時竟使不出來。")
+
+        spend()
+        self.log.write("art_used", {
+            "agent": a.id, "name": a.name, "art": d.id, "art_name": d.name,
+            "kind": d.kind, "effect": d.effect, "line": line,
+            "uses_left": slot.uses_left, **detail,
+        })
+        if self.console:
+            self.console.print(f"[magenta]✦ {line}[/magenta]")
+
+        # 使完就重新盤算下一步（運功之後總要真的出手）。
+        a.action = None
+        if speech_ev:
+            self.log.write("speech", speech_ev)
+        return speech_ev
+
+    def _on_goal_closed(self, rec: dict) -> None:
+        """目的結案了，讓當事人自己知道——否則他會繼續朝一個已經結束的事使力。"""
+        a = self.world.agents.get(rec["agent"])
+        if a is None or not a.alive:
+            return
+        t, when = self.world.tick, clock_str(self.world.tick)
+        if rec["status"] == "done":
+            text = f"（{rec['text']}——{rec['note']}。這件事了了。）"
+        else:
+            text = f"（{rec['text']}——{rec['note']}。這條路走不通了。）"
+        a.memory.add(t, when, "observation", text, importance=10)
+        if self.director is not None:
+            self.director.add_runtime(a.id, text, t + 1, tag="goal")
+        if self.console:
+            colour = "green" if rec["status"] == "done" else "red"
+            self.console.print(f"[{colour}]◆ {a.name}：{rec['text']}／{rec['note']}[/{colour}]")
+
     def _notify_kin(self, dead, killer, t: int) -> None:
         """把噩耗＋尋仇的念頭塞進死者親友的眼前。
 
@@ -415,7 +700,7 @@ class Engine:
                 f"（有人急奔來報：{dead.name}死了，是{killer.name}下的手。"
                 f"你和他的交情，你自己心裡有數。江湖上沒有白死的人。）"
             )
-            self.director.add_runtime(other.id, text, t + 1)
+            self.director.add_runtime(other.id, text, t + 1, tag="revenge")
             self.log.write(
                 "revenge_seed",
                 {"mourner": other.id, "dead": dead.id, "killer": killer.id, "when": when},
@@ -429,10 +714,12 @@ class Engine:
 
         if act["kind"] == "move_to":
             path = act.get("path") or []
-            steps = path[: self.cfg.move_speed]
+            # 輕功類的絕技在這裡兌現：腳程加倍，一拍走得比別人遠。
+            speed = self.cfg.move_speed * max(1, a.buff("dash", t))
+            steps = path[:speed]
             if steps:
                 a.pos = Pos.of(steps[-1])
-            act["path"] = path[self.cfg.move_speed :]
+            act["path"] = path[speed:]
             if not act["path"]:
                 act["done"] = True
                 a.memory.add(

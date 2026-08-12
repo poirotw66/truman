@@ -148,6 +148,55 @@ COMBAT = """\
 """
 
 
+ARTS = """\
+6. `use_art` —— 使出你的一門絕技。`art` 填絕技的名字。
+
+   你會的絕技寫在「你會的絕技」那一段裡，每一門都寫了它做什麼、什麼時候該用。
+   不在那張清單上的功夫你使不出來。
+
+   關於絕技，有四件事你心裡要有數：
+
+   - **有數的**。多數絕技一天只使得出幾次，使過還要緩一陣子才能再使。
+     還剩幾次、緩過來了沒有，每次都寫在「此刻」那一段裡。用掉就沒了，
+     所以真正難的不是會不會，是什麼時候拿出來。
+   - **使出來不等於成事**。運了功還是得真的出手，勸了人他仍然可以不聽。
+     絕技只是讓你比較有機會，不是替你把事情做完。
+   - **有些會被看見**。當眾說破一個人的來歷、在人前動用某些手段，
+     在場的人都會記得，而且收不回來。
+   - **要對得上你今天要做的事**。你會這幾門功夫，是因為它們對你今天要做的事
+     真的有用。挑那個能推進你目的的來用，不要為了使而使。
+
+   使絕技和說話一樣是當下的事，使完你可以馬上再決定下一步。
+"""
+
+
+def arts_public_knowledge(arts_catalog) -> str:
+    """江湖上有名的功夫——招式的**名號**是公開常識，誰會哪一門不是。
+
+    這一段是從目錄生出來的，不是另抄一份：手抄的那份遲早會和 `world/arts.py` 走鐘。
+    只取 name 與 tagline（江湖傳聞層級）。**不要**把 `when`（什麼時候該用）放進來，
+    那是給持有者的使用說明，屬於 system[1]，攤到共用區塊等於把每個人的底牌
+    連同用法一起發給所有人。
+
+    這個函式和劇本無關：拿到什麼目錄就寫什麼，所以換劇本、換招式都不必改這裡。
+    """
+    if not arts_catalog:
+        return ""
+    by_kind: dict[str, list] = {}
+    for d in arts_catalog:
+        by_kind.setdefault(d.kind, []).append(d)
+    title = {"combat": "拳腳兵刃", "social": "待人接物", "move": "身法輕功", "info": "耳目消息"}
+    lines = [
+        "# 江湖上有名的功夫",
+        "（這些名號人人都聽過。但誰會哪一門、誰身上帶著什麼底牌，沒有人知道——",
+        "  除非他當著你的面使出來。）",
+    ]
+    for kind, items in by_kind.items():
+        lines.append(f"\n## {title.get(kind, kind)}")
+        lines += [f"- {d.name}：{d.tagline}" for d in items]
+    return "\n".join(lines)
+
+
 def world_block(
     grid: Grid,
     scenario_brief: str,
@@ -157,6 +206,9 @@ def world_block(
     setting: str = SEAHAVEN_SETTING,
     examples: str = SEAHAVEN_EXAMPLES,
     combat: bool = False,
+    arts: bool = False,
+    arts_catalog=(),
+    lore: str = "",
 ) -> str:
     """system[0]：完全靜態。所有 agent、所有 tick 共用同一份位元組。
 
@@ -164,10 +216,21 @@ def world_block(
     絕不可以出現誰是演員、誰是主角、誰藏了什麼秘密，那是 system[1] 才有的資訊。
 
     setting / examples 跟著劇本走，MECHANICS 與 TONE 全劇本共用。
+
+    `lore` 是劇本自己提供的公開背景（`scenarios/*.py` 的 `PUBLIC_LORE`）。它必須留在
+    劇本檔裡，不能寫死在這個模組——這裡是全劇本共用的那一層，把五嶽劍派塞進來，
+    哪天和平劇本配了絕技就會收到一整套武林設定。
+
+    `arts_catalog` 給招式名號用，內容由目錄生成，和劇本無關。
     """
+    mechanics = MECHANICS
+    if combat:
+        mechanics += COMBAT
+    if arts:
+        mechanics += ARTS
     parts = [
         setting,
-        MECHANICS + COMBAT if combat else MECHANICS,
+        mechanics,
         examples,
         TONE,
         "# 地理",
@@ -177,21 +240,67 @@ def world_block(
     ]
     if cast:
         parts += ["# 這裡的人（這些是每個人都知道的事）", cast]
+    if lore:
+        parts.append(lore)
+    if arts and arts_catalog:
+        parts.append(arts_public_knowledge(arts_catalog))
     parts += ["# 這裡的人怎麼相處", social_norms]
     return "\n\n".join(parts)
 
 
+def goals_block(agent) -> str:
+    """這個人今天要做到的事。空的就整段不存在。
+
+    只寫「要做到什麼」，不寫「現在做到沒有」——後者每 tick 都在變，
+    寫進 system[1] 會把快取前綴打掉。進度在 observation 那一層講。
+    """
+    if not agent.goals:
+        return ""
+    lines = ["# 你今天要做到的事", "（這是你今天真正在乎的事。別的都可以讓，這個不行。）"]
+    for i, g in enumerate(agent.goals, 1):
+        lines.append(f"{i}. {g.text}")
+    return "\n".join(lines)
+
+
+def arts_block(agent) -> str:
+    """這個人會的絕技。同樣不寫剩餘次數——那個每 tick 都在變。"""
+    if not agent.arts:
+        return ""
+    from ..world import arts as arts_mod  # 避免匯入時的環狀相依
+
+    lines = [
+        "# 你會的絕技",
+        "（這幾門功夫你練了很久，它們對你今天要做的事真的有用。）",
+    ]
+    for slot in agent.arts:
+        d = arts_mod.get(slot.id)
+        if d is None:
+            continue
+        lines.append(f"\n## {d.name}")
+        lines.append(d.tagline)
+        lines.append(f"什麼時候用：{d.when}")
+        cost = d.cost_line()
+        if cost:
+            lines.append(f"限制：{cost}。")
+    return "\n".join(lines)
+
+
 def persona_block(agent) -> str:
-    """system[1]：每 agent 一份，只在 reflection 更新信念時才變動。"""
-    return "\n\n".join(
-        [
-            "# 你是誰",
-            agent.persona,
-            "# 你沉澱下來的判斷",
-            "（這些是你從過去經歷歸納出來的，不是別人告訴你的。它們可能是錯的。）",
-            agent.memory.beliefs_block(),
-        ]
-    )
+    """system[1]：每 agent 一份，只在 reflection 更新信念時才變動。
+
+    目的與絕技也掛在這一層：它們整場不變，和人設一起進快取前綴。
+    「還剩幾次」「做到了沒有」那些會變的，一律留給 observation。
+    """
+    parts = ["# 你是誰", agent.persona]
+    for extra in (goals_block(agent), arts_block(agent)):
+        if extra:
+            parts.append(extra)
+    parts += [
+        "# 你沉澱下來的判斷",
+        "（這些是你從過去經歷歸納出來的，不是別人告訴你的。它們可能是錯的。）",
+        agent.memory.beliefs_block(),
+    ]
+    return "\n\n".join(parts)
 
 
 def observation_message(obs, memories) -> str:

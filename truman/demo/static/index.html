@@ -108,6 +108,25 @@
   .metrics{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; font-size:11.5px; color:var(--ink2)}
   .metrics span{display:inline-flex; gap:4px}
   .metrics strong{color:var(--ink); font-weight:600}
+  /* 每個人的目的與絕技：現場跑最想看的就是「我組的 agent 現在怎麼樣了」 */
+  .board{display:grid; grid-template-columns:repeat(auto-fill,minmax(228px,1fr)); gap:8px; margin:10px 0}
+  .board:empty{display:none}
+  .bc{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1);
+      border-radius:9px; padding:8px 10px; display:flex; flex-direction:column; gap:5px}
+  .bc.dead{opacity:.45}
+  .bc .hd{display:flex; align-items:baseline; gap:6px}
+  .bc .nm{font-weight:700; font-size:13px}
+  .bc .st{font-size:10.5px; opacity:.7; margin-left:auto}
+  .bc .g{display:flex; gap:6px; align-items:flex-start; font-size:11.5px; line-height:1.45}
+  .bc .g b{flex:none; width:11px}
+  .bc .g.done b{color:#6fd6ae} .bc .g.failed b{color:#e8877a} .bc .g.open b{opacity:.55}
+  .bc .g.done{color:#6fd6ae} .bc .g.failed{opacity:.62}
+  .bc .g em{font-style:normal; opacity:.62; font-size:10.5px}
+  .bc .as{display:flex; flex-wrap:wrap; gap:4px; margin-top:1px}
+  .bc .a{font-size:10.5px; padding:2px 7px; border-radius:11px;
+         background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); opacity:.62}
+  .bc .a.used{opacity:1; border-color:#b98ede; color:#d9bcf5}
+  .bc .a.spent{opacity:.34; text-decoration:line-through}
   .feed{display:flex; flex-direction:column; gap:5px; max-height:180px; overflow:auto}
   .fe{font-size:12.5px; line-height:1.45; padding:6px 8px; border-radius:7px; background:color-mix(in srgb,var(--bg) 35%,var(--panel2));
     border-left:3px solid var(--line2)}
@@ -196,6 +215,7 @@
           <span><strong>預估剩餘</strong><span id="progEta">—</span></span>
         </div>
         <div class="bar"><div class="fill" id="progFill"></div></div>
+        <div class="board" id="board"></div>
         <div class="feed" id="feed"></div>
       </div>
     </section>
@@ -392,6 +412,7 @@ function renderProgress(data) {
   $("progPhase").textContent = data.phase || "執行中";
   $("progFill").style.width = `${Math.min(100, (tick / total) * 100)}%`;
   updateProgressStats();
+  renderBoard(data.board || []);
   const feed = $("feed");
   feed.innerHTML = "";
   for (const row of (data.recent || []).slice().reverse()) {
@@ -400,6 +421,31 @@ function renderProgress(data) {
     div.innerHTML = `<span class="t">t${row.tick ?? "—"}</span>${escapeHtml(row.text || "")}`;
     feed.appendChild(div);
   }
+}
+
+// 每個人的目的與絕技。沒有目的也沒有絕技的劇本（和平箱庭）拿到空陣列，整段不顯示。
+const GOAL_MARK = { done: "✓", failed: "✕", open: "…" };
+function renderBoard(rows) {
+  const el = $("board");
+  if (!rows.length) { el.innerHTML = ""; return; }
+  el.innerHTML = rows.map((r) => {
+    const goals = (r.goals || []).map((g) => {
+      const mark = GOAL_MARK[g.status] || "…";
+      const note = g.status === "open" ? "" : `<em>　${escapeHtml(g.note || "")}</em>`;
+      return `<div class="g ${g.status}"><b>${mark}</b><span>${escapeHtml(g.text)}${note}</span></div>`;
+    }).join("");
+    const arts = (r.arts || []).map((a) => {
+      // left < 0 是不限次數；用盡就劃掉，用過的高亮——一眼看出他捨不捨得用
+      const spent = a.left === 0;
+      const cls = spent ? "spent" : a.used ? "used" : "";
+      const tail = a.left >= 0 ? ` ${a.left}` : "";
+      return `<span class="a ${cls}">${escapeHtml(a.name)}${tail}</span>`;
+    }).join("");
+    const state = !r.alive ? "已歿" : r.wound >= 2 ? "重傷" : r.wound === 1 ? "帶傷" : "";
+    return `<div class="bc ${r.alive ? "" : "dead"}">
+      <div class="hd"><span class="nm">${escapeHtml(r.name)}</span><span class="st">${state}</span></div>
+      ${goals}${arts ? `<div class="as">${arts}</div>` : ""}</div>`;
+  }).join("");
 }
 
 function updateHeartbeatLabel() {

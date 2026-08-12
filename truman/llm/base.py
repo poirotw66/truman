@@ -190,6 +190,65 @@ class BaseLLMClient:
                 await asyncio.sleep(delay)
 
     # ------------------------------------------------------------ 送出
+    async def preflight(self, world=None) -> list[tuple[str, str, str]]:
+        """開跑前把每一組（模型, thinking_level）各試一次。
+
+        回傳失敗的那幾組 [(model, thinking, 錯誤訊息)]；全過就是空清單。
+
+        為什麼要這個：`j3` 跑了 96 拍、576 次呼叫**全部失敗**，只因為
+        `gemini-2.5-flash-lite` 不接受 `thinking_level=medium`。32 秒就「跑完」了，
+        零對話零意圖，而且要等全部跑完才回報。那次是 400 錯誤沒花到錢，
+        但同樣的設定錯誤配上一個會計費的模型，就是燒掉一整天換一份空日誌。
+
+        只試「真的會用到」的組合：分層路由的四層，加上每個 agent 自己掛的模型。
+        每次幾十個 token，比事後才發現便宜太多。
+        """
+        if self.replay is not None:
+            return []
+        # 要照**解析後**的 thinking_level 去重，不能只看模型。四層預設同一個模型，
+        # 但 thinking 不同（routine/dialogue/judge 是 low、reflect 是 high）——
+        # 只按模型去重的話會塌成一組，reflect 那個 high 從來不會被試到，
+        # 而那正好就是 j3 死掉的那一類錯誤。
+        resolve = getattr(self, "_thinking", None)  # Gemini 才有；Anthropic 回 None
+        combos: dict[tuple[str, str | None], str] = {}
+        for tier in ("routine", "dialogue", "reflect", "judge"):
+            level = resolve(tier) if resolve else None
+            combos.setdefault((self.cfg.models[tier], level), tier)
+        for a in (world.agents.values() if world is not None else ()):
+            spec = a.llm or {}
+            if spec.get("model") or spec.get("thinking"):
+                model = spec.get("model") or self.cfg.models["routine"]
+                level = spec.get("thinking") or (resolve("routine") if resolve else None)
+                combos.setdefault((model, level), "routine")
+
+        probe_schema = {
+            "type": "object",
+            "properties": {"ok": {"type": "string"}},
+            "required": ["ok"],
+            "additionalProperties": False,
+        }
+        bad: list[tuple[str, str, str]] = []
+        for (model, thinking), tier in combos.items():
+            c = Call(
+                key=f"preflight:{model}:{thinking or tier}",
+                tier=tier,
+                system_blocks=["你是一個測試用的回聲程式。"],
+                user_message="回一個 JSON：{\"ok\": \"1\"}",
+                schema=probe_schema,
+                max_tokens=self.cfg.max_output_tokens,
+                model=model,
+                thinking=thinking,
+            )
+            try:
+                await self._invoke_guarded(c, model)
+            except Exception as e:  # noqa: BLE001 —— 任何失敗都要報，不能只認某幾種
+                bad.append((model, thinking or f"（{tier} 層預設）", str(e)))
+        self.log.write("preflight", {
+            "checked": [{"model": m, "thinking": th} for (m, th) in combos],
+            "failed": [{"model": m, "thinking": th, "error": err} for m, th, err in bad],
+        })
+        return bad
+
     async def call(self, c: Call) -> dict:
         if self.replay is not None:
             rec = self.replay.get(c.key)

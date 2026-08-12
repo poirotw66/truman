@@ -4,3 +4,7 @@
 __pycache__/
 *.pyc
 *.egg-info/
+
+# 回放的中繼資料：半 MB，沒有程式讀它，產出的 HTML 本來就自帶資料。
+# 以前每建一次回放就留一個假 diff。要看用 `build_frames.py --frames-json`。
+replay/frames.json

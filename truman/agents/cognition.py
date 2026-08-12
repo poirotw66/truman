@@ -70,7 +70,7 @@ def action_call(agent, obs, world_block_text: str, cfg, tier: str, tick: int) ->
         # 順序即快取層級：世界（全共用）→ 人設＋信念（每人一份，只在 reflection 變）
         system_blocks=[world_block_text, persona_block(agent)],
         user_message=observation_message(obs, memories),
-        schema=action_schema(getattr(cfg, "combat", False)),
+        schema=action_schema(getattr(cfg, "combat", False), bool(agent.arts)),
         max_tokens=cfg.max_output_tokens,
     )
 

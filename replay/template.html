@@ -3,7 +3,7 @@
   :root{
     --bg:#12100c; --bg2:#1b1811; --panel:#211d15; --panel2:#2a251b;
     --ink:#f0e6d0; --ink2:#a99b7e; --line:rgba(240,230,205,.13); --line2:rgba(240,230,205,.26);
-    --gold:#d9a63c; --cinnabar:#c8483a; --jade:#5aa38f;
+    --gold:#d9a63c; --cinnabar:#c8483a; --jade:#5aa38f; --violet:#b98ede;
     --disp:"Songti SC","STSong","Source Han Serif SC","Noto Serif CJK SC","PMingLiU",serif;
     --ui:"PingFang SC","Source Han Sans SC","Noto Sans CJK SC","Microsoft JhengHei",sans-serif;
     --mono:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
@@ -111,6 +111,10 @@
   .fe.k-attack{border-left-color:var(--cinnabar)} .fe.k-death{border-left-color:#e4705f; background:color-mix(in srgb,var(--cinnabar) 15%,var(--panel2))}
   .fe.k-world{border-left-color:var(--ink2); color:var(--ink2); font-style:italic}
   .fe.k-reflection{border-left-color:var(--gold)}
+  .fe.k-art{border-left-color:var(--violet)}
+  .fe.k-note{border-left-color:var(--ink2); font-style:italic}
+  .fe.k-goal{border-left-color:var(--jade); background:color-mix(in srgb,var(--jade) 12%,var(--panel2))}
+  .fe.k-goalx{border-left-color:#a2564e; background:color-mix(in srgb,var(--cinnabar) 10%,var(--panel2))}
   .fe.now{outline:1px solid var(--gold)}
   .feed::-webkit-scrollbar,.body::-webkit-scrollbar{width:8px} .feed::-webkit-scrollbar-thumb,.body::-webkit-scrollbar-thumb{background:var(--line2); border-radius:8px}
 
@@ -135,6 +139,27 @@
   .sheet .body{padding:11px 13px; overflow-y:auto; display:flex; flex-direction:column; gap:11px; font-size:12.5px}
   .sec{display:flex; flex-direction:column; gap:4px}
   .sec .lb{font-size:10px; letter-spacing:.2em; color:var(--gold); font-weight:700}
+  /* 目的：一行一條，勾／叉／進行中三種狀態 */
+  .quest{display:flex; flex-direction:column; gap:5px; margin-top:4px}
+  .qz{display:flex; gap:8px; align-items:flex-start; font-size:12px; line-height:1.5;
+    padding:5px 8px; border-radius:6px; border-left:3px solid var(--ink2);
+    background:color-mix(in srgb,var(--panel2) 70%,transparent)}
+  .qz b{flex:0 0 12px; font-size:13px; line-height:1.35}
+  .qz em{display:block; font-style:normal; font-size:10.5px; color:var(--ink2); margin-top:1px}
+  .qz.done{border-left-color:var(--jade)} .qz.done b{color:var(--jade)}
+  .qz.fail{border-left-color:var(--cinnabar)} .qz.fail b{color:var(--cinnabar)}
+  .qz.open{opacity:.78} .qz.open b{color:var(--gold)}
+  /* 絕技：他手上有什麼工具、用掉了幾次 */
+  .arts{display:flex; flex-direction:column; gap:4px; margin-top:4px}
+  .az{display:grid; grid-template-columns:1fr auto; gap:1px 10px; font-size:11.5px;
+    padding:5px 8px; border-radius:6px; border-left:3px solid var(--line2);
+    background:color-mix(in srgb,var(--panel2) 60%,transparent)}
+  .az b{font-size:12px; letter-spacing:.03em}
+  .az span{grid-column:1; font-size:10.5px; color:var(--ink2)}
+  .az u{grid-row:1/3; grid-column:2; align-self:center; text-decoration:none;
+    font-size:10.5px; color:var(--ink2)}
+  .az.used{border-left-color:var(--violet)}
+  .az.used b{color:var(--violet)} .az.used u{color:var(--violet)}
   .sec .goal{font-family:var(--disp); font-size:14px; line-height:1.5}
   .sec p{margin:0; color:var(--ink); line-height:1.62}
   .sec p.q{color:var(--ink2); border-left:2px solid var(--line2); padding-left:8px}
@@ -207,6 +232,18 @@
     border-radius:9px; padding:7px 12px; font-size:13px}
   .tomb .who{font-family:var(--disp); font-size:15px; font-weight:600}
   .tomb .by{margin-left:auto; color:#c9a08f; font-size:12px}
+  /* 片尾成績單 */
+  .score{display:flex; flex-direction:column; gap:5px; max-width:620px; margin:0 auto; width:100%}
+  .score .sh{font-size:10px; letter-spacing:.28em; color:var(--gold); font-weight:700; margin-bottom:3px}
+  .score .sr{display:flex; gap:10px; align-items:center; padding:6px 12px; border-radius:8px;
+    background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.08)}
+  .score .who{font-family:var(--disp); font-size:14px; font-weight:600; flex:0 0 62px; text-align:left}
+  .score .gt{flex:1; text-align:left; font-size:11.5px; color:#c3b79c; line-height:1.5}
+  .score .gm{display:flex; gap:4px; margin-left:auto}
+  .score .gm i{font-style:normal; width:19px; height:19px; border-radius:5px; font-size:12px;
+    display:grid; place-items:center; cursor:help}
+  .score .gm i.y{background:rgba(90,163,143,.26); color:#8fd8c0; border:1px solid rgba(90,163,143,.5)}
+  .score .gm i.n{background:rgba(200,72,58,.2); color:#eda79c; border:1px solid rgba(200,72,58,.42)}
   .nums{display:flex; gap:22px; justify-content:center; flex-wrap:wrap}
   .nums div{display:flex; flex-direction:column}
   .nums b{font-family:var(--disp); font-size:27px; font-weight:600; color:var(--gold)}
@@ -367,6 +404,14 @@ const ICONS = (() => {
     world:  mk(R => { R(1,2,14,12,"#171210"); R(2,4,12,8,"#e6dcc0"); R(2,2,12,2,"#6b4a2c"); R(2,12,12,2,"#6b4a2c");
       R(4,6,8,1,"#8a7a58"); R(4,8,6,1,"#8a7a58"); }),
     interact: mk(R => { R(6,1,4,14,"#171210"); R(6.6,2,2.8,12,"#c0a45a"); }),
+    // 絕技：捲軸／符籙的樣子，和刀光（attack）明顯區隔開
+    art: mk(R => { R(2,2,12,12,"#171210"); R(3,3,10,10,"#6b3f8a"); R(4,4,8,8,"#b98ede");
+      R(7,5,2,6,"#f3ead3"); R(5,7,6,2,"#f3ead3"); }),
+    // 目的達成／落空：一個勾、一個叉，顏色在 renderFeed 那邊分
+    goal: mk(R => { R(2,2,12,12,"#171210"); R(3,3,10,10,"#2e5e46");
+      R(5,7,2,4,"#9be8c0"); R(6,9,2,2,"#9be8c0"); R(8,6,2,2,"#9be8c0"); R(9,4,2,3,"#9be8c0"); }),
+    goalx: mk((R, dia) => { R(2,2,12,12,"#171210"); R(3,3,10,10,"#6b2f2a");
+      dia(4,4,8,1.6,"#f0a49c",1); dia(4,4,8,1.6,"#f0a49c",-1); }),
   };
 })();
 
@@ -686,6 +731,12 @@ F.forEach(fr => fr.events.forEach(e => {
   else if (e.kind === "death") FEED.push({ t:fr.tick, k:"death", html:`<img class="ic" src="${ICONS.death}" alt="死"><span><b>${esc(e.name)}</b> 死了${e.by&&P[e.by]?`，死於 <b>${esc(P[e.by].name)}</b> 之手`:""}。</span>${tm}` });
   else if (e.kind === "reflection") FEED.push({ t:fr.tick, k:"reflection", html:`<img class="ic" src="${ICONS.reflection}" alt="想通了"><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b> 想通了：${esc(e.insight.length>52?e.insight.slice(0,50)+"…":e.insight)}</span>${tm}` });
   else if (e.kind === "world") FEED.push({ t:fr.tick, k:"world", html:`<img class="ic" src="${ICONS.world}" alt="世界"><span>${esc(e.text.replace(/[（）]/g,""))}</span>${tm}` });
+  else if (e.kind === "art") FEED.push({ t:fr.tick, k:"art",
+    html:`<img class="ic" src="${ICONS.art}" alt="絕技"><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b> 使出 <b style="color:var(--violet)">${esc(e.art)}</b>${e.left>=0?`<span style="color:var(--ink2)">（還剩 ${e.left} 次）</span>`:""}${e.line?`　${esc(e.line)}`:""}</span>${tm}` });
+  else if (e.kind === "note") FEED.push({ t:fr.tick, k:"note",
+    html:`<img class="ic" src="${ICONS.world}" alt="只有他知道"><span><b style="color:${P[e.agent]?P[e.agent].color:"var(--ink2)"}">${esc(P[e.agent]?P[e.agent].name:"某人")}</b> 眼前：${esc(e.text.replace(/[（）]/g,""))}<span style="color:var(--ink2)">　（只有他看得見）</span></span>${tm}` });
+  else if (e.kind === "goal") FEED.push({ t:fr.tick, k:e.done?"goal":"goalx",
+    html:`<img class="ic" src="${ICONS[e.done?"goal":"goalx"]}" alt="${e.done?"達成":"落空"}"><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b> ${e.done?"做到了":"沒能做到"}：${esc(e.text)}<span style="color:var(--ink2)">　${esc(e.note)}</span></span>${tm}` });
 }));
 let feedShown = -1;
 function renderFeed(force) {
@@ -728,6 +779,55 @@ function renderRoster() {
 
 /* ============================ 角色卡 ============================ */
 const sheetHost = document.getElementById("sheetHost");
+/* 目的（quest）與絕技（工具）——這兩段是「這個人今天想幹嘛、手上有什麼」。
+   目的一律取自 goal_* 事件，也就是世界真的判出來的結果，不是劇本上寫的願望。
+   注意要照當下的 cur 篩：還沒發生的結局不能先劇透。                            */
+const GOALS_BY = (() => {
+  const m = {};
+  (DATA.goals || []).forEach(g => (m[g.agent] = m[g.agent] || []).push(g));
+  Object.values(m).forEach(list => list.sort((a, b) => a.idx - b.idx));
+  return m;
+})();
+const ARTS_USED = (() => {
+  const m = {};
+  F.forEach(fr => fr.events.forEach(e => {
+    if (e.kind === "art") (m[e.agent] = m[e.agent] || []).push({ t: fr.tick, art: e.art });
+  }));
+  return m;
+})();
+
+function questHTML(id) {
+  const gs = GOALS_BY[id] || [];
+  if (!gs.length) return "";
+  const rows = gs.map(g => {
+    const settled = g.tick <= cur;
+    const cls = !settled ? "open" : g.done ? "done" : "fail";
+    const mark = !settled ? "…" : g.done ? "✓" : "✕";
+    const note = settled ? `<em>${esc(g.note)}　${clockOf(g.tick).str}</em>` : `<em>還在進行</em>`;
+    return `<div class="qz ${cls}"><b>${mark}</b><span>${esc(g.text)}${note}</span></div>`;
+  }).join("");
+  const done = gs.filter(g => g.tick <= cur && g.done).length;
+  const settled = gs.filter(g => g.tick <= cur).length;
+  return `<div class="sec"><span class="lb">今天要做到的事 ${settled ? `（${done}/${gs.length} 達成）` : ""}</span>
+    <div class="quest" data-n="${settled}">${rows}</div></div>`;
+}
+
+function artsSecHTML(id) {
+  const arts = (CAST[id] || {}).arts || [];
+  if (!arts.length) return "";
+  const used = (ARTS_USED[id] || []).filter(u => u.t <= cur);
+  const count = {};
+  used.forEach(u => { count[u.art] = (count[u.art] || 0) + 1; });
+  const rows = arts.map(a => {
+    const n = count[a.name] || 0;
+    return `<div class="az ${n ? "used" : ""}" title="${esc(a.tagline)}">
+      <b>${esc(a.name)}</b><span>${esc(a.cost || "不限次數")}</span>
+      <u>${n ? `已使 ${n} 次` : "還沒用過"}</u></div>`;
+  }).join("");
+  return `<div class="sec"><span class="lb">絕技 ${used.length ? `（共使出 ${used.length} 次）` : ""}</span>
+    <div class="arts" data-n="${used.length}">${rows}</div></div>`;
+}
+
 function openSheet(id) {
   selected = id; const p = P[id], c = CAST[id], fr = F[cur].agents[id];
   let thought = null; for (let k = cur; k >= 0; k--) { const th = F[k].agents[id].thought; if (th) { thought = { t:k, th }; break; } }
@@ -747,7 +847,9 @@ function openSheet(id) {
       <button class="x" id="sheetX" aria-label="關閉">✕</button></div>
     <div class="body">
       <div class="sec"><span class="lb">今日所求</span><div class="goal">「${esc(p.goal)}」</div></div>
+      ${questHTML(id)}
       <div class="sec"><span class="lb">武功 ${c.skill} / 10</span><div class="bars">${Array.from({length:10},(_,i)=>`<i class="${i<c.skill?"on":""}"></i>`).join("")}</div></div>
+      ${artsSecHTML(id)}
       <div class="sec"><span class="lb">此人</span><p>${esc(p.blurb)}</p></div>
       <div class="sec"><span class="lb thoughtLab">此刻在想（${thought?clockOf(thought.t).str:"—"}）</span>
         <p class="q thoughtTxt">${thought?esc(thought.th):"還沒起念。"}</p></div>
@@ -794,6 +896,14 @@ function refreshSheet() {
   }
   const ar = host.querySelector(".areaTxt");
   if (ar) ar.textContent = (fr.area || "長街") + (AREA_OF[fr.area] ? "　" + AREA_OF[fr.area].desc : "");
+  // 目的與絕技也跟著時間走。整段換掉沒關係——這兩格沒有立繪，重畫很便宜；
+  // 但仍然只在真的變了才換，否則播放中每秒好幾次的重建會把捲動位置洗掉。
+  const swap = (sel, n, html) => {
+    const el = host.querySelector(sel);
+    if (el && el.dataset.n !== String(n)) el.closest(".sec").outerHTML = html;
+  };
+  swap(".quest", (GOALS_BY[id] || []).filter(g => g.tick <= cur).length, questHTML(id));
+  swap(".arts", (ARTS_USED[id] || []).filter(u => u.t <= cur).length, artsSecHTML(id));
 }
 
 /* ============================ 覆蓋層（名牌 / 氣泡） ============================ */
@@ -1021,6 +1131,24 @@ function showIntro() {
   d.querySelector("#go").onclick = () => { d.remove(); started = true; enterTick(0, false); renderFeed(true); setPlay(true); };
   d.querySelector("#skip").onclick = () => { d.remove(); started = true; enterTick(MAXT, false); renderFeed(true); showOutro(); };
 }
+/* 片尾成績單：誰做到了今天要做的事。
+   死亡名單講的是「發生了什麼」，這一張講的是「誰要的東西拿到了」——
+   後者才看得出來目的與工具配得對不對，也才是換一組配置重跑時要比的東西。 */
+function scoreHTML() {
+  const gs = DATA.goals || [];
+  if (!gs.length) return "";
+  const rows = IDS.filter(id => gs.some(g => g.agent === id)).map(id => {
+    const mine = gs.filter(g => g.agent === id).sort((a, b) => a.idx - b.idx);
+    const cells = mine.map(g =>
+      `<i class="${g.done ? "y" : "n"}" title="${esc(g.text)}　${esc(g.note)}">${g.done ? "✓" : "✕"}</i>`).join("");
+    return `<div class="sr">
+      <span class="who" style="color:${P[id].color}">${esc(P[id].name)}</span>
+      <span class="gt">${esc(mine.map(g => g.text).join("；"))}</span>
+      <span class="gm">${cells}</span></div>`;
+  }).join("");
+  return `<div class="score"><div class="sh">今天誰拿到了自己要的東西</div>${rows}</div>`;
+}
+
 function showOutro() {
   if (document.querySelector(".over")) return;
   const live = IDS.filter(id => F[MAXT].agents[id].alive);
@@ -1034,10 +1162,13 @@ function showOutro() {
     <div class="tomb">${tomb}</div>
     <p class="lede">活到最後的是 ${live.map(id => `<b style="color:${P[id].color}">${esc(P[id].name)}</b>`).join("、")}。
       每一刀、每一句話都是 agent 自己算過後的決定——箱庭要看的就是這種結構性衝突下長出來的軌跡。</p>
+    ${scoreHTML()}
     <div class="nums">
       <div><b>${s.speeches ?? "—"}</b><span>句對話</span></div>
+      <div><b>${s.arts ?? 0}</b><span>次使出絕技</span></div>
       <div><b>${s.attacks ?? moments.filter(m=>m.kind==="attack").length}</b><span>次動手</span></div>
       <div><b>${deaths.length}</b><span>人死了</span></div>
+      <div><b>${s.goals_total ? `${s.goals_done}/${s.goals_total}` : "—"}</b><span>目的達成</span></div>
       <div><b>${MAXT}</b><span>個決策時刻</span></div>
     </div>
     <div class="btns"><button class="big" id="again">↻ 再看一次</button>
