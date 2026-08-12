@@ -192,11 +192,14 @@ def main() -> int:
         from truman import cli as cli_mod  # noqa: PLC0415
         from truman.world import arts as arts_mod_t  # noqa: PLC0415
         jh_grid = jianghu_mod.build_grid()
-        jh_wb = world_block(
+        # 沒給目錄就不該生出一個空的名號段（劇本開了絕技、但這場沒人配的情況）
+        jh_no_cat = world_block(
             jh_grid, jianghu_mod.BRIEF, jianghu_mod.NORMS, jianghu_mod.PUBLIC_CAST,
             setting=jianghu_mod.SETTING, examples=jianghu_mod.EXAMPLES,
             combat=jianghu_mod.COMBAT, arts=True,
         )
+        failures += not check("沒給目錄就沒有名號段（不會留一個空標題）",
+                              "# 江湖上有名的功夫" not in jh_no_cat)
         # 招式的**名號**是公開常識，走 CLI 那條真正的組裝路徑來驗
         # （直接呼叫 world_block 而不給 arts_catalog 的話，這段本來就不會出現，
         #  而「大嵩陽手」「快刀」在 PUBLIC_CAST 裡本來就有——那樣測等於沒測）。
@@ -1304,9 +1307,19 @@ def main() -> int:
         glog.close()
 
         # 開跑前的試探呼叫：把每一組（模型, thinking）各送一次，錯的當場報出來。
+        # 假 client 要帶著 `_thinking`，才和真的 GeminiClient 一樣——
+        # preflight 就是靠這個方法把每一層的等級解析出來的。
+        from truman.llm.providers.gemini_client import (  # noqa: PLC0415
+            DEFAULT_THINKING,
+        )
+
         class _PickyModel(BaseLLMClient):
             provider = "picky"
             cache_write_multiplier = 0.0
+
+            def _thinking(self, tier):
+                return (getattr(self.cfg, "gemini_thinking", None)
+                        or {}).get(tier, DEFAULT_THINKING[tier])
 
             async def _invoke(self, c, model):
                 if (c.thinking or "") == "medium":
@@ -1317,6 +1330,36 @@ def main() -> int:
         picky = _PickyModel(cfg_p, EventLog(tmp / "pf"))
         failures += not check("設定沒問題時開跑前檢查會過",
                               asyncio.run(picky.preflight()) == [])
+
+        # 迴歸：四層預設同一個模型但 thinking 不同（reflect 是 high，其餘 low）。
+        # 只按模型去重會塌成一組，reflect 那層永遠試不到——那正是 j3 死掉的那一類。
+        class _RecordsProbes(_PickyModel):
+            def __init__(self, cfg, log):
+                super().__init__(cfg, log)
+                self.seen = []
+
+            async def _invoke(self, c, model):
+                self.seen.append((model, c.thinking))
+                return await super()._invoke(c, model)
+
+        rec = _RecordsProbes(cfg_p, EventLog(tmp / "pf3"))
+        asyncio.run(rec.preflight())
+        levels = {th for _, th in rec.seen}
+        failures += not check("每個實際會用到的 thinking 等級都試過",
+                              levels == {"low", "high"}, str(sorted(levels)))
+
+        # 只有 reflect 那層的等級不合時，也要抓得到。
+        class _RejectsHigh(_RecordsProbes):
+            async def _invoke(self, c, model):
+                self.seen.append((model, c.thinking))
+                if c.thinking == "high":
+                    raise ValueError("'high' is not a supported thinking level")
+                return {"ok": "1"}, None, {"inp": 1, "out": 1}
+
+        only_reflect = asyncio.run(_RejectsHigh(cfg_p, EventLog(tmp / "pf4")).preflight())
+        failures += not check("只有 reflect 那層設定壞掉也抓得到",
+                              len(only_reflect) == 1 and only_reflect[0][1] == "high",
+                              str(only_reflect))
         w_p = jianghu.build_world("pf", 7)
         w_p.agents["fei_bin"].llm = {"thinking": "medium"}
         bad_pf = asyncio.run(picky.preflight(w_p))

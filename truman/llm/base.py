@@ -205,17 +205,21 @@ class BaseLLMClient:
         """
         if self.replay is not None:
             return []
+        # 要照**解析後**的 thinking_level 去重，不能只看模型。四層預設同一個模型，
+        # 但 thinking 不同（routine/dialogue/judge 是 low、reflect 是 high）——
+        # 只按模型去重的話會塌成一組，reflect 那個 high 從來不會被試到，
+        # 而那正好就是 j3 死掉的那一類錯誤。
+        resolve = getattr(self, "_thinking", None)  # Gemini 才有；Anthropic 回 None
         combos: dict[tuple[str, str | None], str] = {}
         for tier in ("routine", "dialogue", "reflect", "judge"):
-            combos.setdefault((self.cfg.models[tier], None), tier)
+            level = resolve(tier) if resolve else None
+            combos.setdefault((self.cfg.models[tier], level), tier)
         for a in (world.agents.values() if world is not None else ()):
             spec = a.llm or {}
             if spec.get("model") or spec.get("thinking"):
-                combos.setdefault(
-                    (spec.get("model") or self.cfg.models["routine"],
-                     spec.get("thinking")),
-                    "routine",
-                )
+                model = spec.get("model") or self.cfg.models["routine"]
+                level = spec.get("thinking") or (resolve("routine") if resolve else None)
+                combos.setdefault((model, level), "routine")
 
         probe_schema = {
             "type": "object",
