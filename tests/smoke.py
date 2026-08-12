@@ -1371,6 +1371,59 @@ def main() -> int:
                                   _PickyModel(cfg_p, EventLog(tmp / "pf2"),
                                               replay={}).preflight(w_p)) == [])
 
+        # ---- demo 現場畫面的資料 ----
+        # 現場跑本來只看得到「第幾刻、誰說了什麼」，看不出組出來的 agent 在幹嘛。
+        print("\ndemo 現場的目的與絕技")
+        from truman.demo.jobs import Job, JobRunner  # noqa: PLC0415
+
+        wb = jianghu.build_world("board", 7)
+        wb.tick = 5
+        wb.agents["fei_bin"].arts[0].uses_left = 0      # 名正言順用掉了
+        wb.agents["fei_bin"].arts[0].used = 1
+        wb.agents["yi_lin"].goals[0].status = "done"
+        wb.agents["yi_lin"].goals[0].note = "走到了城門"
+        wb.agents["liu_zhengfeng"].wound = 3
+        jb = Job(id="t", run_id="t")
+        JobRunner._pull_board(jb, wb)
+        by_name = {r["name"]: r for r in jb.board}
+        failures += not check("board 帶上每個有目的或絕技的人", len(jb.board) == 6,
+                              str(sorted(by_name)))
+        failures += not check("board 看得到目的達成",
+                              by_name["儀琳"]["goals"][0]["status"] == "done")
+        failures += not check("board 看得到絕技用掉了",
+                              by_name["費彬"]["arts"][0]["left"] == 0
+                              and by_name["費彬"]["arts"][0]["used"] == 1)
+        failures += not check("board 標得出死者", by_name["劉正風"]["alive"] is False)
+        wp = seahaven.build_world("board2", 1)
+        jb2 = Job(id="t2", run_id="t2")
+        JobRunner._pull_board(jb2, wp)
+        failures += not check("沒有目的也沒有絕技的劇本，board 是空的", jb2.board == [])
+
+        # 事件摘要：絕技與目的要進得了現場的事件流
+        summ = JobRunner._summarize
+        failures += not check(
+            "絕技進得了現場事件流",
+            "名正言順" in summ({"type": "art_used", "tick": 3, "data": {
+                "name": "費彬", "art_name": "名正言順", "uses_left": 0}})["text"])
+        failures += not check(
+            "目的結案進得了現場事件流",
+            "做到了" in summ({"type": "goal_done", "tick": 9, "data": {
+                "name": "劉正風", "text": "洗完手", "note": "辦成了"}})["text"])
+        failures += not check(
+            "只有一個人看得見的注入會標明",
+            "只有" in summ({"type": "director", "tick": 2, "data": {
+                "kind": "inject", "agent": "曲洋", "text": "（有人急奔來報……）"}})["text"])
+        failures += not check(
+            "目的結案的注入不重複顯示",
+            summ({"type": "director", "tick": 2, "data": {
+                "kind": "inject", "tag": "goal", "agent": "曲洋",
+                "text": "（……）"}})["type"] == "skip")
+        failures += not check(
+            "全場都聽得見的世界旁白照舊",
+            summ({"type": "director", "tick": 2, "data": {
+                "kind": "broadcast", "text": "廳上的金盆擺好了。"}})["text"]
+            == "廳上的金盆擺好了。")
+
         # ---- 記憶檢索 ----
         print("\n記憶檢索")
         p = engine.world.protagonist()

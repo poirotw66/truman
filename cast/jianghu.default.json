@@ -35,7 +35,7 @@
         "heng_shan_jian"
       ],
       "llm": {},
-      "art": {
+      "look": {
         "sect": "衡山派",
         "title": "劉三爺",
         "color": "#4f9b86",
@@ -81,7 +81,7 @@
         "da_ting"
       ],
       "llm": {},
-      "art": {
+      "look": {
         "sect": "嵩山派",
         "title": "大嵩陽手",
         "color": "#6f7a94",
@@ -128,7 +128,7 @@
         "da_ting"
       ],
       "llm": {},
-      "art": {
+      "look": {
         "sect": "華山派",
         "title": "岳不群大弟子",
         "color": "#c9903a",
@@ -176,7 +176,7 @@
         "heng_shan_qing_gong"
       ],
       "llm": {},
-      "art": {
+      "look": {
         "sect": "恆山派",
         "title": "定逸師太弟子",
         "color": "#cf8fa4",
@@ -226,7 +226,7 @@
         "wan_li_du_xing"
       ],
       "llm": {},
-      "art": {
+      "look": {
         "sect": "萬里獨行",
         "title": "快刀無雙",
         "color": "#b84a3c",
@@ -277,7 +277,7 @@
         "jiang_hu_er_mu"
       ],
       "llm": {},
-      "art": {
+      "look": {
         "sect": "日月神教",
         "title": "長老",
         "color": "#8b6bab",

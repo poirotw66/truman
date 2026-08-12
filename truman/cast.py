@@ -17,13 +17,14 @@
                     "params": {"rite": "金盆洗手", "by_tick": 60}}],
          "arts": ["jin_pen_xi_shou", "heng_shan_jian"],
          "llm": {"model": "gemini-3.1-flash", "temperature": 0.9, "thinking": "low"},
-         "art": {...}}                      ← 純美術，引擎不看，回放頁才用
+         "look": {...}}                     ← 長相，引擎不看，工作室與回放頁才用
       ]
     }
 
-注意 `arts`（絕技，引擎要看）和 `art`（美術設定，引擎不看）是兩個不同的欄位，
-差一個 s。命名確實容易看錯，但 `art` 已經寫在既有的設定檔和工作室裡了，
-改名會讓舊檔案的立繪全部失效，不值得。
+`look` 這個欄位以前叫 `art`，和絕技的 `arts` 只差一個 s、又躺在同一份 JSON 裡，
+看走眼是遲早的事，所以改名了。**舊檔案照樣讀得進來**：工作室匯入時會把 `art`
+當成 `look` 收下（見 `cast/editor.template.html` 的 `adopt()`），存檔時寫成新名。
+引擎兩個都不看。
 
 `goals` 的 kind 必須是 `world/goals.py` 認得的判定器；`arts` 裡的 id 必須在
 `world/arts.py` 的目錄裡。兩者都在開跑前驗，錯字不會拖到第 40 tick 才發作。

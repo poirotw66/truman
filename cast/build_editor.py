@@ -79,7 +79,7 @@ def main(scenario: str = "jianghu") -> None:
 
     agents = []
     for a in scen.AGENTS:
-        art = dict(FALLBACK_ART, **ART_DEFAULTS.get(a["id"], {}))
+        look = dict(FALLBACK_ART, **ART_DEFAULTS.get(a["id"], {}))
         agents.append({
             "id": a["id"], "name": a["name"], "role": a.get("role", "villager"),
             "home_area": a["home_area"], "start": list(a["start"]),
@@ -90,7 +90,10 @@ def main(scenario: str = "jianghu") -> None:
             "goals": [dict(g) for g in a.get("goals", [])],
             "arts": list(a.get("arts", [])),
             "llm": {},
-            "art": art,
+            # 長相。舊檔案裡這個欄位叫 `art`，和絕技的 `arts` 只差一個 s，
+            # 兩個都在同一份 JSON 裡，看走眼是遲早的事——所以改叫 `look`。
+            # 讀的那一邊仍然收得下舊名（見工作室的 adopt()）。
+            "look": look,
         })
 
     data = {

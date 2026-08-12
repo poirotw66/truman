@@ -308,12 +308,12 @@ function renderChecks() {
 const THUMBS = {};                    // id → 已經建好的縮圖節點，重複使用
 function thumbFor(a) {
   const url = (DATA.portraits || {})[a.id];
-  const key = a.id + "|" + (url ? "p" : JSON.stringify(a.art));
+  const key = a.id + "|" + (url ? "p" : JSON.stringify(a.look));
   if (THUMBS[key]) return THUMBS[key];
   let el;
   if (url) { el = document.createElement("img"); el.src = url; el.alt = ""; }
   else { el = document.createElement("canvas"); el.width = el.height = 34;
-    drawPortrait(el.getContext("2d"), 34, a.art); }
+    drawPortrait(el.getContext("2d"), 34, a.look); }
   THUMBS[key] = el; return el;
 }
 function renderWho() {
@@ -326,7 +326,7 @@ function renderWho() {
     li.appendChild(thumbFor(a));
     const box = document.createElement("span");
     box.innerHTML = `<span class="n">${esc(a.name || "（無名）")}</span><br>
-      <span class="s">${esc(a.art.sect || "—")}${a.art.title ? " · " + esc(a.art.title) : ""}　武功 ${a.skill}
+      <span class="s">${esc(a.look.sect || "—")}${a.look.title ? " · " + esc(a.look.title) : ""}　武功 ${a.skill}
         ${a.llm && a.llm.model ? `<br><span style="color:var(--gold)">🧠 ${esc(a.llm.model)}</span>` : ""}</span>`;
     li.appendChild(box);
     if (bad.has(a.id)) { const w = document.createElement("span"); w.className = "bad"; w.textContent = "!"; li.appendChild(w); }
@@ -478,8 +478,8 @@ function renderForm() {
     <div class="row">
       <div class="f"><label>名字</label><input type="text" data-k="name" value="${esc(a.name)}"></div>
       <div class="f"><label>id <span>程式用，唯一</span></label><input class="mono" type="text" data-k="id" value="${esc(a.id)}"></div>
-      <div class="f"><label>身分／門派</label><input type="text" data-art="sect" value="${esc(a.art.sect)}"></div>
-      <div class="f"><label>稱號</label><input type="text" data-art="title" value="${esc(a.art.title)}"></div>
+      <div class="f"><label>身分／門派</label><input type="text" data-look="sect" value="${esc(a.look.sect)}"></div>
+      <div class="f"><label>稱號</label><input type="text" data-look="title" value="${esc(a.look.title)}"></div>
     </div>
 
     <div class="look">
@@ -494,27 +494,27 @@ function renderForm() {
       </div>
       <div class="fields">
         <div class="row">
-          <div class="f"><label>衣色</label><div class="swatch"><input type="color" data-art="robe" value="${a.art.robe}">
-            <input class="mono" type="text" data-art="robe" value="${a.art.robe}"></div></div>
-          <div class="f"><label>滾邊／束帶</label><div class="swatch"><input type="color" data-art="trim" value="${a.art.trim}">
-            <input class="mono" type="text" data-art="trim" value="${a.art.trim}"></div></div>
+          <div class="f"><label>衣色</label><div class="swatch"><input type="color" data-look="robe" value="${a.look.robe}">
+            <input class="mono" type="text" data-look="robe" value="${a.look.robe}"></div></div>
+          <div class="f"><label>滾邊／束帶</label><div class="swatch"><input type="color" data-look="trim" value="${a.look.trim}">
+            <input class="mono" type="text" data-look="trim" value="${a.look.trim}"></div></div>
         </div>
         <div class="row">
-          <div class="f"><label>髮色</label><div class="swatch"><input type="color" data-art="hair" value="${a.art.hair === "none" ? "#241d16" : a.art.hair}">
-            <input class="mono" type="text" data-art="hair" value="${esc(a.art.hair)}"></div></div>
-          <div class="f"><label>名牌色</label><div class="swatch"><input type="color" data-art="color" value="${a.art.color}">
-            <input class="mono" type="text" data-art="color" value="${a.art.color}"></div></div>
+          <div class="f"><label>髮色</label><div class="swatch"><input type="color" data-look="hair" value="${a.look.hair === "none" ? "#241d16" : a.look.hair}">
+            <input class="mono" type="text" data-look="hair" value="${esc(a.look.hair)}"></div></div>
+          <div class="f"><label>名牌色</label><div class="swatch"><input type="color" data-look="color" value="${a.look.color}">
+            <input class="mono" type="text" data-look="color" value="${a.look.color}"></div></div>
         </div>
         <div class="row">
-          <div class="f"><label>頭上</label><select data-art="hat">${opt(HATS, a.art.hat)}</select></div>
-          <div class="f"><label>鬚</label><select data-art="beard">${opt(BEARDS, a.art.beard)}</select></div>
-          <div class="f"><label>隨身兵器</label><select data-art="weapon">${opt(WEAPONS, a.art.weapon)}</select></div>
-          <div class="f"><label>身上帶著</label><select data-art="acc">${opt(ACCS, a.art.acc)}</select></div>
+          <div class="f"><label>頭上</label><select data-look="hat">${opt(HATS, a.look.hat)}</select></div>
+          <div class="f"><label>鬚</label><select data-look="beard">${opt(BEARDS, a.look.beard)}</select></div>
+          <div class="f"><label>隨身兵器</label><select data-look="weapon">${opt(WEAPONS, a.look.weapon)}</select></div>
+          <div class="f"><label>身上帶著</label><select data-look="acc">${opt(ACCS, a.look.acc)}</select></div>
         </div>
         <div class="row">
-          <div class="f"><label>眉 <span>立繪的底色</span></label><select data-art="brow">${opt(BROWS, a.art.brow)}</select></div>
-          <div class="f"><label>嘴</label><select data-art="mouth">${opt(MOUTHS, a.art.mouth)}</select></div>
-          <div class="f"><label>臉上</label><select data-art="extra">${opt(EXTRAS, a.art.extra)}</select></div>
+          <div class="f"><label>眉 <span>立繪的底色</span></label><select data-look="brow">${opt(BROWS, a.look.brow)}</select></div>
+          <div class="f"><label>嘴</label><select data-look="mouth">${opt(MOUTHS, a.look.mouth)}</select></div>
+          <div class="f"><label>臉上</label><select data-look="extra">${opt(EXTRAS, a.look.extra)}</select></div>
         </div>
       </div>
     </div>
@@ -564,7 +564,7 @@ function renderForm() {
       <div class="hint" id="artsHint"></div></div>
 
     <div class="f wide"><label>今日所求 <span>一句話文案，只出現在回放頁的片頭，不進 prompt、不判定</span></label>
-      <input type="text" data-art="goal" value="${esc(a.art.goal)}"></div>
+      <input type="text" data-look="goal" value="${esc(a.look.goal)}"></div>
 
     <div class="f wide"><label>江湖傳聞 <span>公開人物表：這一段所有人都看得見</span></label>
       <textarea rows="3" data-k="public">${esc(a.public)}</textarea>
@@ -591,10 +591,10 @@ function renderForm() {
       if (k === "persona") plen();
     };
   });
-  document.querySelectorAll("#form [data-art]").forEach(el => {
+  document.querySelectorAll("#form [data-look]").forEach(el => {
     el.oninput = () => {
-      cur().art[el.dataset.art] = el.value;
-      document.querySelectorAll(`#form [data-art="${el.dataset.art}"]`).forEach(o => { if (o !== el) o.value = el.value; });
+      cur().look[el.dataset.look] = el.value;
+      document.querySelectorAll(`#form [data-look="${el.dataset.look}"]`).forEach(o => { if (o !== el) o.value = el.value; });
       touch(true);
     };
   });
@@ -710,11 +710,11 @@ function drawPreview() {
   const im = document.getElementById("portrait"), url = (DATA.portraits || {})[cur().id];
   if (im) { im.hidden = !url; if (url && im.dataset.for !== cur().id) { im.src = url; im.dataset.for = cur().id; } }
   const b = document.getElementById("bust");
-  if (b) drawBust(b.getContext("2d"), 132, cur().art, {});
+  if (b) drawBust(b.getContext("2d"), 132, cur().look, {});
   const c = document.getElementById("prev"); if (!c) return;
   const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
   g.clearRect(0,0,112,112);
-  drawFigure(g, 56, 106, 106, cur().art, { face, frame: walking ? frame % 4 : 0 });
+  drawFigure(g, 56, 106, 106, cur().look, { face, frame: walking ? frame % 4 : 0 });
 }
 setInterval(() => { if (walking) { frame++; drawPreview(); } }, 130);
 
@@ -736,7 +736,7 @@ function drawMap() {
       mg.strokeStyle = "#d9a63c"; mg.lineWidth = 2;
       mg.beginPath(); mg.ellipse(cx, cy + t*.3, t*.42, t*.2, 0, 0, 6.3); mg.stroke();
     }
-    drawFigure(mg, cx, cy + t*.32, t*1.2, a.art, { face:"down", frame:0 });
+    drawFigure(mg, cx, cy + t*.32, t*1.2, a.look, { face:"down", frame:0 });
     if (!walkable(a.start[0], a.start[1])) {
       mg.strokeStyle = "#c8483a"; mg.lineWidth = 2; mg.strokeRect(a.start[0]*t+1, a.start[1]*t+1, t-2, t-2);
     }
@@ -771,7 +771,7 @@ function payload() {
     goals: (a.goals || []).map(g => ({kind: g.kind, text: g.text || "",
                                       params: g.params || {}})),
     arts: (a.arts || []).slice(),
-    public: a.public || "", persona: a.persona || "", llm: a.llm || {}, art: a.art,
+    public: a.public || "", persona: a.persona || "", llm: a.llm || {}, look: a.look,
   })) };
 }
 const json = () => JSON.stringify(payload(), null, 2);
@@ -785,7 +785,7 @@ function adopt(d) {
   if (!d || !Array.isArray(d.agents) || !d.agents.length) { alert("這份 JSON 裡沒有 agents。"); return; }
   const fb = DATA.art_defaults.fallback;
   const known = new Set((DATA.arts_catalog || []).map(x => x.id));
-  d.agents.forEach(a => { a.art = Object.assign({}, fb, a.art || {}); a.kin = a.kin || []; a.llm = a.llm || {};
+  d.agents.forEach(a => { a.look = Object.assign({}, fb, a.look || a.art || {}); delete a.art; a.kin = a.kin || []; a.llm = a.llm || {};
     a.start = a.start || [1,1]; a.skill = a.skill == null ? 5 : a.skill; a.role = a.role || "villager";
     a.goals = Array.isArray(a.goals) ? a.goals.map(g => ({kind:g.kind || "survive",
       text:g.text || "", params:g.params || {}})) : [];

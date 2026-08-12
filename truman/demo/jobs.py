@@ -32,6 +32,9 @@ class Job:
     error: str = ""
     replay_url: str = ""
     recent: list[dict] = field(default_factory=list)
+    # 每個人的目的進度與絕技存量。現場跑本來只看得到「第幾刻、誰說了什麼」，
+    # 看不出組出來的 agent 到底在幹嘛——這一份就是為了補那個缺口。
+    board: list[dict] = field(default_factory=list)
     started_at: float = 0.0
     finished_at: float = 0.0
     updated_at: float = 0.0
@@ -187,6 +190,7 @@ class JobRunner:
                 job.updated_at = time.time()
                 await engine.tick()
                 self._pull_recent(job, run_dir)
+                self._pull_board(job, world)
                 if engine.aborted:
                     break
             if not engine.aborted:
@@ -206,6 +210,11 @@ class JobRunner:
                 },
             )
             log.close()
+            # 再抓一次：收工結算（engine.finish）是在迴圈**之後**才把還開著的目的
+            # 收掉的，不補這一下，畫面會停在「每個目的都還在進行中」。
+            # 放在 finally 裡，中途被中止的那一場也留得下最後狀態。
+            self._pull_recent(job, run_dir)
+            self._pull_board(job, world)
             job.tick = world.tick
             job.when = clock_str(max(0, world.tick - 1))
             job.updated_at = time.time()
@@ -217,11 +226,47 @@ class JobRunner:
             return 1
         return 0
 
+    @staticmethod
+    def _pull_board(job: Job, world) -> None:
+        """每個人此刻的目的與絕技。直接讀世界狀態，不必回去 parse 日誌。
+
+        沒有配目的也沒有配絕技的人就不列——和平劇本跑起來這一整塊會是空的，
+        前端看到空陣列就整段不顯示。
+        """
+        tick = world.tick
+        from truman.world import arts as arts_mod  # noqa: PLC0415
+
+        rows = []
+        for a in world.agents.values():
+            if not a.goals and not a.arts:
+                continue
+            rows.append({
+                "id": a.id,
+                "name": a.name,
+                "alive": a.alive,
+                "wound": a.wound,
+                "goals": [
+                    {"text": g.text, "status": g.status, "note": g.note} for g in a.goals
+                ],
+                "arts": [
+                    {
+                        "name": d.name,
+                        "left": x.uses_left,
+                        "used": x.used,
+                        "ready": x.available(tick)[0],
+                    }
+                    for x, d in ((x, arts_mod.get(x.id)) for x in a.arts)
+                    if d is not None
+                ],
+            })
+        job.board = rows
+
     def _pull_recent(self, job: Job, run_dir: Path, limit: int = 12) -> None:
         path = run_dir / "events.jsonl"
         if not path.exists():
             return
-        wanted = ("speech", "attack", "death", "director", "tick_start")
+        wanted = ("speech", "attack", "death", "director", "tick_start",
+                  "art_used", "goal_done", "goal_failed")
         recent: list[dict] = []
         with path.open(encoding="utf-8") as fh:
             for line in fh:
@@ -231,7 +276,10 @@ class JobRunner:
                 rec = json.loads(line)
                 if rec.get("type") not in wanted:
                     continue
-                recent.append(self._summarize(rec))
+                row = self._summarize(rec)
+                if row["type"] == "skip":  # 和已經顯示過的目的結案重複
+                    continue
+                recent.append(row)
         job.recent = recent[-limit:]
         job.updated_at = time.time()
 
@@ -244,8 +292,21 @@ class JobRunner:
             text = d.get("line") or f"{d.get('attacker')} 出手"
         elif ty == "death":
             text = f"{d.get('name')} 倒下（{d.get('killed_by', '')}）"
+        elif ty == "art_used":
+            left = d.get("uses_left", -1)
+            text = (f"{d.get('name', '?')} 使出「{d.get('art_name', '')}」"
+                    + (f"（還剩 {left} 次）" if left >= 0 else ""))
+        elif ty in ("goal_done", "goal_failed"):
+            mark = "做到了" if ty == "goal_done" else "沒能做到"
+            text = f"{d.get('name', '?')} {mark}：{d.get('text', '')}　{d.get('note', '')}"
         elif ty == "director":
-            text = d.get("text") or "導演事件"
+            # inject 只有一個人看得見，和全場都聽得見的世界旁白不是同一件事
+            if d.get("kind") == "inject":
+                if d.get("tag") == "goal":
+                    return {"type": "skip", "tick": tick, "text": ""}
+                text = f"（只有{d.get('agent', '某人')}看得見）{d.get('text', '')}"
+            else:
+                text = d.get("text") or "導演事件"
         elif ty == "tick_start":
             text = d.get("when") or f"tick {tick}"
         else:

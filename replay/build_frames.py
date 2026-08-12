@@ -118,10 +118,15 @@ def build_replay(
     runs: list[str] | None = None,
     out: Path | str | None = None,
     *,
-    write_frames_json: bool = True,
+    write_frames_json: bool = False,
     quiet: bool = False,
 ) -> Path:
-    """從 runs 的 events.jsonl 建回放 HTML，回傳輸出路徑。"""
+    """從 runs 的 events.jsonl 建回放 HTML，回傳輸出路徑。
+
+    `write_frames_json` 預設關掉：產出的 HTML 本來就自帶全部資料，frames.json
+    只是除錯時方便拿去 jq 的中繼檔。它有半 MB，以前每建一次回放就在版控裡
+    留一個假 diff（而且沒有任何程式讀它）。要看的話用 `--frames-json`。
+    """
     sources, checkpoint_specs = resolve_sources(runs)
     out_path = Path(out) if out else ROOT / "jianghu_replay.html"
     if not out_path.is_absolute():
@@ -467,9 +472,13 @@ def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description="事件日誌 → 回放頁")
     ap.add_argument("--run", action="append", help="改用這個 run（可重複，依序接起來）")
     ap.add_argument("--out", default="jianghu_replay.html", help="輸出的 HTML 檔名")
+    ap.add_argument(
+        "--frames-json", action="store_true",
+        help="另外把中繼資料寫成 replay/frames.json（除錯用；產出的 HTML 本來就自帶資料）",
+    )
     args = ap.parse_args(argv)
     try:
-        build_replay(args.run, args.out)
+        build_replay(args.run, args.out, write_frames_json=args.frames_json)
     except (FileNotFoundError, ValueError, RuntimeError) as e:
         raise SystemExit(str(e)) from e
 
