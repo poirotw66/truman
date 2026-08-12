@@ -186,12 +186,30 @@ def make_engine(world, scen, cfg, run_dir: Path, replay_index=None, quiet=False,
 
 async def _drive(engine, log, llm, ticks: int, quiet: bool) -> int:
     """回傳結束碼。全部呼叫都失敗時回 1——這種 run 不該看起來像成功。"""
+    # 開跑前先驗設定。這一步擋掉的是 j3 那種「跑完 96 拍才發現每一次呼叫都是 400」。
+    if getattr(engine.cfg, "preflight", False) and getattr(llm, "preflight", None):
+        bad = await llm.preflight(engine.world)
+        if bad:
+            console.print("\n[bold red]✕ 開跑前檢查沒過，這些設定送不出去：[/bold red]")
+            for model, thinking, err in bad:
+                console.print(f"  [red]{model}　thinking={thinking}[/red]\n    {err[:300]}")
+            console.print(
+                "  [dim]先用 `truman.cli models` 對一次模型 ID 與價目；"
+                "thinking_level 每個模型只吃一部分等級。[/dim]"
+            )
+            log.close()
+            return 2
+        if not quiet:
+            console.print("[dim]開跑前檢查通過。[/dim]")
     try:
         for _ in range(ticks):
             if not quiet:
                 console.rule(f"[dim]{clock_str(engine.world.tick)}  (tick {engine.world.tick})[/dim]")
             await engine.tick()
-        await engine.finish()  # 收工補評一次覺察，見 Engine.finish
+            if engine.aborted:
+                break
+        if not engine.aborted:
+            await engine.finish()  # 收工補評一次覺察，見 Engine.finish
     finally:
         checkpoint.save(engine.world, engine.run_dir)
         stats = llm.stats()
@@ -210,6 +228,12 @@ async def _drive(engine, log, llm, ticks: int, quiet: bool) -> int:
             f"（成功 {ok}）。最後一個錯誤：\n  [red]{engine.last_error[:400]}[/red]\n"
             f"  完整紀錄：runs/{engine.world.run_id}/events.jsonl 裡的 think_failed。"
         )
+    if engine.aborted:
+        console.print(
+            f"[bold red]這次 run 在第 {engine.world.tick} 刻中止了。[/bold red]"
+            f"[red]{engine.abort_reason}[/red]"
+        )
+        return 1
     if ok == 0 and bad:
         console.print("[bold red]這次 run 沒有產生任何有效決策——世界狀態等同沒有推進。[/bold red]")
         return 1

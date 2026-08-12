@@ -44,6 +44,11 @@ class Engine:
     ok_calls: int = 0
     failed_calls: int = 0
     last_error: str = ""
+    # 全軍覆沒時由 _check_fail_fast 立起來，外層的 tick 迴圈看到就收工。
+    # 用旗標不用例外：兩個驅動迴圈（CLI 與 demo）都有 finally 在存檔與寫 run_summary，
+    # 例外會讓那段在「已經決定放棄」的情況下還是照跑一遍，讀日誌的人會更困惑。
+    aborted: bool = False
+    abort_reason: str = ""
     _last_judge_tick: int = -999  # 收工強制評審用來避免重複評
     # 這一拍發生的、目的判定看得到但世界狀態上看不出來的事（儀式、指證、死亡）。
     # 每 tick 開頭重置，tick 結束前交給 goals.evaluate。
@@ -172,6 +177,7 @@ class Engine:
                 self.last_error = str(res)
                 self.log.write("think_failed", {"agent": aid, "error": str(res)})
                 a.action = {"kind": "wait", "ticks_left": 1, "done": False}
+                self._check_fail_fast()
                 continue
 
             self.ok_calls += 1
@@ -196,6 +202,33 @@ class Engine:
             if self.console:
                 self._echo(a, res)
         return speech
+
+    def _check_fail_fast(self) -> None:
+        """一次都沒成功過、又已經失敗這麼多次，就別再跑下去了。
+
+        條件刻意寫成「從頭到尾一次都沒成功」而不是「連續失敗 N 次」：
+        跑到一半遇到一段壞天氣（429、5xx）是暫時的，重試那層會處理，
+        不該把一個已經跑出東西的 run 砍掉。真正要擋的是 j3 那種——
+        設定就是錯的，每一次呼叫都會失敗，跑完 96 拍也只是把同一個錯誤重複 576 次。
+        """
+        cap = getattr(self.cfg, "abort_after_failures", 0)
+        if not cap or self.aborted or self.ok_calls:
+            return
+        if self.failed_calls < cap:
+            return
+        self.aborted = True
+        self.abort_reason = (
+            f"連續 {self.failed_calls} 次呼叫全部失敗，一次都沒有成功過——"
+            f"這通常是設定錯了（模型 ID、thinking_level、憑證），不是運氣不好。"
+            f"最後一個錯誤：{self.last_error[:300]}"
+        )
+        self.log.write("run_aborted", {
+            "reason": "all_calls_failing",
+            "failed_calls": self.failed_calls,
+            "last_error": self.last_error,
+        })
+        if self.console:
+            self.console.print(f"\n[bold red]✕ 中止：{self.abort_reason}[/bold red]")
 
     def _burst_targets(self, speech: list[dict]) -> list[tuple[str, list[dict]]]:
         """回傳 [(被指名的人, 指名他的那幾句)]。

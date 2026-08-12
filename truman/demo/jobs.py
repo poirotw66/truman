@@ -165,6 +165,20 @@ class JobRunner:
         )
 
         ok = bad = 0
+        # 開跑前先驗設定。現場 demo 更需要這一步：頁面上只看得到進度在跑，
+        # 看不出每一次呼叫其實都在 400（j3 就是這樣「跑完」96 拍的）。
+        if getattr(cfg, "preflight", False) and getattr(llm, "preflight", None):
+            job.phase = "開跑前檢查模型設定"
+            job.updated_at = time.time()
+            trouble = await llm.preflight(world)
+            if trouble:
+                model, thinking, err = trouble[0]
+                job.error = (f"開跑前檢查沒過：{model}（thinking={thinking}）送不出去。"
+                             f"{err[:200]}")
+                log.write("preflight_failed", {"failed": [list(x) for x in trouble]})
+                log.close()
+                return 2
+
         try:
             for _ in range(ticks):
                 job.tick = world.tick
@@ -173,7 +187,10 @@ class JobRunner:
                 job.updated_at = time.time()
                 await engine.tick()
                 self._pull_recent(job, run_dir)
-            await engine.finish()
+                if engine.aborted:
+                    break
+            if not engine.aborted:
+                await engine.finish()
         finally:
             checkpoint.save(engine.world, engine.run_dir)
             stats = llm.stats()
@@ -192,6 +209,9 @@ class JobRunner:
             job.tick = world.tick
             job.when = clock_str(max(0, world.tick - 1))
             job.updated_at = time.time()
+        if engine.aborted:
+            job.error = engine.abort_reason or "全部呼叫失敗，已中止"
+            return 1
         if ok == 0 and bad:
             job.error = engine.last_error or "全部呼叫失敗"
             return 1

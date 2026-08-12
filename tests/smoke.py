@@ -1190,6 +1190,101 @@ def main() -> int:
                               qu21.goals[0].status == "failed", qu21.goals[0].note)
         elog2.close()
 
+        # ---- 全滅要提早收手 ----
+        # 由 j3 逼出來的：96 拍、576 次呼叫全部失敗（2.5-flash-lite 不吃
+        # thinking_level=medium），32 秒「跑完」，零對話零意圖，而且要等全部跑完才回報。
+        print("\n全滅時的 fail-fast")
+
+        class _AlwaysFails:
+            provider = "broken"
+
+            def stats(self):
+                return {"_provider": "broken", "_total_cost_usd": 0.0}
+
+            def total_cost(self):
+                return 0.0
+
+            async def run_batch(self, calls):
+                return {c.key: RuntimeError("400 thinking level 不合") for c in calls}
+
+        wf = jianghu.build_world("faildemo", 7)
+        flog = EventLog(tmp / "faildemo")
+        flog.bind_tick(lambda: wf.tick)
+        engf = Engine(
+            world=wf, grid=jianghu.build_grid(),
+            cfg=SimConfig(combat=True, abort_after_failures=12),
+            llm=_AlwaysFails(), director=Director(script=[], log=flog), log=flog,
+            world_block_text="", run_dir=tmp / "faildemo",
+        )
+        for _ in range(10):
+            if engf.aborted:
+                break
+            asyncio.run(engf.tick())
+        failures += not check("全部呼叫失敗就中止", engf.aborted, engf.abort_reason[:60])
+        failures += not check("中止得夠早（沒有把 10 拍跑完）", wf.tick < 10,
+                              f"停在第 {wf.tick} 拍")
+        failures += not check("中止有寫進日誌",
+                              any(e["type"] == "run_aborted"
+                                  for e in EventLog.read(tmp / "faildemo")))
+        flog.close()
+
+        # 只要成功過一次就不該中止——跑到一半遇到壞天氣是重試那層的事。
+        class _FailsAfterOne(_AlwaysFails):
+            def __init__(self):
+                self.n = 0
+
+            async def run_batch(self, calls):
+                out = {}
+                for c in calls:
+                    self.n += 1
+                    out[c.key] = ({"thought": "好", "plan": "好",
+                                   "action": {"kind": "wait", "target_area": "",
+                                              "target_agent": "", "utterance": "",
+                                              "object": "", "art": ""}}
+                                  if self.n == 1 else RuntimeError("503"))
+                return out
+
+        wg = jianghu.build_world("flaky", 7)
+        glog = EventLog(tmp / "flaky")
+        glog.bind_tick(lambda: wg.tick)
+        engg = Engine(
+            world=wg, grid=jianghu.build_grid(),
+            cfg=SimConfig(combat=True, abort_after_failures=12),
+            llm=_FailsAfterOne(), director=Director(script=[], log=glog), log=glog,
+            world_block_text="", run_dir=tmp / "flaky",
+        )
+        for _ in range(6):
+            asyncio.run(engg.tick())
+        failures += not check("成功過就不中止（壞天氣交給重試那層）",
+                              not engg.aborted and engg.failed_calls > 12,
+                              f"失敗 {engg.failed_calls} 次仍繼續")
+        glog.close()
+
+        # 開跑前的試探呼叫：把每一組（模型, thinking）各送一次，錯的當場報出來。
+        class _PickyModel(BaseLLMClient):
+            provider = "picky"
+            cache_write_multiplier = 0.0
+
+            async def _invoke(self, c, model):
+                if (c.thinking or "") == "medium":
+                    raise ValueError("'medium' is not a supported thinking level")
+                return {"ok": "1"}, None, {"inp": 1, "out": 1}
+
+        cfg_p = SimConfig(provider="gemini")
+        picky = _PickyModel(cfg_p, EventLog(tmp / "pf"))
+        failures += not check("設定沒問題時開跑前檢查會過",
+                              asyncio.run(picky.preflight()) == [])
+        w_p = jianghu.build_world("pf", 7)
+        w_p.agents["fei_bin"].llm = {"thinking": "medium"}
+        bad_pf = asyncio.run(picky.preflight(w_p))
+        failures += not check("agent 自帶的壞設定會在開跑前被抓到",
+                              len(bad_pf) == 1 and bad_pf[0][1] == "medium",
+                              str(bad_pf))
+        failures += not check("replay 模式不做開跑前檢查（不會呼叫任何東西）",
+                              asyncio.run(
+                                  _PickyModel(cfg_p, EventLog(tmp / "pf2"),
+                                              replay={}).preflight(w_p)) == [])
+
         # ---- 記憶檢索 ----
         print("\n記憶檢索")
         p = engine.world.protagonist()
