@@ -113,6 +113,8 @@ def scenario_world_block(scen, grid, public_cast: str | None = None,
     """
     from .llm.prompts import SEAHAVEN_EXAMPLES, SEAHAVEN_SETTING
 
+    from .world import arts as arts_mod
+
     if arts is None:
         arts = any(a.get("arts") for a in getattr(scen, "AGENTS", []))
     return world_block(
@@ -124,6 +126,16 @@ def scenario_world_block(scen, grid, public_cast: str | None = None,
         examples=getattr(scen, "EXAMPLES", SEAHAVEN_EXAMPLES),
         combat=getattr(scen, "COMBAT", False),
         arts=arts,
+        # 只列這個劇本真的用得到的招式。和平劇本配了社交類絕技的話，
+        # 名號那一段就只會出現社交類，不會冒出一堆刀劍。
+        # 去重要保順序：招式名號那一段進的是快取前綴，順序一變前綴就換了一份，
+        # 快取直接 0 命中。dict.fromkeys 比 set 可靠。
+        arts_catalog=[
+            arts_mod.get(x) for x in dict.fromkeys(
+                x for spec in getattr(scen, "AGENTS", []) for x in spec.get("arts", [])
+            ) if arts_mod.get(x) is not None
+        ],
+        lore=getattr(scen, "PUBLIC_LORE", ""),
     )
 
 

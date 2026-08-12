@@ -170,6 +170,33 @@ ARTS = """\
 """
 
 
+def arts_public_knowledge(arts_catalog) -> str:
+    """江湖上有名的功夫——招式的**名號**是公開常識，誰會哪一門不是。
+
+    這一段是從目錄生出來的，不是另抄一份：手抄的那份遲早會和 `world/arts.py` 走鐘。
+    只取 name 與 tagline（江湖傳聞層級）。**不要**把 `when`（什麼時候該用）放進來，
+    那是給持有者的使用說明，屬於 system[1]，攤到共用區塊等於把每個人的底牌
+    連同用法一起發給所有人。
+
+    這個函式和劇本無關：拿到什麼目錄就寫什麼，所以換劇本、換招式都不必改這裡。
+    """
+    if not arts_catalog:
+        return ""
+    by_kind: dict[str, list] = {}
+    for d in arts_catalog:
+        by_kind.setdefault(d.kind, []).append(d)
+    title = {"combat": "拳腳兵刃", "social": "待人接物", "move": "身法輕功", "info": "耳目消息"}
+    lines = [
+        "# 江湖上有名的功夫",
+        "（這些名號人人都聽過。但誰會哪一門、誰身上帶著什麼底牌，沒有人知道——",
+        "  除非他當著你的面使出來。）",
+    ]
+    for kind, items in by_kind.items():
+        lines.append(f"\n## {title.get(kind, kind)}")
+        lines += [f"- {d.name}：{d.tagline}" for d in items]
+    return "\n".join(lines)
+
+
 def world_block(
     grid: Grid,
     scenario_brief: str,
@@ -180,6 +207,8 @@ def world_block(
     examples: str = SEAHAVEN_EXAMPLES,
     combat: bool = False,
     arts: bool = False,
+    arts_catalog=(),
+    lore: str = "",
 ) -> str:
     """system[0]：完全靜態。所有 agent、所有 tick 共用同一份位元組。
 
@@ -187,6 +216,12 @@ def world_block(
     絕不可以出現誰是演員、誰是主角、誰藏了什麼秘密，那是 system[1] 才有的資訊。
 
     setting / examples 跟著劇本走，MECHANICS 與 TONE 全劇本共用。
+
+    `lore` 是劇本自己提供的公開背景（`scenarios/*.py` 的 `PUBLIC_LORE`）。它必須留在
+    劇本檔裡，不能寫死在這個模組——這裡是全劇本共用的那一層，把五嶽劍派塞進來，
+    哪天和平劇本配了絕技就會收到一整套武林設定。
+
+    `arts_catalog` 給招式名號用，內容由目錄生成，和劇本無關。
     """
     mechanics = MECHANICS
     if combat:
@@ -205,6 +240,10 @@ def world_block(
     ]
     if cast:
         parts += ["# 這裡的人（這些是每個人都知道的事）", cast]
+    if lore:
+        parts.append(lore)
+    if arts and arts_catalog:
+        parts.append(arts_public_knowledge(arts_catalog))
     parts += ["# 這裡的人怎麼相處", social_norms]
     return "\n\n".join(parts)
 

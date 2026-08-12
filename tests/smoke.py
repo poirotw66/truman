@@ -16,7 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from scenarios import seahaven  # noqa: E402
+from scenarios import seahaven, jianghu  # noqa: E402
 from truman.config import PROVIDERS, SimConfig, clock_str  # noqa: E402
 from truman.director.director import Director  # noqa: E402
 from truman.llm.client import make_client  # noqa: E402
@@ -184,6 +184,49 @@ def main() -> int:
             floors = sorted({c.cache_min(m) for m in c.models.values()})
             print(f"          {prov:<10} 門檻 {floors}")
         print("        逐層判定與真值量測請跑：python -m truman.cli tokens --provider ...")
+
+        # ---- 江湖劇本的公開常識 ----
+        print("\n江湖劇本世界區塊")
+        from scenarios import hakoniwa as hakoniwa_mod  # noqa: PLC0415
+        from scenarios import jianghu as jianghu_mod  # noqa: PLC0415
+        from truman import cli as cli_mod  # noqa: PLC0415
+        from truman.world import arts as arts_mod_t  # noqa: PLC0415
+        jh_grid = jianghu_mod.build_grid()
+        jh_wb = world_block(
+            jh_grid, jianghu_mod.BRIEF, jianghu_mod.NORMS, jianghu_mod.PUBLIC_CAST,
+            setting=jianghu_mod.SETTING, examples=jianghu_mod.EXAMPLES,
+            combat=jianghu_mod.COMBAT, arts=True,
+        )
+        # 招式的**名號**是公開常識，走 CLI 那條真正的組裝路徑來驗
+        # （直接呼叫 world_block 而不給 arts_catalog 的話，這段本來就不會出現，
+        #  而「大嵩陽手」「快刀」在 PUBLIC_CAST 裡本來就有——那樣測等於沒測）。
+        jh_full = cli_mod.scenario_world_block(jianghu_mod, jh_grid)
+        failures += not check("世界區塊有招式名號那一段",
+                              "# 江湖上有名的功夫" in jh_full and "名正言順" in jh_full)
+        failures += not check("同一門招式只列一次（順序一變快取就沒了）",
+                              jh_full.count("- 打聽：") == 1)
+        # 使用時機是給持有者的說明，屬於 system[1]。攤進共用區塊等於把底牌連用法一起發給所有人。
+        failures += not check(
+            "使用時機不進共用區塊",
+            "什麼時候用" not in jh_full
+            and arts_mod_t.CATALOG["ming_zheng_yan_shun"].when[:12] not in jh_full)
+        # 誰配了什麼是私有的：世界區塊不該把人名和招式綁在一起
+        one_line = jh_full.replace("\n", " ")
+        import re as _re  # noqa: PLC0415
+        failures += not check(
+            "世界區塊沒把人名和招式綁在一起",
+            not any(_re.search(f"{n}[^。]{{0,40}}{a}", one_line)
+                    for n, a in (("費彬", "名正言順"), ("田伯光", "花言巧語"),
+                                 ("曲洋", "廣陵散"))))
+        # 劇本專屬的背景要留在劇本檔裡，不能寫死在共用的 prompts 模組
+        failures += not check("公開背景由劇本提供", "PUBLIC_LORE" in dir(jianghu_mod)
+                              and jianghu_mod.PUBLIC_LORE[:8] in jh_full)
+        # 和平劇本不該收到任何武林設定——hakoniwa 之後配了絕技也一樣
+        for peace in (seahaven, hakoniwa_mod):
+            pw = cli_mod.scenario_world_block(peace, peace.build_grid())
+            failures += not check(f"{peace.NAME} 不含武林設定",
+                                  not any(x in pw for x in
+                                          ("大嵩陽手", "五嶽劍派", "江湖上有名的功夫")))
 
         # ---- tick 迴圈 ----
         print("\ntick 迴圈")
