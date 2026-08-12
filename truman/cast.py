@@ -13,12 +13,20 @@
          "home_area": "劉府", "start": [2, 2], "skill": 8, "kin": ["qu_yang"],
          "public": "劉正風，衡山派……",      ← 進世界區塊的公開人物表，人人看得見
          "persona": "你是劉正風……",         ← 只有他自己看得見
+         "goals": [{"kind": "ritual", "text": "把金盆洗手辦完",
+                    "params": {"rite": "金盆洗手", "by_tick": 60}}],
+         "arts": ["jin_pen_xi_shou", "heng_shan_jian"],
          "llm": {"model": "gemini-3.1-flash", "temperature": 0.9, "thinking": "low"},
          "art": {...}}                      ← 純美術，引擎不看，回放頁才用
       ]
     }
 
-`art` 引擎完全不碰，原樣留著給回放頁讀。
+注意 `arts`（絕技，引擎要看）和 `art`（美術設定，引擎不看）是兩個不同的欄位，
+差一個 s。命名確實容易看錯，但 `art` 已經寫在既有的設定檔和工作室裡了，
+改名會讓舊檔案的立繪全部失效，不值得。
+
+`goals` 的 kind 必須是 `world/goals.py` 認得的判定器；`arts` 裡的 id 必須在
+`world/arts.py` 的目錄裡。兩者都在開跑前驗，錯字不會拖到第 40 tick 才發作。
 """
 
 from __future__ import annotations
@@ -27,8 +35,10 @@ import json
 from pathlib import Path
 
 from .config import PROVIDERS
+from .world import arts as arts_mod
+from .world import goals as goals_mod
 from .world.grid import Grid, Pos
-from .world.state import AgentState, WorldState
+from .world.state import AgentState, Goal, WorldState
 
 THINKING = ("minimal", "low", "medium", "high", "off")
 
@@ -72,6 +82,75 @@ def _check_llm(who: str, spec: dict, provider: str | None) -> list[str]:
     th = llm.get("thinking")
     if th is not None and th not in THINKING:
         out.append(f"{who}：thinking {th!r} 不在 {list(THINKING)} 裡")
+    return out
+
+
+def _check_arts(who: str, spec: dict) -> list[str]:
+    """絕技 id 打錯字的話，那個人會安安靜靜地少一門功夫——要在開跑前抓到。"""
+    ids = spec.get("arts")
+    if ids is None:
+        return []
+    if not isinstance(ids, list) or any(not isinstance(x, str) for x in ids):
+        return [f"{who}：arts 要是絕技 id 的字串陣列，例如 [\"kuai_dao\"]"]
+    out = []
+    for bad in arts_mod.unknown(ids):
+        out.append(f"{who}：絕技目錄裡沒有 {bad!r}。可用的有："
+                   f"{'、'.join(sorted(arts_mod.CATALOG))}")
+    if len(set(ids)) != len(ids):
+        out.append(f"{who}：同一門絕技配了兩次")
+    return out
+
+
+def _check_goals(who: str, spec: dict, ids: set[str], grid: Grid) -> list[str]:
+    """目的的參數指到不存在的人或地方，判定會永遠不成立——那比報錯更難查。"""
+    goals = spec.get("goals")
+    if goals is None:
+        return []
+    if not isinstance(goals, list):
+        return [f"{who}：goals 要是陣列"]
+    out = []
+    for i, g in enumerate(goals, 1):
+        tag = f"{who} 的第 {i} 個目的"
+        if not isinstance(g, dict):
+            out.append(f"{tag}：要是物件，至少有 kind 和 text")
+            continue
+        kind = g.get("kind")
+        if kind not in goals_mod.CHECKERS:
+            out.append(f"{tag}：不認得的判定器 {kind!r}。可用的有："
+                       f"{'、'.join(sorted(goals_mod.CHECKERS))}")
+            continue
+        if not (g.get("text") or "").strip():
+            out.append(f"{tag}：text 是空的（那是角色自己讀的那句話，不能省）")
+        p = g.get("params") or {}
+        if not isinstance(p, dict):
+            out.append(f"{tag}：params 要是物件")
+            continue
+        # 指到人的參數
+        refs = []
+        if kind in ("isolate",):
+            refs.append(p.get("target"))
+        if kind in ("meet",):
+            refs.append(p.get("who"))
+        if kind in ("prevent",):
+            refs.append(p.get("agent"))
+        if kind == "protect":
+            refs.extend(p.get("who") or [])
+        for r in refs:
+            if not r:
+                out.append(f"{tag}：{kind} 少了指定對象的參數")
+            elif r not in ids:
+                out.append(f"{tag}：指到的 {r!r} 不在這份名單裡")
+        # 指到地方的參數
+        areas = []
+        if kind == "reach":
+            if not p.get("area"):
+                out.append(f"{tag}：reach 要指定 area")
+            else:
+                areas.append(p["area"])
+        areas.extend(p.get("areas") or [])
+        for area in areas:
+            if area != grid.street and grid.area(area) is None:
+                out.append(f"{tag}：{area!r} 不是這張地圖上的區域")
     return out
 
 
@@ -120,8 +199,12 @@ def validate(cast: dict, grid: Grid, scenario_name: str | None = None,
         if skill is not None and not (isinstance(skill, int) and 1 <= skill <= 10):
             problems.append(f"{who}：武功 {skill!r} 必須是 1–10 的整數")
         problems.extend(_check_llm(who, a, provider))
+        problems.extend(_check_arts(who, a))
 
+    # 目的會指到別人，所以要等 ids 收完整才驗。
     for a in agents:
+        who = a.get("name") or a.get("id") or "?"
+        problems.extend(_check_goals(who, a, ids, grid))
         for k in a.get("kin") or []:
             if k not in ids:
                 problems.append(f"{a.get('name', a.get('id'))}：在意的人 {k!r} 不在這份名單裡")
@@ -172,6 +255,10 @@ def apply(world: WorldState, cast: dict, grid: Grid) -> None:
             base.skill = int(spec["skill"])
         if "kin" in spec:
             base.kin = list(spec["kin"])
+        if "goals" in spec:
+            base.goals = [Goal.from_dict(g) for g in spec["goals"] or []]
+        if "arts" in spec:
+            base.arts = arts_mod.equip(spec["arts"] or [])
         if "llm" in spec:
             base.llm = {k: v for k, v in (spec["llm"] or {}).items() if v not in (None, "")}
         world.agents[aid] = base

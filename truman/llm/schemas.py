@@ -38,8 +38,14 @@ ACTION_SCHEMA = {
                     "type": "string",
                     "description": "kind=interact 時填你要做的事，例如「泡咖啡」，其餘填空字串。",
                 },
+                "art": {
+                    "type": "string",
+                    "description": "kind=use_art 時填絕技的名字，其餘填空字串。",
+                },
             },
-            "required": ["kind", "target_area", "target_agent", "utterance", "object"],
+            "required": [
+                "kind", "target_area", "target_agent", "utterance", "object", "art",
+            ],
             "additionalProperties": False,
         },
         "plan": {
@@ -52,20 +58,38 @@ ACTION_SCHEMA = {
 }
 
 
-def action_schema(combat: bool = False) -> dict:
-    """combat 劇本才把 attack 放進 enum。
+def action_schema(combat: bool = False, arts: bool = False) -> dict:
+    """combat 劇本才把 attack 放進 enum；身上有絕技的人才看得到 use_art。
 
     和平劇本連這個選項都不該存在——enum 是模型看得到的東西，
-    列出來就等於在暗示可以用。
+    列出來就等於在暗示可以用。同理，沒配絕技的人不該看到 use_art：
+    他每個 tick 都會多考慮一個永遠會被駁回的選項。
     """
-    if not combat:
+    if not combat and not arts:
         return ACTION_SCHEMA
     s = copy.deepcopy(ACTION_SCHEMA)
     act = s["properties"]["action"]["properties"]
-    act["kind"]["enum"] = [*act["kind"]["enum"], "attack"]
+    extra = []
+    if combat:
+        extra.append("attack")
+    if arts:
+        extra.append("use_art")
+    act["kind"]["enum"] = [*act["kind"]["enum"], *extra]
+
+    who = ["speak"]
+    if combat:
+        who.append("attack")
+    if arts:
+        who.append("use_art（有些絕技要指定對象）")
     act["target_agent"]["description"] = (
-        "kind=speak 或 attack 時填對象的名字；對全場說話或其餘情況填空字串。"
+        f"kind={' 或 '.join(who)} 時填對象的名字；對全場說話或其餘情況填空字串。"
     )
+    if arts:
+        act["utterance"]["description"] = (
+            "kind=speak 時填你要說的話；"
+            "kind=use_art 且那門絕技是靠說話起作用的（例如當眾指證、勸說），"
+            "也要填你實際說出口的那句話。其餘填空字串。"
+        )
     return s
 
 

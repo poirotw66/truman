@@ -101,14 +101,20 @@ def require_credentials(provider: str) -> None:
         sys.exit(2)
 
 
-def scenario_world_block(scen, grid, public_cast: str | None = None) -> str:
+def scenario_world_block(scen, grid, public_cast: str | None = None,
+                         arts: bool | None = None) -> str:
     """劇本可以換掉世界設定與少樣例示範；機制與語氣是全劇本共用的。
 
     `public_cast` 是給 --cast 用的：換了人，公開人物表也要跟著換，
     否則世界區塊還在介紹一批已經不存在的人。
+
+    `arts` 決定要不要把絕技那段規則掛上去。預設看劇本有沒有人配了絕技；
+    --cast 可能把絕技全拿掉或全加上，所以呼叫端可以直接覆寫。
     """
     from .llm.prompts import SEAHAVEN_EXAMPLES, SEAHAVEN_SETTING
 
+    if arts is None:
+        arts = any(a.get("arts") for a in getattr(scen, "AGENTS", []))
     return world_block(
         grid,
         scen.BRIEF,
@@ -117,6 +123,7 @@ def scenario_world_block(scen, grid, public_cast: str | None = None) -> str:
         setting=getattr(scen, "SETTING", SEAHAVEN_SETTING),
         examples=getattr(scen, "EXAMPLES", SEAHAVEN_EXAMPLES),
         combat=getattr(scen, "COMBAT", False),
+        arts=arts,
     )
 
 
@@ -165,7 +172,12 @@ def make_engine(world, scen, cfg, run_dir: Path, replay_index=None, quiet=False,
         llm=llm,
         director=director,
         log=log,
-        world_block_text=scenario_world_block(scen, grid, public_cast),
+        # 絕技那段規則看的是「這場實際上有沒有人配了絕技」，不是劇本預設——
+        # --cast 可能把絕技全拿掉，那就不該讓任何人看到 use_art。
+        world_block_text=scenario_world_block(
+            scen, grid, public_cast,
+            arts=any(a.arts for a in world.agents.values()),
+        ),
         run_dir=run_dir,
         console=None if quiet else console,
     )
@@ -387,6 +399,9 @@ def cmd_report(args) -> None:
         for tick, d in deaths:
             console.print(f"[bold red]  ☠ {d['when']}  {d['name']} 死於 {d['killed_by']} 之手[/bold red]")
 
+    _report_goals(events)
+    _report_arts(events)
+
     if speech:
         _report_social(speech, scenario, getattr(args, "track", None))
     _report_gatherings(events)
@@ -394,6 +409,81 @@ def cmd_report(args) -> None:
     if summary:
         console.rule("成本")
         _print_stats(summary["llm"])
+
+
+def _report_goals(events: list[dict]) -> None:
+    """誰做到了今天要做的事。
+
+    這是箱庭最直接的成績單：同一張地圖、同一批目的，換一個人的腦袋或換一組絕技，
+    達成率會不會變。沒有這張表就只能靠讀對話猜。
+    """
+    closed = [
+        (e["tick"], e["type"], e["data"])
+        for e in events
+        if e["type"] in ("goal_done", "goal_failed")
+    ]
+    if not closed:
+        return
+    done = sum(1 for _, k, _ in closed if k == "goal_done")
+    console.rule(f"目的（{done}/{len(closed)} 達成）")
+    t = Table(show_edge=False)
+    t.add_column("人"); t.add_column("要做到的事"); t.add_column("判定")
+    t.add_column("結果", justify="center"); t.add_column("時刻", justify="right")
+    for tick, kind, d in closed:
+        ok = kind == "goal_done"
+        t.add_row(
+            d.get("name", d["agent"]),
+            d.get("text", ""),
+            d.get("kind", ""),
+            f"[green]達成[/green]" if ok else "[red]沒做到[/red]",
+            f"t{tick}",
+        )
+    console.print(t)
+    for tick, kind, d in closed:
+        if d.get("note"):
+            colour = "green" if kind == "goal_done" else "red"
+            console.print(f"  [{colour}]· {d.get('name')}：{d['note']}[/{colour}]")
+
+
+def _report_arts(events: list[dict]) -> None:
+    """絕技用了幾次、誰用的、有沒有用在刀口上。
+
+    配了卻從來不用，和配了每次都用，是兩種不同的毛病：前者是說明寫得不夠清楚
+    （或者這門功夫對他的目的根本沒用），後者是配額給太鬆。這張表就是要看出這件事。
+    """
+    used = [(e["tick"], e["data"]) for e in events if e["type"] == "art_used"]
+    rejected = [
+        e["data"] for e in events
+        if e["type"] == "invalid_intent"
+        and (e["data"].get("action") or {}).get("kind") == "use_art"
+    ]
+    if not used and not rejected:
+        return
+    console.rule(f"絕技（使出 {len(used)} 次，駁回 {len(rejected)} 次）")
+    by: dict[tuple[str, str], int] = {}
+    for _, d in used:
+        by[(d.get("name", d["agent"]), d.get("art_name", d.get("art", "")))] = (
+            by.get((d.get("name", d["agent"]), d.get("art_name", d.get("art", ""))), 0) + 1
+        )
+    if by:
+        t = Table(show_edge=False)
+        t.add_column("人"); t.add_column("絕技"); t.add_column("次數", justify="right")
+        for (who, art), n in sorted(by.items(), key=lambda x: -x[1]):
+            t.add_row(who, art, str(n))
+        console.print(t)
+    for tick, d in used[:20]:
+        console.print(f"[magenta]t{tick}  {d.get('line', '')}[/magenta]")
+    if rejected:
+        # 駁回多半代表說明沒寫清楚——角色一直去用已經用盡或還在冷卻的功夫。
+        console.print(f"[dim]駁回 {len(rejected)} 次，前幾個理由：[/dim]")
+        seen = set()
+        for r in rejected:
+            why = r.get("reason", "")
+            if why not in seen:
+                seen.add(why)
+                console.print(f"  [dim red]· {why}[/dim red]")
+            if len(seen) >= 5:
+                break
 
 
 def _report_gatherings(events: list[dict], least: int = 3) -> None:
