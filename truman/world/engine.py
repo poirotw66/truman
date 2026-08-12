@@ -585,7 +585,7 @@ class Engine:
             remember(a, text, importance=8)
             # 記憶不保證被檢索到，所以也直接送到他下一拍的眼前——和報噩耗同一條路。
             if self.director is not None:
-                self.director.add_runtime(a.id, text, t + 1)
+                self.director.add_runtime(a.id, text, t + 1, tag="scout")
             detail = {"target": target.id, "area": area}
             line = f"{a.name}向路邊的人打聽了幾句。"
 
@@ -639,7 +639,7 @@ class Engine:
             text = f"（{rec['text']}——{rec['note']}。這條路走不通了。）"
         a.memory.add(t, when, "observation", text, importance=10)
         if self.director is not None:
-            self.director.add_runtime(a.id, text, t + 1)
+            self.director.add_runtime(a.id, text, t + 1, tag="goal")
         if self.console:
             colour = "green" if rec["status"] == "done" else "red"
             self.console.print(f"[{colour}]◆ {a.name}：{rec['text']}／{rec['note']}[/{colour}]")
@@ -667,7 +667,7 @@ class Engine:
                 f"（有人急奔來報：{dead.name}死了，是{killer.name}下的手。"
                 f"你和他的交情，你自己心裡有數。江湖上沒有白死的人。）"
             )
-            self.director.add_runtime(other.id, text, t + 1)
+            self.director.add_runtime(other.id, text, t + 1, tag="revenge")
             self.log.write(
                 "revenge_seed",
                 {"mourner": other.id, "dead": dead.id, "killer": killer.id, "when": when},

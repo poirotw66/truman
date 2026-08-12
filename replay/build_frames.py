@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT))
 
 from scenarios import jianghu  # noqa: E402
 from art.embed_portraits import portrait_map  # noqa: E402
+from truman.world import arts as arts_mod  # noqa: E402
 from truman.world.grid import Pos  # noqa: E402
 
 DEFAULT_SOURCES = [("j1", 0, 48), ("j1b", 48, 10**9)]
@@ -189,6 +190,9 @@ def build_replay(
     frames = []
     drift = 0
     n_speech = n_attack = n_death = 0
+    n_art = n_goal_done = 0
+    # 目的的結案紀錄，收工結算也在裡面。片尾的成績單就是讀這一份。
+    goal_log: list[dict] = []
     walked = {aid: 0 for aid in agents}
 
     for t in range(0, max_tick + 1):
@@ -247,6 +251,38 @@ def build_replay(
                         "killed_by": d.get("killed_by", ""),
                     }
                 )
+            elif ty == "art_used":
+                # 絕技使完就要重新盤算，所以和說話一樣把進行中的動作清掉。
+                action[d["agent"]] = None
+                n_art += 1
+                tick_events.append(
+                    {
+                        "kind": "art",
+                        "agent": d["agent"],
+                        "art": d.get("art_name", d.get("art", "")),
+                        "art_kind": d.get("kind", ""),
+                        "target": d.get("target", ""),
+                        "line": d.get("line", ""),
+                        "left": d.get("uses_left", -1),
+                    }
+                )
+            elif ty in ("goal_done", "goal_failed"):
+                ok = ty == "goal_done"
+                n_goal_done += ok
+                goal_log.append({
+                    "tick": t, "agent": d["agent"], "name": d.get("name", ""),
+                    "idx": d.get("goal", 0), "text": d.get("text", ""),
+                    "kind": d.get("kind", ""), "done": ok, "note": d.get("note", ""),
+                })
+                tick_events.append(
+                    {
+                        "kind": "goal",
+                        "agent": d["agent"],
+                        "done": ok,
+                        "text": d.get("text", ""),
+                        "note": d.get("note", ""),
+                    }
+                )
             elif ty == "reflection":
                 ins = d.get("insights") or []
                 if ins:
@@ -254,9 +290,21 @@ def build_replay(
                         {"kind": "reflection", "agent": d["agent"], "insight": ins[0]}
                     )
             elif ty == "director" and d.get("fired") and d.get("text"):
-                tick_events.append(
-                    {"kind": "world", "area": d.get("area", ""), "text": d["text"]}
-                )
+                # broadcast 是全場都聽得見的世界旁白；inject 只有一個人看得見。
+                # 先前兩者都畫成世界旁白，於是「有人急奔來報噩耗」看起來像是
+                # 說給全城聽的。這兩件事在箱庭裡差很多，不能混。
+                if d.get("kind") == "inject":
+                    # 目的結案的那一則跳過：同一拍已經有 goal 事件講過同一件事了。
+                    if d.get("tag") == "goal":
+                        continue
+                    tick_events.append(
+                        {"kind": "note", "agent": d.get("agent", ""),
+                         "tag": d.get("tag", ""), "text": d["text"]}
+                    )
+                else:
+                    tick_events.append(
+                        {"kind": "world", "area": d.get("area", ""), "text": d["text"]}
+                    )
 
         steps: dict[str, list[list[int]]] = {}
         if use_snapshot and t in snaps:
@@ -337,6 +385,9 @@ def build_replay(
         }
         for a in grid.areas.values()
     ]
+    # 配備的絕技從劇本模組讀（和 skill／kin 一樣是既有做法）。用 --cast 換過的話
+    # 這一欄會是劇本預設，但實際使出來的絕技照樣會出現在事件流與統計裡——那些是
+    # 從日誌來的，不會騙人。目的則一律取自 goal_* 事件，那才是真的跑出來的結果。
     cast = [
         {
             "id": aid,
@@ -344,6 +395,12 @@ def build_replay(
             "skill": agents[aid]["skill"],
             "home": agents[aid]["home_area"],
             "kin": list(agents[aid].get("kin", [])),
+            "arts": [
+                {"name": d.name, "kind": d.kind, "tagline": d.tagline,
+                 "cost": d.cost_line()}
+                for d in (arts_mod.get(x) for x in agents[aid].get("arts", []))
+                if d is not None
+            ],
         }
         for aid in agents
     ]
@@ -358,11 +415,15 @@ def build_replay(
         "street": grid.street,
         "frames": frames,
         "max_tick": max_tick,
+        "goals": goal_log,
         "stats": {
             "speeches": n_speech,
             "attacks": n_attack,
             "deaths": n_death,
             "walked": sum(walked.values()),
+            "arts": n_art,
+            "goals_done": n_goal_done,
+            "goals_total": len(goal_log),
         },
         "portraits": portrait_map("jianghu"),
     }
