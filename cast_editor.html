@@ -161,10 +161,6 @@
       <button class="b mini danger" id="btnDel">刪掉這個人</button>
      </div>
     </div>
-    <div class="card">
-     <h3>出門前檢查</h3>
-     <div class="pad"><div class="checks" id="checks"></div></div>
-    </div>
    </div>
 
    <!-- 表單 -->
@@ -190,6 +186,10 @@
       <button class="b mini" id="btnCmd" style="align-self:flex-start">複製指令</button>
       <p class="hint">劇本的 .py 一個字都不會動——設定檔只在這次 run 生效。箱庭主線看的是目標衝突下會長出什麼，不是誰先懷疑世界。</p>
      </div>
+    </div>
+    <div class="card">
+     <h3>出門前檢查</h3>
+     <div class="pad"><div class="checks" id="checks"></div></div>
     </div>
    </div>
   </div>
@@ -1065,7 +1065,32 @@ function renderForm() {
       <div class="f"><label>稱號</label><input type="text" data-look="title" value="${esc(a.look.title)}"></div>
     </div>
 
-    <div class="look">
+    <div class="f wide" style="border-top:1px solid var(--line); padding-top:12px">
+      <label>今天要做到的事 <span>世界會判定成敗，報表算得出達成率</span></label>
+      <div id="goals">${goalsHTML(a)}</div>
+      <button class="b mini" id="btnAddGoal" style="align-self:flex-start; margin-top:6px">＋ 加一個目的</button>
+      <div class="hint">目的要和下面的人設說同一件事——人設是給他自己讀的，這裡是給世界判的。
+        「要做到某件事」（走到、辦成、帶走）沒做到就是失敗；
+        「不要出事」（活著、護住、別被說破）撐到最後就是達成。</div></div>
+
+    <div class="f wide">
+      <label>配備的絕技 <span>他手上的工具。挑對他的目的真的有用的</span></label>
+      <div id="arts">${artsHTML(a)}</div>
+      <div class="hint" id="artsHint"></div></div>
+
+    <div class="row" style="border-top:1px solid var(--line); padding-top:12px">
+      <div class="f"><label>武功 <span>1–10，只有世界引擎看得到，不寫進人設</span></label>
+        <div class="sk"><input type="range" min="1" max="10" step="1" data-k="skill" value="${a.skill}"><b id="skv">${a.skill}</b></div></div>
+      <div class="f"><label>家 <span>沒事會回去的地方</span></label><select data-k="home_area">${areaOpts}</select></div>
+      <div class="f" style="flex:0 0 190px"><label>角色類型</label><select data-k="role">${opt(ROLES, a.role)}</select></div>
+    </div>
+
+    <div class="f wide"><label>在意的人 <span>他們死了，噩耗會傳到這個人眼前，逼他面對要不要討公道</span></label>
+      <div class="chips" id="kin">${others.length ? others.map(b =>
+        `<button class="chip" data-kin="${esc(b.id)}" aria-pressed="${(a.kin||[]).includes(b.id)}">${esc(b.name)}</button>`).join("")
+        : `<span class="chip none">名單上只有這一個人</span>`}</div></div>
+
+    <div class="look" style="border-top:1px solid var(--line); padding-top:12px">
       <div class="prev">
         <img id="portrait" class="ptcv" alt="" hidden>
         <canvas id="bust" class="bustcv" width="132" height="176"></canvas>
@@ -1102,13 +1127,6 @@ function renderForm() {
       </div>
     </div>
 
-    <div class="row">
-      <div class="f"><label>武功 <span>1–10，只有世界引擎看得到，不寫進人設</span></label>
-        <div class="sk"><input type="range" min="1" max="10" step="1" data-k="skill" value="${a.skill}"><b id="skv">${a.skill}</b></div></div>
-      <div class="f"><label>家 <span>沒事會回去的地方</span></label><select data-k="home_area">${areaOpts}</select></div>
-      <div class="f" style="flex:0 0 190px"><label>角色類型</label><select data-k="role">${opt(ROLES, a.role)}</select></div>
-    </div>
-
     <div class="f wide" style="border-top:1px solid var(--line); padding-top:12px">
       <label>這個人的腦袋 <span>不設就照分層路由走（routine/dialogue 各自的預設模型）</span></label>
       <div class="row" style="margin-top:4px">
@@ -1127,24 +1145,6 @@ function renderForm() {
       </div>
       <div class="hint" id="llmHint"></div>
     </div>
-
-    <div class="f wide"><label>在意的人 <span>他們死了，噩耗會傳到這個人眼前，逼他面對要不要討公道</span></label>
-      <div class="chips" id="kin">${others.length ? others.map(b =>
-        `<button class="chip" data-kin="${esc(b.id)}" aria-pressed="${(a.kin||[]).includes(b.id)}">${esc(b.name)}</button>`).join("")
-        : `<span class="chip none">名單上只有這一個人</span>`}</div></div>
-
-    <div class="f wide" style="border-top:1px solid var(--line); padding-top:12px">
-      <label>今天要做到的事 <span>世界會判定成敗，報表算得出達成率</span></label>
-      <div id="goals">${goalsHTML(a)}</div>
-      <button class="b mini" id="btnAddGoal" style="align-self:flex-start; margin-top:6px">＋ 加一個目的</button>
-      <div class="hint">目的要和下面的人設說同一件事——人設是給他自己讀的，這裡是給世界判的。
-        「要做到某件事」（走到、辦成、帶走）沒做到就是失敗；
-        「不要出事」（活著、護住、別被說破）撐到最後就是達成。</div></div>
-
-    <div class="f wide">
-      <label>配備的絕技 <span>他手上的工具。挑對他的目的真的有用的</span></label>
-      <div id="arts">${artsHTML(a)}</div>
-      <div class="hint" id="artsHint"></div></div>
 
     <div class="f wide"><label>今日所求 <span>一句話文案，只出現在回放頁的片頭，不進 prompt、不判定</span></label>
       <input type="text" data-look="goal" value="${esc(a.look.goal)}"></div>
