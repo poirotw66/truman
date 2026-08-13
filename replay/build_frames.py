@@ -28,6 +28,7 @@ from scenarios import jianghu  # noqa: E402
 from art.embed_portraits import portrait_map  # noqa: E402
 from art.embed_scenes import scene_map  # noqa: E402
 from art.embed_icons import icon_map  # noqa: E402
+from art.embed_event_icons import event_icon_map  # noqa: E402
 from truman.world import arts as arts_mod  # noqa: E402
 from truman.world.grid import Pos  # noqa: E402
 
@@ -436,6 +437,7 @@ def build_replay(
         "portraits": portrait_map("jianghu"),
         "scenes": scene_map("jianghu"),
         "art_icons": icon_map("jianghu"),
+        "event_icons": event_icon_map(),
     }
 
     if write_frames_json:
