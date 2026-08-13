@@ -401,8 +401,8 @@ function clockOf(t) {
 
 /* ============================ 像素美術（共用模組，注入自 web/pixelart.js） ============================ */
 /*__PIXELART__*/
-/* 事件流／時間軸的小圖示自己畫成像素圖——emoji 在每台機器長得不一樣，也跟像素美術打架 */
-const ICONS = (() => {
+/* 事件流／時間軸的小圖示：有插畫就用插畫，否則退回程式畫的像素圖（跟地圖一致）。 */
+const PIXEL_ICONS = (() => {
   const S = 2, mk = fn => {
     const c = document.createElement("canvas"); c.width = c.height = 16 * S;
     const g = c.getContext("2d");
@@ -431,6 +431,13 @@ const ICONS = (() => {
       dia(4,4,8,1.6,"#f0a49c",1); dia(4,4,8,1.6,"#f0a49c",-1); }),
   };
 })();
+const ICONS = Object.assign({}, PIXEL_ICONS, DATA.event_icons || {});
+/* image-rendered event icons look better without forced pixelation */
+if (DATA.event_icons) {
+  const st = document.createElement("style");
+  st.textContent = ".fe .ic,.mk img,.legend .ic{image-rendering:auto;border-radius:3px}";
+  document.head.appendChild(st);
+}
 
 const TS_ART = 48;                                  // 貼圖每格 48px（美術原生 16px × 3）
 const world = buildWorldCanvas(ROWS, DATA.areas, TS_ART, DECOR_JIANGHU);

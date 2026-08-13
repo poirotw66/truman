@@ -400,12 +400,16 @@ todo.md                  主線待辦與實跑紀錄
 場景圖在 `art/scenes/jianghu/`（關鍵美術＋九個地點），`build_frames.py` 會自動內嵌：
 片頭用 `keyart`、片尾用 `night`、角色卡「現在在」顯示對應地點圖。
 絕技圖示在 `art/icons/jianghu/`（十五門各一張），角色卡／事件流／工作室／Demo 看板都會用。
+事件流小圖示在 `art/icons/events/`（說話／動手／死亡／想通了／世界／互動／目的達成與落空）。
+海晏鎮立繪在 `art/portraits/hakoniwa/` 與 `art/portraits/seahaven/`（同一批六人）。
 Demo 落地頁另從 `truman/demo/static/art/` 讀靜態檔。沒圖時退回像素城／像素立繪／通用絕技小圖。
 
 畫完重跑 `replay/build_frames.py` 與 `cast/build_editor.py`。
 
 ```powershell
 .\.venv\Scripts\python.exe art\embed_icons.py              # 看絕技圖示內嵌後多大
+.\.venv\Scripts\python.exe art\embed_event_icons.py        # 事件流小圖示
+.\.venv\Scripts\python.exe art\embed_portraits.py hakoniwa # 海晏鎮立繪
 ```
 
 ## 開場之前：人物工作室

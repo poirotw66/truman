@@ -28,7 +28,12 @@ def portrait_map(scenario: str, px: int = 480, quality: int = 82) -> dict[str, s
         print("  ⚠ 沒裝 Pillow，立繪不會內嵌（pip install pillow）")
         return {}
     out: dict[str, str] = {}
-    for p in sorted(d.glob("*.png")):
+    files = sorted(d.glob("*.png")) + sorted(d.glob("*.jpg"))
+    seen: set[str] = set()
+    for p in files:
+        if p.stem in seen:
+            continue
+        seen.add(p.stem)
         im = Image.open(p).convert("RGB")
         h = round(px * im.height / im.width)
         im = im.resize((px, h), Image.LANCZOS)
