@@ -26,6 +26,9 @@ SCENE_KEYS: dict[str, str] = {
     "scene_plaza": "演武場",
     "scene_gate": "城門",
     "scene_shrine": "荒祠",
+    "scene_yard": "後院",
+    "scene_qunyu": "群玉院",
+    "scene_temple": "城隍廟",
 }
 
 
