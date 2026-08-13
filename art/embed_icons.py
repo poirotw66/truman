@@ -1,0 +1,54 @@
+"""把 art/icons 底下的絕技圖示壓成 data URI，給回放頁內嵌。
+
+圖示是 1:1 方圖，UI 只需要小尺寸——統一縮到 96 寬 JPEG。
+十五張加起來大約 100 KB。
+
+    python art/embed_icons.py
+"""
+from __future__ import annotations
+
+import base64
+import io
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+ICONS = Path(__file__).with_name("icons")
+
+
+def icon_map(
+    scenario: str = "jianghu",
+    *,
+    px: int = 96,
+    quality: int = 78,
+) -> dict[str, str]:
+    """{art_id: data URI}。沒有圖就回空的。"""
+    d = ICONS / scenario
+    if not d.exists():
+        return {}
+    try:
+        from PIL import Image
+    except ImportError:
+        print("  ⚠ 沒裝 Pillow，絕技圖示不會內嵌（pip install pillow）")
+        return {}
+    out: dict[str, str] = {}
+    for p in sorted(d.glob("*.jpg")) + sorted(d.glob("*.png")):
+        im = Image.open(p).convert("RGB")
+        im = im.resize((px, px), Image.LANCZOS)
+        buf = io.BytesIO()
+        im.save(buf, "JPEG", quality=quality, optimize=True)
+        out[p.stem] = "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
+    return out
+
+
+if __name__ == "__main__":
+    scen = sys.argv[1] if len(sys.argv) > 1 else "jianghu"
+    m = icon_map(scen)
+    if not m:
+        raise SystemExit(f"art/icons/{scen} 底下沒有圖")
+    total = 0.0
+    for k, v in m.items():
+        kb = len(v) / 1024
+        total += kb
+        print(f"  {k:24s} {kb:6.1f} KB")
+    print(f"  {'合計':24s} {total:6.1f} KB")

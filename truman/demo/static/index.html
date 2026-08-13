@@ -165,8 +165,10 @@
   .bc .g.done{color:#6fd6ae} .bc .g.failed{opacity:.62}
   .bc .g em{font-style:normal; opacity:.62; font-size:10.5px}
   .bc .as{display:flex; flex-wrap:wrap; gap:4px; margin-top:1px}
-  .bc .a{font-size:10.5px; padding:2px 7px; border-radius:11px;
-         background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); opacity:.62}
+  .bc .a{font-size:10.5px; padding:2px 7px 2px 3px; border-radius:11px;
+         background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); opacity:.62;
+         display:inline-flex; align-items:center; gap:4px}
+  .bc .a img{width:16px; height:16px; border-radius:4px; object-fit:cover}
   .bc .a.used{opacity:1; border-color:#b98ede; color:#d9bcf5}
   .bc .a.spent{opacity:.34; text-decoration:line-through}
   .feed{display:flex; flex-direction:column; gap:5px; max-height:180px; overflow:auto}
@@ -496,7 +498,8 @@ function renderBoard(rows) {
       const spent = a.left === 0;
       const cls = spent ? "spent" : a.used ? "used" : "";
       const tail = a.left >= 0 ? ` ${a.left}` : "";
-      return `<span class="a ${cls}">${escapeHtml(a.name)}${tail}</span>`;
+      const ic = a.id ? `<img src="/art/icons/${a.id}.jpg" alt="">` : "";
+      return `<span class="a ${cls}">${ic}${escapeHtml(a.name)}${tail}</span>`;
     }).join("");
     const state = !r.alive ? "已歿" : r.wound >= 2 ? "重傷" : r.wound === 1 ? "帶傷" : "";
     return `<div class="bc ${r.alive ? "" : "dead"}">

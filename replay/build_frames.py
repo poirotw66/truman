@@ -27,6 +27,7 @@ sys.path.insert(0, str(ROOT))
 from scenarios import jianghu  # noqa: E402
 from art.embed_portraits import portrait_map  # noqa: E402
 from art.embed_scenes import scene_map  # noqa: E402
+from art.embed_icons import icon_map  # noqa: E402
 from truman.world import arts as arts_mod  # noqa: E402
 from truman.world.grid import Pos  # noqa: E402
 
@@ -266,6 +267,7 @@ def build_replay(
                         "kind": "art",
                         "agent": d["agent"],
                         "art": d.get("art_name", d.get("art", "")),
+                        "art_id": d.get("art", ""),
                         "art_kind": d.get("kind", ""),
                         "target": d.get("target", ""),
                         "line": d.get("line", ""),
@@ -402,7 +404,7 @@ def build_replay(
             "home": agents[aid]["home_area"],
             "kin": list(agents[aid].get("kin", [])),
             "arts": [
-                {"name": d.name, "kind": d.kind, "tagline": d.tagline,
+                {"id": d.id, "name": d.name, "kind": d.kind, "tagline": d.tagline,
                  "cost": d.cost_line()}
                 for d in (arts_mod.get(x) for x in agents[aid].get("arts", []))
                 if d is not None
@@ -433,6 +435,7 @@ def build_replay(
         },
         "portraits": portrait_map("jianghu"),
         "scenes": scene_map("jianghu"),
+        "art_icons": icon_map("jianghu"),
     }
 
     if write_frames_json:
