@@ -153,15 +153,18 @@
   .qz.open{opacity:.78} .qz.open b{color:var(--gold)}
   /* 絕技：他手上有什麼工具、用掉了幾次 */
   .arts{display:flex; flex-direction:column; gap:4px; margin-top:4px}
-  .az{display:grid; grid-template-columns:1fr auto; gap:1px 10px; font-size:11.5px;
-    padding:5px 8px; border-radius:6px; border-left:3px solid var(--line2);
+  .az{display:grid; grid-template-columns:28px 1fr auto; gap:1px 8px; align-items:center;
+    font-size:11.5px; padding:5px 8px; border-radius:6px; border-left:3px solid var(--line2);
     background:color-mix(in srgb,var(--panel2) 60%,transparent)}
+  .az .aic{width:28px; height:28px; border-radius:6px; object-fit:cover; grid-row:1/3;
+    box-shadow:0 1px 4px rgba(0,0,0,.35)}
   .az b{font-size:12px; letter-spacing:.03em}
-  .az span{grid-column:1; font-size:10.5px; color:var(--ink2)}
-  .az u{grid-row:1/3; grid-column:2; align-self:center; text-decoration:none;
+  .az span{grid-column:2; font-size:10.5px; color:var(--ink2)}
+  .az u{grid-row:1/3; grid-column:3; align-self:center; text-decoration:none;
     font-size:10.5px; color:var(--ink2)}
   .az.used{border-left-color:var(--violet)}
   .az.used b{color:var(--violet)} .az.used u{color:var(--violet)}
+  .fe .ic.art{border-radius:4px}
   .sec .goal{font-family:var(--disp); font-size:14px; line-height:1.5}
   .sec p{margin:0; color:var(--ink); line-height:1.62}
   .sec p.q{color:var(--ink2); border-left:2px solid var(--line2); padding-left:8px}
@@ -360,6 +363,17 @@ const P = {
 const AREA_OF = {}; DATA.areas.forEach(a => AREA_OF[a.name] = a);
 const PORTRAIT = DATA.portraits || {};          // Gemini 產的立繪；沒有就退回程式畫的像素立繪
 const SCENES = DATA.scenes || {};               // 場景／關鍵美術；沒有就退回像素城底圖
+const ART_ICONS = DATA.art_icons || {};         // 絕技圖示（按 art id）
+const ART_ICON_BY_NAME = (() => {
+  const m = {};
+  (DATA.cast || []).forEach(c => (c.arts || []).forEach(a => {
+    if (a.id && ART_ICONS[a.id]) m[a.name] = ART_ICONS[a.id];
+  }));
+  return m;
+})();
+function artIconSrc(idOrName) {
+  return ART_ICONS[idOrName] || ART_ICON_BY_NAME[idOrName] || ICONS.art;
+}
 function lightbox(id) {
   if (!PORTRAIT[id]) return;
   const d = document.createElement("div"); d.className = "ptlb";
@@ -741,8 +755,9 @@ F.forEach(fr => fr.events.forEach(e => {
     const body = ln.startsWith(nm)
       ? `<b style="color:${P[e.agent].color}; white-space:nowrap">${esc(nm)}</b>${esc(ln.slice(nm.length))}`
       : esc(ln);
+    const ic = artIconSrc(e.art_id || e.art);
     FEED.push({ t:fr.tick, k:"art",
-      html:`<img class="ic" src="${ICONS.art}" alt="絕技"><span>${body}${e.left>=0?`<span style="color:var(--ink2); font-size:10.5px">　（還剩 ${e.left} 次）</span>`:""}</span>${tm}` });
+      html:`<img class="ic art" src="${ic}" alt="絕技"><span>${body}${e.left>=0?`<span style="color:var(--ink2); font-size:10.5px">　（還剩 ${e.left} 次）</span>`:""}</span>${tm}` });
   }
   else if (e.kind === "note") FEED.push({ t:fr.tick, k:"note",
     html:`<img class="ic" src="${ICONS.world}" alt="只有他知道"><span><b style="color:${P[e.agent]?P[e.agent].color:"var(--ink2)"}">${esc(P[e.agent]?P[e.agent].name:"某人")}</b> 眼前：${esc(e.text.replace(/[（）]/g,""))}<span style="color:var(--ink2)">　（只有他看得見）</span></span>${tm}` });
@@ -831,7 +846,9 @@ function artsSecHTML(id) {
   used.forEach(u => { count[u.art] = (count[u.art] || 0) + 1; });
   const rows = arts.map(a => {
     const n = count[a.name] || 0;
+    const ic = artIconSrc(a.id || a.name);
     return `<div class="az ${n ? "used" : ""}" title="${esc(a.tagline)}">
+      <img class="aic" src="${ic}" alt="">
       <b>${esc(a.name)}</b><span>${esc(a.cost || "不限次數")}</span>
       <u>${n ? `已使 ${n} 次` : "還沒用過"}</u></div>`;
   }).join("");

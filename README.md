@@ -397,11 +397,16 @@ todo.md                  主線待辦與實跑紀錄
 ```
 
 立繪一致性靠：**共用同一段 `STYLE`**（一字不改）＋ 風格錨當參考影像。
-場景圖在 `art/scenes/jianghu/`（關鍵美術＋六個地點），`build_frames.py` 會自動內嵌：
+場景圖在 `art/scenes/jianghu/`（關鍵美術＋九個地點），`build_frames.py` 會自動內嵌：
 片頭用 `keyart`、片尾用 `night`、角色卡「現在在」顯示對應地點圖。
-Demo 落地頁另從 `truman/demo/static/art/` 讀靜態檔。沒圖時退回像素城／像素立繪。
+絕技圖示在 `art/icons/jianghu/`（十五門各一張），角色卡／事件流／工作室／Demo 看板都會用。
+Demo 落地頁另從 `truman/demo/static/art/` 讀靜態檔。沒圖時退回像素城／像素立繪／通用絕技小圖。
 
 畫完重跑 `replay/build_frames.py` 與 `cast/build_editor.py`。
+
+```powershell
+.\.venv\Scripts\python.exe art\embed_icons.py              # 看絕技圖示內嵌後多大
+```
 
 ## 開場之前：人物工作室
 

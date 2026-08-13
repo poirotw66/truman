@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from art.embed_portraits import portrait_map  # noqa: E402
+from art.embed_icons import icon_map  # noqa: E402
 from truman.config import PROVIDERS  # noqa: E402
 from truman.world import arts as arts_mod  # noqa: E402
 from truman.world import goals as goals_mod  # noqa: E402
@@ -120,6 +121,7 @@ def main(scenario: str = "jianghu") -> None:
         "art_kinds": {"combat": "戰鬥", "social": "社交", "info": "情報", "move": "身法"},
         "goal_kinds": sorted(goals_mod.CHECKERS),
         "portraits": portrait_map(scen.NAME),
+        "art_icons": icon_map(scen.NAME),
         # 模型目錄：讓工作室的下拉選單有東西可選，並且能就地估價
         "providers": {
             name: {

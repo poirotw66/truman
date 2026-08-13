@@ -250,6 +250,7 @@ class JobRunner:
                 ],
                 "arts": [
                     {
+                        "id": d.id,
                         "name": d.name,
                         "left": x.uses_left,
                         "used": x.used,

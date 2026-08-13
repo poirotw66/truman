@@ -95,6 +95,9 @@
   .artcard{display:inline-flex; flex-direction:column; gap:3px; text-align:left; width:224px;
     min-height:78px; vertical-align:top; padding:8px 11px; margin:0 6px 6px 0; border-radius:8px;
     cursor:pointer; background:var(--panel2); border:1px solid var(--line2); color:var(--ink); font:inherit}
+  .artcard .row{display:flex; gap:8px; align-items:center}
+  .artcard .aic{width:32px; height:32px; border-radius:7px; object-fit:cover; flex:none;
+    box-shadow:0 1px 4px rgba(0,0,0,.35)}
   .artcard u{margin-top:auto}
   .artcard:hover{border-color:var(--gold)}
   .artcard b{font-size:12.5px; letter-spacing:.04em}
@@ -451,8 +454,9 @@ function artsHTML(a) {
       <div class="artkind">${esc((DATA.art_kinds || {})[kind] || kind)}</div>
       ${list.map(d => {
         const on = equipped.includes(d.id);
+        const ic = (DATA.art_icons || {})[d.id];
         return `<button class="artcard" data-art-id="${esc(d.id)}" aria-pressed="${on}">
-          <b>${esc(d.name)}</b>
+          <div class="row">${ic ? `<img class="aic" src="${ic}" alt="">` : ""}<b>${esc(d.name)}</b></div>
           <i>${esc(d.tagline)}</i>
           <u>${esc(d.cost || "不限次數")}</u>
         </button>`;
