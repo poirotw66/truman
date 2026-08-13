@@ -18,30 +18,52 @@
   html,body{margin:0;min-height:100%}
   body{
     font-family:var(--ui); color:var(--ink);
-    background:
-      radial-gradient(110% 70% at 50% -10%, color-mix(in srgb,var(--gold) 16%,transparent), transparent 55%),
-      radial-gradient(90% 60% at 100% 100%, color-mix(in srgb,var(--cinnabar) 10%,transparent), transparent 50%),
-      var(--bg);
+    background:#0a0907;
     -webkit-font-smoothing:antialiased;
   }
-  .stage{min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    padding:clamp(20px,4vw,48px); gap:28px}
-  .brand{text-align:center; display:flex; flex-direction:column; gap:10px; max-width:36em}
+  .hero{
+    position:relative; min-height:100vh; min-height:100dvh;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:clamp(28px,5vw,56px);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:""; position:absolute; inset:0; z-index:0;
+    background:
+      linear-gradient(180deg, rgba(8,6,4,.28) 0%, rgba(8,6,4,.55) 42%, rgba(8,6,4,.92) 78%, #0a0907 100%),
+      url("art/keyart_hengshan.jpg") center/cover no-repeat;
+    transform:scale(1.04);
+    animation:drift 28s ease-in-out infinite alternate;
+  }
+  .hero::after{
+    content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(70% 55% at 50% 100%, rgba(217,166,60,.14), transparent 60%);
+    animation:glow 6s ease-in-out infinite alternate;
+  }
+  @keyframes drift{from{transform:scale(1.04) translateY(0)} to{transform:scale(1.08) translateY(-1.4%)}}
+  @keyframes glow{from{opacity:.55} to{opacity:1}}
+  .hero .inner{position:relative; z-index:2; width:min(920px,100%); margin:0 auto;
+    display:flex; flex-direction:column; gap:22px}
+  .brand{text-align:left; display:flex; flex-direction:column; gap:12px; max-width:22em}
   .brand .k{font-size:11px; letter-spacing:.42em; color:var(--gold); font-weight:700}
-  .brand h1{margin:0; font-family:var(--disp); font-size:clamp(42px,8vw,72px); font-weight:600; letter-spacing:.08em}
-  .brand p{margin:0; font-size:15px; line-height:1.75; color:var(--ink2)}
+  .brand h1{margin:0; font-family:var(--disp); font-size:clamp(52px,10vw,92px); font-weight:600; letter-spacing:.1em;
+    text-shadow:0 8px 40px rgba(0,0,0,.55); line-height:.95}
+  .brand p{margin:0; font-size:15px; line-height:1.75; color:#d7cbb0; max-width:34em}
 
-  .modes{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; width:min(920px,100%)}
+  .modes{display:flex; gap:12px; flex-wrap:wrap; width:100%}
   .mode{
-    flex:1 1 280px; max-width:420px; text-align:left; cursor:pointer;
-    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 22px 20px;
-    box-shadow:var(--shadow); transition:border-color .15s, transform .12s, background .15s;
+    flex:1 1 240px; max-width:420px; text-align:left; cursor:pointer;
+    background:rgba(24,20,14,.72); border:1px solid var(--line); border-radius:12px; padding:18px 18px 16px;
+    box-shadow:var(--shadow); backdrop-filter:blur(8px);
+    transition:border-color .15s, transform .12s, background .15s;
   }
   .mode:hover{border-color:color-mix(in srgb,var(--gold) 45%,var(--line)); transform:translateY(-2px)}
-  .mode[aria-pressed="true"]{border-color:var(--gold); background:color-mix(in srgb,var(--gold) 10%,var(--panel))}
-  .mode .t{font-family:var(--disp); font-size:22px; font-weight:600; letter-spacing:.04em; margin:0 0 6px}
+  .mode[aria-pressed="true"]{border-color:var(--gold); background:color-mix(in srgb,var(--gold) 14%,rgba(24,20,14,.82))}
+  .mode .t{font-family:var(--disp); font-size:20px; font-weight:600; letter-spacing:.04em; margin:0 0 6px}
   .mode .d{margin:0; font-size:13px; line-height:1.65; color:var(--ink2)}
 
+  .stage{display:flex; flex-direction:column; align-items:center;
+    padding:0 clamp(20px,4vw,48px) clamp(28px,5vw,48px); gap:18px; margin-top:-8px}
   .panel{
     width:min(720px,100%); background:var(--panel); border:1px solid var(--line); border-radius:14px;
     padding:20px 22px; box-shadow:var(--shadow); display:none; flex-direction:column; gap:14px;
@@ -49,6 +71,26 @@
   }
   .panel.on{display:flex}
   @keyframes rise{from{opacity:0; transform:translateY(10px)}}
+
+  .scenes{
+    width:min(920px,100%); display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+    margin:8px auto 0;
+  }
+  .scenes figure{margin:0; position:relative; overflow:hidden; border-radius:10px;
+    border:1px solid var(--line); aspect-ratio:3/2; background:var(--panel2)}
+  .scenes img{width:100%; height:100%; object-fit:cover; display:block;
+    transition:transform .55s ease; filter:saturate(1.05)}
+  .scenes figure:hover img{transform:scale(1.05)}
+  .scenes figcaption{position:absolute; left:0; right:0; bottom:0; padding:18px 10px 8px;
+    font-size:11px; letter-spacing:.18em; color:#f3e8ce;
+    background:linear-gradient(transparent, rgba(8,6,4,.85))}
+  @media (max-width:720px){
+    .scenes{grid-template-columns:repeat(2,1fr)}
+    .brand{max-width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hero::before,.hero::after,.scenes img{animation:none!important; transition:none!important; transform:none!important}
+  }
 
   .panel h2{margin:0; font-family:var(--disp); font-size:20px; font-weight:600}
   .hint{margin:0; font-size:12.5px; color:var(--ink2); line-height:1.55}
@@ -136,29 +178,30 @@
 
   .foot{font-size:11px; color:var(--ink2); text-align:center; line-height:1.7}
   :focus-visible{outline:2px solid var(--gold); outline-offset:2px; border-radius:6px}
-  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 </style>
 </head>
 <body>
-  <div class="stage">
-    <header class="brand">
-      <span class="k">LLM MULTI-AGENT SANDBOX</span>
-      <h1>TRUMAN</h1>
-      <p>箱庭：把目標互相排斥的 AI 放進世界，看社交與動手會不會自己長出來。<br>
-         現役劇本是江湖 · 劉正風金盆洗手那一天——知識對稱、可拔刀、沒有預寫結局。</p>
-    </header>
-
-    <div class="modes" role="group" aria-label="模式">
-      <button type="button" class="mode" id="pickReplay" aria-pressed="false">
-        <div class="t">回放既有軌跡</div>
-        <p class="d">選一場（或接力多場）已跑完的 run，打開完整地圖回放。零 API、結局可預期，適合上台。</p>
-      </button>
-      <button type="button" class="mode" id="pickLive" aria-pressed="false">
-        <div class="t">現場開一場</div>
-        <p class="d">現在就跑箱庭。預設真 LLM、全日 96 ticks；要測管線可勾 stub（內容會鬼打牆）。</p>
-      </button>
+  <section class="hero" aria-label="開場">
+    <div class="inner">
+      <header class="brand">
+        <span class="k">LLM MULTI-AGENT SANDBOX</span>
+        <h1>TRUMAN</h1>
+        <p>箱庭：把目標互相排斥的 AI 放進世界，看社交與動手會不會自己長出來。</p>
+      </header>
+      <div class="modes" role="group" aria-label="模式">
+        <button type="button" class="mode" id="pickReplay" aria-pressed="false">
+          <div class="t">回放既有軌跡</div>
+          <p class="d">選一場已跑完的 run，打開完整地圖回放。零 API，適合上台。</p>
+        </button>
+        <button type="button" class="mode" id="pickLive" aria-pressed="false">
+          <div class="t">現場開一場</div>
+          <p class="d">現在就跑箱庭。預設真 LLM、全日 96 ticks。</p>
+        </button>
+      </div>
     </div>
+  </section>
 
+  <div class="stage">
     <section class="panel" id="panelReplay" aria-label="回放">
       <h2>選擇 run</h2>
       <p class="hint">可多選接力（例如 j2 → j2b → j2c）。清單由上到下依序串接；切點由各 run 的 fork 事件推算。</p>
@@ -220,8 +263,17 @@
       </div>
     </section>
 
-    <p class="foot">本機箱庭入口 · <code>python -m truman.demo</code><br>
-      主線不是「誰先懷疑世界是假的」，而是結構性衝突下的社交／殺戮動力學。</p>
+    <div class="scenes" aria-label="衡山城場景">
+      <figure><img src="art/scene_liufu.jpg" alt="劉府廳堂"/><figcaption>劉府</figcaption></figure>
+      <figure><img src="art/scene_market.jpg" alt="市集"/><figcaption>市集</figcaption></figure>
+      <figure><img src="art/scene_plaza.jpg" alt="演武場"/><figcaption>演武場</figcaption></figure>
+      <figure><img src="art/scene_tavern.jpg" alt="迴雁樓"/><figcaption>迴雁樓</figcaption></figure>
+      <figure><img src="art/scene_gate.jpg" alt="城門"/><figcaption>城門</figcaption></figure>
+      <figure><img src="art/scene_shrine.jpg" alt="荒祠"/><figcaption>荒祠</figcaption></figure>
+    </div>
+
+    <p class="foot">現役劇本：江湖 · 劉正風金盆洗手那一天——知識對稱、可拔刀、沒有預寫結局。<br>
+      本機入口 · <code>python -m truman.demo</code></p>
   </div>
 
 <script>
@@ -245,6 +297,8 @@ function show(mode) {
   panelReplay.classList.toggle("on", replay);
   panelLive.classList.toggle("on", !replay);
   if (replay) loadRuns();
+  const panel = replay ? panelReplay : panelLive;
+  requestAnimationFrame(() => panel.scrollIntoView({ behavior: "smooth", block: "start" }));
 }
 
 pickReplay.onclick = () => show("replay");

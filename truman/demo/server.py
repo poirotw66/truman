@@ -163,9 +163,16 @@ class DemoHandler(BaseHTTPRequestHandler):
         rel = path.lstrip("/")
         candidate = (STATIC / rel).resolve()
         if candidate.is_file() and str(candidate).startswith(str(STATIC.resolve())):
-            ctype = "text/css" if candidate.suffix == ".css" else "application/javascript"
-            if candidate.suffix == ".html":
-                ctype = "text/html; charset=utf-8"
+            ctype = {
+                ".css": "text/css",
+                ".js": "application/javascript",
+                ".html": "text/html; charset=utf-8",
+                ".jpg": "image/jpeg",
+                ".jpeg": "image/jpeg",
+                ".png": "image/png",
+                ".webp": "image/webp",
+                ".svg": "image/svg+xml",
+            }.get(candidate.suffix.lower(), "application/octet-stream")
             self._serve_file(candidate, ctype)
             return
         self._json(404, {"error": "not found"})
