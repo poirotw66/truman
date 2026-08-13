@@ -382,21 +382,26 @@ scenarios/
   seahaven.py            早期楚門劇本
 tests/smoke.py           離線煙霧測試
 web/pixelart.js          共用像素美術
-art/…                    立繪產生與內嵌
+art/…                    立繪／場景圖產生與內嵌
 cast/build_editor.py     人物工作室
 replay/build_frames.py   事件日誌 → 回放 HTML
 todo.md                  主線待辦與實跑紀錄
 ```
 
-## 人物立繪
+## 人物立繪與場景美術
 
 ```powershell
 .\.venv\Scripts\python.exe art\gen_portraits.py            # 已存在的跳過
 .\.venv\Scripts\python.exe art\gen_portraits.py --force    # 全部重畫
+.\.venv\Scripts\python.exe art\embed_scenes.py             # 看場景圖內嵌後多大
 ```
 
-一致性靠：**共用同一段 `STYLE`**（一字不改）＋ 風格錨當參考影像。畫完重跑
-`replay/build_frames.py` 與 `cast/build_editor.py`。沒立繪時退回像素立繪。
+立繪一致性靠：**共用同一段 `STYLE`**（一字不改）＋ 風格錨當參考影像。
+場景圖在 `art/scenes/jianghu/`（關鍵美術＋六個地點），`build_frames.py` 會自動內嵌：
+片頭用 `keyart`、片尾用 `night`、角色卡「現在在」顯示對應地點圖。
+Demo 落地頁另從 `truman/demo/static/art/` 讀靜態檔。沒圖時退回像素城／像素立繪。
+
+畫完重跑 `replay/build_frames.py` 與 `cast/build_editor.py`。
 
 ## 開場之前：人物工作室
 

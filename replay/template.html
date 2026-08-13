@@ -126,6 +126,8 @@
     box-shadow:0 3px 10px rgba(0,0,0,.5); transition:filter .3s}
   .sheet canvas.bust{image-rendering:pixelated}
   .sheet img.bust{cursor:zoom-in}
+  .sheet .vignette{width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:8px; display:block;
+    margin-top:6px; border:1px solid var(--line)}
   .ptlb{position:fixed; inset:0; z-index:80; background:rgba(6,4,3,.92); display:flex; align-items:center;
     justify-content:center; padding:24px; cursor:zoom-out; animation:fade .25s ease}
   .ptlb img{max-width:min(560px,92vw); max-height:88vh; border-radius:10px; box-shadow:0 18px 60px rgba(0,0,0,.7)}
@@ -357,6 +359,7 @@ const P = {
 };
 const AREA_OF = {}; DATA.areas.forEach(a => AREA_OF[a.name] = a);
 const PORTRAIT = DATA.portraits || {};          // Gemini 產的立繪；沒有就退回程式畫的像素立繪
+const SCENES = DATA.scenes || {};               // 場景／關鍵美術；沒有就退回像素城底圖
 function lightbox(id) {
   if (!PORTRAIT[id]) return;
   const d = document.createElement("div"); d.className = "ptlb";
@@ -864,7 +867,9 @@ function openSheet(id) {
       <div class="sec"><span class="lb">說過的話</span><div class="said" data-n="${said.length}">${said.length?said.map(s=>
         `<div data-t="${s.t}"><em>${clockOf(s.t).str}${s.to&&P[s.to]?" → "+esc(P[s.to].name):""}</em><br>${esc(s.text)}</div>`).join(""):`<span style="color:var(--ink2);font-size:12px">還沒開過口。</span>`}</div></div>
       <div class="sec"><span class="lb">關係（到此刻為止）</span><div class="rel">${[...kin,...foe,...spoke].join("")||`<span>還沒和誰打過交道</span>`}</div></div>
-      <div class="sec"><span class="lb">現在在</span><p class="areaTxt" style="color:var(--ink2)">${esc(fr.area||"長街")}${AREA_OF[fr.area]?"　"+esc(AREA_OF[fr.area].desc):""}</p></div>
+      <div class="sec"><span class="lb">現在在</span>
+        <p class="areaTxt" style="color:var(--ink2)">${esc(fr.area||"長街")}${AREA_OF[fr.area]?"　"+esc(AREA_OF[fr.area].desc):""}</p>
+        ${SCENES[fr.area] ? `<img class="vignette" data-area="${esc(fr.area)}" src="${SCENES[fr.area]}" alt="">` : ""}</div>
     </div></div>`;
   const face = document.getElementById("sheetFace");
   if (face.tagName === "CANVAS") drawBust(face.getContext("2d"), 120, p, { wound:fr.wound, dead:!fr.alive });
@@ -904,6 +909,17 @@ function refreshSheet() {
   }
   const ar = host.querySelector(".areaTxt");
   if (ar) ar.textContent = (fr.area || "長街") + (AREA_OF[fr.area] ? "　" + AREA_OF[fr.area].desc : "");
+  let vg = host.querySelector(".vignette");
+  const sceneUrl = SCENES[fr.area];
+  if (sceneUrl) {
+    if (!vg) {
+      vg = document.createElement("img"); vg.className = "vignette"; vg.alt = "";
+      ar && ar.parentElement && ar.parentElement.appendChild(vg);
+    }
+    if (vg.dataset.area !== fr.area) { vg.dataset.area = fr.area || ""; vg.src = sceneUrl; }
+  } else if (vg) {
+    vg.remove();
+  }
   // 目的與絕技也跟著時間走。整段換掉沒關係——這兩格沒有立繪，重畫很便宜；
   // 但仍然只在真的變了才換，否則播放中每秒好幾次的重建會把捲動位置洗掉。
   const swap = (sel, n, html) => {
@@ -1108,16 +1124,23 @@ document.getElementById("legend").innerHTML =
   + `<span><img class="ic" src="${ICONS.attack}" alt="">動手</span><span><img class="ic" src="${ICONS.death}" alt="">命殞</span><span style="margin-left:auto">空白鍵播放／暫停　←→ 逐刻　點人看他是誰</span>`;
 
 /* ============================ 片頭 / 片尾 ============================ */
-let CITY_URL = null;                                  // 片頭片尾拿整座城當底圖
+let CITY_URL = null;                                  // 沒有場景圖時，退回整座像素城
 function cityBackdrop(tintTop, tintBottom) {
   if (CITY_URL === null) { try { CITY_URL = world.toDataURL(); } catch (e) { CITY_URL = ""; } }
   return CITY_URL ? `linear-gradient(${tintTop}, ${tintBottom}), url(${CITY_URL})` : "";
 }
-function overlay(html, tint) {
+function overlay(html, tint, sceneKey) {
   const d = document.createElement("div"); d.className = "over"; d.innerHTML = `<div class="in">${html}</div>`;
-  const bg = cityBackdrop(tint ? tint[0] : "rgba(9,7,5,.80)", tint ? tint[1] : "rgba(9,7,5,.93)");
-  if (bg) { d.style.backgroundImage = bg; d.style.backgroundSize = "cover";
-    d.style.backgroundPosition = "center"; d.style.imageRendering = "pixelated"; }
+  const top = tint ? tint[0] : "rgba(9,7,5,.80)", bot = tint ? tint[1] : "rgba(9,7,5,.93)";
+  const art = sceneKey && SCENES[sceneKey];
+  if (art) {
+    d.style.backgroundImage = `linear-gradient(${top}, ${bot}), url(${art})`;
+    d.style.backgroundSize = "cover"; d.style.backgroundPosition = "center";
+  } else {
+    const bg = cityBackdrop(top, bot);
+    if (bg) { d.style.backgroundImage = bg; d.style.backgroundSize = "cover";
+      d.style.backgroundPosition = "center"; d.style.imageRendering = "pixelated"; }
+  }
   document.body.appendChild(d); return d;
 }
 function showIntro() {
@@ -1134,7 +1157,8 @@ function showIntro() {
       以下是那一天的完整實錄，一刻十分鐘，共 ${MAXT} 刻。</p>
     <div class="cast">${cards}</div>
     <div class="btns"><button class="big" id="go">▶ 進　城</button>
-      <button class="big ghost" id="skip">直接看結局</button></div>`);
+      <button class="big ghost" id="skip">直接看結局</button></div>`,
+    null, "keyart");
   d.querySelectorAll(".cc canvas").forEach(c => drawBust(c.getContext("2d"), 90, P[c.dataset.id]));
   d.querySelector("#go").onclick = () => { d.remove(); started = true; enterTick(0, false); renderFeed(true); setPlay(true); };
   d.querySelector("#skip").onclick = () => { d.remove(); started = true; enterTick(MAXT, false); renderFeed(true); showOutro(); };
@@ -1181,7 +1205,7 @@ function showOutro() {
     </div>
     <div class="btns"><button class="big" id="again">↻ 再看一次</button>
       <button class="big ghost" id="stay">留在最後一刻</button></div>`,
-    ["rgba(28,8,6,.86)", "rgba(9,7,5,.96)"]);
+    ["rgba(28,8,6,.86)", "rgba(9,7,5,.96)"], "night");
   d.querySelector("#again").onclick = () => { d.remove(); enterTick(0, false); renderFeed(true); setPlay(true); };
   d.querySelector("#stay").onclick = () => d.remove();
 }
