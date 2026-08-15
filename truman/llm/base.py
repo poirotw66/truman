@@ -154,7 +154,11 @@ class BaseLLMClient:
                     "model": model,
                     "approx_prefix_tokens": approx,
                     "min_cacheable": floor,
-                    "note": "前綴低於門檻，快取會靜默失效（不會多收錢，只是沒有效益）。",
+                    "note": (
+                        "前綴低於文件記載的快取門檻。"
+                        "Gemini 有時仍會回報 cached tokens——以實際 usage 的 "
+                        "cache_read 為準；若一路是 0，才代表完全沒吃到快取。"
+                    ),
                 },
             )
 

@@ -466,7 +466,22 @@ TRACK_TOPICS = ["金盆", "洗手", "魔教", "日月神教", "曲洋", "琴", "
 
 
 def build_grid() -> Grid:
-    return Grid(GRID_ROWS, LEGEND, AREAS, street="長街")
+    return Grid(
+        GRID_ROWS, LEGEND, AREAS, street="長街",
+        aliases={
+            "城外": "荒祠",
+            "城外荒祠": "荒祠",
+            "荒野": "荒祠",
+            "野外": "荒祠",
+            "郊外": "荒祠",
+            "東門": "城門",
+            "城門口": "城門",
+            "城門洞": "城門",
+            "劉家": "劉府",
+            "劉府大廳": "劉府",
+            "大廳": "劉府",
+        },
+    )
 
 
 def build_world(run_id: str, seed: int) -> WorldState:

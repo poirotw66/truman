@@ -82,7 +82,8 @@ def action_schema(combat: bool = False, arts: bool = False) -> dict:
     if arts:
         who.append("use_art（有些絕技要指定對象）")
     act["target_agent"]["description"] = (
-        f"kind={' 或 '.join(who)} 時填對象的名字；對全場說話或其餘情況填空字串。"
+        f"kind={' 或 '.join(who)} 時填對象的名字（絕技若需要對象，名字不能空）；"
+        "對全場說話、或不需要對象時填空字串。"
     )
     if arts:
         act["utterance"]["description"] = (

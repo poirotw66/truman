@@ -78,27 +78,58 @@ class GeminiClient(BaseLLMClient):
         # 世界在前、人設在後——隱式快取靠的就是這個順序穩定。
         system_instruction = "\n\n".join(c.system_blocks)
 
-        try:
-            resp = await self._client.aio.interactions.create(
-                model=model,
-                system_instruction=system_instruction,
-                input=c.user_message,
-                store=False,
-                generation_config=self._gen_config(c, model),
-                response_format=text_json_format(c.schema),
-            )
-        except Exception as e:  # noqa: BLE001
-            msg = str(e).lower()
-            if "thinking budget" in msg or "thinking level" in msg:
-                raise ValueError(
-                    f"{model} 不接受 thinking_level="
-                    f"{(c.thinking or self._thinking(c.tier))!r}。"
-                    f"請改用這個模型支援的等級（例如 3.1-flash-lite 用 low/high；"
-                    f"2.5-flash-lite 可能需要 high）。"
-                    f"原始錯誤：{e}"
-                ) from e
-            raise
-        return (*_parse(resp), _usage(resp))
+        async def once(call: Call):
+            try:
+                resp = await self._client.aio.interactions.create(
+                    model=model,
+                    system_instruction=system_instruction,
+                    input=call.user_message,
+                    store=False,
+                    generation_config=self._gen_config(call, model),
+                    response_format=text_json_format(call.schema),
+                )
+            except Exception as e:  # noqa: BLE001
+                msg = str(e).lower()
+                if "thinking budget" in msg or "thinking level" in msg:
+                    raise ValueError(
+                        f"{model} 不接受 thinking_level="
+                        f"{(call.thinking or self._thinking(call.tier))!r}。"
+                        f"請改用這個模型支援的等級（例如 3.1-flash-lite 用 low/high；"
+                        f"2.5-flash-lite 用 minimal/low/high，不要用 medium）。"
+                        f"原始錯誤：{e}"
+                    ) from e
+                # 安全過濾擋下的 prompt：重試同一份通常沒用，標清楚讓上層略過。
+                if "blocked" in msg or "sensitive" in msg:
+                    raise ValueError(
+                        f"輸入被安全過濾擋下（{type(e).__name__}）。"
+                        f"這次 reflection／決策略過，不重試同一份內容。原始錯誤：{e}"
+                    ) from e
+                raise
+            return resp
+
+        resp = await once(c)
+        parsed, err = _parse(resp)
+        usage = _usage(resp)
+        # thinking 吃掉 max_output_tokens 時 JSON 會切半——加額度再試一次。
+        if err and "輸出被截斷" in err and c.max_tokens < 8000:
+            from dataclasses import replace
+
+            bumped = replace(c, max_tokens=min(8000, c.max_tokens * 2))
+            self.log.write("llm_retry", {
+                "key": c.key, "model": model, "attempt": 1, "of": 2,
+                "wait_s": 0, "reason": "truncated_output",
+                "error": err[:200],
+            })
+            resp2 = await once(bumped)
+            parsed2, err2 = _parse(resp2)
+            usage2 = _usage(resp2)
+            # 合併兩次用量，成功與否都算錢。
+            for k in ("inp", "out", "c_write", "c_read"):
+                usage[k] = usage.get(k, 0) + usage2.get(k, 0)
+            if parsed2 is not None:
+                return parsed2, None, usage
+            return None, err2 or err, usage
+        return parsed, err, usage
 
 
 def text_json_format(schema: dict) -> dict:
