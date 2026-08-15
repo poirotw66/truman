@@ -64,11 +64,14 @@ PROVIDERS = {
         },
     },
     "gemini": {
-        # 全層統一 gemini-3.1-flash-lite：格式穩定性比 2.5-flash-lite 好，適合當預設。
-        # 代價是快取門檻 4096，我們常見前綴（~2200）跨不過，成本會高一些。
-        # 若要省錢，可單層或全層覆寫回 2.5 系列；若要更強推理，覆寫 reflect 即可。
+        # routine 用 2.5-flash-lite 省錢並跨過 2048 快取門檻；
+        # dialogue／reflect／judge 留 3.1-flash-lite 顧格式穩定度。
+        # 若要全層更省，可 `--model gemini-2.5-flash-lite`（注意 thinking_level 子集）。
+        # 若要更強推理，覆寫 reflect 即可。
         "models": {
-            "routine": "gemini-3.1-flash-lite",
+            # routine 佔呼叫大宗：2.5-flash-lite 門檻 2048、輸入價更低，前綴跨得過。
+            # dialogue／reflect 留 3.1，格式穩定性比較好（當初換 3.1 就是為了這個）。
+            "routine": "gemini-2.5-flash-lite",
             "dialogue": "gemini-3.1-flash-lite",
             "reflect": "gemini-3.1-flash-lite",
             "judge": "gemini-3.1-flash-lite",
@@ -106,7 +109,7 @@ DEFAULT_PROVIDER = "gemini"
 #
 # Sonnet 划算的條件是 O·10 < P·0.7 − V·2，V=400 / O=200 時約為 P > 4000。
 # 但 P 一旦到 4096，Haiku 自己也開始快取，所以 Haiku 一路領先。
-# Gemini 預設用 3.1-flash-lite：較穩，但門檻 4096，前綴常進不了快取。
+# Gemini：routine 用 2.5-flash-lite 跨快取門檻；其餘層留 3.1 顧穩定性。
 
 
 def provider_models(provider: str) -> dict:
@@ -140,13 +143,14 @@ class SimConfig:
     # 預設關閉，而且是徹底關閉：attack 不進 schema 的 enum、動手的規則不進世界區塊。
     # 讓和平劇本的 agent 知道「可以動手」，本身就會改變它們。
     combat: bool = False
-    reach: int = 2  # 出手打得到的距離
+    reach: int = 3  # 出手打得到的距離（2 太緊，模型常卡在「還差一步」空揮）
 
     # --- 認知節流（成本的最大槓桿）---
     forced_think_interval: int = 6  # 就算無事發生，每 N tick 也強制思考一次
     # act 一次的輸出上限。Gemini 的 thinking token 吃同一份額度，900 會讓長台詞
     # 的 JSON 斷在字串中間（g5：208 次呼叫掉 3 次，1.4%，全是這個原因）。
-    max_output_tokens: int = 1600
+    # Gemini thinking tokens 也吃這個額度；1600 會把 act／reply 的 JSON 切半。
+    max_output_tokens: int = 3200
 
     # --- 記憶 ---
     retrieval_k: int = 8  # 每次思考檢索幾條 episodic memory

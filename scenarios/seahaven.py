@@ -281,7 +281,18 @@ DIRECTOR_SCRIPT = [
 
 # ---------------------------------------------------------------- 建構
 def build_grid() -> Grid:
-    return Grid(GRID_ROWS, LEGEND, AREAS)
+    return Grid(
+        GRID_ROWS, LEGEND, AREAS,
+        aliases={
+            "海邊": "海堤",
+            "海岸": "海堤",
+            "堤防": "海堤",
+            "咖啡店": "咖啡館",
+            "咖啡屋": "咖啡館",
+            "圖書館樓": "圖書館",
+            "報紙攤": "報攤",
+        },
+    )
 
 
 def build_world(run_id: str, seed: int) -> WorldState:

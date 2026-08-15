@@ -152,6 +152,12 @@ def main() -> int:
         failures += not check("陳家 → 報攤 有路", len(p) > 0, f"{len(p)} 步")
         failures += not check("區域名容錯解析", grid.resolve_area("咖啡") == "咖啡館")
         failures += not check("不存在的地點回 None", grid.resolve_area("火星基地") is None)
+        failures += not check("海晏鎮別名", grid.resolve_area("海邊") == "海堤")
+        from scenarios import jianghu as jianghu_map  # noqa: PLC0415
+        jg = jianghu_map.build_grid()
+        failures += not check("衡山別名 城外→荒祠", jg.resolve_area("城外") == "荒祠")
+        failures += not check("衡山別名 荒野→荒祠", jg.resolve_area("荒野") == "荒祠")
+        failures += not check("衡山別名 東門→城門", jg.resolve_area("東門") == "城門")
 
         # ---- prompt 區塊穩定性（快取的前提）----
         print("\nprompt 快取前綴")
@@ -230,6 +236,12 @@ def main() -> int:
             failures += not check(f"{peace.NAME} 不含武林設定",
                                   not any(x in pw for x in
                                           ("大嵩陽手", "五嶽劍派", "江湖上有名的功夫")))
+        hw = hakoniwa_mod.build_world("hk_goals", 7)
+        failures += not check(
+            "hakoniwa 每人都有目的",
+            all(a.goals for a in hw.agents.values()),
+            str({a.name: len(a.goals) for a in hw.agents.values()}),
+        )
 
         # ---- tick 迴圈 ----
         print("\ntick 迴圈")
@@ -534,6 +546,44 @@ def main() -> int:
         failures += not check("連殺堆成重傷玻璃刀", fei_s.wound == 2, fei_s.wound_word)
         failures += not check("殺人代價不會自殺下手者", fei_s.alive, fei_s.wound_word)
 
+        # 空對象 scout、出手距離、attackable 標註
+        w_scout = jianghu.build_world("scout_empty", 7)
+        qu_s = w_scout.agents["qu_yang"]
+        eng_s = war_engine(w_scout)
+        eng_s._apply_intent(qu_s, {"kind": "use_art", "art": "江湖耳目", "target_agent": ""})
+        failures += not check("scout 空對象被擋下",
+                              "名字" in (qu_s.last_rejection or ""),
+                              qu_s.last_rejection)
+
+        w_reach = jianghu.build_world("reach3", 7)
+        fei_r, tb_r = w_reach.agents["fei_bin"], w_reach.agents["tian_boguang"]
+        tb_r.pos = Pos(fei_r.pos.x + 3, fei_r.pos.y)  # 剛好三步，新 reach=3 打得到
+        war_engine(w_reach)._apply_intent(fei_r, {"kind": "attack", "target_agent": "田伯光"})
+        failures += not check(
+            "三步出手不被距離駁回",
+            "打不到" not in (fei_r.last_rejection or ""),
+            fei_r.last_rejection,
+        )
+        # 舊 reach=2 時距離 3 直接駁回、連骰子都不進；現在應進入勝負判定（中不中另說）。
+        failures += not check(
+            "三步出手進入勝負判定",
+            fei_r.last_rejection == "" or "打不到" not in fei_r.last_rejection,
+            fei_r.last_rejection,
+        )
+
+        wo_atk = jianghu.build_world("obs_atk", 7)
+        wo_atk.tick = 5
+        who_a = wo_atk.agents["fei_bin"]
+        near = wo_atk.agents["yi_lin"]
+        near.pos = Pos(who_a.pos.x + 1, who_a.pos.y)
+        far = wo_atk.agents["tian_boguang"]
+        far.pos = Pos(who_a.pos.x + 4, who_a.pos.y)
+        txt_atk = build_observations(
+            wo_atk, jianghu.build_grid(), [], {}, SimConfig(combat=True)
+        )[who_a.id].render()
+        failures += not check("combat 眼前標打得到誰",
+                              "出手打得到" in txt_atk and "儀琳" in txt_atk)
+
         print("\n背水一戰")
         # 重傷的令狐沖(6)硬拚沒受傷的費彬(8)，要有實質勝算——不再是必敗清場。
         # 舊公式下重傷 -4 讓弱者出手幾乎穩輸；背水一戰把傷勢對「攻擊」的拖累抵掉。
@@ -596,10 +646,26 @@ def main() -> int:
         failures += not check("噩耗下一拍注入不在場的知音",
                               len(queued) == 1 and "劉正風" in queued[0]["text"],
                               f"{len(queued)} 則")
+        failures += not check("噩耗同時寫進親友記憶（fork 才丟不掉）",
+                              any("劉正風" in m.content and "費彬" in m.content
+                                  for m in qu.memory.entries),
+                              str([m.content for m in qu.memory.entries[-3:]]))
         w.tick = 11
         inj = director.apply(w, jianghu.build_grid())
         failures += not check("尋仇注入送達知音的眼前",
                               any("劉正風" in x for x in inj.get("qu_yang", [])))
+
+        # 沒有導演層時仍寫記憶——離線測試／缺 director 不該讓尋仇線索蒸發。
+        w0 = jianghu.build_world("rev_mem", 7)
+        w0.tick = 10
+        fei0, liu0, qu0 = w0.agents["fei_bin"], w0.agents["liu_zhengfeng"], w0.agents["qu_yang"]
+        fei0.fury = 6
+        liu0.wound = 2
+        fei0.pos = Pos(liu0.pos.x + 1, liu0.pos.y)
+        qu0.pos = Pos(12, 14)
+        war_engine(w0)._apply_intent(fei0, {"kind": "attack", "target_agent": "劉正風"})
+        failures += not check("無導演時噩耗仍進親友記憶",
+                              any("劉正風" in m.content for m in qu0.memory.entries))
 
         # 沒有親友的人被殺，不會憑空冒出尋仇者——尋仇要有交情作根據。
         w2 = jianghu.build_world("norev", 7)

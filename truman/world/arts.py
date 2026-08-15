@@ -82,7 +82,8 @@ CATALOG: dict[str, ArtDef] = {
         kind="combat",
         tagline="嵩山派的剛猛掌法，一掌下去對方多半接不住。",
         when="你已經決定要動手，而且想一擊見效的時候。先運起這門功夫，"
-        "接下來幾刻你出手都會重得多。單用它不會傷到人，你還是得真的出手。",
+        "接下來幾刻你出手都會重得多。單用它不會傷到人，你還是得真的出手。"
+        "對手武功不弱、或你想速戰速決時，先使這門再 attack。",
         effect="atk_up",
         params={"amount": 3, "ticks": 3},
         uses=3,
@@ -95,7 +96,7 @@ CATALOG: dict[str, ArtDef] = {
         kind="combat",
         tagline="出刀比別人快半拍，江湖上十幾年沒人接得住。",
         when="要動手，而且對方武功不弱的時候。快的那半拍就是勝負。"
-        "單用它不會傷到人，你還是得真的出手。",
+        "單用它不會傷到人，你還是得真的出手。先使這門再 attack。",
         effect="atk_up",
         params={"amount": 3, "ticks": 3},
         uses=3,
@@ -247,7 +248,8 @@ CATALOG: dict[str, ArtDef] = {
         kind="info",
         tagline="找街上的人問幾句，就知道某個人現在在哪。",
         when="你要找的人不在眼前，而你不想瞎走的時候。"
-        "問到的是他此刻在哪個地方，不是他在做什麼。",
+        "問到的是他此刻在哪個地方，不是他在做什麼。"
+        "一定要在 target_agent 填他的名字；名字空著一定使不出來。",
         effect="scout",
         params={},
         uses=4,
@@ -259,7 +261,8 @@ CATALOG: dict[str, ArtDef] = {
         name="江湖耳目",
         kind="info",
         tagline="道上有人替你看著，誰進了城、誰往哪去，你比別人早知道。",
-        when="你想避開某個人，或者想知道某個人有沒有跟上來的時候。",
+        when="你想避開某個人，或者想知道某個人有沒有跟上來的時候。"
+        "一定要在 target_agent 填他的名字；名字空著一定使不出來。",
         effect="scout",
         params={},
         uses=4,

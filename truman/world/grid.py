@@ -52,7 +52,8 @@ class Grid:
     STREET = "街道"
 
     def __init__(self, rows: list[str], legend: dict[str, tuple[str, bool]],
-                 areas: list[Area], street: str | None = None):
+                 areas: list[Area], street: str | None = None,
+                 aliases: dict[str, str] | None = None):
         # 區域之外的空地叫什麼，跟著劇本走：海晏鎮是「街道」，衡山城是「長街」。
         self.street = street or self.STREET
         self.rows = rows
@@ -63,6 +64,8 @@ class Grid:
             if len(r) != self.w:
                 raise ValueError(f"地圖第 {i} 列寬度 {len(r)} != {self.w}")
         self.areas = {a.name: a for a in areas}
+        # LLM 常發明「城外／荒野」這類地圖上沒有的名字；劇本用別名指回真區域。
+        self.aliases = dict(aliases or {})
 
     # ------------------------------------------------------------ 地形
     def in_bounds(self, p: Pos) -> bool:
@@ -96,6 +99,11 @@ class Grid:
             return raw
         if raw == self.street:
             return self.street
+        if raw in self.aliases:
+            return self.aliases[raw]
+        for alias, canon in self.aliases.items():
+            if alias in raw or raw in alias:
+                return canon
         for name in self.areas:
             if name in raw or raw in name:
                 return name

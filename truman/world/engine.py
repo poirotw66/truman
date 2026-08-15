@@ -507,6 +507,10 @@ class Engine:
         target = None
         if d.target == arts_mod.TARGET_AGENT:
             name = (act.get("target_agent") or "").strip()
+            if not name:
+                return reject(
+                    f"使{d.name}得說出對象是誰——`target_agent` 填對方的名字，不能空著。"
+                )
             for oid, o in w.agents.items():
                 if o.name == name or oid == name:
                     target = o
@@ -692,18 +696,15 @@ class Engine:
             self.console.print(f"[{colour}]◆ {a.name}：{rec['text']}／{rec['note']}[/{colour}]")
 
     def _notify_kin(self, dead, killer, t: int) -> None:
-        """把噩耗＋尋仇的念頭塞進死者親友的眼前。
+        """把噩耗＋尋仇的念頭塞進死者親友。
 
-        用導演的 runtime inject 在**下一拍**送達：obs.injected 會觸發 needs_llm，
-        逼親友當場面對「要不要討公道」。就算人在城的另一頭，消息也傳得到——
-        這正是導演層「只有某些人觀察得到的事實」該做的事，也讓死亡有了社會後果，
-        而不是費彬連殺五人卻沒有一個人來討。
+        兩條路並行：
+          1. 高 importance 記憶——跟著 WorldState／checkpoint，fork 不會丟。
+          2. 導演 runtime inject（下一拍）——obs.injected 觸發 needs_llm，
+             逼親友當場面對「要不要討公道」。
 
-        親眼看見的人不重複報信：他們的義憤和記憶已經夠了，「有人急奔來報」這種
-        框架只對不在場的親友成立。
+        親眼看見的人不重複報信：他們的義憤和記憶已經夠了。
         """
-        if self.director is None:  # 離線測試沒有導演層
-            return
         when = clock_str(t)
         for other in self.world.agents.values():
             if dead.id not in other.kin or not other.alive or other is killer:
@@ -714,7 +715,11 @@ class Engine:
                 f"（有人急奔來報：{dead.name}死了，是{killer.name}下的手。"
                 f"你和他的交情，你自己心裡有數。江湖上沒有白死的人。）"
             )
-            self.director.add_runtime(other.id, text, t + 1, tag="revenge")
+            # 記憶一定寫下：runtime inject 不進 checkpoint，fork 會漏待發尋仇；
+            # 高 importance 記憶跟著 WorldState 走，接力／重放都還在。
+            other.memory.add(t, when, "observation", text, importance=10)
+            if self.director is not None:
+                self.director.add_runtime(other.id, text, t + 1, tag="revenge")
             self.log.write(
                 "revenge_seed",
                 {"mourner": other.id, "dead": dead.id, "killer": killer.id, "when": when},

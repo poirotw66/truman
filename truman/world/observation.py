@@ -65,6 +65,17 @@ class Observation:
                 lines.append(f"其中聽得見你說話的只有：{'、'.join(in_earshot)}。")
             else:
                 lines.append("他們都離你太遠，你現在說什麼都沒有人聽得見。")
+            # combat 劇本才標打得到誰——和平劇本連這個字都不該出現。
+            if any("attackable" in v for v in self.visible):
+                in_strike = [
+                    v["name"]
+                    for v in self.visible
+                    if v.get("attackable") and v.get("alive", True)
+                ]
+                if in_strike:
+                    lines.append(f"其中你現在出手打得到的只有：{'、'.join(in_strike)}。")
+                else:
+                    lines.append("他們都離你太遠，你這會兒出手打不到任何人。")
         else:
             lines.append("附近沒有其他人。")
 
@@ -203,6 +214,8 @@ def build_observations(
                         "alive": other.alive,
                     }
                 )
+                if getattr(cfg, "combat", False):
+                    visible[-1]["attackable"] = dist <= cfg.reach
 
         heard = []
         for ev in speech_events:

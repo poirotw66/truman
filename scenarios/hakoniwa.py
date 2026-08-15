@@ -18,7 +18,7 @@
 from __future__ import annotations
 
 from truman.world.grid import Pos
-from truman.world.state import AgentState, WorldState
+from truman.world.state import AgentState, Goal, WorldState
 
 from .seahaven import AREAS, GRID_ROWS, LEGEND, build_grid  # 同一座鎮，同一張地圖
 
@@ -91,6 +91,10 @@ AGENTS = [
         "role": "villager",
         "home_area": "咖啡館",
         "start": (15, 2),
+        "goals": [
+            {"kind": "meet", "text": "當面邀到陳原來小聚", "params": {"who": "chen_yuan"}},
+            {"kind": "meet", "text": "當面邀到王浩來小聚", "params": {"who": "wang_hao"}},
+        ],
         "persona": """\
 你叫梅姨，五十多歲，海晏鎮咖啡館的老闆，開了二十幾年。
 你話多、記性好，每個常客的口味你都清楚，誰上禮拜說過什麼你也記得。
@@ -107,6 +111,10 @@ AGENTS = [
         "role": "villager",
         "home_area": "陳家",
         "start": (2, 2),
+        "goals": [
+            {"kind": "reach", "text": "去咖啡館一趟（看看梅姨在忙什麼）",
+             "params": {"area": "咖啡館"}},
+        ],
         "persona": """\
 你叫陳原，三十二歲，在海晏鎮的保險行上班，做了九年。
 你和林淑結婚四年。你們住在鎮西邊那棟白房子，門口有一株長歪的九重葛。
@@ -124,6 +132,10 @@ AGENTS = [
         "role": "villager",
         "home_area": "陳家",
         "start": (1, 2),
+        "goals": [
+            {"kind": "meet", "text": "今天要跟陳原說上話（排班的事拖太久了）",
+             "params": {"who": "chen_yuan"}},
+        ],
         "persona": """\
 你叫林淑，陳原的太太，鎮上診所的護理師。你溫柔、細心、很會安撫人。
 你們結婚四年，在別人眼裡是模範夫妻。
@@ -138,6 +150,9 @@ AGENTS = [
         "role": "villager",
         "home_area": "保險行",
         "start": (3, 10),
+        "goals": [
+            {"kind": "reach", "text": "去海堤看看適不適合下竿", "params": {"area": "海堤"}},
+        ],
         "persona": """\
 你叫王浩，陳原的死黨兼同事，也在保險行上班。大剌剌、講話大聲、喜歡開玩笑。
 你們從小一起長大，走到哪都有人跟你打招呼。
@@ -151,6 +166,9 @@ AGENTS = [
         "role": "villager",
         "home_area": "報攤",
         "start": (20, 10),
+        "goals": [
+            {"kind": "reach", "text": "下午去廣場走走、看人", "params": {"area": "廣場"}},
+        ],
         "persona": """\
 你叫郭伯，七十歲，報攤老闆，每天四點半開攤，三十年沒斷過。
 你話極少，別人問你才答。你不覺得那是冷淡，你只是沒什麼要說的。
@@ -165,6 +183,9 @@ AGENTS = [
         "role": "villager",
         "home_area": "圖書館",
         "start": (12, 10),
+        "goals": [
+            {"kind": "meet", "text": "找個人幫忙搬舊報紙合訂本", "params": {"who": "wang_hao"}},
+        ],
         "persona": """\
 你叫蘇晴，二十八歲，前陣子才調來海晏鎮的圖書館當館員。
 你安靜，講話會停頓一下，鎮上的人對你還不太熟，你也還沒摸清楚這裡的規矩。
@@ -227,5 +248,6 @@ def build_world(run_id: str, seed: int) -> WorldState:
             persona=spec["persona"],
             home_area=spec["home_area"],
             pos=Pos(*spec["start"]),
+            goals=[Goal.from_dict(g) for g in spec.get("goals", [])],
         )
     return world

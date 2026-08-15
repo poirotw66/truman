@@ -85,8 +85,8 @@ def reflection_call(agent, world_block_text: str, cfg, tick: int) -> Call:
         user_message=reflection_message(agent, memories, clock_str(tick)),
         schema=REFLECTION_SCHEMA,
         # reflect 層跑高推理強度，thinking token 也吃這個額度。
-        # 實測 2000 會把 insights 陣列切在字串中間（JSON 直接壞掉），拉到 4000。
-        max_tokens=4000,
+        # 實測 2000／4000 仍會把 insights 陣列切在字串中間，拉到 6000。
+        max_tokens=6000,
     )
 
 
