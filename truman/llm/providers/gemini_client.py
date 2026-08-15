@@ -33,14 +33,20 @@ import json
 from ..base import BaseLLMClient, Call
 
 # thinking_level：SDK 列了 minimal|low|medium|high，但每個模型只接受子集。
-# 目前預設模型是 gemini-3.1-flash-lite，實跑上 low / high 都可用；先用 low 壓成本。
-# 若使用 2.5-flash-lite，可能要另外覆寫到 high。
+# 3.1-flash-lite：low / high 可用。
+# 2.5-flash-lite：API 說允許 low/high，但 low 會映成 budget 256，低於下限 512 直接 400。
+# 所以 2.5-flash-lite 實務上只能用 high（見 j3／本次 preflight）。
 DEFAULT_THINKING = {
     "routine": "low",
     "dialogue": "low",
     "reflect": "high",
     "judge": "low",
 }
+
+# 這些模型的 low 會炸；強制抬到 high。
+_FORCE_HIGH_THINKING = (
+    "gemini-2.5-flash-lite",
+)
 
 
 class GeminiClient(BaseLLMClient):
@@ -62,6 +68,8 @@ class GeminiClient(BaseLLMClient):
     def _gen_config(self, c: Call, model: str) -> dict:
         """每個 agent 可以自帶 thinking_level 與 temperature（AgentState.llm）。"""
         level = c.thinking or self._thinking(c.tier)
+        if any(m in model for m in _FORCE_HIGH_THINKING) and level == "low":
+            level = "high"
         cfg = {
             "thinking_level": level,
             "max_output_tokens": c.max_tokens,
