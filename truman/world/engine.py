@@ -364,7 +364,7 @@ class Engine:
         隨機源綁死在 (seed, tick, 誰打誰) 上——replay 必須重現同一個結果，
         否則一次血案之後整條時間線就對不上了。
 
-        三個機制一起對抗「強者通吃」（j1b 費彬六戰全勝、零反抗、一人清城）：
+        四個機制一起對抗「強者通吃」（j1b／j5 費彬連殺清場）：
 
           先手  只給一點便宜（+1）。原本 +2 配上技高一籌就足以讓武功相近者穩贏。
           背水  帶傷的人再出手是拿命去搏：傷勢不拖累「攻擊」，重傷更添三分狠勁，
@@ -372,6 +372,8 @@ class Engine:
                 被逼到角落的高手，那最後一刀最危險。這給了受害者反殺的一線生機。
           義憤  親眼見過殺人的人 fury 會漲，出手更狠（見 witness 迴圈）。
                 費彬每殺一個，在場的人就更難對付——連續擊殺不再是零阻力。
+          代價  取人性命的人自己也帶傷，剛猛攻勢絕技當場散掉。連殺兩人就成重傷
+                玻璃刀——j5 那種「殺完還全身而退、靠一門絕技連清」被直接掐掉。
         """
         w, t, when = self.world, self.world.tick, clock_str(self.world.tick)
         rng = random.Random(f"{w.seed}:{t}:{a.id}:{target.id}")
@@ -404,8 +406,19 @@ class Engine:
         if not a.alive and not a.killed_by:
             a.killed_by = target.id  # 反被格殺
 
+        # 殺人代價：取命不是零成本。下手的人自己帶傷（封頂重傷，不自殺），
+        # 攻勢絕技消散——不能靠一門大嵩陽手連清全場。
+        kill_toll = False
+        if not target.alive and a.alive:
+            before = a.wound
+            a.wound = min(2, a.wound + 1)
+            kill_toll = a.wound > before
+            a.buffs.pop("atk", None)
+
         if not target.alive:
             line = f"{a.name}向{target.name}下手，{target.name}倒了下去，沒再起來。"
+            if kill_toll:
+                line += f"{a.name}這一刀取了性命，自己也氣息紊亂、帶了傷。"
         elif hurt_target >= 2:
             line = f"{a.name}向{target.name}下手，{target.name}受了重傷。"
         elif hurt_target:
@@ -419,6 +432,7 @@ class Engine:
             "attacker": a.id, "target": target.id, "margin": margin,
             "target_wound": target.wound, "attacker_wound": a.wound,
             "atk_art": atk_art, "def_art": def_art,
+            "kill_toll": kill_toll,
             "line": line,
         })
         for x in died:
@@ -442,8 +456,8 @@ class Engine:
                 # 或挨了打卻繼續埋頭走路。動手的人自己的 action 在最後另外處理。
                 other.action = None
                 if died:
-                    # 義憤：親眼見人被殺，出手更狠。連續擊殺的阻力就從這裡來。
-                    other.fury = min(4, other.fury + 2)
+                    # 義憤：親眼見人被殺，出手更狠。+3 讓一場命案就把旁觀者推到接近封頂。
+                    other.fury = min(4, other.fury + 3)
 
         # 有人死了，噩耗傳到他的師門親友那裡——江湖上沒有白死的人。
         for x in died:

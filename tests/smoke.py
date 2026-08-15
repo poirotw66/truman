@@ -480,8 +480,8 @@ def main() -> int:
                               and "attack" not in cli_mod.scenario_world_block(
                                   seahaven, grid))
 
-        # ---- 武林：對抗「強者通吃」的三個機制 ----
-        # 背景：j1b 費彬六戰全勝、零反抗、一人清城。以下驗證新加的平衡機制。
+        # ---- 武林：對抗「強者通吃」的機制 ----
+        # 背景：j1b／j5 費彬連殺清場。以下驗證平衡機制（義憤／殺人代價／背水）。
         def war_engine(world, director=None, run="e"):
             return Engine(
                 world=world, grid=jianghu.build_grid(), cfg=SimConfig(combat=True),
@@ -505,6 +505,34 @@ def main() -> int:
                               f"{fury_lh0}→{lh.fury}")
         failures += not check("下手的人自己不義憤", fei.fury == fury_fei0)
         failures += not check("見血後旁觀者放下手邊的事重新決定", lh.action is None)
+
+        print("\n殺人代價")
+        # j5：費彬殺完人還全身而退、靠大嵩陽手連清。取命必須讓下手的人變玻璃刀。
+        w_toll = jianghu.build_world("kill_toll", 7)
+        w_toll.tick = 8
+        fei_t, yl_t = w_toll.agents["fei_bin"], w_toll.agents["yi_lin"]
+        yl_t.wound = 2
+        yl_t.pos = Pos(fei_t.pos.x + 1, fei_t.pos.y)
+        fei_t.buffs["atk"] = {"amount": 3, "until": 20}
+        wound0 = fei_t.wound
+        war_engine(w_toll)._apply_intent(fei_t, {"kind": "attack", "target_agent": "儀琳"})
+        failures += not check("取命後下手者帶傷", fei_t.wound == wound0 + 1,
+                              f"{wound0}→{fei_t.wound}")
+        failures += not check("取命後攻勢絕技散掉", fei_t.buff("atk", 8) == 0,
+                              str(fei_t.buffs))
+
+        # 連殺兩人 → 重傷（封頂 2，不自殺）；第三人再殺也不會被「殺人代價」自己弄死。
+        w_stack = jianghu.build_world("kill_stack", 7)
+        fei_s = w_stack.agents["fei_bin"]
+        for i, victim_id in enumerate(("yi_lin", "linghu_chong", "tian_boguang")):
+            w_stack.tick = 20 + i
+            victim = w_stack.agents[victim_id]
+            victim.wound = 2
+            victim.pos = Pos(fei_s.pos.x + 1, fei_s.pos.y)
+            war_engine(w_stack)._apply_intent(
+                fei_s, {"kind": "attack", "target_agent": victim.name})
+        failures += not check("連殺堆成重傷玻璃刀", fei_s.wound == 2, fei_s.wound_word)
+        failures += not check("殺人代價不會自殺下手者", fei_s.alive, fei_s.wound_word)
 
         print("\n背水一戰")
         # 重傷的令狐沖(6)硬拚沒受傷的費彬(8)，要有實質勝算——不再是必敗清場。
