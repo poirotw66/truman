@@ -184,9 +184,19 @@ class Engine:
             a.last_think_tick = t
             a.think_count += 1
             a.plan = (res.get("plan") or a.plan).strip()
+            act = res.get("action")
+            if not isinstance(act, dict):
+                # schema 要求 object；偶發模型回字串會讓整拍崩潰（j7）。
+                self.failed_calls += 1
+                self.ok_calls -= 1
+                self.last_error = f"{t}:{aid}:{suffix}: action 不是物件：{act!r}"
+                self.log.write("think_failed", {"agent": aid, "error": self.last_error})
+                a.action = {"kind": "wait", "ticks_left": 1, "done": False}
+                self._check_fail_fast()
+                continue
             cognition.record_decision(a, res, t)
 
-            ev = self._apply_intent(a, res.get("action") or {})
+            ev = self._apply_intent(a, act)
             if ev:
                 speech.append(ev)
 
@@ -195,7 +205,7 @@ class Engine:
                     w,
                     a,
                     res.get("thought", ""),
-                    (res.get("action") or {}).get("utterance", ""),
+                    act.get("utterance", ""),
                     self.cfg,
                     self.log,
                 )

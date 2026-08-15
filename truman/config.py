@@ -64,14 +64,14 @@ PROVIDERS = {
         },
     },
     "gemini": {
-        # routine 用 2.5-flash-lite 省錢並跨過 2048 快取門檻；
-        # dialogue／reflect／judge 留 3.1-flash-lite 顧格式穩定度。
-        # 若要全層更省，可 `--model gemini-2.5-flash-lite`（注意 thinking_level 子集）。
+        # routine 預設回 3.1-flash-lite（見 models 註解）；2.5 僅作手動省錢覆寫。
         # 若要更強推理，覆寫 reflect 即可。
         "models": {
-            # routine 佔呼叫大宗：2.5-flash-lite 門檻 2048、輸入價更低，前綴跨得過。
-            # dialogue／reflect 留 3.1，格式穩定性比較好（當初換 3.1 就是為了這個）。
-            "routine": "gemini-2.5-flash-lite",
+            # 全層 3.1-flash-lite：格式穩、thinking=low 可用。
+            # 2.5-flash-lite 雖便宜、快取門檻低，但 low→budget 256 非法、只能 high，
+            # high 又吃光 max_output_tokens 導致 act JSON 截斷（j7 當場炸）。
+            # 要省錢可手動 `--model routine=gemini-2.5-flash-lite`（會強制 high）。
+            "routine": "gemini-3.1-flash-lite",
             "dialogue": "gemini-3.1-flash-lite",
             "reflect": "gemini-3.1-flash-lite",
             "judge": "gemini-3.1-flash-lite",
@@ -109,7 +109,7 @@ DEFAULT_PROVIDER = "gemini"
 #
 # Sonnet 划算的條件是 O·10 < P·0.7 − V·2，V=400 / O=200 時約為 P > 4000。
 # 但 P 一旦到 4096，Haiku 自己也開始快取，所以 Haiku 一路領先。
-# Gemini：routine 用 2.5-flash-lite 跨快取門檻；其餘層留 3.1 顧穩定性。
+# Gemini：預設全層 3.1-flash-lite（穩）；2.5-flash-lite 僅作手動省錢覆寫。
 
 
 def provider_models(provider: str) -> dict:

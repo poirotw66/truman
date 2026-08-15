@@ -156,6 +156,8 @@ def record_decision(agent, result: dict, tick: int) -> None:
     if thought:
         agent.memory.add(tick, when, "thought", thought, IMPORTANCE["thought"])
     act = result.get("action") or {}
+    if not isinstance(act, dict):
+        return  # 畸形輸出交給 _decide 當失敗處理
     if act.get("kind") == "speak" and (act.get("utterance") or "").strip():
         agent.memory.add(
             tick, when, "speech", f"我說：「{act['utterance']}」", IMPORTANCE["own_speech"]
