@@ -70,7 +70,7 @@ ART_DEFAULTS = {
     "shen_xi": {"sect":"鎮廟","title":"金水伯","color":"#3d6b7a","robe":"#2a4a56","trim":"#1a3038",
                 "hair":"#3a342c","hat":"none","beard":"short","weapon":None,"acc":"beads",
                 "brow":"flat","mouth":"line","goal":"在鎮廟當眾做完海醮。空廟不算。"},
-    "shi_lei": {"sect":"鐵鋪","title":"鐵雄","color":"#b85a2a","robe":"#5a4035","trim":"#2a1f18",
+    "shi_lei": {"sect":"鐵鋪","title":"鐵雄","color":"#5a6570","robe":"#4a3a32","trim":"#1e1814",
                 "hair":"#1b1610","hat":"none","beard":"stub","weapon":"hammer",
                 "brow":"stern","mouth":"line","goal":"在海堤當眾焊死水閘。要有人作證。"},
     "fang_lan": {"sect":"村長宅","title":"美華姐","color":"#4a7a6a","robe":"#3d5c52","trim":"#243832",

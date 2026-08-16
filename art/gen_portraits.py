@@ -161,12 +161,18 @@ knows an empty temple does not count.""",
     ),
     "shi_lei": dict(
         onom="砰", who="""\
-A powerfully built handsome Taiwanese blacksmith around forty — square jaw with short stubble, thick
-forearms, soot-smudged cheekbones, intense narrow eyes. Sparse with words; the village calls him 鐵雄.
-Heavy leather apron over a burnt-umber work shirt, dark iron-grey trim; a welding hammer or tongs in hand,
-ember highlights on metal.
-POSE: weight forward, one knee slightly bent as if bracing a gate, hammer raised mid-strike, other hand
-steadying an unseen sluice plate. EXPRESSION: grim focus — prayer will not hold a gate; steel will.""",
+A powerfully built handsome Taiwanese blacksmith around forty — square jaw with short dark stubble,
+thick forearms, soot-smudged cheekbones, intense narrow DARK eyes, SHORT BLACK hair (not brown, not dyed).
+Sparse with words; the village calls him 鐵雄.
+Heavy dark leather apron over a charcoal-umber work shirt (cool iron browns, NOT bright orange fabric);
+iron-grey trim. He is sealing a coastal sluice gate on a seawall before the typhoon surge — NOT posing
+at a glowing forge anvil.
+COLOUR restraint: keep the overall palette cool storm-iron (slate, soot, wet metal). Ember/weld sparks
+are a SMALL accent only — do not flood the background with hot orange.
+CRITICAL — HAND ANATOMY: exactly five fingers each, clear tool grips.
+POSE: weight forward bracing a heavy iron sluice plate; one hand slamming / welding with a short heavy
+hammer, the other steadying the gate with tongs or a gloved grip. Salt spray and wind on the coat.
+EXPRESSION: grim focus — prayer will not hold a gate; steel will.""",
     ),
     "fang_lan": dict(
         onom="令", who="""\
@@ -210,13 +216,16 @@ steady compassion — panic kills before the tide; she is moving people NOW.""",
     ),
     "gu_chao": dict(
         onom="望", who="""\
-A weathered handsome Taiwanese dyke watchman of forty-five — lean face, stubbled jaw, sharp far-seeing
-eyes, wind-cut hair under a faded cloth band. Everyone just calls him 阿德.
-Storm-grey canvas coat over charcoal work layers, salt-stained trim; one hand shielding his eyes toward
-the sea as if reading cloud walls.
-POSE: crouched slightly on an unseen seawall, torso twisted looking back inland while pointing seaward
-with the other hand — calling for the blacksmith. EXPRESSION: taut alertness — he cannot weld the gate,
-but he can outrun the wind to fetch the man who can.""",
+A weathered handsome Taiwanese dyke watchman of forty-five — lean face, stubbled jaw going grey at the
+sides, sharp far-seeing dark eyes, SHORT WIND-CUT DARK HAIR with salt-and-pepper at the temples.
+NO headband, NO hachimaki, NO forehead cloth — that look belongs to the younger fisherman; 阿德 goes bareheaded
+under the weather. Everyone just calls him 阿德.
+Long storm-grey rain-stained canvas coat over charcoal layers, salt crust on the shoulders; a short brass
+hand-telescope or spyglass clipped at his belt.
+CRITICAL — HAND ANATOMY: exactly five fingers each.
+POSE: crouched on an unseen seawall edge, one hand shielding his eyes toward the SEA (reading the cloud
+wall), the other pointing INLAND over his shoulder — shouting for the blacksmith. Wind tears at the coat.
+EXPRESSION: taut alertness — he cannot weld the gate, but he can outrun the wind to fetch the man who can.""",
     ),
 }
 
