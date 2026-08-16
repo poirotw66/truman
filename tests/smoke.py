@@ -182,7 +182,7 @@ def main() -> int:
                               tg.area_at(aq.pos) != "漁港" and tg.area_at(gc.pos) != "海堤",
                               f"海={tg.area_at(aq.pos)} 德={tg.area_at(gc.pos)}")
         rite_ids = {x.id for a in tw.agents.values() for x in a.arts}
-        failures += not check("嵐潮掛上鎮潮禮與封閘",
+        failures += not check("嵐潮掛上做海醮與焊水門",
                               "zhen_chao_li" in rite_ids and "feng_zha" in rite_ids)
 
         # ---- prompt 區塊穩定性（快取的前提）----
@@ -276,7 +276,7 @@ def main() -> int:
         tw_full = cli_mod.scenario_world_block(tempest_mod, tw_grid)
         failures += not check("嵐潮世界區塊有招式名號",
                               "# 江湖上有名的功夫" in tw_full
-                              and "鎮潮禮" in tw_full and "封閘" in tw_full)
+                              and "做海醮" in tw_full and "焊水門" in tw_full)
         failures += not check("嵐潮不含武林設定",
                               not any(x in tw_full for x in ("大嵩陽手", "五嶽劍派")))
         failures += not check("嵐潮不含動手規則", "attack" not in tw_full)
@@ -286,8 +286,8 @@ def main() -> int:
         failures += not check(
             "嵐潮世界區塊沒把人名和招式綁在一起",
             not any(_re.search(f"{n}[^。]{{0,40}}{a}", one_tw)
-                    for n, a in (("陳金水", "鎮潮禮"), ("張鐵雄", "封閘"),
-                                 ("林美華", "號令"))),
+                    for n, a in (("陳金水", "做海醮"), ("張鐵雄", "焊水門"),
+                                 ("林美華", "派工"))),
         )
 
         # ---- 嵐潮暴潮結算：淹水真斷路、結局可判定 ----
@@ -302,14 +302,14 @@ def main() -> int:
             ww.tick = storm_mod.STORM_TICK
             if rite:
                 for g in ww.agents["shen_xi"].goals:
-                    if g.params.get("rite") == "鎮潮禮":
+                    if g.params.get("rite") == "做海醮":
                         g.status, g.note, g.at_tick = "done", "辦成了", ww.tick
             if sealed:
                 for g in ww.agents["shi_lei"].goals:
-                    if g.params.get("rite") == "封閘":
+                    if g.params.get("rite") == "焊水門":
                         g.status, g.note, g.at_tick = "done", "辦成了", ww.tick
             if park_low:
-                # 阿海站在漁港——沒封閘時應被淹
+                # 阿海站在漁港——沒焊水門時應被淹
                 ww.agents["a_qian"].pos = gw.areas["漁港"].center()
                 ww.agents["gu_chao"].pos = gw.areas["海堤"].center()
                 ww.agents["qing_he"].pos = gw.areas["高地"].center()
@@ -1192,22 +1192,22 @@ def main() -> int:
 
         # ---- 絕技怎麼推動目的 ----
         print("\n絕技推動目的")
-        # 金盆洗手：要在劉府、要有人觀禮，辦成了 ritual 目的就結案。
+        # 金盆洗手：要在劉府、要有人看醮，辦成了 ritual 目的就結案。
         w6, eng6 = art_world()
         liu6, fei6 = w6.agents["liu_zhengfeng"], w6.agents["fei_bin"]
-        fei6.pos = Pos(20, 6)  # 先把人支開，湊不足觀禮的人
+        fei6.pos = Pos(20, 6)  # 先把人支開，湊不足看醮的人
         for other in w6.agents.values():
             if other is not liu6:
                 other.pos = Pos(20, 6)
         eng6._apply_intent(liu6, {"kind": "use_art", "art": "金盆洗手"})
-        failures += not check("沒人觀禮就辦不成",
+        failures += not check("沒人看醮就辦不成",
                               "沒有人" in liu6.last_rejection
                               and liu6.art("jin_pen_xi_shou").uses_left == 1,
                               liu6.last_rejection)
         fei6.pos = Pos(liu6.pos.x + 1, liu6.pos.y)
         liu6.last_rejection = ""
         eng6._apply_intent(liu6, {"kind": "use_art", "art": "金盆洗手"})
-        failures += not check("有人觀禮就辦得成",
+        failures += not check("有人看醮就辦得成",
                               "金盆洗手" in eng6._signals.rites.get("liu_zhengfeng", []),
                               str(eng6._signals.rites))
         goals_mod.evaluate(w6, jianghu.build_grid(), SimConfig(combat=True),
