@@ -178,9 +178,9 @@ def main() -> int:
         starts = [a.pos for a in tw.agents.values()]
         failures += not check("嵐潮起點不重疊", len(starts) == len(set(starts)))
         aq, gc = tw.agents["a_qian"], tw.agents["gu_chao"]
-        failures += not check("阿潛／顧潮不在目標區原地開局",
+        failures += not check("阿海／阿德不在目標區原地開局",
                               tg.area_at(aq.pos) != "漁港" and tg.area_at(gc.pos) != "海堤",
-                              f"潛={tg.area_at(aq.pos)} 顧={tg.area_at(gc.pos)}")
+                              f"海={tg.area_at(aq.pos)} 德={tg.area_at(gc.pos)}")
         rite_ids = {x.id for a in tw.agents.values() for x in a.arts}
         failures += not check("嵐潮掛上鎮潮禮與封閘",
                               "zhen_chao_li" in rite_ids and "feng_zha" in rite_ids)
@@ -286,8 +286,8 @@ def main() -> int:
         failures += not check(
             "嵐潮世界區塊沒把人名和招式綁在一起",
             not any(_re.search(f"{n}[^。]{{0,40}}{a}", one_tw)
-                    for n, a in (("沈汐", "鎮潮禮"), ("石磊", "封閘"),
-                                 ("方嵐", "號令"))),
+                    for n, a in (("陳金水", "鎮潮禮"), ("張鐵雄", "封閘"),
+                                 ("林美華", "號令"))),
         )
 
         # ---- 嵐潮暴潮結算：淹水真斷路、結局可判定 ----
@@ -309,7 +309,7 @@ def main() -> int:
                     if g.params.get("rite") == "封閘":
                         g.status, g.note, g.at_tick = "done", "辦成了", ww.tick
             if park_low:
-                # 阿潛站在漁港——沒封閘時應被淹
+                # 阿海站在漁港——沒封閘時應被淹
                 ww.agents["a_qian"].pos = gw.areas["漁港"].center()
                 ww.agents["gu_chao"].pos = gw.areas["海堤"].center()
                 ww.agents["qing_he"].pos = gw.areas["高地"].center()
