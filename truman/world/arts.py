@@ -270,31 +270,32 @@ CATALOG: dict[str, ArtDef] = {
         target=TARGET_AGENT,
     ),
     # ---------------------------------------------------------- 嵐潮（沿海救村）
+    # 名號走台灣庄頭用語；id 維持穩定，避免舊 cast／checkpoint 對不上。
     "zhen_chao_li": ArtDef(
         id="zhen_chao_li",
-        name="鎮潮禮",
+        name="做海醮",
         kind="social",
-        tagline="在鎮廟當眾行禮，請海神把暴潮壓下去。全鎮的命懸在這一場。",
-        when="吉時將近、鎮廟裡有人觀禮的時候。這是今天唯一能擋滅村的大禮。"
+        tagline="在鎮廟當眾起香做醮，請海把暴潮壓下去。全庄的命懸在這一場。",
+        when="潮快上岸、鎮廟裡有人看著的時候。這是今天唯一能擋滅村的大禮。"
         "沒人看見就不算；潮頭一過再做也晚了。",
         effect="rite",
-        params={"area": "鎮廟", "witnesses": 2, "rite": "鎮潮禮"},
+        params={"area": "鎮廟", "witnesses": 2, "rite": "做海醮"},
         uses=1,
     ),
     "feng_zha": ArtDef(
         id="feng_zha",
-        name="封閘",
+        name="焊水門",
         kind="social",
-        tagline="把海堤水閘焊死、頂死，讓第一波潮水衝不進鎮裡。",
-        when="你人在海堤、旁邊還有人能作證的時候。閘封晚了，禮也救不了低處。"
+        tagline="把海堤水門焊死、頂死，讓第一波潮水衝不進庄裡。",
+        when="你人在海堤、旁邊還有人能作證的時候。水門焊晚了，醮也救不了低處。"
         "這是苦力活，不是空話。",
         effect="rite",
-        params={"area": "海堤", "witnesses": 1, "rite": "封閘"},
+        params={"area": "海堤", "witnesses": 1, "rite": "焊水門"},
         uses=1,
     ),
     "wang_chao": ArtDef(
         id="wang_chao",
-        name="望潮",
+        name="探潮",
         kind="info",
         tagline="憑潮聲、雲色和鳥飛，判斷誰還在哪裡、潮還有多遠。",
         when="你要找的人不在眼前，而暴潮不等人的時候。"
@@ -307,9 +308,9 @@ CATALOG: dict[str, ArtDef] = {
     ),
     "ji_feng_bu": ArtDef(
         id="ji_feng_bu",
-        name="疾風步",
+        name="飛毛腿",
         kind="move",
-        tagline="頂著風跑，別人寸步難行時你還能趕路。",
+        tagline="頂著風拚命衝，別人寸步難行時你還能趕到。",
         when="要在潮來之前趕到海堤、鎮廟或高地的時候。慢一步，整條街就沒了。",
         effect="dash",
         params={"multiplier": 2, "ticks": 4},
@@ -318,7 +319,7 @@ CATALOG: dict[str, ArtDef] = {
     ),
     "an_min_zhou": ArtDef(
         id="an_min_zhou",
-        name="安民咒",
+        name="穩陣",
         kind="social",
         tagline="幾句穩得住人心的話，讓旁邊慌亂的人先定下來。",
         when="廣場或高地上有人快要崩潰、互相推擠的時候。"
@@ -330,10 +331,10 @@ CATALOG: dict[str, ArtDef] = {
     ),
     "hao_ling": ArtDef(
         id="hao_ling",
-        name="號令",
+        name="派工",
         kind="social",
-        tagline="用村長的口吻把人往該去的地方趕——聽不聽仍是他自己的事。",
-        when="你要把某人勸去鎮廟觀禮、去海堤幫忙、或撤上高地的時候。",
+        tagline="用村長的口吻把人派去該去的地方——聽不聽仍是他自己的事。",
+        when="你要把某人勸去鎮廟看醮、去海堤幫忙、或撤上高地的時候。",
         effect="lure",
         params={"weight": 9},
         uses=4,
