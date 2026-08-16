@@ -269,6 +269,78 @@ CATALOG: dict[str, ArtDef] = {
         cooldown=2,
         target=TARGET_AGENT,
     ),
+    # ---------------------------------------------------------- 嵐潮（沿海救村）
+    "zhen_chao_li": ArtDef(
+        id="zhen_chao_li",
+        name="鎮潮禮",
+        kind="social",
+        tagline="在鎮廟當眾行禮，請海神把暴潮壓下去。全鎮的命懸在這一場。",
+        when="吉時將近、鎮廟裡有人觀禮的時候。這是今天唯一能擋滅村的大禮。"
+        "沒人看見就不算；潮頭一過再做也晚了。",
+        effect="rite",
+        params={"area": "鎮廟", "witnesses": 2, "rite": "鎮潮禮"},
+        uses=1,
+    ),
+    "feng_zha": ArtDef(
+        id="feng_zha",
+        name="封閘",
+        kind="social",
+        tagline="把海堤水閘焊死、頂死，讓第一波潮水衝不進鎮裡。",
+        when="你人在海堤、旁邊還有人能作證的時候。閘封晚了，禮也救不了低處。"
+        "這是苦力活，不是空話。",
+        effect="rite",
+        params={"area": "海堤", "witnesses": 1, "rite": "封閘"},
+        uses=1,
+    ),
+    "wang_chao": ArtDef(
+        id="wang_chao",
+        name="望潮",
+        kind="info",
+        tagline="憑潮聲、雲色和鳥飛，判斷誰還在哪裡、潮還有多遠。",
+        when="你要找的人不在眼前，而暴潮不等人的時候。"
+        "問到的是他此刻在哪個地方。一定要填對象名字。",
+        effect="scout",
+        params={},
+        uses=5,
+        cooldown=1,
+        target=TARGET_AGENT,
+    ),
+    "ji_feng_bu": ArtDef(
+        id="ji_feng_bu",
+        name="疾風步",
+        kind="move",
+        tagline="頂著風跑，別人寸步難行時你還能趕路。",
+        when="要在潮來之前趕到海堤、鎮廟或高地的時候。慢一步，整條街就沒了。",
+        effect="dash",
+        params={"multiplier": 2, "ticks": 4},
+        uses=4,
+        cooldown=3,
+    ),
+    "an_min_zhou": ArtDef(
+        id="an_min_zhou",
+        name="安民咒",
+        kind="social",
+        tagline="幾句穩得住人心的話，讓旁邊慌亂的人先定下來。",
+        when="廣場或高地上有人快要崩潰、互相推擠的時候。"
+        "它擋不住潮水，但能讓疏散還有秩序。",
+        effect="soothe",
+        params={"amount": 2, "radius": 4},
+        uses=3,
+        cooldown=5,
+    ),
+    "hao_ling": ArtDef(
+        id="hao_ling",
+        name="號令",
+        kind="social",
+        tagline="用村長的口吻把人往該去的地方趕——聽不聽仍是他自己的事。",
+        when="你要把某人勸去鎮廟觀禮、去海堤幫忙、或撤上高地的時候。",
+        effect="lure",
+        params={"weight": 9},
+        uses=4,
+        cooldown=3,
+        target=TARGET_AGENT,
+        reach=3,
+    ),
 }
 
 

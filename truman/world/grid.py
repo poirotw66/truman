@@ -66,6 +66,8 @@ class Grid:
         self.areas = {a.name: a for a in areas}
         # LLM 常發明「城外／荒野」這類地圖上沒有的名字；劇本用別名指回真區域。
         self.aliases = dict(aliases or {})
+        # 執行期淹水覆寫：底圖不變（快取前綴穩），被淹的格子當下不可通行。
+        self.flooded: set[Pos] = set()
 
     # ------------------------------------------------------------ 地形
     def in_bounds(self, p: Pos) -> bool:
@@ -75,10 +77,39 @@ class Grid:
         return self.rows[p.y][p.x]
 
     def terrain(self, p: Pos) -> str:
+        if p in self.flooded:
+            return "洪水"
         return self.legend[self.symbol(p)][0]
 
     def walkable(self, p: Pos) -> bool:
-        return self.in_bounds(p) and self.legend[self.symbol(p)][1]
+        return (
+            self.in_bounds(p)
+            and self.legend[self.symbol(p)][1]
+            and p not in self.flooded
+        )
+
+    def is_flooded(self, p: Pos) -> bool:
+        return p in self.flooded
+
+    def flood_positions(self, positions) -> int:
+        """把格子標成洪水。回傳新淹到的格數。"""
+        before = len(self.flooded)
+        self.flooded.update(positions)
+        return len(self.flooded) - before
+
+    def cells_in_areas(self, names: list[str]) -> list[Pos]:
+        """區域內原本可走的格子（不含已淹的，方便算增量）。"""
+        out: list[Pos] = []
+        for name in names:
+            a = self.areas.get(name)
+            if a is None:
+                continue
+            for y in range(a.y0, a.y1 + 1):
+                for x in range(a.x0, a.x1 + 1):
+                    p = Pos(x, y)
+                    if self.in_bounds(p) and self.legend[self.symbol(p)][1]:
+                        out.append(p)
+        return out
 
     # ------------------------------------------------------------ 區域
     def area_at(self, p: Pos) -> str:

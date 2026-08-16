@@ -159,6 +159,32 @@ def main() -> int:
         failures += not check("衡山別名 荒野→荒祠", jg.resolve_area("荒野") == "荒祠")
         failures += not check("衡山別名 東門→城門", jg.resolve_area("東門") == "城門")
 
+        print("\n嵐潮劇本")
+        from scenarios import tempest  # noqa: PLC0415
+        tg = tempest.build_grid()
+        failures += not check("嵐潮地圖可通行區域齊全", all(
+            any(tg.walkable(Pos(x, y))
+                for y in range(a.y0, a.y1 + 1) for x in range(a.x0, a.x1 + 1))
+            for a in tg.areas.values()))
+        failures += not check("嵐潮別名 碼頭→漁港", tg.resolve_area("碼頭") == "漁港")
+        failures += not check("嵐潮別名 水閘→海堤", tg.resolve_area("水閘") == "海堤")
+        tw = tempest.build_world("tempest_smoke", 7)
+        failures += not check("嵐潮六人皆有目的與絕技",
+                              len(tw.agents) == 6
+                              and all(a.goals and a.arts for a in tw.agents.values()),
+                              str({a.name: (len(a.goals), len(a.arts)) for a in tw.agents.values()}))
+        failures += not check("嵐潮關閉動手", tempest.COMBAT is False)
+        # 起點不重疊、且不在「立刻達成」的 reach 目標上
+        starts = [a.pos for a in tw.agents.values()]
+        failures += not check("嵐潮起點不重疊", len(starts) == len(set(starts)))
+        aq, gc = tw.agents["a_qian"], tw.agents["gu_chao"]
+        failures += not check("阿潛／顧潮不在目標區原地開局",
+                              tg.area_at(aq.pos) != "漁港" and tg.area_at(gc.pos) != "海堤",
+                              f"潛={tg.area_at(aq.pos)} 顧={tg.area_at(gc.pos)}")
+        rite_ids = {x.id for a in tw.agents.values() for x in a.arts}
+        failures += not check("嵐潮掛上鎮潮禮與封閘",
+                              "zhen_chao_li" in rite_ids and "feng_zha" in rite_ids)
+
         # ---- prompt 區塊穩定性（快取的前提）----
         print("\nprompt 快取前綴")
         wb1 = world_block(grid, seahaven.BRIEF, seahaven.NORMS, seahaven.PUBLIC_CAST)
@@ -242,6 +268,92 @@ def main() -> int:
             all(a.goals for a in hw.agents.values()),
             str({a.name: len(a.goals) for a in hw.agents.values()}),
         )
+
+        # ---- 嵐潮劇本：壯闊救村，絕技是工具不是兵器 ----
+        print("\n嵐潮劇本世界區塊")
+        from scenarios import tempest as tempest_mod  # noqa: PLC0415
+        tw_grid = tempest_mod.build_grid()
+        tw_full = cli_mod.scenario_world_block(tempest_mod, tw_grid)
+        failures += not check("嵐潮世界區塊有招式名號",
+                              "# 江湖上有名的功夫" in tw_full
+                              and "鎮潮禮" in tw_full and "封閘" in tw_full)
+        failures += not check("嵐潮不含武林設定",
+                              not any(x in tw_full for x in ("大嵩陽手", "五嶽劍派")))
+        failures += not check("嵐潮不含動手規則", "attack" not in tw_full)
+        failures += not check("嵐潮公開背景進世界區塊",
+                              tempest_mod.PUBLIC_LORE[:8] in tw_full)
+        one_tw = tw_full.replace("\n", " ")
+        failures += not check(
+            "嵐潮世界區塊沒把人名和招式綁在一起",
+            not any(_re.search(f"{n}[^。]{{0,40}}{a}", one_tw)
+                    for n, a in (("沈汐", "鎮潮禮"), ("石磊", "封閘"),
+                                 ("方嵐", "號令"))),
+        )
+
+        # ---- 嵐潮暴潮結算：淹水真斷路、結局可判定 ----
+        print("\n嵐潮暴潮結算")
+        from scenarios import tempest as storm_mod  # noqa: PLC0415
+        from truman.world.engine import Engine as EngStorm  # noqa: PLC0415
+        from truman.director.director import Director as DirStorm  # noqa: PLC0415
+
+        def _storm_case(rite: bool, sealed: bool, park_low: bool = True):
+            gw = storm_mod.build_grid()
+            ww = storm_mod.build_world("storm", 7)
+            ww.tick = storm_mod.STORM_TICK
+            if rite:
+                for g in ww.agents["shen_xi"].goals:
+                    if g.params.get("rite") == "鎮潮禮":
+                        g.status, g.note, g.at_tick = "done", "辦成了", ww.tick
+            if sealed:
+                for g in ww.agents["shi_lei"].goals:
+                    if g.params.get("rite") == "封閘":
+                        g.status, g.note, g.at_tick = "done", "辦成了", ww.tick
+            if park_low:
+                # 阿潛站在漁港——沒封閘時應被淹
+                ww.agents["a_qian"].pos = gw.areas["漁港"].center()
+                ww.agents["gu_chao"].pos = gw.areas["海堤"].center()
+                ww.agents["qing_he"].pos = gw.areas["高地"].center()
+            log_s = EventLog(tmp / f"storm_{rite}_{sealed}")
+            eng = EngStorm(
+                world=ww, grid=gw, cfg=SimConfig(combat=False),
+                llm=StubLLM(cfg=SimConfig(), log=log_s),
+                director=DirStorm(script=[], log=log_s),
+                log=log_s,
+                world_block_text="x",
+                run_dir=tmp / f"storm_{rite}_{sealed}",
+                on_after_goals=storm_mod.after_goals,
+            )
+            eng._signals = __import__(
+                "truman.world.goals", fromlist=["Signals"]
+            ).Signals.empty(ww.tick)
+            storm_mod.after_goals(eng)
+            log_s.close()
+            return ww, gw
+
+        held_w, held_g = _storm_case(True, True)
+        failures += not check("雙成 → held", held_w.outcome == "held", held_w.outcome)
+        failures += not check("雙成不淹低處", not held_g.flooded)
+        failures += not check("雙成漁港的人還活著", held_w.agents["a_qian"].alive)
+
+        part_w, part_g = _storm_case(True, False)
+        failures += not check("只禮 → partial", part_w.outcome == "partial")
+        failures += not check("只禮淹南岸", part_g.is_flooded(part_g.areas["漁港"].center()))
+        failures += not check("只禮高地不淹", not part_g.is_flooded(part_g.areas["高地"].center()))
+        failures += not check("只禮漁港的人被捲走", not part_w.agents["a_qian"].alive)
+        failures += not check("只禮高地的人還活著", part_w.agents["qing_he"].alive)
+
+        lost_w, lost_g = _storm_case(False, False)
+        failures += not check("雙敗 → lost", lost_w.outcome == "lost")
+        failures += not check("雙敗廣場也淹", lost_g.is_flooded(lost_g.areas["廣場"].center()))
+        failures += not check("雙敗有結局文案", "滅村" in lost_w.outcome_text)
+        failures += not check("淹水格不可通行", not lost_g.walkable(lost_g.areas["漁港"].center()))
+        # 結局只結一次
+        storm_mod.after_goals(type("E", (), {
+            "world": lost_w, "grid": lost_g, "log": EventLog(tmp / "noop"),
+            "director": None, "console": None, "cfg": SimConfig(),
+            "_signals": __import__("truman.world.goals", fromlist=["Signals"]).Signals.empty(72),
+        })())
+        failures += not check("結局不重複結算", lost_w.outcome == "lost")
 
         # ---- tick 迴圈 ----
         print("\ntick 迴圈")

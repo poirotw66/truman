@@ -191,6 +191,9 @@ def build_observations(
     for aid, a in world.agents.items():
         area = grid.area_at(a.pos)
         area_obj = grid.area(area)
+        area_desc = area_obj.description if area_obj else "戶外的通道。"
+        if grid.is_flooded(a.pos):
+            area_desc = "這裡已被潮水吞沒，浪還在往上推。"
 
         visible = []
         for oid, other in world.agents.items():
@@ -235,7 +238,7 @@ def build_observations(
             tick=world.tick,
             when=when,
             area=area,
-            area_desc=area_obj.description if area_obj else "戶外的通道。",
+            area_desc=area_desc,
             pos=str(a.pos),
             visible=visible,
             heard=heard,

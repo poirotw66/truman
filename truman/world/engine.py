@@ -53,6 +53,9 @@ class Engine:
     # 這一拍發生的、目的判定看得到但世界狀態上看不出來的事（儀式、指證、死亡）。
     # 每 tick 開頭重置，tick 結束前交給 goals.evaluate。
     _signals: goals_mod.Signals = field(default_factory=lambda: goals_mod.Signals.empty(0))
+    # 劇本掛鉤：目的判定之後、reflect 之前。嵐潮用它結算暴潮／淹水／滅村。
+    # 簽名：callable(engine) -> None。沒掛就是普通劇本。
+    on_after_goals: object | None = None
 
     # ------------------------------------------------------------ 主迴圈
     async def run(self, ticks: int) -> None:
@@ -126,6 +129,14 @@ class Engine:
         # 目的判定要在動作推進之後、快照之前：這一拍走到城門的人，這一拍就算數。
         for closed in goals_mod.evaluate(w, self.grid, self.cfg, self._signals, self.log):
             self._on_goal_closed(closed)
+
+        if self.on_after_goals is not None:
+            self.on_after_goals(self)
+            # 鉤子可能改了生死（暴潮淹人）；再判一次，protect 等才不會拖到下一拍。
+            for closed in goals_mod.evaluate(
+                w, self.grid, self.cfg, self._signals, self.log
+            ):
+                self._on_goal_closed(closed)
 
         await self._reflect_phase()
         await self._awareness_phase()
@@ -750,10 +761,16 @@ class Engine:
             path = act.get("path") or []
             # 輕功類的絕技在這裡兌現：腳程加倍，一拍走得比別人遠。
             speed = self.cfg.move_speed * max(1, a.buff("dash", t))
-            steps = path[:speed]
-            if steps:
-                a.pos = Pos.of(steps[-1])
-            act["path"] = path[speed:]
+            # 暴潮淹過後，舊路可能已不通——走到淹水格前停住，別穿過洪水。
+            safe: list = []
+            for step in path[:speed]:
+                nxt = Pos.of(step)
+                if not self.grid.walkable(nxt):
+                    break
+                safe.append(step)
+            if safe:
+                a.pos = Pos.of(safe[-1])
+            act["path"] = path[len(safe):]
             if not act["path"]:
                 act["done"] = True
                 a.memory.add(
@@ -761,6 +778,15 @@ class Engine:
                     cognition.IMPORTANCE["arrival"],
                 )
                 self.log.write("arrive", {"agent": a.id, "area": act["target_area"]})
+            elif len(safe) < min(speed, len(path)):
+                # 路被淹斷了，別死抱著一條走不通的 path。
+                act["done"] = True
+                a.action = None
+                a.memory.add(
+                    t, when, "observation",
+                    "前面的路已被水斷了，走不過去。",
+                    7,
+                )
         else:
             act["ticks_left"] = act.get("ticks_left", 1) - 1
             if act["ticks_left"] <= 0:
