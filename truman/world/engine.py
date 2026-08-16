@@ -333,6 +333,10 @@ class Engine:
         if kind == "attack":
             if not getattr(self.cfg, "combat", False):
                 return reject("我不是那種會動手的人，這個念頭一閃就過去了。")
+            # 同一拍只能出手一次：追加輪（reply）不得接著補刀，否則對決瞬間結束
+            # （j7：劉正風 act 打傷、reply 補死，費彬同拍兩刀）。
+            if a.id in self._signals.attacked:
+                return reject("這一刻我已經出手過了，得先看清對方怎麼接招。")
             target_name = (act.get("target_agent") or "").strip()
             target = None
             for oid, o in w.agents.items():
@@ -352,6 +356,7 @@ class Engine:
                     "我得先欺身上去。",
                     dist=dist,
                 )
+            self._signals.attacked.add(a.id)
             return self._resolve_attack(a, target)
 
         if kind == "use_art":
@@ -382,8 +387,8 @@ class Engine:
                 被逼到角落的高手，那最後一刀最危險。這給了受害者反殺的一線生機。
           義憤  親眼見過殺人的人 fury 會漲，出手更狠（見 witness 迴圈）。
                 費彬每殺一個，在場的人就更難對付——連續擊殺不再是零阻力。
-          代價  取人性命的人自己也帶傷，剛猛攻勢絕技當場散掉。連殺兩人就成重傷
-                玻璃刀——j5 那種「殺完還全身而退、靠一門絕技連清」被直接掐掉。
+          代價  取命必散攻勢絕技；傷勢只抬到輕傷封頂——不靠「殺人代價」把人
+                疊成重傷玻璃刀，清場阻力改由義憤與帶傷守勢承擔（張力才拉得長）。
         """
         w, t, when = self.world, self.world.tick, clock_str(self.world.tick)
         rng = random.Random(f"{w.seed}:{t}:{a.id}:{target.id}")
@@ -416,14 +421,14 @@ class Engine:
         if not a.alive and not a.killed_by:
             a.killed_by = target.id  # 反被格殺
 
-        # 殺人代價：取命不是零成本。下手的人自己帶傷（封頂重傷，不自殺），
-        # 攻勢絕技消散——不能靠一門大嵩陽手連清全場。
+        # 殺人代價：攻勢絕技必散。傷勢只抬到輕傷封頂——連殺不會單靠代價變重傷。
         kill_toll = False
         if not target.alive and a.alive:
-            before = a.wound
-            a.wound = min(2, a.wound + 1)
-            kill_toll = a.wound > before
             a.buffs.pop("atk", None)
+            before = a.wound
+            if a.wound < 1:
+                a.wound = 1
+            kill_toll = a.wound > before
 
         if not target.alive:
             line = f"{a.name}向{target.name}下手，{target.name}倒了下去，沒再起來。"
@@ -466,8 +471,8 @@ class Engine:
                 # 或挨了打卻繼續埋頭走路。動手的人自己的 action 在最後另外處理。
                 other.action = None
                 if died:
-                    # 義憤：親眼見人被殺，出手更狠。+3 讓一場命案就把旁觀者推到接近封頂。
-                    other.fury = min(4, other.fury + 3)
+                    # 義憤：見過殺 +2（封頂 4）。+3 一場就近封頂，對決張力收太快。
+                    other.fury = min(4, other.fury + 2)
 
         # 有人死了，噩耗傳到他的師門親友那裡——江湖上沒有白死的人。
         for x in died:

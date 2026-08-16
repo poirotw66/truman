@@ -533,18 +533,39 @@ def main() -> int:
         failures += not check("取命後攻勢絕技散掉", fei_t.buff("atk", 8) == 0,
                               str(fei_t.buffs))
 
-        # 連殺兩人 → 重傷（封頂 2，不自殺）；第三人再殺也不會被「殺人代價」自己弄死。
+        # 連殺：代價封頂輕傷（不再疊成重傷）；攻勢仍每殺必散。
         w_stack = jianghu.build_world("kill_stack", 7)
         fei_s = w_stack.agents["fei_bin"]
+        eng_stack = war_engine(w_stack)
         for i, victim_id in enumerate(("yi_lin", "linghu_chong", "tian_boguang")):
             w_stack.tick = 20 + i
+            eng_stack._signals.attacked.clear()  # 模擬跨拍
             victim = w_stack.agents[victim_id]
             victim.wound = 2
             victim.pos = Pos(fei_s.pos.x + 1, fei_s.pos.y)
-            war_engine(w_stack)._apply_intent(
+            fei_s.buffs["atk"] = {"amount": 3, "until": 99}
+            eng_stack._apply_intent(
                 fei_s, {"kind": "attack", "target_agent": victim.name})
-        failures += not check("連殺堆成重傷玻璃刀", fei_s.wound == 2, fei_s.wound_word)
+        failures += not check("連殺代價封頂輕傷", fei_s.wound == 1, fei_s.wound_word)
+        failures += not check("連殺仍會散掉攻勢", fei_s.buff("atk", 22) == 0)
         failures += not check("殺人代價不會自殺下手者", fei_s.alive, fei_s.wound_word)
+
+        # 同一拍不能連刀（堵住 act 打傷、reply 補死）
+        w_once = jianghu.build_world("atk_once", 7)
+        w_once.tick = 3
+        fei_o, yl_o = w_once.agents["fei_bin"], w_once.agents["yi_lin"]
+        yl_o.wound = 2
+        yl_o.pos = Pos(fei_o.pos.x + 1, fei_o.pos.y)
+        eng_o = war_engine(w_once)
+        eng_o._apply_intent(fei_o, {"kind": "attack", "target_agent": "儀琳"})
+        failures += not check("第一刀可出手", not yl_o.alive, yl_o.wound_word)
+        # 換下一個重傷目標，同拍再攻應被擋
+        lh_o = w_once.agents["linghu_chong"]
+        lh_o.wound = 2
+        lh_o.pos = Pos(fei_o.pos.x + 1, fei_o.pos.y)
+        eng_o._apply_intent(fei_o, {"kind": "attack", "target_agent": "令狐沖"})
+        failures += not check("同拍第二刀被擋", lh_o.alive and "出手過了" in (fei_o.last_rejection or ""),
+                              fei_o.last_rejection)
 
         # 空對象 scout、出手距離、attackable 標註
         w_scout = jianghu.build_world("scout_empty", 7)

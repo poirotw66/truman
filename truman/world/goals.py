@@ -48,6 +48,9 @@ class Signals:
     rites: dict[str, list[str]] = field(default_factory=dict)  # aid -> 完成的儀式名
     exposures: list[dict] = field(default_factory=list)  # 當眾指證，見 arts.denounce
     deaths: list[str] = field(default_factory=list)  # 這一拍死掉的人
+    # 這一拍已經出手過的人——同一拍只能動手一次，否則 act 打傷、reply 補刀
+    # 會把對決壓成一瞬（j7 劉正風同拍兩刀結果費彬）。
+    attacked: set[str] = field(default_factory=set)
 
     @staticmethod
     def empty(tick: int) -> "Signals":
