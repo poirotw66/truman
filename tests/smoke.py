@@ -355,6 +355,66 @@ def main() -> int:
         })())
         failures += not check("結局不重複結算", lost_w.outcome == "lost")
 
+        # ---- 回放依劇本載入（嵐潮不能再用衡山地圖）----
+        print("\n回放劇本偵測")
+        from replay import build_frames as bf  # noqa: PLC0415
+        failures += not check("j11 偵測為 jianghu", bf.detect_scenario("j11") == "jianghu")
+        # 合成一場最短嵐潮 run：只有 run_start + 一拍 snapshot，確認地圖／卡司對上
+        trun = tmp / "treplay"
+        trun.mkdir()
+        (trun / "events.jsonl").write_text(
+            "\n".join([
+                json.dumps({"seq": 1, "tick": 0, "type": "run_start",
+                            "data": {"run_id": "treplay", "scenario": "tempest", "seed": 1}},
+                           ensure_ascii=False),
+                json.dumps({"seq": 2, "tick": 0, "type": "tick_start",
+                            "data": {"tick": 0, "when": "t0"}}, ensure_ascii=False),
+                json.dumps({"seq": 3, "tick": 0, "type": "snapshot", "data": {
+                    "agents": {a["id"]: {"pos": list(a["start"]), "area": a["home_area"],
+                                         "wound": 0, "fury": 0, "alive": True}
+                               for a in tempest_mod.AGENTS}
+                }}, ensure_ascii=False),
+                json.dumps({"seq": 4, "tick": 0, "type": "storm", "data": {
+                    "outcome": "lost", "text": "（滅村的邊緣。）",
+                    "flooded": [[1, 14], [2, 14]], "flooded_areas": ["海堤"],
+                }}, ensure_ascii=False),
+            ]) + "\n",
+            encoding="utf-8",
+        )
+        # build_replay 讀的是 runs/<id>，暫時指過去
+        import os  # noqa: PLC0415
+        runs_link = Path("runs") / "_smoke_treplay"
+        if runs_link.exists() or runs_link.is_symlink():
+            if runs_link.is_dir() and not runs_link.is_symlink():
+                shutil.rmtree(runs_link)
+            else:
+                runs_link.unlink()
+        # ponytail: 直接把事件放到 runs/ 底下測真實路徑
+        shutil.copytree(trun, runs_link)
+        try:
+            failures += not check("合成嵐潮 run 偵測為 tempest",
+                                  bf.detect_scenario("_smoke_treplay") == "tempest")
+            out_html = bf.build_replay(
+                ["_smoke_treplay"], tmp / "tempest_replay.html", quiet=True,
+            )
+            html = out_html.read_text(encoding="utf-8")
+            failures += not check("嵐潮回放標題", "嵐潮鎮" in html)
+            # 從注入的 DATA 物件驗卡司／地圖，不要掃整份 HTML（模板還留著衡山 BAKED 規格）
+            d0 = html.index("const DATA = ") + len("const DATA = ")
+            d1 = html.index(";\nconst F", d0)
+            payload = json.loads(html[d0:d1])
+            failures += not check("嵐潮回放劇本名", payload.get("scenario") == "tempest")
+            cast_ids = [c["id"] for c in payload.get("cast", [])]
+            failures += not check("嵐潮回放卡司",
+                                  "shen_xi" in cast_ids and "liu_zhengfeng" not in cast_ids,
+                                  str(cast_ids))
+            failures += not check("嵐潮回放帶淹水資料", payload.get("flood_tick") == 0
+                                  and payload.get("flooded") == [[1, 14], [2, 14]])
+            failures += not check("嵐潮回放地圖寬度 28",
+                                  payload.get("rows") and len(payload["rows"][0]) == 28)
+        finally:
+            shutil.rmtree(runs_link, ignore_errors=True)
+
         # ---- tick 迴圈 ----
         print("\ntick 迴圈")
         engine, log, llm, _ = build(tmp / "a")

@@ -1,4 +1,4 @@
-<title>衡山城 · 那一天</title>
+<title>箱庭回放</title>
 <style>
   :root{
     --bg:#12100c; --bg2:#1b1811; --panel:#211d15; --panel2:#2a251b;
@@ -263,7 +263,7 @@
 <div class="jh">
  <div class="wrap">
   <header class="topbar">
-   <div class="brand"><span class="k">TRUMAN · LLM 箱庭</span><h1>衡山城 · 劉正風金盆洗手</h1></div>
+   <div class="brand"><span class="k">TRUMAN · LLM 箱庭</span><h1 id="pageTitle">箱庭回放</h1></div>
    <div class="stat"><span class="lab">時辰</span><span class="val" id="clock">—</span></div>
    <div class="stat"><span class="lab" id="phaselab">天色</span><span class="val" id="phase" style="font-size:15px">—</span></div>
    <div class="stat alive" id="alivebox"><span class="lab">尚在人世</span><span class="val"><b id="surv">6</b><small> / 6</small></span></div>
@@ -283,7 +283,7 @@
 
    <aside class="rail">
     <div class="card">
-     <h3>六人 · 上帝視角 <em id="deadcount"></em></h3>
+     <h3><span id="rosterLabel">眾人</span> · 上帝視角 <em id="deadcount"></em></h3>
      <ul class="roster" id="roster"></ul>
     </div>
     <div class="card" style="flex:1 1 auto">
@@ -318,10 +318,7 @@
    <div class="legend" id="legend"></div>
   </div>
 
-  <p class="foot">
-   箱庭實錄：目標互相排斥的多智能體，知識對稱、世界允許拔刀；沒有預寫結局。<br>
-   離線確定性重放（預設模型 <b>gemini-3.1-flash-lite</b>；歷史 run 可能不同），零 API 呼叫。人物取自金庸《笑傲江湖》。
-  </p>
+  <p class="foot" id="pageFoot">離線確定性重放，零 API 呼叫。</p>
  </div>
 </div>
 
@@ -332,9 +329,14 @@ const F = DATA.frames, ROWS = DATA.rows, W = ROWS[0].length, H = ROWS.length, MA
 const CAST = {}; DATA.cast.forEach(c => CAST[c.id] = c);
 const IDS = DATA.cast.map(c => c.id);
 const reduced = matchMedia("(prefers-reduced-motion:reduce)").matches;
+const SCENARIO = DATA.scenario || "jianghu";
+const FLOOD_TICK = (DATA.flood_tick == null) ? -1 : DATA.flood_tick;
+const FLOODED = (DATA.flooded || []).map(xy => xy[0] + "," + xy[1]);
+const FLOOD_SET = new Set(FLOODED);
 
 /* ============================ 人物設定（美術 + 文案） ============================ */
-const P = {
+/* 江湖劇本有手繪像素立繪規格；其他劇本從 DATA.cast 生成可用的預設。 */
+const BAKED = {
   liu_zhengfeng:{ch:"劉", name:"劉正風", sect:"衡山派", title:"劉三爺", color:"#4f9b86",
     robe:"#3f7d6e", trim:"#25584c", hair:"#241d16", hat:"bun", beard:"short", weapon:"sword", acc:"jade", brow:"flat", mouth:"small",
     goal:"把這個手洗完。誰來說什麼，都忍。",
@@ -360,6 +362,27 @@ const P = {
     goal:"遠遠看他一眼就走。別連累他。",
     blurb:"在旁人眼裡只是個愛琴的老人。這輩子在教中殺過不少人，到了這個年紀發現真正放不下的只有琴，還有一個懂琴的人。他和劉正風合譜了一曲《笑傲江湖》，那是他這輩子做過最好的事。正邪之分在他眼裡是笑話——可他知道，這個笑話會要人命。"},
 };
+const PIXEL_FALLBACK = {
+  robe:"#6b6252", trim:"#3b3529", hair:"#241d16", hat:"bun", beard:"none",
+  weapon:null, brow:"flat", mouth:"small",
+};
+const P = {};
+DATA.cast.forEach((c, i) => {
+  if (BAKED[c.id]) { P[c.id] = BAKED[c.id]; return; }
+  P[c.id] = Object.assign({}, PIXEL_FALLBACK, {
+    ch: c.ch || (c.name || "?")[0],
+    name: c.name,
+    sect: c.sect || c.home || "",
+    title: c.title || c.home || "",
+    color: c.color || ["#4f9b86","#6f7a94","#c9903a","#cf8fa4","#b84a3c","#8b6bab"][i % 6],
+    goal: c.goal || "",
+    blurb: c.blurb || "",
+  });
+});
+document.title = DATA.title || document.title;
+const _tEl = document.getElementById("pageTitle"); if (_tEl) _tEl.textContent = DATA.title || _tEl.textContent;
+const _fEl = document.getElementById("pageFoot"); if (_fEl && DATA.foot) _fEl.innerHTML = DATA.foot;
+const _rEl = document.getElementById("rosterLabel"); if (_rEl) _rEl.textContent = IDS.length + "人";
 const AREA_OF = {}; DATA.areas.forEach(a => AREA_OF[a.name] = a);
 const PORTRAIT = DATA.portraits || {};          // Gemini 產的立繪；沒有就退回程式畫的像素立繪
 const SCENES = DATA.scenes || {};               // 場景／關鍵美術；沒有就退回像素城底圖
@@ -440,15 +463,17 @@ if (DATA.event_icons) {
 }
 
 const TS_ART = 48;                                  // 貼圖每格 48px（美術原生 16px × 3）
-const world = buildWorldCanvas(ROWS, DATA.areas, TS_ART, DECOR_JIANGHU);
+const worldDecor = (DATA.decor === "jianghu") ? DECOR_JIANGHU : [];
+const world = buildWorldCanvas(ROWS, DATA.areas, TS_ART, worldDecor);
 function faceCanvas(id, px) {
   const c = document.createElement("canvas"); c.width = c.height = px;
   drawPortrait(c.getContext("2d"), px, P[id]); return c;
 }
 
-/* 圍觀百姓（純裝飾） */
+/* 圍觀百姓（純裝飾）——只在衡山劇本放，嵐潮別拿廣場座標硬塞。 */
 const CROWD = [];
 (function(){
+  if (SCENARIO !== "jianghu") return;
   const spots = [[6,6],[8,7],[11,6],[12,7],[7,8],[10,8],[9,4],[13,5],[9,2],[10,3],[18,7],[16,8]];
   const robes = ["#7a6a52","#6b7a62","#8a7a5e","#5f6673","#7d6459"];
   spots.forEach((s,i) => CROWD.push({ x:s[0]+ .5, y:s[1]+ .5, ph:i*1.7,
@@ -518,7 +543,9 @@ function tintFor(t) {
   if (h < 19) return { c:"rgba(255,124,52,.22)", night:.35 };
   return { c:"rgba(26,42,92,.44)", night:1 };
 }
-const LANTERNS = [[12,11.2],[14.6,11.2],[16.5,3.4],[18.4,3.4],[1.6,3.4],[3.4,3.4],[19.4,10.2],[21.4,10.2]];
+const LANTERNS = SCENARIO === "jianghu"
+  ? [[12,11.2],[14.6,11.2],[16.5,3.4],[18.4,3.4],[1.6,3.4],[3.4,3.4],[19.4,10.2],[21.4,10.2]]
+  : [];
 
 /* ============================ HD-2D 合成 ============================
    場景先畫進離屏 canvas，再做三件事：移軸景深（上下模糊、中間清晰）、
@@ -615,14 +642,26 @@ function drawScene(now, t) {
   const m = world.margin || 0, o = toScreen(-m, -m);
   sc.drawImage(world, 0, 0, world.width, world.height, o.sx, o.sy, (W + m*2)*t, (H + m*2)*t);
 
+  // 暴潮淹水覆寫：亥時之後把被淹的格子蓋成半透明海水
+  if (FLOOD_TICK >= 0 && cur >= FLOOD_TICK && FLOODED.length) {
+    sc.fillStyle = "rgba(40,110,150,.48)";
+    FLOODED.forEach(key => {
+      const [fx, fy] = key.split(",").map(Number);
+      const s = toScreen(fx, fy);
+      sc.fillRect(Math.round(s.sx), Math.round(s.sy), Math.ceil(t)+1, Math.ceil(t)+1);
+    });
+  }
+
   // 關係線
   if (selected) drawRelations(t);
 
-  // 金盆（會閃）
-  const basin = toScreen(2.5, 2.5), gl = .5 + .5*Math.sin(now/380);
-  sc.fillStyle = "#e8c766"; sc.fillRect(Math.round(basin.sx - t*.2), Math.round(basin.sy - t*.12), Math.round(t*.4), Math.round(t*.22));
-  sc.fillStyle = `rgba(255,238,170,${.25+.35*gl})`; sc.beginPath(); sc.arc(basin.sx, basin.sy, t*.42, 0, 6.3); sc.fill();
-  lights.push({ x:basin.sx, y:basin.sy, r:t*1.5, c:`rgba(255,214,120,${.20+.16*gl})` });
+  // 金盆（只在衡山劇本；嵐潮沒有這件道具）
+  if (DATA.basin) {
+    const basin = toScreen(DATA.basin[0], DATA.basin[1]), gl = .5 + .5*Math.sin(now/380);
+    sc.fillStyle = "#e8c766"; sc.fillRect(Math.round(basin.sx - t*.2), Math.round(basin.sy - t*.12), Math.round(t*.4), Math.round(t*.22));
+    sc.fillStyle = `rgba(255,238,170,${.25+.35*gl})`; sc.beginPath(); sc.arc(basin.sx, basin.sy, t*.42, 0, 6.3); sc.fill();
+    lights.push({ x:basin.sx, y:basin.sy, r:t*1.5, c:`rgba(255,214,120,${.20+.16*gl})` });
+  }
 
   // 燈籠（入夜變亮）
   const tint = tintFor(cur);
@@ -752,7 +791,13 @@ F.forEach(fr => fr.events.forEach(e => {
   if (e.kind === "speech") FEED.push({ t:fr.tick, k:"speech",
     html:`<img class="ic" src="${ICONS.speech}" alt="說"><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b>${e.to&&P[e.to]?` → <b>${esc(P[e.to].name)}</b>`:""}：${esc(e.text.length>58?e.text.slice(0,56)+"…":e.text)}</span>${tm}` });
   else if (e.kind === "attack") FEED.push({ t:fr.tick, k:"attack", html:`<img class="ic" src="${ICONS.attack}" alt="動手"><span>${esc(e.line)}</span>${tm}` });
-  else if (e.kind === "death") FEED.push({ t:fr.tick, k:"death", html:`<img class="ic" src="${ICONS.death}" alt="死"><span><b>${esc(e.name)}</b> 死了${e.by&&P[e.by]?`，死於 <b>${esc(P[e.by].name)}</b> 之手`:""}。</span>${tm}` });
+  else if (e.kind === "death") {
+    const killer = e.killed_by || e.by || "";
+    const byTxt = killer
+      ? (P[killer] ? `，死於 <b>${esc(P[killer].name)}</b> 之手` : `，死於${esc(killer)}`)
+      : "";
+    FEED.push({ t:fr.tick, k:"death", html:`<img class="ic" src="${ICONS.death}" alt="死"><span><b>${esc(e.name)}</b> 死了${byTxt}。</span>${tm}` });
+  }
   else if (e.kind === "reflection") FEED.push({ t:fr.tick, k:"reflection", html:`<img class="ic" src="${ICONS.reflection}" alt="想通了"><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b> 想通了：${esc(e.insight.length>52?e.insight.slice(0,50)+"…":e.insight)}</span>${tm}` });
   else if (e.kind === "world") FEED.push({ t:fr.tick, k:"world", html:`<img class="ic" src="${ICONS.world}" alt="世界"><span>${esc(e.text.replace(/[（）]/g,""))}</span>${tm}` });
   else if (e.kind === "art") {
@@ -867,9 +912,9 @@ function openSheet(id) {
   selected = id; const p = P[id], c = CAST[id], fr = F[cur].agents[id];
   let thought = null; for (let k = cur; k >= 0; k--) { const th = F[k].agents[id].thought; if (th) { thought = { t:k, th }; break; } }
   const said = (saidBy[id] || []).filter(s => s.t <= cur).slice(-4).reverse();
-  const kin = (c.kin || []).map(k => `<span class="kin">知音 · ${esc(P[k].name)}</span>`);
-  const spoke = Object.keys(rel.spoke[id] || {}).filter(k => relSeen(id,k)).map(k => `<span>說過話 · ${esc(P[k].name)}</span>`);
-  const foe = Object.keys(rel.foe[id] || {}).filter(k => rel.foe[id][k] <= cur).map(k => `<span class="foe">動過手 · ${esc(P[k].name)}</span>`);
+  const kin = (c.kin || []).filter(k => P[k]).map(k => `<span class="kin">知音 · ${esc(P[k].name)}</span>`);
+  const spoke = Object.keys(rel.spoke[id] || {}).filter(k => relSeen(id,k) && P[k]).map(k => `<span>說過話 · ${esc(P[k].name)}</span>`);
+  const foe = Object.keys(rel.foe[id] || {}).filter(k => rel.foe[id][k] <= cur && P[k]).map(k => `<span class="foe">動過手 · ${esc(P[k].name)}</span>`);
   const d = deaths.find(x => x.id === id && x.t <= cur);
   const status = !fr.alive ? `<span class="tag dead">已歿 ${clockOf(d ? d.t : cur).str}${d && P[d.by] ? " · 死於"+esc(P[d.by].name) : ""}</span>`
     : fr.wound >= 2 ? `<span class="tag crit">重傷</span>` : fr.wound === 1 ? `<span class="tag hurt">帶傷</span>` : `<span class="tag ok">無傷</span>`;
@@ -1175,12 +1220,11 @@ function showIntro() {
       <div class="g">${esc(P[id].goal)}</div></div>`).join("");
   const d = overlay(`
     <div class="k">TRUMAN · LLM 箱庭</div>
-    <h2>衡山城 · 劉正風金盆洗手</h2>
-    <p class="lede">六個 AI 被放進同一天的同一座城。沒有人寫結局——目標互相排斥，張力自己會長出來。<br>
-      知識對稱，每個人只看得見自己看得見的、只記得自己記得的；而這個世界允許他們拔刀。<br>
+    <h2>${esc(DATA.title || "")}</h2>
+    <p class="lede">${DATA.lede || ""}<br>
       以下是那一天的完整實錄，一刻十分鐘，共 ${MAXT} 刻。</p>
     <div class="cast">${cards}</div>
-    <div class="btns"><button class="big" id="go">▶ 進　城</button>
+    <div class="btns"><button class="big" id="go">${esc(DATA.cta || "▶ 開　始")}</button>
       <button class="big ghost" id="skip">直接看結局</button></div>`,
     null, "keyart");
   d.querySelectorAll(".cc canvas").forEach(c => drawBust(c.getContext("2d"), 90, P[c.dataset.id]));
@@ -1210,14 +1254,22 @@ function showOutro() {
   const live = IDS.filter(id => F[MAXT].agents[id].alive);
   const tomb = deaths.map(d => `<div><span class="who" style="color:${P[d.id].color}">${esc(d.name)}</span>
       <span style="color:#b9ac92">${clockOf(d.t).str}　${esc(P[d.id].sect)}</span>
-      <span class="by">死於 ${P[d.by] ? esc(P[d.by].name) : "不明"}</span></div>`).join("");
+      <span class="by">死於 ${P[d.by] ? esc(P[d.by].name) : esc(d.by || "不明")}</span></div>`).join("");
   const s = DATA.stats || {};
+  const outcomeLine = DATA.outcome_text
+    ? `<p class="lede" style="color:var(--gold)">${esc(String(DATA.outcome_text).replace(/^[（(]|[）)]$/g, ""))}</p>`
+    : "";
+  const h2 = DATA.outcome === "held" ? "嵐潮，守住了"
+    : DATA.outcome === "lost" ? "滅村的邊緣"
+    : DATA.outcome === "partial" ? "只救回了一半"
+    : (live.length === 1 ? "只剩一個人站著" : "城裡靜下來了");
   const d = overlay(`
     <div class="k">亥時 · 這一天結束了</div>
-    <h2>${live.length === 1 ? "只剩一個人站著" : "城裡靜下來了"}</h2>
+    <h2>${esc(h2)}</h2>
+    ${outcomeLine}
     <div class="tomb">${tomb}</div>
-    <p class="lede">活到最後的是 ${live.map(id => `<b style="color:${P[id].color}">${esc(P[id].name)}</b>`).join("、")}。
-      每一刀、每一句話都是 agent 自己算過後的決定——箱庭要看的就是這種結構性衝突下長出來的軌跡。</p>
+    <p class="lede">活到最後的是 ${live.map(id => `<b style="color:${P[id].color}">${esc(P[id].name)}</b>`).join("、") || "——"}。
+      每一句話、每一次趕路都是 agent 自己算過後的決定——箱庭要看的就是這種結構性衝突下長出來的軌跡。</p>
     ${scoreHTML()}
     <div class="nums">
       <div><b>${s.speeches ?? "—"}</b><span>句對話</span></div>
