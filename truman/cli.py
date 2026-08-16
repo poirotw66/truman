@@ -28,6 +28,7 @@ from .llm.prompts import world_block
 from .obs import checkpoint
 from .obs.eventlog import EventLog
 from .world.engine import Engine
+from .world.grid import Pos
 
 ROOT = Path(__file__).resolve().parent.parent
 RUNS = ROOT / "runs"
@@ -185,6 +186,9 @@ def make_engine(world, scen, cfg, run_dir: Path, replay_index=None, quiet=False,
     else:
         llm = make_client(cfg=cfg, log=log, replay=replay_index)
     director = Director(script=list(scen.DIRECTOR_SCRIPT), log=log)
+    # 舊 checkpoint 裡的淹水格要覆寫回地圖，否則 fork／續跑會變成乾的。
+    for xy in getattr(world, "flooded", []) or []:
+        grid.flooded.add(Pos(int(xy[0]), int(xy[1])))
     engine = Engine(
         world=world,
         grid=grid,
@@ -200,6 +204,7 @@ def make_engine(world, scen, cfg, run_dir: Path, replay_index=None, quiet=False,
         ),
         run_dir=run_dir,
         console=None if quiet else console,
+        on_after_goals=getattr(scen, "after_goals", None),
     )
     return engine, log, llm
 
@@ -728,7 +733,7 @@ def main() -> None:
     p.add_argument(
         "--scenario",
         default="jianghu",
-        help="劇本（預設 jianghu；另有 hakoniwa、seahaven）",
+        help="劇本（預設 jianghu；另有 tempest、hakoniwa、seahaven）",
     )
     p.add_argument(
         "--thinking",

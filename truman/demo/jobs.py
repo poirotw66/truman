@@ -35,6 +35,9 @@ class Job:
     # 每個人的目的進度與絕技存量。現場跑本來只看得到「第幾刻、誰說了什麼」，
     # 看不出組出來的 agent 到底在幹嘛——這一份就是為了補那個缺口。
     board: list[dict] = field(default_factory=list)
+    # 劇本級結局文案（嵐潮暴潮結算）。空字串表示還沒結／此劇本沒有。
+    outcome: str = ""
+    outcome_text: str = ""
     started_at: float = 0.0
     finished_at: float = 0.0
     updated_at: float = 0.0
@@ -191,6 +194,7 @@ class JobRunner:
                 await engine.tick()
                 self._pull_recent(job, run_dir)
                 self._pull_board(job, world)
+                self._pull_outcome(job, world)
                 if engine.aborted:
                     break
             if not engine.aborted:
@@ -207,6 +211,8 @@ class JobRunner:
                     "ok_calls": ok,
                     "failed_calls": bad,
                     "last_error": engine.last_error,
+                    "outcome": getattr(engine.world, "outcome", ""),
+                    "outcome_text": getattr(engine.world, "outcome_text", ""),
                 },
             )
             log.close()
@@ -215,6 +221,7 @@ class JobRunner:
             # 放在 finally 裡，中途被中止的那一場也留得下最後狀態。
             self._pull_recent(job, run_dir)
             self._pull_board(job, world)
+            self._pull_outcome(job, world)
             job.tick = world.tick
             job.when = clock_str(max(0, world.tick - 1))
             job.updated_at = time.time()
@@ -262,12 +269,17 @@ class JobRunner:
             })
         job.board = rows
 
+    @staticmethod
+    def _pull_outcome(job: Job, world) -> None:
+        job.outcome = getattr(world, "outcome", "") or ""
+        job.outcome_text = getattr(world, "outcome_text", "") or ""
+
     def _pull_recent(self, job: Job, run_dir: Path, limit: int = 12) -> None:
         path = run_dir / "events.jsonl"
         if not path.exists():
             return
         wanted = ("speech", "attack", "death", "director", "tick_start",
-                  "art_used", "goal_done", "goal_failed")
+                  "art_used", "goal_done", "goal_failed", "storm")
         recent: list[dict] = []
         with path.open(encoding="utf-8") as fh:
             for line in fh:
@@ -293,6 +305,8 @@ class JobRunner:
             text = d.get("line") or f"{d.get('attacker')} 出手"
         elif ty == "death":
             text = f"{d.get('name')} 倒下（{d.get('killed_by', '')}）"
+        elif ty == "storm":
+            text = d.get("text") or f"暴潮結算：{d.get('outcome', '')}"
         elif ty == "art_used":
             left = d.get("uses_left", -1)
             text = (f"{d.get('name', '?')} 使出「{d.get('art_name', '')}」"

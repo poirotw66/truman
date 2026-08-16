@@ -94,6 +94,8 @@ def job_public(job) -> dict:
         "replay_url": job.replay_url,
         "recent": job.recent,
         "board": getattr(job, "board", []),
+        "outcome": getattr(job, "outcome", ""),
+        "outcome_text": getattr(job, "outcome_text", ""),
         "started_at": getattr(job, "started_at", 0.0),
         "updated_at": getattr(job, "updated_at", 0.0),
         "server_now": time.time(),

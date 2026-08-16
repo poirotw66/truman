@@ -238,6 +238,11 @@ class WorldState:
     director_fired: list[int] = field(default_factory=list)
     awareness_score: float = 0.0
     awareness_log: list[dict] = field(default_factory=list)
+    # 劇本級結局（嵐潮等）："" / held / partial / lost；文案給 demo／報表。
+    outcome: str = ""
+    outcome_text: str = ""
+    # 已淹格子 [[x,y], ...]——跟 checkpoint 走，fork 後能把洪水覆寫回地圖。
+    flooded: list = field(default_factory=list)
 
     def protagonist(self) -> AgentState:
         p = self.protagonist_or_none()
@@ -269,6 +274,9 @@ class WorldState:
             "director_fired": self.director_fired,
             "awareness_score": self.awareness_score,
             "awareness_log": self.awareness_log,
+            "outcome": self.outcome,
+            "outcome_text": self.outcome_text,
+            "flooded": list(self.flooded),
         }
 
     @staticmethod
@@ -282,4 +290,7 @@ class WorldState:
             director_fired=list(d.get("director_fired", [])),
             awareness_score=d.get("awareness_score", 0.0),
             awareness_log=list(d.get("awareness_log", [])),
+            outcome=d.get("outcome", ""),
+            outcome_text=d.get("outcome_text", ""),
+            flooded=list(d.get("flooded", [])),
         )

@@ -153,6 +153,11 @@
   /* 每個人的目的與絕技：現場跑最想看的就是「我組的 agent 現在怎麼樣了」 */
   .board{display:grid; grid-template-columns:repeat(auto-fill,minmax(228px,1fr)); gap:8px; margin:10px 0}
   .board:empty{display:none}
+  .outcome{margin:8px 0 0; padding:12px 14px; border-radius:10px; font-family:var(--disp);
+    font-size:16px; line-height:1.45; letter-spacing:.02em; border:1px solid var(--line)}
+  .outcome.held{background:rgba(111,214,174,.12); color:#6fd6ae; border-color:rgba(111,214,174,.35)}
+  .outcome.partial{background:rgba(212,168,75,.12); color:var(--gold); border-color:rgba(212,168,75,.35)}
+  .outcome.lost{background:rgba(232,135,122,.12); color:#e8877a; border-color:rgba(232,135,122,.35)}
   .bc{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1);
       border-radius:9px; padding:8px 10px; display:flex; flex-direction:column; gap:5px}
   .bc.dead{opacity:.45}
@@ -230,6 +235,7 @@
           <label for="scenario">scenario</label>
           <select id="scenario">
             <option value="jianghu" selected>jianghu · 武林箱庭（現役）</option>
+            <option value="tempest">tempest · 嵐潮（暴潮救村）</option>
             <option value="hakoniwa">hakoniwa · 和平箱庭</option>
             <option value="seahaven">seahaven · 早期楚門（遺留）</option>
           </select>
@@ -262,6 +268,7 @@
           <span><strong>預估剩餘</strong><span id="progEta">—</span></span>
         </div>
         <div class="bar"><div class="fill" id="progFill"></div></div>
+        <div class="outcome" id="outcome" hidden></div>
         <div class="board" id="board"></div>
         <div class="feed" id="feed"></div>
       </div>
@@ -279,7 +286,7 @@
       <figure><img src="art/scene_shrine.jpg" alt="荒祠"/><figcaption>荒祠</figcaption></figure>
     </div>
 
-    <p class="foot">現役劇本：江湖 · 劉正風金盆洗手那一天——知識對稱、可拔刀、沒有預寫結局。<br>
+    <p class="foot">劇本可選：江湖 · 金盆洗手；嵐潮 · 暴潮救村（禮與閘成敗會真的淹鎮）。知識對稱、沒有預寫結局。<br>
       本機入口 · <code>python -m truman.demo</code></p>
   </div>
 
@@ -473,6 +480,7 @@ function renderProgress(data) {
   $("progPhase").textContent = data.phase || "執行中";
   $("progFill").style.width = `${Math.min(100, (tick / total) * 100)}%`;
   updateProgressStats();
+  renderOutcome(data);
   renderBoard(data.board || []);
   const feed = $("feed");
   feed.innerHTML = "";
@@ -482,6 +490,21 @@ function renderProgress(data) {
     div.innerHTML = `<span class="t">t${row.tick ?? "—"}</span>${escapeHtml(row.text || "")}`;
     feed.appendChild(div);
   }
+}
+
+function renderOutcome(data) {
+  const el = $("outcome");
+  const kind = data.outcome || "";
+  const text = data.outcome_text || "";
+  if (!kind || !text) {
+    el.hidden = true;
+    el.textContent = "";
+    el.className = "outcome";
+    return;
+  }
+  el.hidden = false;
+  el.className = `outcome ${kind}`;
+  el.textContent = text.replace(/^[（(]|[）)]$/g, "").replace(/^[（(]/, "").replace(/[）)]$/, "");
 }
 
 // 每個人的目的與絕技。沒有目的也沒有絕技的劇本（和平箱庭）拿到空陣列，整段不顯示。
