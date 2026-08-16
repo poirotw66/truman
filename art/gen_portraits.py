@@ -171,12 +171,15 @@ steadying an unseen sluice plate. EXPRESSION: grim focus — prayer will not hol
     "fang_lan": dict(
         onom="令", who="""\
 A beautiful, commanding Taiwanese village headwoman of thirty-eight — clear sharp eyes, neat dark hair
-pulled back for work, strong graceful posture. Practical authority; everyone calls her 美華姐.
-MODESTY IS MANDATORY: high collar, full sleeves. Sea-green practical jacket over a darker teal blouse,
-ink-dark trim; a cloth tally cord or whistle at her belt — no frills.
-POSE: half-turned toward the viewer, one arm flung out pointing inland (toward high ground), the other
-hand open as if counting people to move. EXPRESSION: firm, urgent, compassionate without softness —
-she cannot argue with the sea, only with people.""",
+pulled tightly back for work with a few wind-tossed strands, strong graceful posture that reads mid-thirties
+not twenties. Practical authority; everyone calls her 美華姐.
+MODESTY IS MANDATORY: high collar, full sleeves. Sea-green practical field jacket over a darker teal blouse,
+ink-dark trim; a silver whistle on a cord at her belt — no frills, no fashion posing.
+HANDS MUST BE ANATOMICALLY CORRECT: five clear fingers each, natural knuckles, no fused or extra digits.
+POSE: three-quarter bust, body angled; RIGHT ARM extended straight, INDEX FINGER pointing inland toward
+high ground (simple clear point — no splayed fingers); LEFT HAND clenched around the whistle cord at her
+waist. EXPRESSION: firm, urgent, compassionate without softness — she cannot argue with the sea, only
+with people.""",
     ),
     "a_qian": dict(
         onom="潮", who="""\
@@ -190,12 +193,20 @@ the rope. EXPRESSION: urgent grin, alive to danger — ships still at sea means 
     ),
     "qing_he": dict(
         onom="安", who="""\
-A beautiful Taiwanese herbal healer of thirty-three — warm luminous eyes, gentle but unflinching mouth,
-dark hair tied simply, soft sun-weathered skin. The village comes to her for medicine and calm.
-MODESTY IS MANDATORY: covering clothes to the throat and wrists. Soft sage-and-sand herbalist jacket with
-moss-green trim; a cloth medicine pouch at her side; a sprig of dried herbs tucked near the collar.
-POSE: body angled as if guiding someone uphill, one hand outstretched to steady a panicked neighbour,
-the other clutching the pouch. EXPRESSION: steady compassion — she knows panic kills before the tide does.""",
+A beautiful Taiwanese herbal healer of thirty-three — warm luminous eyes, unflinching mouth, dark hair
+tied in a tight practical bun with wind-whipped loose strands, sun-weathered skin. The village comes to
+her for medicine and calm — but tonight she is evacuating people, not posing for a portrait.
+MODESTY IS MANDATORY: covering clothes to the throat and wrists. PRACTICAL coastal storm kit, NOT elegant
+qipao or embroidered silk: sage-green canvas work jacket over a sand-coloured high-collar shirt, moss
+trim, a cloth medicine pouch strapped at her hip, a folded cloth wrap of dried herbs tucked in a pocket.
+Wind and fine rain should tug at her clothes and hair; storm urgency in the silhouette.
+CRITICAL — SOLO PORTRAIT ONLY: no other people, no other hands entering the frame, no wrist-grabs.
+CRITICAL — HAND ANATOMY: exactly five fingers on each of HER hands, clear knuckles, no fused digits,
+no extra fingers. Prefer simple closed grips over open splayed fingers.
+POSE: mid-stride climbing toward high ground, torso twisted looking back over her shoulder as if calling
+others to follow; ONE hand raised in a clear beckoning / follow-me gesture (palm open, five fingers),
+the OTHER hand clutching the medicine pouch tight against her hip. EXPRESSION: focused urgency with
+steady compassion — panic kills before the tide; she is moving people NOW.""",
     ),
     "gu_chao": dict(
         onom="望", who="""\
@@ -282,11 +293,16 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     client = genai.Client()
 
-    # 錨圖排第一個，後面的人才有東西可以對齊
+    # 錨圖排第一個，後面的人才有東西可以對齊。
+    # --force 只表示「這次要重畫選定角色」；錨圖若已在磁碟上且這次沒重畫它，
+    # 仍要讀進來當風格參考，否則 --only 重畫會脫隊。
     order = sorted(agents, key=lambda a: (a["id"] != args.anchor,))
     anchor_bytes: bytes | None = None
     anchor_path = out_dir / f"{args.anchor}.png"
-    if anchor_path.exists() and not args.force:
+    regenerating_anchor = args.force and (
+        not args.only or args.anchor in args.only
+    )
+    if anchor_path.exists() and not regenerating_anchor:
         anchor_bytes = anchor_path.read_bytes()
 
     made = skipped = failed = 0
