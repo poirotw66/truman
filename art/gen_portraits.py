@@ -41,6 +41,7 @@ OUT = Path(__file__).with_name("portraits")
 
 # ---------------------------------------------------------------- 風格
 # 這一段是整組的共同語言。任何一個字改了，就得整組重畫，否則風格會裂開。
+# SUBJECT WORLD 依劇本換（武俠／漁村），其餘線條與上色規則必須同一套。
 STYLE = """\
 A dramatic manga-style character portrait. Bust / upper-body composition, vertical 3:4.
 
@@ -62,15 +63,28 @@ BEAUTY — this is a cast of beautiful people; every face must be genuinely attr
 - Men: handsome and charismatic — chiselled but refined bone structure, strong jaw, high cheekbones,
   deep-set intense eyes, straight nose, broad shoulders, effortless confidence.
 - Women: beautiful and graceful — large luminous eyes with long lashes, soft refined features, delicate
-  poise, serene dignity. Depict with complete modesty: covering robes, no sexualised posing or framing.
+  poise, serene dignity. Depict with complete modesty: covering clothes, no sexualised posing or framing.
 - Eyes rendered in high detail: coloured irises with visible gradient, crisp catchlights, defined lashes.
 - Hair with glossy specular highlights and individually inked strands catching the light.
 - Cinematic rim light tracing the whole silhouette, separating the figure from the background.
 - Polished, high-detail illustration finish — this should look like premium key art.
 
-SUBJECT WORLD: Ming-dynasty Chinese wuxia (martial arts) — hanfu robes, wide sleeves, sashes, topknots.
-No modern clothing. No lettering other than the single glyph. No watermark, no signature, no frame, no border.
+%(world)s
+No lettering other than the single glyph. No watermark, no signature, no frame, no border.
 """
+
+WORLDS = {
+    "jianghu": (
+        "SUBJECT WORLD: Ming-dynasty Chinese wuxia (martial arts) — hanfu robes, wide sleeves, "
+        "sashes, topknots. No modern clothing."
+    ),
+    "tempest": (
+        "SUBJECT WORLD: Taiwan coastal fishing village on the eve of a typhoon surge — temple keepers, "
+        "blacksmiths, fishers, herbalists, and watchmen. Practical coastal workwear and folk temple dress "
+        "(indigo vests, oilskin, leather aprons, rain cloaks, prayer beads). Not ancient hanfu wuxia; "
+        "not glossy modern city fashion. Wind and salt in the hair; storm urgency in every gesture."
+    ),
+}
 
 # 每個人的姿態、表情、道具。人設決定姿態——這是 JoJo 立最重要的地方：
 # 姿勢要洩漏這個人今天想幹什麼。
@@ -133,6 +147,71 @@ POSE: half-turned away, looking back over his shoulder, one hand raised with fin
 just plucked a string that is still ringing. EXPRESSION: gentle, sorrowful, unafraid — an old killer who has
 stopped caring about anything except one friendship.""",
     ),
+    # --- tempest · 嵐潮鎮 ---
+    "shen_xi": dict(
+        onom="鐘", who="""\
+A handsome Taiwanese temple keeper in his mid-fifties — salt-and-pepper hair cropped short, a neat short
+beard, deep calm eyes with weathered crow's feet, strong still hands. Quiet gravity; everyone calls him
+金水伯.
+Deep indigo temple vest over a dark teal under-robe, wooden prayer beads at the wrist, incense smoke
+curling past his shoulder.
+POSE: standing firm as if before an altar, torso slightly twisted, one hand raising a small temple bell,
+the other open in invitation toward unseen worshippers. EXPRESSION: resolute, devout, urgent — a man who
+knows an empty temple does not count.""",
+    ),
+    "shi_lei": dict(
+        onom="砰", who="""\
+A powerfully built handsome Taiwanese blacksmith around forty — square jaw with short stubble, thick
+forearms, soot-smudged cheekbones, intense narrow eyes. Sparse with words; the village calls him 鐵雄.
+Heavy leather apron over a burnt-umber work shirt, dark iron-grey trim; a welding hammer or tongs in hand,
+ember highlights on metal.
+POSE: weight forward, one knee slightly bent as if bracing a gate, hammer raised mid-strike, other hand
+steadying an unseen sluice plate. EXPRESSION: grim focus — prayer will not hold a gate; steel will.""",
+    ),
+    "fang_lan": dict(
+        onom="令", who="""\
+A beautiful, commanding Taiwanese village headwoman of thirty-eight — clear sharp eyes, neat dark hair
+pulled back for work, strong graceful posture. Practical authority; everyone calls her 美華姐.
+MODESTY IS MANDATORY: high collar, full sleeves. Sea-green practical jacket over a darker teal blouse,
+ink-dark trim; a cloth tally cord or whistle at her belt — no frills.
+POSE: half-turned toward the viewer, one arm flung out pointing inland (toward high ground), the other
+hand open as if counting people to move. EXPRESSION: firm, urgent, compassionate without softness —
+she cannot argue with the sea, only with people.""",
+    ),
+    "a_qian": dict(
+        onom="潮", who="""\
+A very handsome Taiwanese fisherman of twenty-nine — sun-browned skin, bright keen eyes that read the
+tide, wind-tossed dark hair under a simple cloth headband, lean athletic build. The village just calls
+him 阿海.
+Deep sea-blue oilskin jacket half-open at the collar, darker teal undershirt, a coiled rope over one
+shoulder; salt spray catching the rim light.
+POSE: mid-stride as if racing back to harbour, one arm raised signaling boats offshore, the other gripping
+the rope. EXPRESSION: urgent grin, alive to danger — ships still at sea means bodies the rite cannot save.""",
+    ),
+    "qing_he": dict(
+        onom="安", who="""\
+A beautiful Taiwanese herbal healer of thirty-three — warm luminous eyes, gentle but unflinching mouth,
+dark hair tied simply, soft sun-weathered skin. The village comes to her for medicine and calm.
+MODESTY IS MANDATORY: covering clothes to the throat and wrists. Soft sage-and-sand herbalist jacket with
+moss-green trim; a cloth medicine pouch at her side; a sprig of dried herbs tucked near the collar.
+POSE: body angled as if guiding someone uphill, one hand outstretched to steady a panicked neighbour,
+the other clutching the pouch. EXPRESSION: steady compassion — she knows panic kills before the tide does.""",
+    ),
+    "gu_chao": dict(
+        onom="望", who="""\
+A weathered handsome Taiwanese dyke watchman of forty-five — lean face, stubbled jaw, sharp far-seeing
+eyes, wind-cut hair under a faded cloth band. Everyone just calls him 阿德.
+Storm-grey canvas coat over charcoal work layers, salt-stained trim; one hand shielding his eyes toward
+the sea as if reading cloud walls.
+POSE: crouched slightly on an unseen seawall, torso twisted looking back inland while pointing seaward
+with the other hand — calling for the blacksmith. EXPRESSION: taut alertness — he cannot weld the gate,
+but he can outrun the wind to fetch the man who can.""",
+    ),
+}
+
+DEFAULT_ANCHOR = {
+    "jianghu": "liu_zhengfeng",
+    "tempest": "shen_xi",
 }
 
 ANCHOR_NOTE = """\
@@ -151,16 +230,18 @@ def load_cast(scenario: str) -> list[dict]:
     return json.loads(p.read_text(encoding="utf-8"))["agents"]
 
 
-def build_prompt(agent: dict, pose: dict) -> str:
-    art = agent.get("art", {})
-    bg = art.get("color") or "#8a8272"
-    head = STYLE % {"onom": pose["onom"], "bg": bg}
+def build_prompt(agent: dict, pose: dict, scenario: str = "jianghu") -> str:
+    # cast 現在用 look；舊檔可能還叫 art
+    look = agent.get("look") or agent.get("art") or {}
+    bg = look.get("color") or "#8a8272"
+    world = WORLDS.get(scenario) or WORLDS["jianghu"]
+    head = STYLE % {"onom": pose["onom"], "bg": bg, "world": world}
     return (
         f"{head}\n"
-        f"CHARACTER — {agent['name']} ({art.get('sect','')} · {art.get('title','')}):\n"
+        f"CHARACTER — {agent['name']} ({look.get('sect','')} · {look.get('title','')}):\n"
         f"{pose['who']}\n"
-        f"Costume palette must be built on {art.get('robe','#6f6455')} with "
-        f"{art.get('trim','#463f34')} trim, pushed to high saturation.\n"
+        f"Costume palette must be built on {look.get('robe','#6f6455')} with "
+        f"{look.get('trim','#463f34')} trim, pushed to high saturation.\n"
     )
 
 
@@ -190,9 +271,11 @@ def main() -> None:
     ap.add_argument("--scenario", default="jianghu")
     ap.add_argument("--model", default=MODEL)
     ap.add_argument("--only", action="append", help="只畫這些 id，可重複")
-    ap.add_argument("--anchor", default="liu_zhengfeng", help="當風格錨的角色 id")
+    ap.add_argument("--anchor", default=None, help="當風格錨的角色 id（預設依劇本）")
     ap.add_argument("--force", action="store_true", help="已存在也重畫")
     args = ap.parse_args()
+    if not args.anchor:
+        args.anchor = DEFAULT_ANCHOR.get(args.scenario, "liu_zhengfeng")
 
     agents = load_cast(args.scenario)
     out_dir = OUT / args.scenario
@@ -226,7 +309,7 @@ def main() -> None:
         ref = None if aid == args.anchor else anchor_bytes
         if ref is None and aid != args.anchor:
             print(f"  ⚠ {aid}：還沒有錨圖，這張會少了風格對齊")
-        prompt = build_prompt(a, POSE[aid])
+        prompt = build_prompt(a, POSE[aid], args.scenario)
         t0 = time.time()
         try:
             data, usage = generate(client, args.model, prompt, ref)
@@ -242,7 +325,7 @@ def main() -> None:
 
     print(f"\n畫了 {made} 張、跳過 {skipped}、失敗 {failed} → {out_dir}")
     if made:
-        print("接著跑：python art/embed_portraits.py，把圖壓進兩個網頁")
+        print(f"接著跑：python art/embed_portraits.py {args.scenario}，確認內嵌體積")
 
 
 if __name__ == "__main__":

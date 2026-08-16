@@ -18,3 +18,9 @@ def test_hakoniwa_and_seahaven_portraits() -> None:
         m = portrait_map(scen)
         for aid in ("mei_yi", "chen_yuan", "lin_shu", "wang_hao", "guo_bo", "su_qing"):
             assert aid in m, f"{scen} missing {aid}"
+
+
+def test_tempest_portraits() -> None:
+    m = portrait_map("tempest")
+    for aid in ("shen_xi", "shi_lei", "fang_lan", "a_qian", "qing_he", "gu_chao"):
+        assert aid in m, f"tempest missing {aid}"
