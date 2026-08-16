@@ -8,14 +8,15 @@
 用法：
     python replay/build_frames.py                 # 預設 j1(0-47) + j1b(48-)
     python replay/build_frames.py --run j2        # 單一 run
-    python replay/build_frames.py --run j2 --out j2_replay.html
+    python replay/build_frames.py --run t1 --out t1_replay.html
 輸出：
     replay/frames.json      中繼資料（可關）
-    <out>                   自帶資料、離線可開的回放頁（預設 jianghu_replay.html）
+    <out>                   自帶資料、離線可開的回放頁
 """
 from __future__ import annotations
 
 import argparse
+import importlib
 import json
 import sys
 from collections import deque
@@ -24,7 +25,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from scenarios import jianghu  # noqa: E402
 from art.embed_portraits import portrait_map  # noqa: E402
 from art.embed_scenes import scene_map  # noqa: E402
 from art.embed_icons import icon_map  # noqa: E402
@@ -35,6 +35,58 @@ from truman.world.grid import Pos  # noqa: E402
 DEFAULT_SOURCES = [("j1", 0, 48), ("j1b", 48, 10**9)]
 DEFAULT_CHECKPOINTS = [("j1", (12, 24, 36, 48)), ("j1b", (60, 72, 84, 96))]
 MOVE_SPEED = 3
+
+# 回放標題／開場文案。沒列到的劇本用 NAME。
+SCENARIO_META = {
+    "jianghu": {
+        "title": "衡山城 · 劉正風金盆洗手",
+        "lede": (
+            "六個 AI 被放進同一天的同一座城。沒有人寫結局——目標互相排斥，張力自己會長出來。"
+            "<br>知識對稱，每個人只看得見自己看得見的、只記得自己記得的；而這個世界允許他們拔刀。"
+        ),
+        "foot": (
+            "箱庭實錄：目標互相排斥的多智能體，知識對稱、世界允許拔刀；沒有預寫結局。<br>"
+            "離線確定性重放，零 API 呼叫。人物取自金庸《笑傲江湖》。"
+        ),
+        "cta": "▶ 進　城",
+        "decor": "jianghu",
+        "basin": [2.5, 2.5],
+    },
+    "tempest": {
+        "title": "嵐潮鎮 · 暴潮來襲前的半日",
+        "lede": (
+            "六個人被丟進同一場暴潮。對手不是刀，是海——"
+            "鎮潮禮要人觀禮，封閘要人作證，疏散要人聽勸。"
+            "<br>亥時一到，禮與閘成不成會真的改地圖：低處淹水、斷路、捲走還站在水裡的人。"
+        ),
+        "foot": (
+            "箱庭實錄：壯闊的和平劇本，對手是海；禮／閘成敗會淹鎮。<br>"
+            "離線確定性重放，零 API 呼叫。"
+        ),
+        "cta": "▶ 上　堤",
+        "decor": "",
+        "basin": None,
+    },
+}
+
+# 嵐潮地圖符號 → 像素美術認得的符號（衡山那套圖磚）。
+# 海 `~` 另外在 pixelart 裡畫水；其餘就近映射，避免碼頭 `p` 被畫成院子屏風。
+TEMPEST_REPLAY_SYM = {
+    "a": "y",  # 高地 → 泥地／坡
+    "b": "l",  # 村長宅 → 廳堂
+    "c": "c",  # 鎮廟 → 廟
+    "d": "s",  # 廣場 → 青石
+    "e": "y",  # 鐵鋪
+    "f": "m",  # 漁市 → 市集
+    "g": "y",  # 糧倉（避開城門 g）
+    "h": "s",  # 海堤 → 石面
+    "p": "y",  # 碼頭（避開院子 p）
+}
+
+PROFILE_COLORS = [
+    "#4f9b86", "#6f7a94", "#c9903a", "#cf8fa4", "#b84a3c", "#8b6bab",
+    "#5a8fbf", "#9a7b4f",
+]
 
 
 def fork_tick(run: str) -> int | None:
@@ -56,7 +108,6 @@ def resolve_sources(runs: list[str] | None) -> tuple[list[tuple[str, int, int]],
     if not runs:
         return list(DEFAULT_SOURCES), list(DEFAULT_CHECKPOINTS)
 
-    # 接力的 run 之間 tick 是重疊的：前一段的界線 = 後一段的 fork 點。
     starts = [fork_tick(r) or 0 for r in runs]
     bounds = starts[1:] + [10**9]
     sources = [(r, lo, hi) for r, lo, hi in zip(runs, starts, bounds)]
@@ -76,6 +127,37 @@ def resolve_sources(runs: list[str] | None) -> tuple[list[tuple[str, int, int]],
         if (ROOT / "runs" / r / "checkpoints").exists()
     ]
     return sources, checkpoints
+
+
+def detect_scenario(run: str) -> str:
+    """從 run_start 或 checkpoint 讀劇本名；讀不到就當江湖。"""
+    path = ROOT / "runs" / run / "events.jsonl"
+    if path.exists():
+        for line in path.open(encoding="utf-8"):
+            if '"run_start"' not in line:
+                continue
+            r = json.loads(line)
+            if r.get("type") == "run_start":
+                return r.get("data", {}).get("scenario") or "jianghu"
+    cps = sorted((ROOT / "runs" / run / "checkpoints").glob("t*.json"))
+    if cps:
+        try:
+            return json.loads(cps[0].read_text(encoding="utf-8")).get("scenario") or "jianghu"
+        except (OSError, json.JSONDecodeError):
+            pass
+    return "jianghu"
+
+
+def load_scenario(name: str):
+    return importlib.import_module(f"scenarios.{name}")
+
+
+def replay_rows(scen) -> list[str]:
+    """給像素地圖用的 rows：嵐潮符號映射到現有圖磚。"""
+    rows = list(scen.GRID_ROWS)
+    if getattr(scen, "NAME", "") != "tempest":
+        return rows
+    return ["".join(TEMPEST_REPLAY_SYM.get(ch, ch) for ch in row) for row in rows]
 
 
 def walk_between(grid, a: Pos, b: Pos, limit: int = 8) -> list[list[int]]:
@@ -117,6 +199,45 @@ def _load_cp(run: str, t: int):
     return {aid: Pos.of(a["pos"]) for aid, a in d["agents"].items()}
 
 
+def _cast_profiles(scen) -> list[dict]:
+    """回放用的人物卡：缺 skill／kin 的劇本給預設，並帶上開場文案欄位。"""
+    cast = []
+    for i, spec in enumerate(scen.AGENTS):
+        goals = spec.get("goals") or []
+        goal_text = goals[0]["text"] if goals else ""
+        persona = (spec.get("persona") or "").strip()
+        blurb = ""
+        for line in persona.splitlines():
+            line = line.strip()
+            if line and not line.startswith("你叫"):
+                blurb = line
+                break
+        if not blurb and persona:
+            blurb = persona.splitlines()[0].strip()
+        role = spec.get("role", "")
+        title = spec.get("home_area", "") if role in ("villager", "actor", "") else role
+        cast.append({
+            "id": spec["id"],
+            "name": spec["name"],
+            "skill": int(spec.get("skill", 5)),
+            "home": spec["home_area"],
+            "kin": list(spec.get("kin", [])),
+            "arts": [
+                {"id": d.id, "name": d.name, "kind": d.kind, "tagline": d.tagline,
+                 "cost": d.cost_line()}
+                for d in (arts_mod.get(x) for x in spec.get("arts", []))
+                if d is not None
+            ],
+            "ch": spec["name"][0],
+            "sect": spec.get("home_area", ""),
+            "title": title,
+            "color": PROFILE_COLORS[i % len(PROFILE_COLORS)],
+            "goal": goal_text,
+            "blurb": blurb,
+        })
+    return cast
+
+
 def build_replay(
     runs: list[str] | None = None,
     out: Path | str | None = None,
@@ -124,14 +245,20 @@ def build_replay(
     write_frames_json: bool = False,
     quiet: bool = False,
 ) -> Path:
-    """從 runs 的 events.jsonl 建回放 HTML，回傳輸出路徑。
-
-    `write_frames_json` 預設關掉：產出的 HTML 本來就自帶全部資料，frames.json
-    只是除錯時方便拿去 jq 的中繼檔。它有半 MB，以前每建一次回放就在版控裡
-    留一個假 diff（而且沒有任何程式讀它）。要看的話用 `--frames-json`。
-    """
+    """從 runs 的 events.jsonl 建回放 HTML，回傳輸出路徑。"""
     sources, checkpoint_specs = resolve_sources(runs)
-    out_path = Path(out) if out else ROOT / "jianghu_replay.html"
+    scenario_name = detect_scenario(sources[0][0])
+    scen = load_scenario(scenario_name)
+    meta = SCENARIO_META.get(scenario_name, {
+        "title": getattr(scen, "NAME", scenario_name),
+        "lede": "一場多智能體箱庭實錄。",
+        "foot": "離線確定性重放，零 API 呼叫。",
+        "cta": "▶ 開　始",
+        "decor": "",
+        "basin": None,
+    })
+
+    out_path = Path(out) if out else ROOT / f"{scenario_name}_replay.html"
     if not out_path.is_absolute():
         out_path = ROOT / out_path
 
@@ -140,11 +267,11 @@ def build_replay(
         if not ev.exists():
             raise FileNotFoundError(f"找不到 {ev}")
         if not quiet:
-            print(f"  {run}: tick [{lo}, {'∞' if hi > 10**8 else hi})")
+            print(f"  {run}: tick [{lo}, {'∞' if hi > 10**8 else hi})  scenario={scenario_name}")
 
-    grid = jianghu.build_grid()
-    agents = {a["id"]: a for a in jianghu.AGENTS}
-    start = {a["id"]: Pos(*a["start"]) for a in jianghu.AGENTS}
+    grid = scen.build_grid()
+    agents = {a["id"]: a for a in scen.AGENTS}
+    start = {a["id"]: Pos(*a["start"]) for a in scen.AGENTS}
 
     events = []
     for run, lo, hi in sources:
@@ -182,7 +309,6 @@ def build_replay(
                 if th:
                     thought_at[(int(parts[0]), parts[1])] = th
 
-    # checkpoint 檔名比它描述的狀態晚一拍。
     checkpoints = {}
     for run, ts in checkpoint_specs:
         for t in ts:
@@ -199,9 +325,12 @@ def build_replay(
     drift = 0
     n_speech = n_attack = n_death = 0
     n_art = n_goal_done = 0
-    # 目的的結案紀錄，收工結算也在裡面。片尾的成績單就是讀這一份。
     goal_log: list[dict] = []
     walked = {aid: 0 for aid in agents}
+    flood_tick = -1
+    flooded: list[list[int]] = []
+    outcome = ""
+    outcome_text = ""
 
     for t in range(0, max_tick + 1):
         evs = by_tick.get(t, [])
@@ -211,7 +340,7 @@ def build_replay(
             d, ty = r["data"], r["type"]
             if ty == "intent" and d.get("kind") == "move_to":
                 aid = d["agent"]
-                if alive[aid]:
+                if alive.get(aid, False):
                     action[aid] = {"path": grid.path(pos[aid], d["target"]), "to": d["target"]}
             elif ty == "intent" and d.get("kind") == "interact":
                 action[d["agent"]] = None
@@ -260,7 +389,6 @@ def build_replay(
                     }
                 )
             elif ty == "art_used":
-                # 絕技使完就要重新盤算，所以和說話一樣把進行中的動作清掉。
                 action[d["agent"]] = None
                 n_art += 1
                 tick_events.append(
@@ -298,12 +426,25 @@ def build_replay(
                     tick_events.append(
                         {"kind": "reflection", "agent": d["agent"], "insight": ins[0]}
                     )
+            elif ty == "storm":
+                flood_tick = t
+                outcome = d.get("outcome", "") or outcome
+                outcome_text = d.get("text", "") or outcome_text
+                cells = d.get("flooded") or []
+                if cells:
+                    flooded = [list(xy) for xy in cells]
+                    grid.flood_positions(Pos(int(xy[0]), int(xy[1])) for xy in flooded)
+                elif d.get("flooded_areas"):
+                    names = list(d["flooded_areas"])
+                    flooded = [p.as_list() for p in grid.cells_in_areas(names)]
+                    grid.flood_positions(Pos(xy[0], xy[1]) for xy in flooded)
+                tick_events.append({
+                    "kind": "world",
+                    "area": "",
+                    "text": d.get("text") or f"暴潮結算：{d.get('outcome', '')}",
+                })
             elif ty == "director" and d.get("fired") and d.get("text"):
-                # broadcast 是全場都聽得見的世界旁白；inject 只有一個人看得見。
-                # 先前兩者都畫成世界旁白，於是「有人急奔來報噩耗」看起來像是
-                # 說給全城聽的。這兩件事在箱庭裡差很多，不能混。
                 if d.get("kind") == "inject":
-                    # 目的結案的那一則跳過：同一拍已經有 goal 事件講過同一件事了。
                     if d.get("tag") == "goal":
                         continue
                     tick_events.append(
@@ -341,6 +482,8 @@ def build_replay(
 
             if t in checkpoints:
                 for aid, cp_pos in checkpoints[t].items():
+                    if aid not in pos:
+                        continue
                     if pos[aid] != cp_pos:
                         drift += 1
                         pos[aid] = cp_pos
@@ -369,7 +512,7 @@ def build_replay(
                 1
                 for t, cp in checkpoints.items()
                 for aid, cp_pos in cp.items()
-                if t < len(frames)
+                if aid in agents and t < len(frames)
                 and Pos.of(
                     [frames[t]["agents"][aid]["x"], frames[t]["agents"][aid]["y"]]
                 )
@@ -382,7 +525,23 @@ def build_replay(
         else:
             print(f"drift vs checkpoints: {drift} cell-mismatches (snapped)")
 
-    legend = {sym: {"name": n, "walk": w} for sym, (n, w) in jianghu.LEGEND.items()}
+    if not outcome:
+        for run, _, _ in sources:
+            cps = sorted((ROOT / "runs" / run / "checkpoints").glob("t*.json"))
+            if not cps:
+                continue
+            try:
+                last = json.loads(cps[-1].read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            outcome = last.get("outcome") or outcome
+            outcome_text = last.get("outcome_text") or outcome_text
+            if last.get("flooded") and not flooded:
+                flooded = [list(xy) for xy in last["flooded"]]
+                if flood_tick < 0:
+                    flood_tick = max_tick
+
+    legend = {sym: {"name": n, "walk": w} for sym, (n, w) in scen.LEGEND.items()}
     areas = [
         {
             "name": a.name,
@@ -394,30 +553,17 @@ def build_replay(
         }
         for a in grid.areas.values()
     ]
-    # 配備的絕技從劇本模組讀（和 skill／kin 一樣是既有做法）。用 --cast 換過的話
-    # 這一欄會是劇本預設，但實際使出來的絕技照樣會出現在事件流與統計裡——那些是
-    # 從日誌來的，不會騙人。目的則一律取自 goal_* 事件，那才是真的跑出來的結果。
-    cast = [
-        {
-            "id": aid,
-            "name": agents[aid]["name"],
-            "skill": agents[aid]["skill"],
-            "home": agents[aid]["home_area"],
-            "kin": list(agents[aid].get("kin", [])),
-            "arts": [
-                {"id": d.id, "name": d.name, "kind": d.kind, "tagline": d.tagline,
-                 "cost": d.cost_line()}
-                for d in (arts_mod.get(x) for x in agents[aid].get("arts", []))
-                if d is not None
-            ],
-        }
-        for aid in agents
-    ]
+    cast = _cast_profiles(scen)
 
     payload = {
-        "scenario": "jianghu",
-        "title": jianghu.NAME and "衡山城 · 劉正風金盆洗手",
-        "rows": jianghu.GRID_ROWS,
+        "scenario": scenario_name,
+        "title": meta["title"],
+        "lede": meta["lede"],
+        "foot": meta["foot"],
+        "cta": meta["cta"],
+        "decor": meta.get("decor") or "",
+        "basin": meta.get("basin"),
+        "rows": replay_rows(scen),
         "legend": legend,
         "areas": areas,
         "cast": cast,
@@ -425,6 +571,10 @@ def build_replay(
         "frames": frames,
         "max_tick": max_tick,
         "goals": goal_log,
+        "flood_tick": flood_tick,
+        "flooded": flooded,
+        "outcome": outcome,
+        "outcome_text": outcome_text,
         "stats": {
             "speeches": n_speech,
             "attacks": n_attack,
@@ -434,9 +584,9 @@ def build_replay(
             "goals_done": n_goal_done,
             "goals_total": len(goal_log),
         },
-        "portraits": portrait_map("jianghu"),
-        "scenes": scene_map("jianghu"),
-        "art_icons": icon_map("jianghu"),
+        "portraits": portrait_map(scenario_name),
+        "scenes": scene_map(scenario_name),
+        "art_icons": icon_map(scenario_name),
         "event_icons": event_icon_map(),
     }
 
@@ -478,14 +628,14 @@ def build_replay(
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description="事件日誌 → 回放頁")
     ap.add_argument("--run", action="append", help="改用這個 run（可重複，依序接起來）")
-    ap.add_argument("--out", default="jianghu_replay.html", help="輸出的 HTML 檔名")
+    ap.add_argument("--out", default="", help="輸出的 HTML 檔名（預設依劇本名）")
     ap.add_argument(
         "--frames-json", action="store_true",
         help="另外把中繼資料寫成 replay/frames.json（除錯用；產出的 HTML 本來就自帶資料）",
     )
     args = ap.parse_args(argv)
     try:
-        build_replay(args.run, args.out, write_frames_json=args.frames_json)
+        build_replay(args.run, args.out or None, write_frames_json=args.frames_json)
     except (FileNotFoundError, ValueError, RuntimeError) as e:
         raise SystemExit(str(e)) from e
 

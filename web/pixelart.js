@@ -168,6 +168,14 @@ function buildWorldCanvas(rows, areas, TS, decor, margin) {
       else if (h(5) > .5) R(6,9,5,4,"#4d5a3c");
       return;
     }
+    if (sym === "~") {                                     // 海／洪水（嵐潮）
+      const SEA = ["#3a6d8a", "#356480", "#407897"];
+      R(0,0,16,16,SEA[Math.floor(h(2)*3)]);
+      R(0, Math.floor(h(4)*6)+2, 16, 1, "rgba(220,240,255,.22)");
+      R(0, Math.floor(h(5)*8)+6, 16, 1, "rgba(180,220,240,.16)");
+      if (h(6) > .7) R(Math.floor(h(7)*10)+2, Math.floor(h(8)*10)+2, 3, 2, "rgba(255,255,255,.18)");
+      return;
+    }
     // 長街
     R(0,0,16,16,PAL.street[Math.floor(h(1)*3)]);
     for (let i=0; i<4; i++) { const cx = Math.floor(h(10+i)*12)+1, cy = Math.floor(h(20+i)*12)+1;

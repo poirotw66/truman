@@ -492,6 +492,7 @@ def after_goals(engine) -> None:
         "sealed": sealed,
         "flooded_areas": flood_names,
         "flooded_cells": len(set(cells)),
+        "flooded": w.flooded,
         "drowned": drowned,
         "text": text,
     }
