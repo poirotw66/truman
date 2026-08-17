@@ -166,7 +166,7 @@ copy .env.example .env      # 填你要用的那一家的 key
 
 瀏覽器 `http://127.0.0.1:8765/`：
 
-1. **回放既有軌跡（推薦上台）** — 勾 `j2` / `j2b` / `j2c` → 產出完整回放頁。內容已驗證、不燒 API。
+1. **回放既有軌跡（推薦上台）** — 勾 `j2` / `j2b` / `j2c`（江湖）或 `t1` / `t2`（嵐潮）→ 產出完整回放頁。內容已驗證、不燒 API。
 2. **現場開一場** — 真 LLM 預設全日 96 ticks；`stub` 僅測管線（對話會鬼打牆，沒模擬價值）。
 
 現場進度會顯示：時辰、phase、最近對話、**已花時間／平均每 tick／本刻已等／預估剩餘**，
@@ -178,15 +178,18 @@ copy .env.example .env      # 填你要用的那一家的 key
 | run id | 新名字（不能跟 `runs/` 裡已有的撞名） |
 | ticks | **96**（一天；頁面上限也是 96）；試水管線可先 12–24 |
 | seed | `7` |
-| scenario | `jianghu（完整回放）` |
+| scenario | `jianghu` 或 `tempest` |
 | provider | `gemini` |
-| cast | 可空；或 `cast/jianghu.json` |
+| cast | 可空；或 `cast/jianghu.json` / `cast/tempest.default.json` |
 | stub | **不要勾** |
 
 日誌在 `runs/<run-id>/`，回放 HTML 在 `runs/_demo/<run-id>_replay.html`。粗估全日 **$0.3–0.6**（有快取時）；3.1-flash-lite 門檻高，命中率常偏低、帳單會往上。對帳：
 
 ```powershell
 .\.venv\Scripts\python.exe -m truman.cli report --run-id j3
+# 嵐潮兩場既有實錄（seed 42 / 7，皆 held）：
+.\.venv\Scripts\python.exe -m truman.cli report --run-id t1
+.\.venv\Scripts\python.exe -m truman.cli report --run-id t2
 ```
 
 ---
