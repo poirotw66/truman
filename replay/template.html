@@ -89,8 +89,12 @@
   .roster li{display:flex; gap:9px; align-items:center; padding:5px 7px; border-radius:8px; cursor:pointer; transition:background .15s}
   .roster li:hover{background:var(--panel2)}
   .roster li.sel{background:color-mix(in srgb,var(--gold) 20%,transparent)}
-  .rface{flex:none; width:30px; height:30px; border-radius:8px; background:#171410; display:block;
-    image-rendering:pixelated; object-fit:cover; object-position:50% 14%}
+  /* 頭像框：像素小人直接畫在 canvas；Gemini 立繪要 zoom 對準臉，不能再 pixelated */
+  .rface{flex:none; width:34px; height:34px; border-radius:9px; background:#171410; display:block;
+    overflow:hidden; box-shadow:inset 0 0 0 1px rgba(255,240,210,.12)}
+  canvas.rface{image-rendering:pixelated; width:34px; height:34px}
+  .rface img{width:100%; height:100%; object-fit:cover; object-position:50% 14%;
+    transform:scale(1.72); transform-origin:50% 16%; display:block}
   .rname{font-family:var(--disp); font-weight:600; font-size:14px}
   .rmeta{font-size:10.5px; color:var(--ink2)}
   .rstat{margin-left:auto; text-align:right}
@@ -122,15 +126,18 @@
   .sheet{position:absolute; inset:0; z-index:20; background:var(--panel); border:1px solid var(--line2); border-radius:12px;
     display:flex; flex-direction:column; box-shadow:var(--shadow); overflow:hidden}
   .sheet .hd{display:flex; gap:12px; align-items:flex-start; padding:12px 13px; border-bottom:1px solid var(--line); background:var(--panel2)}
-  .sheet .bust{width:104px; height:139px; border-radius:7px; flex:none; object-fit:cover; display:block;
-    box-shadow:0 3px 10px rgba(0,0,0,.5); transition:filter .3s}
-  .sheet canvas.bust{image-rendering:pixelated}
-  .sheet img.bust{cursor:zoom-in}
+  .sheet .bust{width:112px; height:149px; border-radius:8px; flex:none; object-fit:cover; object-position:50% 8%;
+    display:block; box-shadow:0 3px 12px rgba(0,0,0,.55); transition:filter .3s, transform .2s;
+    background:#120e0a}
+  .sheet canvas.bust{image-rendering:pixelated; object-position:unset}
+  .sheet img.bust{cursor:zoom-in; border:1px solid rgba(255,240,210,.16)}
+  .sheet img.bust:hover{transform:translateY(-1px); filter:brightness(1.04)}
   .sheet .vignette{width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:8px; display:block;
     margin-top:6px; border:1px solid var(--line)}
   .ptlb{position:fixed; inset:0; z-index:80; background:rgba(6,4,3,.92); display:flex; align-items:center;
     justify-content:center; padding:24px; cursor:zoom-out; animation:fade .25s ease}
-  .ptlb img{max-width:min(560px,92vw); max-height:88vh; border-radius:10px; box-shadow:0 18px 60px rgba(0,0,0,.7)}
+  .ptlb img{max-width:min(560px,92vw); max-height:88vh; border-radius:10px; box-shadow:0 18px 60px rgba(0,0,0,.7);
+    border:1px solid rgba(255,240,210,.14)}
   .ptlb .cap{position:absolute; bottom:22px; left:0; right:0; text-align:center; color:#e9dcbe;
     font-family:var(--disp); font-size:17px; letter-spacing:.1em; text-shadow:0 2px 8px #000}
   .sheet .nm{font-family:var(--disp); font-size:19px; font-weight:600; line-height:1.2}
@@ -222,8 +229,10 @@
     display:flex; flex-direction:column; align-items:center; gap:5px; animation:rise .5s backwards}
   @keyframes rise{from{opacity:0; transform:translateY(14px)}}
   .cc canvas{width:78px; height:104px; image-rendering:pixelated; border-radius:5px; box-shadow:0 4px 12px rgba(0,0,0,.45)}
-  .cc img.pt{width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:6px; display:block;
-    box-shadow:0 5px 16px rgba(0,0,0,.5)}
+  .cc img.pt{width:100%; aspect-ratio:3/4; object-fit:cover; object-position:50% 6%; border-radius:7px;
+    display:block; box-shadow:0 5px 16px rgba(0,0,0,.5); border:1px solid rgba(255,240,210,.14);
+    transition:transform .22s ease, box-shadow .22s ease}
+  .cc:hover img.pt{transform:translateY(-3px) scale(1.02); box-shadow:0 10px 22px rgba(0,0,0,.55)}
   .cc .n{font-family:var(--disp); font-size:15px; font-weight:600}
   .cc .s{font-size:10px; color:var(--gold); letter-spacing:.1em}
   .cc .g{font-size:11.5px; color:#c2b699; line-height:1.5; min-height:3em}
@@ -242,6 +251,10 @@
   .score .sh{font-size:10px; letter-spacing:.28em; color:var(--gold); font-weight:700; margin-bottom:3px}
   .score .sr{display:flex; gap:10px; align-items:center; padding:6px 12px; border-radius:8px;
     background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.08)}
+  .score .sf{flex:none; width:28px; height:28px; border-radius:7px; overflow:hidden; background:#171410;
+    box-shadow:inset 0 0 0 1px rgba(255,240,210,.12)}
+  .score .sf img{width:100%; height:100%; object-fit:cover; object-position:50% 14%;
+    transform:scale(1.7); transform-origin:50% 16%; display:block}
   .score .who{font-family:var(--disp); font-size:14px; font-weight:600; flex:0 0 62px; text-align:left}
   .score .gt{flex:1; text-align:left; font-size:11.5px; color:#c3b79c; line-height:1.5}
   .score .gm{display:flex; gap:4px; margin-left:auto}
@@ -257,7 +270,10 @@
   .foot{font-size:11px; color:var(--ink2); text-align:center; line-height:1.75}
   .foot b{color:var(--ink)}
   :focus-visible{outline:2px solid var(--gold); outline-offset:2px; border-radius:6px}
-  @media (prefers-reduced-motion:reduce){ *{animation-duration:.01ms!important} }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms!important}
+    .cc:hover img.pt,.sheet img.bust:hover{transform:none}
+  }
 </style>
 
 <div class="jh">
@@ -832,9 +848,13 @@ feedEl.onclick = e => { const d = e.target.closest(".fe"); if (d && d.dataset.t)
 const rosterEl = document.getElementById("roster");
 IDS.forEach(id => {
   const p = P[id], li = document.createElement("li"); li.dataset.id = id;
-  if (PORTRAIT[id]) { const im = document.createElement("img"); im.className = "rface"; im.src = PORTRAIT[id];
-    im.alt = ""; li.appendChild(im); }
-  else { const f = faceCanvas(id, 30); f.className = "rface"; li.appendChild(f); }
+  if (PORTRAIT[id]) {
+    const wrap = document.createElement("span"); wrap.className = "rface";
+    const im = document.createElement("img"); im.src = PORTRAIT[id]; im.alt = "";
+    wrap.appendChild(im); li.appendChild(wrap);
+  } else {
+    const f = faceCanvas(id, 34); f.className = "rface"; li.appendChild(f);
+  }
   const mid = document.createElement("span");
   mid.innerHTML = `<span class="rname">${esc(p.name)}</span><br><span class="rmeta">${esc(p.sect)} · ${esc(p.title)}</span>`;
   li.appendChild(mid);
@@ -1242,6 +1262,7 @@ function scoreHTML() {
     const cells = mine.map(g =>
       `<i class="${g.done ? "y" : "n"}" title="${esc(g.text)}　${esc(g.note)}">${g.done ? "✓" : "✕"}</i>`).join("");
     return `<div class="sr">
+      ${PORTRAIT[id] ? `<span class="sf"><img src="${PORTRAIT[id]}" alt=""></span>` : ""}
       <span class="who" style="color:${P[id].color}">${esc(P[id].name)}</span>
       <span class="gt">${esc(mine.map(g => g.text).join("；"))}</span>
       <span class="gm">${cells}</span></div>`;

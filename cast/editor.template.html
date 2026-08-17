@@ -57,9 +57,13 @@
   .who li{display:flex; gap:9px; align-items:center; padding:6px 7px; border-radius:9px; cursor:pointer}
   .who li:hover{background:var(--panel2)}
   .who li.sel{background:color-mix(in srgb,var(--gold) 22%,transparent); outline:1px solid var(--gold)}
-  .who canvas, .who img{width:34px; height:34px; image-rendering:pixelated; border-radius:8px;
-    background:#171410; flex:none; object-fit:cover; object-position:50% 14%}
-  .who img{image-rendering:auto}
+  .who canvas, .who img{width:34px; height:34px; border-radius:8px;
+    background:#171410; flex:none}
+  .who canvas{image-rendering:pixelated}
+  .who span.av{width:34px; height:34px; border-radius:8px; overflow:hidden; flex:none;
+    background:#171410; box-shadow:inset 0 0 0 1px rgba(255,240,210,.12)}
+  .who span.av img{width:100%; height:100%; object-fit:cover; object-position:50% 14%;
+    transform:scale(1.7); transform-origin:50% 16%; display:block; image-rendering:auto}
   .who .n{font-family:var(--disp); font-size:14.5px; font-weight:600; line-height:1.25}
   .who .s{font-size:10.5px; color:var(--ink2)}
   .who .bad{margin-left:auto; color:var(--cinnabar); font-size:13px}
@@ -314,9 +318,14 @@ function thumbFor(a) {
   const key = a.id + "|" + (url ? "p" : JSON.stringify(a.look));
   if (THUMBS[key]) return THUMBS[key];
   let el;
-  if (url) { el = document.createElement("img"); el.src = url; el.alt = ""; }
-  else { el = document.createElement("canvas"); el.width = el.height = 34;
-    drawPortrait(el.getContext("2d"), 34, a.look); }
+  if (url) {
+    el = document.createElement("span"); el.className = "av";
+    const im = document.createElement("img"); im.src = url; im.alt = "";
+    el.appendChild(im);
+  } else {
+    el = document.createElement("canvas"); el.width = el.height = 34;
+    drawPortrait(el.getContext("2d"), 34, a.look);
+  }
   THUMBS[key] = el; return el;
 }
 function renderWho() {

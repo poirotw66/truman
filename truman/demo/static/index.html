@@ -162,8 +162,10 @@
       border-radius:9px; padding:8px 10px; display:flex; flex-direction:column; gap:5px}
   .bc.dead{opacity:.45}
   .bc .hd{display:flex; align-items:center; gap:8px}
-  .bc .face{width:28px; height:36px; border-radius:5px; object-fit:cover; object-position:50% 12%;
-    flex:none; background:rgba(0,0,0,.35); box-shadow:0 1px 4px rgba(0,0,0,.35)}
+  .bc .face{width:36px; height:36px; border-radius:8px; flex:none; overflow:hidden;
+    background:rgba(0,0,0,.35); box-shadow:inset 0 0 0 1px rgba(255,255,255,.12), 0 1px 4px rgba(0,0,0,.35)}
+  .bc .face img{width:100%; height:100%; object-fit:cover; object-position:50% 14%;
+    transform:scale(1.7); transform-origin:50% 16%; display:block}
   .bc .nm{font-weight:700; font-size:13px}
   .bc .st{font-size:10.5px; opacity:.7; margin-left:auto}
   .bc .g{display:flex; gap:6px; align-items:flex-start; font-size:11.5px; line-height:1.45}
@@ -527,9 +529,11 @@ function renderBoard(rows) {
       return `<span class="a ${cls}">${ic}${escapeHtml(a.name)}${tail}</span>`;
     }).join("");
     const state = !r.alive ? "已歿" : r.wound >= 2 ? "重傷" : r.wound === 1 ? "帶傷" : "";
+    const scen = (currentJobData && currentJobData.scenario) || $("scenario").value || "jianghu";
     const face = r.id
-      ? `<img class="face" src="/art/portraits/${encodeURIComponent(r.id)}.jpg" alt=""
-           onerror="this.remove()">`
+      ? `<span class="face"><img src="/art/portraits/${encodeURIComponent(scen)}/${encodeURIComponent(r.id)}.jpg" alt=""
+           data-fallback="/art/portraits/${encodeURIComponent(r.id)}.jpg"
+           onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;delete this.dataset.fallback}else{this.parentNode.remove()}"></span>`
       : "";
     return `<div class="bc ${r.alive ? "" : "dead"}">
       <div class="hd">${face}<span class="nm">${escapeHtml(r.name)}</span><span class="st">${state}</span></div>
