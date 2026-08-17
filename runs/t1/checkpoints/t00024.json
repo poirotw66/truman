@@ -1,0 +1,4172 @@
+{
+  "run_id": "t1",
+  "scenario": "tempest",
+  "seed": 42,
+  "tick": 24,
+  "agents": {
+    "shen_xi": {
+      "id": "shen_xi",
+      "name": "沈汐",
+      "role": "villager",
+      "persona": "你叫沈汐，嵐潮鎮廟的祭司，五十多歲。\n你信海神，但更信「禮要人看見」——空廟裡的禱告海不認。\n\n今天傍晚暴潮會上岸。你今天只要做成一件事：在鎮廟當眾行完鎮潮禮。\n至少要有兩個人在場觀禮。禮成之前，你什麼都可以放下；禮敗了，鎮就完了。\n你可以安撫慌亂的人，但安撫代替不了開禮。",
+      "home_area": "鎮廟",
+      "pos": [
+        19,
+        6
+      ],
+      "plan": "移動到鎮廟，確認青禾是否在場，並準備好隨時行鎮潮禮。",
+      "action": {
+        "kind": "move_to",
+        "target_area": "鎮廟",
+        "path": [
+          [
+            19,
+            5
+          ],
+          [
+            19,
+            4
+          ],
+          [
+            19,
+            3
+          ]
+        ],
+        "done": false
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "廟裡連個鬼影都沒有，這禮要開給誰看？得去廣場把人趕過來，至少先找幾個能聽進話的。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 2,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "在街道遇到顧潮。",
+            "importance": 3,
+            "last_access_tick": 5
+          },
+          {
+            "id": 3,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "在街道遇到青禾。",
+            "importance": 3,
+            "last_access_tick": 6
+          },
+          {
+            "id": 4,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 4
+          },
+          {
+            "id": 5,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "青禾往村長宅走，那是方嵐的地盤，正好，我得去把方嵐和青禾都請到廟裡來，不然禮沒人看就是白搭。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 6,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "speech",
+            "content": "青禾對我說：「沈祭司！方嵐人在哪？疏散順序得趕快定下來，不然等會兒廣場一亂，誰都撤不走。」",
+            "importance": 7,
+            "last_access_tick": 15
+          },
+          {
+            "id": 7,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "青禾也是個明白人，但方嵐不在這兒就沒法下令，得趕緊去宅子裡把人堵住。這廣場看著要亂，晚點回來用安民咒可能還有點用。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 8,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "在街道遇到阿潛。",
+            "importance": 3,
+            "last_access_tick": 6
+          },
+          {
+            "id": 9,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "青禾對我說：「沈祭司！方嵐不在宅子裡嗎？疏散順序得趕緊定，不然等會人潮湧起來，高地那邊會踩踏的。」",
+            "importance": 7,
+            "last_access_tick": 15
+          },
+          {
+            "id": 10,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "方嵐不在村長宅，這下麻煩了，整個鎮子亂起來可就沒人能幫我作證行禮。先回應青禾的焦慮，並確認方嵐的去向，看看能不能先讓她跟我去廟裡或者幫忙維持秩序。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 11,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "我說：「青禾，方嵐應該在海堤或是廣場那邊。這兒要亂了，妳先跟我上鎮廟，那邊得準備鎮潮禮，否則潮水一進來，誰都躲不掉。妳先把人引過去，我隨後就到。」",
+            "importance": 5,
+            "last_access_tick": 19
+          },
+          {
+            "id": 12,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "方嵐這混帳東西又不知道跑哪去了，但我沒時間乾等，得先把這兩個人都拉去廟裡候著。青禾就在宅子附近，先穩住她，讓她去廟裡看著，順便幫忙勸人。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 13,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "speech",
+            "content": "我說：「青禾！方嵐若不在，就妳先往鎮廟走！我稍後去海堤找他，妳去廟裡候著，那兒需要有人觀禮，不然暴潮一到，誰都跑不掉！」",
+            "importance": 5,
+            "last_access_tick": 15
+          },
+          {
+            "id": 14,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "在街道遇到石磊。",
+            "importance": 3,
+            "last_access_tick": 7
+          },
+          {
+            "id": 15,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "在街道遇到顧潮。",
+            "importance": 3,
+            "last_access_tick": 7
+          },
+          {
+            "id": 16,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "青禾這丫頭還在愣著，得讓她趕緊先去鎮廟穩住，那裡不能沒人。石磊跟顧潮都在廣場那邊，等安頓好青禾，我得去海堤或者廣場把他們攔下。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 17,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "speech",
+            "content": "我說：「青禾，別管方嵐了！妳先上鎮廟守著，那邊的香火不能斷，妳在廟裡幫忙穩住來的人，我現在就去海堤找人！」",
+            "importance": 5,
+            "last_access_tick": 9
+          },
+          {
+            "id": 18,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "reflection",
+            "content": "青禾雖慌，但只要給她明確指令，她會聽我的去廟裡守著，這是能爭取到的第一個觀禮人。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 19,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "reflection",
+            "content": "村長方嵐遲遲未現身，救命的事不能乾等他，直接徵調石磊和顧潮這兩個能幹實事的才是正道。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 20,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "reflection",
+            "content": "石磊懂封閘、顧潮眼界廣，讓他們先去保住海堤，並要求他們事後趕來鎮廟，能同時確保「禮」與「閘」兩個救命條件。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 21,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "在街道遇到方嵐。",
+            "importance": 3,
+            "last_access_tick": 8
+          },
+          {
+            "id": 22,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "青禾是醫者，這時候她若能在廟裡幫忙穩住先到的人，這觀禮的人數就有了，我得最後叮囑她一次，確認她真的往廟裡去，別在半路又回頭。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 23,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "我說：「青禾，別管方嵐了，妳現在就去鎮廟！那邊需要有人守著，妳先穩住先到的人，這是救命的事，快走！」",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 24,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "青禾的安民咒傳進耳裡，心裡那股躁動平了些。",
+            "importance": 6,
+            "last_access_tick": 8
+          },
+          {
+            "id": 25,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "在街道遇到阿潛。",
+            "importance": 3,
+            "last_access_tick": 9
+          },
+          {
+            "id": 26,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "青禾就在這，得讓她立刻去鎮廟把人穩住，否則空廟行禮根本沒用。方嵐那傢伙指望不上，我得趕緊去海堤找石磊和顧潮把閘封了。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 27,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "speech",
+            "content": "我說：「青禾，別管方嵐了！妳現在立刻上鎮廟！那是最後的退路，到了那邊幫忙穩住先到的鎮民，我隨後就到。」",
+            "importance": 5,
+            "last_access_tick": 9
+          },
+          {
+            "id": 28,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "青禾已經要往鎮廟走了，再推她一把，確保她會在那守著。我得抓緊時間去海堤，這場仗禮與閘一個都不能少。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 29,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "speech",
+            "content": "我說：「青禾，去廟裡守著，別回頭！不管看到什麼，就在廟前把人穩住，那是大家唯一的退路！」",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 30,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "青禾既然已經在往鎮廟走，觀禮的人手暫時有著落了。方嵐那傢伙不靠譜，我得趕緊去海堤找石磊和顧潮，閘門才是另一道救命符。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 31,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "在街道遇到顧潮。",
+            "importance": 3,
+            "last_access_tick": 13
+          },
+          {
+            "id": 32,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 13
+          },
+          {
+            "id": 33,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "海堤空蕩蕩的，石磊跟顧潮人呢？暴潮將至，這閘要是沒封上，我做再多場鎮潮禮也是白搭。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 34,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "在海堤遇到阿潛。",
+            "importance": 3,
+            "last_access_tick": 15
+          },
+          {
+            "id": 35,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "阿潛這孩子識潮，得先問他有沒有把船收完，順便確認石磊的去向。廟裡現在只有青禾，太單薄了，得把阿潛也拉過去。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 36,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "speech",
+            "content": "我說：「阿潛！船都進港了吧？別在這兒看海了，石磊有沒有往鐵鋪或者這邊過來？你趕快去鎮廟，那兒人少，待會兒觀禮還得靠你們把陣仗撐起來！」",
+            "importance": 5,
+            "last_access_tick": 15
+          },
+          {
+            "id": 37,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "青禾雖有恐懼但聽話，是目前鎮廟最可靠的觀禮者，必須確保她守在廟裡不被路人帶走。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 38,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "村長方嵐已徹底指望不上，再花時間找他就是浪費救援的黃金時刻，必須直接命令能幹實事的人。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 39,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "海堤空無一人是當下最大危機，若閘門沒封，鎮潮禮做得再好也擋不住水勢，必須強硬留住阿潛去執行封閘或尋人。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 40,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "阿潛機靈且識潮，他是目前聯繫石磊與鎮廟之間最有效的連結點。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 41,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "阿潛對我說：「沈汐，我有急事找顧潮對潮訊，妳剛才見過他嗎？」",
+            "importance": 7,
+            "last_access_tick": 18
+          },
+          {
+            "id": 42,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "顧潮不在這，找他純屬浪費時間。阿潛這小子識潮，得讓他去叫石磊封閘，然後自己先趕回廟裡穩住局面。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 43,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "我說：「別找了，現在沒人有空守著。你去鐵鋪把石磊找來，告訴他閘封不住就別想活命！辦完立刻到鎮廟來，這才是救命的地方。」",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 44,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "阿潛這小子還算機靈，正好讓他跑腿去把鐵匠找來封閘。我得趕快回廟裡，青禾如果沒人盯著，我怕她半路被誰拉走了。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 45,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "我說：「別找人了！海堤水閘沒封，暴潮一來就全完了。你現在趕快去鐵鋪把石磊找來，讓他封閘，封完立刻帶人上廟來！」",
+            "importance": 5,
+            "last_access_tick": 17
+          },
+          {
+            "id": 46,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "阿潛現在去海堤正好能遇上顧潮或石磊，只要閘封上了，我就能回廟裡專心開禮。這事兒不能耽擱，得讓他立刻動起來。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 47,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "speech",
+            "content": "我說：「別找顧潮了，快去鐵鋪把石磊叫來封閘！這水閘沒人守不行，叫他帶齊傢伙趕來，之後立刻來鎮廟，我有急事交代你們。」",
+            "importance": 5,
+            "last_access_tick": 18
+          },
+          {
+            "id": 48,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "海堤這裡竟然空了，石磊若沒來封閘就全完了。得趕緊回鎮廟，至少先守住那邊，再看路上能不能抓到人幫忙。",
+            "importance": 4,
+            "last_access_tick": 19
+          }
+        ],
+        "next_id": 49,
+        "importance_since_reflection": 38,
+        "beliefs": [
+          "鎮潮禮必須當眾行禮，空廟無效，祭司必須親自把人拉到場上。",
+          "海神不渡沒準備的人，祭司得自己去拉人，等待村長只會坐以待斃。",
+          "禮與閘缺一不可，禮擋潮運，閘擋水勢，兩者都要有人在場作證。",
+          "方嵐靠不住，救命的事不能等他下令，必須由自己直接徵調鎮民。",
+          "青禾是鎮廟觀禮的人選，必須確保她守在廟裡不離開。",
+          "街道上隨機遇到的人是寶貴資源，必須明確指派去處，別讓人在路上晃。",
+          "廣場人潮是踩踏死地，安民咒必須用在疏散關鍵點，不能隨便亂用。",
+          "阿潛機靈且識潮，他是海堤與鐵鋪之間的最佳傳訊人，能幫忙叫回石磊。",
+          "暴潮來時，鎮民的動向比任何官話都重要，誰在現場誰就要扛起責任。"
+        ],
+        "last_reflection_tick": 15
+      },
+      "seen_last_tick": [],
+      "last_think_tick": 19,
+      "think_count": 16,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "ritual",
+          "text": "在鎮廟當眾做成鎮潮禮，壓住暴潮",
+          "params": {
+            "rite": "鎮潮禮",
+            "by_tick": 72
+          },
+          "status": "open",
+          "at_tick": -1,
+          "note": ""
+        }
+      ],
+      "arts": [
+        {
+          "id": "zhen_chao_li",
+          "uses_left": 1,
+          "ready_at": -1,
+          "used": 0
+        },
+        {
+          "id": "an_min_zhou",
+          "uses_left": 3,
+          "ready_at": -1,
+          "used": 0
+        }
+      ],
+      "buffs": {}
+    },
+    "shi_lei": {
+      "id": "shi_lei",
+      "name": "石磊",
+      "role": "villager",
+      "persona": "你叫石磊，鐵匠，四十歲，臂力比話多。\n你覺得禱詞救不了閘——閘要焊、要頂、要人看見你封上了。\n\n今天你必須在海堤把水閘封死，而且旁邊要有人能作證。\n封晚了，鎮潮禮也擋不住灌進來的水。你跑得動，別浪費在廣場站著聽人哭。",
+      "home_area": "鐵鋪",
+      "pos": [
+        19,
+        3
+      ],
+      "plan": "指引方嵐找到祭司，確保廟內行禮不受干擾，自己則守在門口坐鎮。",
+      "action": null,
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "天剛亮，沒人會提早來海堤。我得先去那邊把鐵鏈跟閘板備好，順便看看有沒有誰在附近能當證人。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 3
+          },
+          {
+            "id": 3,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "一個人封閘等於白幹，這規矩真麻煩。先檢查一下閘門鐵鏈還能不能用，順便等人過來。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 4,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "這裡連個鬼影都沒有，守株待兔太慢了。去廣場那邊看看，把人趕過來，順便把話放出去，人多才好辦事。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 5,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "在海堤遇到方嵐。",
+            "importance": 3,
+            "last_access_tick": 7
+          },
+          {
+            "id": 6,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "在海堤遇到顧潮。",
+            "importance": 3,
+            "last_access_tick": 7
+          },
+          {
+            "id": 7,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 7
+          },
+          {
+            "id": 8,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "在廣場遇到沈汐。",
+            "importance": 3,
+            "last_access_tick": 8
+          },
+          {
+            "id": 9,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "在廣場遇到青禾。",
+            "importance": 3,
+            "last_access_tick": 8
+          },
+          {
+            "id": 10,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "顧潮就在這，他是守望人，找他作證最合適，帶他走海堤封閘。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 11,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "speech",
+            "content": "我說：「顧潮，跟我走！海堤的水閘得趕在傍晚前封死，你是守望人，你得給我作證！」",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 12,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "顧潮對我說：「石磊！別在廣場廢話了，閘板不用搬，直接去海堤焊死！今天這潮勢不對，得封！」",
+            "importance": 7,
+            "last_access_tick": 15
+          },
+          {
+            "id": 13,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "injected",
+            "content": "（北邊雲牆壓下來，海鳥成群往內陸飛。有人低聲說：這種雲，上回來過一次。）",
+            "importance": 7,
+            "last_access_tick": 10
+          },
+          {
+            "id": 14,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "顧潮這傢伙比我還急，很好。只要他在場作證，這水閘我一個人也能焊死，別耽誤了時辰。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 15,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "顧潮對我說：「別廢話，走！我這就去海堤等你，你腳步快點，那閘板要是銹了，咱們今天都得交代在這。」",
+            "importance": 7,
+            "last_access_tick": 10
+          },
+          {
+            "id": 16,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "青禾的安民咒傳進耳裡，心裡那股躁動平了些。",
+            "importance": 6,
+            "last_access_tick": 8
+          },
+          {
+            "id": 17,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "顧潮動作夠快，我得跟上。這一趟跑起來，一定要在潮頭之前把閘釘死。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 18,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "我使了疾風步。",
+            "importance": 5,
+            "last_access_tick": 9
+          },
+          {
+            "id": 19,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "reflection",
+            "content": "在海堤乾等只會浪費時辰，把人聚攏這種事得去廣場，但執行封閘的事還是得回到海堤。",
+            "importance": 8,
+            "last_access_tick": 15
+          },
+          {
+            "id": 20,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "reflection",
+            "content": "顧潮這守望人比誰都清楚海色，有他在海堤，我就能把所有力氣花在焊閘板上，不必分心顧慮潮頭時機。",
+            "importance": 8,
+            "last_access_tick": 20
+          },
+          {
+            "id": 21,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "reflection",
+            "content": "青禾的安民咒雖然不是鐵器，但確實把廣場上那股慌亂壓下來了，這比村長在那裡喊口號更有實效。",
+            "importance": 8,
+            "last_access_tick": 18
+          },
+          {
+            "id": 22,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "顧潮已經先走一步了，廢話少說，我也得趕快到海堤把閘板給焊死，封上才算數。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 23,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 9
+          },
+          {
+            "id": 24,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "顧潮就在這，閘板就在手邊，沒什麼好等的，直接焊死就是。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 25,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "我把封閘做完了。",
+            "importance": 10,
+            "last_access_tick": 23
+          },
+          {
+            "id": 26,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "speech",
+            "content": "顧潮對我說：「石磊，別廢話了，閘就在這，快動手焊！我會一直盯著，絕不離開。」",
+            "importance": 7,
+            "last_access_tick": 11
+          },
+          {
+            "id": 27,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "閘已封死，顧潮看著，穩了。該去看看鎮廟那邊，沈汐一個人行禮怕是不夠鎮住這海勢。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 28,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "（在海堤當眾封死水閘——封閘辦成了。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 23
+          },
+          {
+            "id": 29,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "injected",
+            "content": "（在海堤當眾封死水閘——封閘辦成了。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 11
+          },
+          {
+            "id": 30,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "封閘已成，海堤那邊總算能扛住第一波。方嵐那女人這時候往鎮廟去，肯定是要召集人手，我也跟過去看看。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 31,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "observation",
+            "content": "在街道遇到阿潛。",
+            "importance": 3,
+            "last_access_tick": 12
+          },
+          {
+            "id": 32,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "在街道遇到青禾。",
+            "importance": 3,
+            "last_access_tick": 14
+          },
+          {
+            "id": 33,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "方嵐對我說：「石磊，閘口那邊拜託你了，務必焊死，這事沒得商量！」這話聽起來竟然頗有道理。",
+            "importance": 9,
+            "last_access_tick": 23
+          },
+          {
+            "id": 34,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "speech",
+            "content": "方嵐對我說：「石磊，閘口那邊拜託你了，務必焊死，這事沒得商量！」",
+            "importance": 7,
+            "last_access_tick": 15
+          },
+          {
+            "id": 35,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "方嵐這婆娘是急糊塗了還是沒搞清楚狀況，海堤那邊我都封好了，還要我去焊？得跟她說清楚，然後趕緊往鎮廟去，那邊還沒人主持呢。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 36,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "speech",
+            "content": "我說：「方村長，閘已經焊死，顧潮就在邊上盯著。我現在去鎮廟幫忙，你也別在街上晃了，廟裡還缺人手！」",
+            "importance": 5,
+            "last_access_tick": 15
+          },
+          {
+            "id": 37,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "顧潮確實靠得住，他在海堤盯著，我就能心無旁騖地把閘焊死，這是鐵律。",
+            "importance": 8,
+            "last_access_tick": 16
+          },
+          {
+            "id": 38,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "方嵐雖然掛著村長名頭，但心慌起來判斷會錯，跟她說話得直接扔結論，別多廢話。",
+            "importance": 8,
+            "last_access_tick": 15
+          },
+          {
+            "id": 39,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "青禾那一手安民咒比村長的命令管用，這鎮子要亂，得靠她先把那股躁動給壓住。",
+            "importance": 8,
+            "last_access_tick": 18
+          },
+          {
+            "id": 40,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "海堤閘已封，接下來鎮廟就是全鎮的定海針，廟裡的氣氛得有人撐著，不能讓那裡也散了。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 41,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "青禾說：「方嵐，站住！鎮廟那邊有沈汐就夠了，你現在立刻發令，老人婦孺先上高地，壯年最後撤，不然高地窄路一擠，誰也活不了！」（當時我在街道）",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 42,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "海堤閘門既然焊死了，顧潮能看顧，那我就不用瞎操心了。青禾這話說得中肯，得趕緊讓方嵐定下心來指揮疏散，我再去鎮廟那頭搭把手。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 43,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "我說：「方嵐，閘門已經焊死，顧潮在守著，沒問題。聽青禾的，你趕緊去安排疏散，鎮廟那邊我走一趟，沈汐一個人撐不住我頂著。」",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 44,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "方嵐說：「青禾，按你說的辦，老人婦孺先撤！廣場那邊交給你，一定要壓住，誰敢亂擠就給我吼住他們。石磊，你去廟裡幫沈汐，人夠多禮才壓得住潮。」（當時我在街道）",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 45,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "青禾說：「方村長，等等！閘有人顧，但高地那邊亂成一團會踩死人，你現在得給我個疏散順序，誰先走、誰後走，立刻定下來！」（當時我在街道）",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 46,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "閘封好了，剩下的就看天意和沈汐的那場禮了。我現在去廟裡，就算幫不上什麼忙，至少在那邊站著也是個人氣。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 47,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "observation",
+            "content": "我到了鎮廟。",
+            "importance": 2,
+            "last_access_tick": 17
+          },
+          {
+            "id": 48,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "speech",
+            "content": "方嵐說：「青禾，聽你的。這事交給你，老人、婦孺先上高地，壯年斷後，誰敢鬧事你隨時能用我的名義壓人。石磊，廟裡你幫著沈汐，除了祭禮，誰想進來避難都准，不許亂。」（當時我在鎮廟）",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 49,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "海堤的閘已經焊死，接下來就看鎮廟這裡的陣仗了，我得聽村長的，守好這裡。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 50,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "方嵐對我說：「石磊，海堤閘門既然封了，你馬上進廟！在裡頭盯著沈汐開禮，要是有人敢鬧事，直接用你的鐵拳給他長點記性。」這話聽起來竟然頗有道理。",
+            "importance": 9,
+            "last_access_tick": 23
+          },
+          {
+            "id": 51,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "speech",
+            "content": "方嵐對我說：「石磊，海堤閘門既然封了，你馬上進廟！在裡頭盯著沈汐開禮，要是有人敢鬧事，直接用你的鐵拳給他長點記性。」",
+            "importance": 7,
+            "last_access_tick": 21
+          },
+          {
+            "id": 52,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "方嵐這丫頭終於說了句人話，既然閘封了，廟就是最後的關口，我有力氣，鎮得住場子。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 53,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "speech",
+            "content": "我說：「知道了，我這就看著廟，誰敢鬧事，問問我的鐵拳答不答應。」",
+            "importance": 5,
+            "last_access_tick": 18
+          },
+          {
+            "id": 54,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "海堤的閘板焊死後，方嵐才算真正鎮定下來，這證明指揮者必須先看到實質的保障，才會去想疏散的事。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 55,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "顧潮只要盯著海面就不會撤，他是最可靠的定海神針，有他在海堤，我能把精力完全花在別處。",
+            "importance": 8,
+            "last_access_tick": 18
+          },
+          {
+            "id": 56,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "青禾的安民咒對付慌亂的人群比方嵐的村長威信更管用，她才是維持鎮子秩序的關鍵。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 57,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "廟裡現在不只是行禮的地方，更是最後避難所，只要我在這，沈汐就不會被打擾，行禮就能成。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 58,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "既然閘已經封死，方嵐這村長也沒瞎忙，我就守在這廟裡。反正沈汐那老頭子開禮需要人鎮著，我不動，這廟就塌不了。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 59,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "speech",
+            "content": "方嵐對我說：「石磊，沈汐人呢？我得親口跟她確認鎮潮禮何時開，這事不能有一刻耽擱。」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 60,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "沈汐應該去準備祭品了，方嵐這時候急著找人，反而會打亂儀式。我得讓她別去後堂亂闖，守住這裡的規矩。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 61,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "speech",
+            "content": "我說：「沈汐去準備祭品了，祭司行禮自有規矩，方村長你現在進去就是亂了她的心。在這候著，鐘響了就是開禮，別去後堂鬧事。」",
+            "importance": 5,
+            "last_access_tick": 20
+          },
+          {
+            "id": 62,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "村長真是急得昏頭了，沈汐這種時候肯定在備禮，誰去打擾誰就是壞事。我得把方嵐擋在廟門外，讓裡面靜心。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 63,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "speech",
+            "content": "我說：「村長，沈汐這會兒在備禮，心不能亂。妳在外頭候著，別進去攪擾，禮成自然會通知妳。」",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 64,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "方嵐對我說：「成，沈汐那邊就交給你護著，廟裡不能出亂子。我去廣場那邊催人上高地，封閘之後你再跟上來，這關要是沒過，咱倆誰也沒臉見祖宗。」",
+            "importance": 7,
+            "last_access_tick": 22
+          },
+          {
+            "id": 65,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "方嵐去忙疏散了，這廟裡現在安安靜靜的，得先把沈汐叫出來，只要這禮順順當當開了，嵐潮鎮就能少死幾個人。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 66,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "我說：「沈汐，閘已封死。廟我守著，妳放心開禮，誰也別想進來鬧事。」",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 67,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "observation",
+            "content": "沈汐離我太遠了（9 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 68,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "方嵐對我說：「石磊，你守好這兒，別讓閒雜人等進廟擾了她。禮成立刻吹螺告知，我現在去廣場主持疏散。」",
+            "importance": 7,
+            "last_access_tick": 22
+          },
+          {
+            "id": 69,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "閘門焊死了，心裡的大石放下一半。這時候廟裡不能亂，我就在這守著，看誰敢進來鬧。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 70,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "我說：「去忙吧，廟口我盯著，一隻蒼蠅都飛不進去。」",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 71,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "方嵐這種人，只有在看到閘門焊死、有了實質防護後，才會從慌亂轉為指揮疏散，我得先給她吃定心丸。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 72,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "青禾的安民咒比方嵐的村長名頭更能控場，廣場的人能不能有序撤離，全看她壓不壓得住那股恐慌。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 73,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "廟裡與海堤一樣，都是決定生死的關口，只要我守住廟門並隨時準備驅趕鬧事者，沈汐就能安心行禮，這道氣不能散。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 74,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "廟裡空間太大，遠處喊話沈汐根本聽不見，我必須主動走近她才能確保祭禮銜接得上。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 75,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "方嵐要找沈汐，這事不能耽誤。祭禮必須在亥時前開始，沒什麼比這個更要緊了。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 76,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "我說：「村長，沈汐就在後殿，你自己去找她談開禮的事，我在廟門口守著，誰也進不來打擾。」",
+            "importance": 5,
+            "last_access_tick": 23
+          }
+        ],
+        "next_id": 77,
+        "importance_since_reflection": 9,
+        "beliefs": [
+          "鐵器比人心可靠，錨鏈焊死了就不會走，水絕對進不來。",
+          "祈禱與封閘同等重要，缺了哪一樣，潮水都會吞掉低處。",
+          "守望人看天色，鐵匠看閘口，各司其職才活得下來。",
+          "在暴潮面前，話說得再好聽不如手腳快，先做再說。",
+          "恐慌會殺人，比潮水更快，必須先由青禾這種人穩住。",
+          "別指望外援，嵐潮鎮的命只能靠自己頂。",
+          "有人在旁作證，焊死的閘才算數，這規矩不能破。",
+          "對方嵐這種當官的，遇到急事得把話說硬，她腦子才會清楚。",
+          "廟裡的禮一定要有人守，那是一道氣，氣散了心就全亂了。",
+          "只要我還站在這，廟門就沒人能隨便進出，祭禮就絕對安全。"
+        ],
+        "last_reflection_tick": 22
+      },
+      "seen_last_tick": [
+        "方嵐"
+      ],
+      "last_think_tick": 23,
+      "think_count": 21,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "ritual",
+          "text": "在海堤當眾封死水閘",
+          "params": {
+            "rite": "封閘",
+            "by_tick": 72
+          },
+          "status": "done",
+          "at_tick": 10,
+          "note": "封閘辦成了"
+        }
+      ],
+      "arts": [
+        {
+          "id": "feng_zha",
+          "uses_left": 0,
+          "ready_at": -1,
+          "used": 1
+        },
+        {
+          "id": "ji_feng_bu",
+          "uses_left": 3,
+          "ready_at": 11,
+          "used": 1
+        }
+      ],
+      "buffs": {}
+    },
+    "fang_lan": {
+      "id": "fang_lan",
+      "name": "方嵐",
+      "role": "villager",
+      "persona": "你叫方嵐，嵐潮村長，三十八歲。\n暴潮面前，村長的工作不是哭，是把人趕到該去的地方：鎮廟觀禮、海堤作證、高地躲。\n\n你今天要親自跟沈汐、石磊對上話，確認禮與閘都有人做。\n你可以用號令勸人，也可以安撫廣場上的恐慌——但你勸不動海，只能勸人。",
+      "home_area": "村長宅",
+      "pos": [
+        19,
+        3
+      ],
+      "plan": "進入後殿與沈汐溝通開禮進度，隨即前往廣場協助青禾進行全面疏散。",
+      "action": {
+        "kind": "move_to",
+        "target_area": "鎮廟",
+        "path": [],
+        "done": true
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在村長宅遇到顧潮。",
+            "importance": 3,
+            "last_access_tick": 7
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "天色還早，但時間不多了。得先去鐵鋪找石磊把閘板的事敲定，那是救命的鐵傢伙。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 3,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "observation",
+            "content": "我到了鐵鋪。",
+            "importance": 2,
+            "last_access_tick": 7
+          },
+          {
+            "id": 4,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "在鐵鋪遇到石磊。",
+            "importance": 3,
+            "last_access_tick": 7
+          },
+          {
+            "id": 5,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "石磊那倔傢伙走得真快，人不在鋪子裡。顧潮既然在，先讓他幫忙看著閘，我得趕去海堤截住石磊。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 6,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "我說：「顧潮，石磊去廣場了，你腳程快，幫我追上他告訴他：閘板不用搬，叫他直接去海堤焊死，今天這潮勢不對，得封！」",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 7,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "speech",
+            "content": "顧潮對我說：「方村長，我剛才看見石磊往廣場去了，現在海堤要封閘，我得把他攔下來，你知道他去哪嗎？」",
+            "importance": 7,
+            "last_access_tick": 16
+          },
+          {
+            "id": 8,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "顧潮動作夠快，我得讓他去海堤那頭堵人，絕不能讓石磊在廣場浪費時間。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 9,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "石磊那傢伙腳程太快，在這站著喊破喉嚨也沒用，先追到廣場再說。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 10,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "（當面把石磊說動／對上話，確認封閘——見到了石磊。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 23
+          },
+          {
+            "id": 11,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "石磊說：「顧潮，跟我走！海堤的水閘得趕在傍晚前封死，你是守望人，你得給我作證！」（當時我在街道）",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 12,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "顧潮說：「石磊！別在廣場廢話了，閘板不用搬，直接去海堤焊死！今天這潮勢不對，得封！」（當時我在街道）",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 13,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "在街道遇到沈汐。",
+            "importance": 3,
+            "last_access_tick": 8
+          },
+          {
+            "id": 14,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "在街道遇到青禾。",
+            "importance": 3,
+            "last_access_tick": 8
+          },
+          {
+            "id": 15,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "injected",
+            "content": "（當面把石磊說動／對上話，確認封閘——見到了石磊。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 15
+          },
+          {
+            "id": 16,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "石磊那邊總算搞定了，不用我多費唇舌。當務之急是沈汐，鎮廟的禮不能沒人主持，得趕緊攔住她交代下去。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 17,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "我說：「沈汐！鎮廟那邊香火要備齊，傍晚前這場鎮潮禮你必須開。別管別的，我會派人把觀禮的村民趕上去，你人一定要在廟裡坐鎮！」",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 18,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "沈汐離我太遠了（5 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 19,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "青禾的安民咒傳進耳裡，心裡那股躁動平了些。",
+            "importance": 6,
+            "last_access_tick": 8
+          },
+          {
+            "id": 20,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "reflection",
+            "content": "石磊和顧潮一旦有了共識，不需要我盯梢也能把閘封好，這兩個人靠得住。",
+            "importance": 8,
+            "last_access_tick": 16
+          },
+          {
+            "id": 21,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "reflection",
+            "content": "沈汐這樣的舊派祭司，隔著半條街喊話只會讓她覺得我在催命，得親自走到她身邊說話才有份量。",
+            "importance": 8,
+            "last_access_tick": 21
+          },
+          {
+            "id": 22,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "reflection",
+            "content": "青禾在場能穩住秩序，只要有她在，我就可以把安撫人群的事交給她，不用每個人都親自勸。",
+            "importance": 8,
+            "last_access_tick": 18
+          },
+          {
+            "id": 23,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "reflection",
+            "content": "距離確實是最大的敵人，與其在原地喊破喉嚨，不如直接跑過去。",
+            "importance": 8,
+            "last_access_tick": 15
+          },
+          {
+            "id": 24,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "speech",
+            "content": "顧潮說：「別廢話，走！我這就去海堤等你，你腳步快點，那閘板要是銹了，咱們今天都得交代在這。」（當時我在街道）",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 25,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "石磊跟顧潮去封閘了，他們是老手，放心。現在我得親自去找沈汐，這種時候催她沒用，得讓她知道全鎮的命都在這一禮上。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 26,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "石磊當眾行了封閘之禮。",
+            "importance": 10,
+            "last_access_tick": 23
+          },
+          {
+            "id": 27,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "observation",
+            "content": "在漁市遇到阿潛。",
+            "importance": 3,
+            "last_access_tick": 11
+          },
+          {
+            "id": 28,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "在街道遇到青禾。",
+            "importance": 3,
+            "last_access_tick": 14
+          },
+          {
+            "id": 29,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "石磊就在眼前，多叮囑一句封閘的事心裡才踏實。青禾也要用上，讓她去廣場穩住人群，我得趕緊去鎮廟找沈汐。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 30,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "青禾對我說：「方嵐，站住！鎮廟那邊有沈汐就夠了，你現在立刻發令，老人婦孺先上高地，壯年最後撤，不然高地窄路一擠，誰也活不了！」這話聽起來竟然頗有道理。",
+            "importance": 9,
+            "last_access_tick": 23
+          },
+          {
+            "id": 31,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "青禾對我說：「方嵐，站住！鎮廟那邊有沈汐就夠了，你現在立刻發令，老人婦孺先上高地，壯年最後撤，不然高地窄路一擠，誰也活不了！」",
+            "importance": 7,
+            "last_access_tick": 20
+          },
+          {
+            "id": 32,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "石磊對我說：「方村長，閘已經焊死，顧潮就在邊上盯著。我現在去鎮廟幫忙，你也別在街上晃了，廟裡還缺人手！」",
+            "importance": 7,
+            "last_access_tick": 17
+          },
+          {
+            "id": 33,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "青禾的主意好，秩序穩住了人才能活；石磊那邊既然封了閘，我就不用擔心海堤，可以專心去鎮廟確認開禮。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 34,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "我說：「青禾，按你說的辦，老人婦孺先撤！廣場那邊交給你，一定要壓住，誰敢亂擠就給我吼住他們。石磊，你去廟裡幫沈汐，人夠多禮才壓得住潮。」",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 35,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "青禾對於疏散順序的建議非常精準，老幼先走、壯年斷後能有效防止高地入口處的踩踏，這比我原本想的隨便大家一窩蜂往上爬更管用。",
+            "importance": 8,
+            "last_access_tick": 18
+          },
+          {
+            "id": 36,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "石磊已經完成了封閘，他在場能鎮得住人，把他調往鎮廟去協助沈汐行禮，既能護法也能維持廟裡的秩序，這比讓他留守海堤更有價值。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 37,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "廣場現在是全鎮疏散的咽喉，也是潛在的亂源，我必須把青禾死死釘在那裡作為第一道防線，剩下的時間我只需要專注把人流趕向她。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 38,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "沈汐這樣的祭司，只要有人手護著鎮廟，她就不會因為外界的混亂而中斷鎮潮禮，我之前的擔心多慮了。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 39,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "石磊對我說：「方嵐，閘門已經焊死，顧潮在守著，沒問題。聽青禾的，你趕緊去安排疏散，鎮廟那邊我走一趟，沈汐一個人撐不住我頂著。」",
+            "importance": 7,
+            "last_access_tick": 17
+          },
+          {
+            "id": 40,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "青禾對我說：「方村長，等等！閘有人顧，但高地那邊亂成一團會踩死人，你現在得給我個疏散順序，誰先走、誰後走，立刻定下來！」",
+            "importance": 7,
+            "last_access_tick": 17
+          },
+          {
+            "id": 41,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "青禾比我更清楚高地的情況，這時候放權給她比我瞎指揮有用。石磊有那身力氣，去廟裡護住祭禮和避難的老幼正好。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 42,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "我說：「青禾，聽你的。這事交給你，老人、婦孺先上高地，壯年斷後，誰敢鬧事你隨時能用我的名義壓人。石磊，廟裡你幫著沈汐，除了祭禮，誰想進來避難都准，不許亂。」",
+            "importance": 5,
+            "last_access_tick": 17
+          },
+          {
+            "id": 43,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "石磊就在附近，正好讓他直接去鎮廟。我得抓緊時間去見沈汐，廟裡這禮若是沒成，我也沒臉活過亥時。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 44,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "speech",
+            "content": "石磊對我說：「知道了，我這就看著廟，誰敢鬧事，問問我的鐵拳答不答應。」",
+            "importance": 7,
+            "last_access_tick": 19
+          },
+          {
+            "id": 45,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "石磊已經答應去廟裡壓陣，這步棋對了。現在得趕緊找沈汐確認開禮，再安排青禾疏散人群，沒時間拖了。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 46,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "我到了鎮廟。",
+            "importance": 2,
+            "last_access_tick": 19
+          },
+          {
+            "id": 47,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "沈汐呢？廟裡怎麼只有石磊？得先確定祭司人到底在哪，不然鎮潮禮怎麼開。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 48,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "speech",
+            "content": "我說：「石磊，沈汐人呢？我得親口跟她確認鎮潮禮何時開，這事不能有一刻耽擱。」",
+            "importance": 5,
+            "last_access_tick": 20
+          },
+          {
+            "id": 49,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "speech",
+            "content": "石磊對我說：「沈汐去準備祭品了，祭司行禮自有規矩，方村長你現在進去就是亂了她的心。在這候著，鐘響了就是開禮，別去後堂鬧事。」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 50,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "石磊這傢伙說得對，術業有專攻，我這時候衝進去確實只會添亂。他剛好在廟裡，讓他護法比我親自去盯著沈汐更穩妥，我要趕緊去廣場抓著疏散的進度。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 51,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "speech",
+            "content": "我說：「成，沈汐那邊就交給你護著，廟裡不能出亂子。我去廣場那邊催人上高地，封閘之後你再跟上來，這關要是沒過，咱倆誰也沒臉見祖宗。」",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 52,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "reflection",
+            "content": "石磊守廟不僅是為了護法，他的威懾力是確保沈汐能不受干擾行禮的唯一防線，我不該再去試圖干涉。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 53,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "reflection",
+            "content": "青禾對疏散順序的判斷比我更精準，將廣場與疏散現場的執行權徹底放給她，我只需在關鍵時刻用村長威信背書即可。",
+            "importance": 8,
+            "last_access_tick": 21
+          },
+          {
+            "id": 54,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "reflection",
+            "content": "現在我的角色已從『指揮官』過渡為『資源配置者』，不必事必躬親，只需確保各個崗位上的專業人士能發揮效用。",
+            "importance": 8,
+            "last_access_tick": 21
+          },
+          {
+            "id": 55,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "reflection",
+            "content": "鎮廟現在必須雙管齊下：沈汐行禮是壓制潮水，石磊守門則是確保避難秩序，二者缺一不可。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 56,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "石磊對我說：「村長，沈汐這會兒在備禮，心不能亂。妳在外頭候著，別進去攪擾，禮成自然會通知妳。」",
+            "importance": 7,
+            "last_access_tick": 22
+          },
+          {
+            "id": 57,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "石磊說的對，沈汐行禮容不得干擾。交代他守好廟門，我得趕去廣場，那邊的疏散才是當務之急。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 58,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "我說：「石磊，你守好這兒，別讓閒雜人等進廟擾了她。禮成立刻吹螺告知，我現在去廣場主持疏散。」",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 59,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "石磊對我說：「去忙吧，廟口我盯著，一隻蒼蠅都飛不進去。」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 60,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "石磊這邊穩了，但沈汐人在廟裡，我沒親眼看到她開始行禮總是不放心。先進去確認沈汐的狀況，確認無誤後就趕去廣場找青禾。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 61,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "石磊對我說：「村長，沈汐就在後殿，你自己去找她談開禮的事，我在廟門口守著，誰也進不來打擾。」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 62,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "石磊說話變了，這時候進後殿找沈汐正合適。得趕快確認祭禮，這樣我才能騰出手去廣場疏散人群，不然等到漲潮就來不及了。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 63,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "observation",
+            "content": "（當面把沈汐說動／對上話，確認開禮——見到了沈汐。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 23
+          }
+        ],
+        "next_id": 64,
+        "importance_since_reflection": 48,
+        "beliefs": [
+          "鎮潮禮與封閘是命脈，缺一不可，任何一項失守都意味著滅村。",
+          "村長的話必須準確、有力，過多的解釋在潮水面前毫無意義。",
+          "信任專業人手（石磊封閘、沈汐行禮、青禾安民），我的職責是排除障礙，而非插手專業。",
+          "恐慌的殺傷力遠勝潮水，疏散順序必須嚴格執行：老弱婦孺先走，壯年斷後。",
+          "亥時前沒撤離的村民，必須動用最強硬的手段趕上去，絕不能有僥倖心態。",
+          "面對倔強的村民或祭司，講道理不如講死活，直接點出後果最有效。",
+          "既然扛了這份責任，我就是全鎮最後一道防線，絕不能在暴潮前動搖。",
+          "廣場必須作為疏散的中樞，讓青禾守在那裡是現階段最正確的佈局。",
+          "鎮廟必須兼具行禮與避難的功能，但儀式區域需有物理隔離，不可混雜。",
+          "石磊的暴力不僅能封閘，在混亂中更是穩定民心的必要槓桿。"
+        ],
+        "last_reflection_tick": 21
+      },
+      "seen_last_tick": [
+        "石磊"
+      ],
+      "last_think_tick": 23,
+      "think_count": 16,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "meet",
+          "text": "當面把沈汐說動／對上話，確認開禮",
+          "params": {
+            "who": "shen_xi"
+          },
+          "status": "done",
+          "at_tick": 23,
+          "note": "見到了沈汐"
+        },
+        {
+          "kind": "meet",
+          "text": "當面把石磊說動／對上話，確認封閘",
+          "params": {
+            "who": "shi_lei"
+          },
+          "status": "done",
+          "at_tick": 7,
+          "note": "見到了石磊"
+        },
+        {
+          "kind": "protect",
+          "text": "盡力護住鎮上這些還能走的人活過今天",
+          "params": {
+            "who": [
+              "shen_xi",
+              "shi_lei",
+              "a_qian",
+              "qing_he",
+              "gu_chao"
+            ]
+          },
+          "status": "open",
+          "at_tick": -1,
+          "note": ""
+        }
+      ],
+      "arts": [
+        {
+          "id": "hao_ling",
+          "uses_left": 1,
+          "ready_at": 21,
+          "used": 3
+        },
+        {
+          "id": "an_min_zhou",
+          "uses_left": 3,
+          "ready_at": -1,
+          "used": 0
+        }
+      ],
+      "buffs": {}
+    },
+    "a_qian": {
+      "id": "a_qian",
+      "name": "阿潛",
+      "role": "villager",
+      "persona": "你叫阿潛，漁民，二十九歲，識潮。\n船還在外海，岸上的禮再盛大也救不了人。你得先回漁港收船、放訊號。\n\n你腿快，也能望潮打聽誰在哪。收完船，去跟顧潮對一下潮訊——他看海堤，你看船路。",
+      "home_area": "漁港",
+      "pos": [
+        4,
+        14
+      ],
+      "plan": "用疾風步以最快速度衝去鐵鋪，找到石磊立刻叫他帶傢伙去海堤封閘。",
+      "action": null,
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "天剛亮，得趁浪頭還沒完全起來趕緊去漁港，晚了就沒法出信號了。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "我到了漁港。",
+            "importance": 2,
+            "last_access_tick": 2
+          },
+          {
+            "id": 3,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "（先回到漁港，把還在外面的船班叫回來——走到了漁港。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 23
+          },
+          {
+            "id": 4,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "injected",
+            "content": "（先回到漁港，把還在外面的船班叫回來——走到了漁港。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 5
+          },
+          {
+            "id": 5,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "船還在外海，得先發信號把人催回來，然後用望潮找找顧潮在哪，免得白跑一趟。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 6,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "（打聽到了：顧潮這會兒在廣場。）",
+            "importance": 8,
+            "last_access_tick": 17
+          },
+          {
+            "id": 7,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "injected",
+            "content": "（打聽到了：顧潮這會兒在廣場。）",
+            "importance": 7,
+            "last_access_tick": 17
+          },
+          {
+            "id": 8,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "船的事情處理完了，顧潮就在廣場，不能浪費時間，直接過去。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 9,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "我使了疾風步。",
+            "importance": 5,
+            "last_access_tick": 3
+          },
+          {
+            "id": 10,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "船的事情發完信號了，現在趕緊去廣場找顧潮。那老小子在海堤那邊盯得久，對潮訊最清楚，這命得對上了才保險。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 11,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 4
+          },
+          {
+            "id": 12,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "在廣場遇到沈汐。",
+            "importance": 3,
+            "last_access_tick": 5
+          },
+          {
+            "id": 13,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "在廣場遇到青禾。",
+            "importance": 3,
+            "last_access_tick": 5
+          },
+          {
+            "id": 14,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "剛剛才說顧潮在廣場，怎麼眼下只看到沈汐跟青禾？得先找人確認顧潮去哪了，慢一刻就是一條命。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 15,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "（打聽到了：沈汐這會兒在街道。）",
+            "importance": 8,
+            "last_access_tick": 17
+          },
+          {
+            "id": 16,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "reflection",
+            "content": "望潮所得的消息有時效，顧潮既然沒在廣場，很可能已經移往海堤，直接問在場的沈汐比再次消耗絕技更有效率。",
+            "importance": 8,
+            "last_access_tick": 16
+          },
+          {
+            "id": 17,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "reflection",
+            "content": "顧潮身為守望人，他的動向與海堤水閘的狀況綁定，找不到人直接去海堤堵他準沒錯。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 18,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "reflection",
+            "content": "沈汐這會兒在廣場，她身為祭司對鎮上各路人的動向向來清楚，先問她可以少走冤枉路。",
+            "importance": 8,
+            "last_access_tick": 11
+          },
+          {
+            "id": 19,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "injected",
+            "content": "（打聽到了：沈汐這會兒在街道。）",
+            "importance": 7,
+            "last_access_tick": 17
+          },
+          {
+            "id": 20,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "沈汐現在在街道，離廣場很近，先過去問她顧潮在哪，問完直接往海堤衝。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 21,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "我到了街道。",
+            "importance": 2,
+            "last_access_tick": 6
+          },
+          {
+            "id": 22,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "沈汐在街道，先問她顧潮在哪，免得撲空。如果她也不知道，我就直接衝海堤。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 23,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "沈汐應該知道顧潮在哪，問一聲比自己亂找快。顧潮要是沒在廣場，肯定已經去海堤準備了。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 24,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 8
+          },
+          {
+            "id": 25,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "在廣場遇到沈汐。",
+            "importance": 3,
+            "last_access_tick": 9
+          },
+          {
+            "id": 26,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "沈汐就在旁邊，她要是知道顧潮在哪，問她比自己亂撞好。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 27,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "我到了街道。",
+            "importance": 2,
+            "last_access_tick": 9
+          },
+          {
+            "id": 28,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "沈汐就在這附近，直接問她顧潮在哪，不用浪費力氣瞎跑。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 29,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "speech",
+            "content": "我說：「沈汐，你剛看見顧潮沒？潮訊緊，我得找他對一下狀況。」",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 30,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "沈汐離我太遠了（6 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 31,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "observation",
+            "content": "在街道遇到方嵐。",
+            "importance": 3,
+            "last_access_tick": 11
+          },
+          {
+            "id": 32,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "observation",
+            "content": "在街道遇到青禾。",
+            "importance": 3,
+            "last_access_tick": 11
+          },
+          {
+            "id": 33,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "剛剛看錯地方了，顧潮不在廣場，直接用望潮看他到底在哪，免得浪費時間在街道上瞎跑。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 34,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "observation",
+            "content": "（打聽到了：顧潮這會兒在海堤。）",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 35,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "reflection",
+            "content": "憑直覺找人容易白跑，直接用「望潮」查位置最快。",
+            "importance": 8,
+            "last_access_tick": 11
+          },
+          {
+            "id": 36,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "reflection",
+            "content": "對話前一定要先確認距離，沒站對位置喊破喉嚨也沒用。",
+            "importance": 8,
+            "last_access_tick": 11
+          },
+          {
+            "id": 37,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "reflection",
+            "content": "顧潮確實就在海堤，別再在街道上磨蹭，直接趕路過去會合。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 38,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "observation",
+            "content": "在街道遇到石磊。",
+            "importance": 3,
+            "last_access_tick": 12
+          },
+          {
+            "id": 39,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "injected",
+            "content": "（打聽到了：顧潮這會兒在海堤。）",
+            "importance": 7,
+            "last_access_tick": 17
+          },
+          {
+            "id": 40,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "石磊、方嵐和青禾都往鎮廟去了，正好，那邊的事我不用操心。顧潮在海堤等著，再磨蹭下去水就要上來了，現在得全速過去。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 41,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "observation",
+            "content": "我使了疾風步。",
+            "importance": 5,
+            "last_access_tick": 12
+          },
+          {
+            "id": 42,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "石磊、方嵐都往鎮廟走，廟裡那邊應該穩了。我得抓緊時間去海堤，潮訊不等我。",
+            "importance": 4,
+            "last_access_tick": 13
+          },
+          {
+            "id": 43,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "在廣場遇到顧潮。",
+            "importance": 3,
+            "last_access_tick": 14
+          },
+          {
+            "id": 44,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 14
+          },
+          {
+            "id": 45,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "在海堤遇到沈汐。",
+            "importance": 3,
+            "last_access_tick": 15
+          },
+          {
+            "id": 46,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "沈汐在這裡，但顧潮人呢？消息沒錯的話他應該就在海堤，問問沈汐省得我盲目亂找。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 47,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "speech",
+            "content": "我說：「沈汐，我有急事找顧潮對潮訊，妳剛才見過他嗎？」",
+            "importance": 5,
+            "last_access_tick": 15
+          },
+          {
+            "id": 48,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "沈汐對我說：「阿潛！船都進港了吧？別在這兒看海了，石磊有沒有往鐵鋪或者這邊過來？你趕快去鎮廟，那兒人少，待會兒觀禮還得靠你們把陣仗撐起來！」",
+            "importance": 7,
+            "last_access_tick": 22
+          },
+          {
+            "id": 49,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "沈汐居然要我去鎮廟，可顧潮這傢伙不在海堤，沒他在這兒看著潮，誰能封閘？我得先穩住沈汐，確認顧潮的位置，再想辦法把他弄回海堤，不然一切都亂了。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 50,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "observation",
+            "content": "（打聽到了：顧潮這會兒在街道。）",
+            "importance": 8,
+            "last_access_tick": 17
+          },
+          {
+            "id": 51,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "沈汐對我說：「別找了，現在沒人有空守著。你去鐵鋪把石磊找來，告訴他閘封不住就別想活命！辦完立刻到鎮廟來，這才是救命的地方。」",
+            "importance": 7,
+            "last_access_tick": 22
+          },
+          {
+            "id": 52,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "顧潮不在這兒，沈汐又催得急，石磊那邊確實得有人去盯著封閘。我得趕快去鐵鋪，路上看看能不能堵到顧潮，把潮訊對上。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 53,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "沈汐對封閘的急迫感，說明海堤防線已經失守，守望人顧潮離崗可能意味著危機比預期中更快。",
+            "importance": 8,
+            "last_access_tick": 18
+          },
+          {
+            "id": 54,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "既然知道顧潮在街道，我現在去鐵鋪找石磊的路上，剛好可以攔截顧潮，這比在原地等待或漫無目的尋找更有效。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 55,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "船班的訊號與封閘的工程是兩條救命線，我必須在攔到顧潮後，立刻確認潮訊，並決定是先回漁港還是先去鐵鋪。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 56,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "顧潮不在海堤讓我意外，但他的動向現在比我原本的計劃更重要，絕不能錯過這次街道相遇。",
+            "importance": 8,
+            "last_access_tick": 16
+          },
+          {
+            "id": 57,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "injected",
+            "content": "（打聽到了：顧潮這會兒在街道。）",
+            "importance": 7,
+            "last_access_tick": 17
+          },
+          {
+            "id": 58,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "沈汐在這裡站著，但我得先去街道追上顧潮，潮訊對不上什麼都免談。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 59,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "沈汐對我說：「別找人了！海堤水閘沒封，暴潮一來就全完了。你現在趕快去鐵鋪把石磊找來，讓他封閘，封完立刻帶人上廟來！」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 60,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "沈汐看起來急瘋了，閘沒封這事確實壓在頭上。我答應她先去鐵鋪，至於顧潮，路上再看看能不能遇上，救命優先。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 61,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "observation",
+            "content": "我使了疾風步。",
+            "importance": 5,
+            "last_access_tick": 17
+          },
+          {
+            "id": 62,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "沈汐這老人家急瘋了，但她說得沒錯，沒有鐵匠封閘，海堤就是擺設。我也沒看到顧潮的人影，只能先按她說的辦，去鐵鋪把石磊拽過來。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 63,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "speech",
+            "content": "沈汐對我說：「別找顧潮了，快去鐵鋪把石磊叫來封閘！這水閘沒人守不行，叫他帶齊傢伙趕來，之後立刻來鎮廟，我有急事交代你們。」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 64,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "顧潮不在，沈汐又這麼急，水閘的事確實比找人重要。先把鐵匠拎過來，晚了真的就來不及了。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 65,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "我到了鐵鋪。",
+            "importance": 2,
+            "last_access_tick": 19
+          },
+          {
+            "id": 66,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "沈汐的話沒錯，石磊才是現在唯一能把閘封住的人，不能再浪費時間找顧潮了，先去鐵鋪把人帶走。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 67,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "石磊不在鐵鋪，可能已經去海堤了。既然沈汐一直說閘沒封就完蛋，我直接衝海堤找他跟顧潮，兩手抓才保險。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 68,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 22
+          },
+          {
+            "id": 69,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "沈汐的話沒錯，水閘封不住，別說船了，命都沒了。顧潮不在海堤，那我就直接去鐵鋪找石磊，他能把這閘焊死。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 70,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "observation",
+            "content": "我使了疾風步。",
+            "importance": 5,
+            "last_access_tick": 23
+          },
+          {
+            "id": 71,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "reflection",
+            "content": "顧潮行蹤飄忽，不能再把守望人當作唯一的潮訊來源，沈汐掌握的訊息才決定了當下的優先順序。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 72,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "reflection",
+            "content": "石磊是封閘的絕對關鍵，只要沒看到他在海堤，我就必須去鐵鋪堵人，不能浪費時間在海堤空等。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 73,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "reflection",
+            "content": "鎮廟與海堤的協作已斷鏈，沈汐在海堤不斷趕人走，意味著防線已至極限，再不封閘就要棄守。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 74,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "reflection",
+            "content": "「望潮」打聽顧潮的位置雖省時，但若他持續移動，使用時機必須更精準，否則只是浪費次數。",
+            "importance": 8,
+            "last_access_tick": 23
+          }
+        ],
+        "next_id": 75,
+        "importance_since_reflection": 0,
+        "beliefs": [
+          "潮訊若沒對上，船就是廢鐵，命也懸著。",
+          "現場確認勝過望潮，望潮只能幫我縮小搜尋範圍。",
+          "顧潮不可控，鐵匠石磊才是封閘的絕對剛需。",
+          "危機時刻，直接開口問人比自己瞎猜更快。",
+          "沈汐對鎮上動向最清楚，聽她的安排能少走彎路。",
+          "先看距離再開口，別浪費力氣做白工。",
+          "鎮上的人都在動，別預設誰會留在原地等你。",
+          "既然確定目標地點，直接趕路最有效，疾風步要用在刀口上。",
+          "封閘任務刻不容緩，沒封住之前，任何人都不能放鬆。",
+          "船的安危是第一目標，但水閘不封，船進港也是死。",
+          "鐵鋪與海堤之間的往返是當下的生命線，比找人更重要。"
+        ],
+        "last_reflection_tick": 23
+      },
+      "seen_last_tick": [],
+      "last_think_tick": 23,
+      "think_count": 23,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "reach",
+          "text": "先回到漁港，把還在外面的船班叫回來",
+          "params": {
+            "area": "漁港"
+          },
+          "status": "done",
+          "at_tick": 0,
+          "note": "走到了漁港"
+        },
+        {
+          "kind": "meet",
+          "text": "找到顧潮，對上潮訊",
+          "params": {
+            "who": "gu_chao"
+          },
+          "status": "open",
+          "at_tick": -1,
+          "note": ""
+        }
+      ],
+      "arts": [
+        {
+          "id": "ji_feng_bu",
+          "uses_left": 0,
+          "ready_at": 26,
+          "used": 4
+        },
+        {
+          "id": "wang_chao",
+          "uses_left": 1,
+          "ready_at": 17,
+          "used": 4
+        }
+      ],
+      "buffs": {
+        "dash": {
+          "amount": 2,
+          "until": 26
+        }
+      }
+    },
+    "qing_he": {
+      "id": "qing_he",
+      "name": "青禾",
+      "role": "villager",
+      "persona": "你叫青禾，草藥醫，三十三歲。\n你知道慌比潮先死人：人一擠，高地的窄路會踩踏。\n\n你今天要自己先上高地站住，並找到村長方嵐，把「誰先撤、誰去觀禮」說清楚。\n你能安撫人，也能號令——用在刀口上，別浪費在跟潮水吵架。",
+      "home_area": "漁市",
+      "pos": [
+        3,
+        3
+      ],
+      "plan": "確認顧潮執行老人小孩優先撤離的指令後，我在高地入口守著，準備隨時用安民咒壓制推擠的人群。",
+      "action": null,
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在漁市遇到顧潮。",
+            "importance": 3,
+            "last_access_tick": 5
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "這裡離海太近，待著心裡發慌。得先去村長宅找方嵐，確認疏散順序，不然亂了套就更危險了。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 3,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "在廣場遇到沈汐。",
+            "importance": 3,
+            "last_access_tick": 6
+          },
+          {
+            "id": 4,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "observation",
+            "content": "我到了村長宅。",
+            "importance": 2,
+            "last_access_tick": 5
+          },
+          {
+            "id": 5,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "沈汐這時候往村長宅走，肯定是要找方嵐商量，攔住她問一聲方嵐在哪，省得我瞎找。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 6,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "speech",
+            "content": "我說：「沈祭司！方嵐人在哪？疏散順序得趕快定下來，不然等會兒廣場一亂，誰都撤不走。」",
+            "importance": 5,
+            "last_access_tick": 7
+          },
+          {
+            "id": 7,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "在村長宅遇到阿潛。",
+            "importance": 3,
+            "last_access_tick": 6
+          },
+          {
+            "id": 8,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "沈汐來了，正好問她方嵐的去向。方嵐不在家，這事兒真麻煩，得趕緊找到人才能去高地。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 9,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "我說：「沈祭司！方嵐不在宅子裡嗎？疏散順序得趕緊定，不然等會人潮湧起來，高地那邊會踩踏的。」",
+            "importance": 5,
+            "last_access_tick": 7
+          },
+          {
+            "id": 10,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "speech",
+            "content": "沈汐對我說：「青禾，方嵐應該在海堤或是廣場那邊。這兒要亂了，妳先跟我上鎮廟，那邊得準備鎮潮禮，否則潮水一進來，誰都躲不掉。妳先把人引過去，我隨後就到。」",
+            "importance": 7,
+            "last_access_tick": 10
+          },
+          {
+            "id": 11,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "沈汐要我去鎮廟，但我的首要任務是去高地疏散，且還沒找到方嵐確認順序。不能全聽她的，得先去找方嵐。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 12,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "speech",
+            "content": "沈汐對我說：「青禾！方嵐若不在，就妳先往鎮廟走！我稍後去海堤找他，妳去廟裡候著，那兒需要有人觀禮，不然暴潮一到，誰都跑不掉！」",
+            "importance": 7,
+            "last_access_tick": 14
+          },
+          {
+            "id": 13,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "沈汐要我去鎮廟，但我不能去。高地那邊更重要，而且我還沒找到方嵐，如果不把疏散順序定下來，等下全亂了就沒救了。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 14,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 6
+          },
+          {
+            "id": 15,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "在廣場遇到石磊。",
+            "importance": 3,
+            "last_access_tick": 7
+          },
+          {
+            "id": 16,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "在廣場遇到顧潮。",
+            "importance": 3,
+            "last_access_tick": 7
+          },
+          {
+            "id": 17,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "方嵐不在村長宅，這傢伙肯定在海堤或是哪裡忙，沈汐叫我去廟，但我現在更擔心高地那邊會踩踏。先去高地路上看看能不能堵到方嵐，順便疏散些人。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 18,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "speech",
+            "content": "沈汐對我說：「青禾，別管方嵐了！妳先上鎮廟守著，那邊的香火不能斷，妳在廟裡幫忙穩住來的人，我現在就去海堤找人！」",
+            "importance": 7,
+            "last_access_tick": 10
+          },
+          {
+            "id": 19,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "沈汐要去海堤找人，但我不能去廟裡，高地才是這場疏散的關卡。我得趕快移動，去高地路上攔截方嵐，順便疏散人潮。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 20,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "reflection",
+            "content": "沈汐雖然一心想做鎮潮禮，但她願意去海堤找人，可以利用這點把找方嵐的責任交給她，我自己專心去高地。",
+            "importance": 8,
+            "last_access_tick": 9
+          },
+          {
+            "id": 21,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "reflection",
+            "content": "廟宇不能救急，高地才是疏散的瓶頸，若我聽沈汐去廟裡，高地的疏散秩序就徹底沒人管了。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 22,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "reflection",
+            "content": "方嵐不在家且行蹤不明，他必然在海堤或漁港處理最危急的封閘與船隻，直接去高地路上攔截或去海堤找他才是正途。",
+            "importance": 8,
+            "last_access_tick": 15
+          },
+          {
+            "id": 23,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "石磊說：「顧潮，跟我走！海堤的水閘得趕在傍晚前封死，你是守望人，你得給我作證！」（當時我在廣場）",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 24,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "顧潮說：「石磊！別在廣場廢話了，閘板不用搬，直接去海堤焊死！今天這潮勢不對，得封！」（當時我在廣場）",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 25,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "在廣場遇到方嵐。",
+            "importance": 3,
+            "last_access_tick": 8
+          },
+          {
+            "id": 26,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "injected",
+            "content": "（北邊雲牆壓下來，海鳥成群往內陸飛。有人低聲說：這種雲，上回來過一次。）",
+            "importance": 7,
+            "last_access_tick": 8
+          },
+          {
+            "id": 27,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "方嵐過來了，正好。沈汐那邊我得回絕，廟救不了人，我必須去高地守著，得讓方嵐去接手疏散的重擔。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 28,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "我說：「方嵐！別去海堤了，那邊石磊和顧潮在忙。你得去廣場把老人小孩先送上高地，高地那邊窄，不能擠，我先過去把路口守住！」",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 29,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "方嵐離我太遠了（4 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 30,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "沈汐對我說：「青禾，別管方嵐了，妳現在就去鎮廟！那邊需要有人守著，妳先穩住先到的人，這是救命的事，快走！」",
+            "importance": 7,
+            "last_access_tick": 10
+          },
+          {
+            "id": 31,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "沈汐又在亂出主意，廟裡香火斷了就斷了，路堵死了人會死絕的。我得先穩住廣場這群快要慌的人，再想辦法把方嵐拽住，絕不能讓他像無頭蒼蠅一樣去海堤。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 32,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "我使了安民咒。",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 33,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "speech",
+            "content": "顧潮說：「別廢話，走！我這就去海堤等你，你腳步快點，那閘板要是銹了，咱們今天都得交代在這。」（當時我在廣場）",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 34,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "方嵐就在街道，既然顧潮要去海堤，這兩人一定會碰頭，我得先攔住方嵐交代疏散順序，否則高地一亂就全完了。沈汐的鎮潮禮救不了急，我得堅持去高地守口子。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 35,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "speech",
+            "content": "沈汐對我說：「青禾，別管方嵐了！妳現在立刻上鎮廟！那是最後的退路，到了那邊幫忙穩住先到的鎮民，我隨後就到。」",
+            "importance": 7,
+            "last_access_tick": 14
+          },
+          {
+            "id": 36,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "沈汐想去海堤就隨她，但我得攔住方嵐。他往鎮廟走，我得在他進門前把優先疏散的事說死，不然大家全得擠死在高地路上。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 37,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "reflection",
+            "content": "沈汐對鎮潮禮的堅持已經到了盲目的地步，她根本不在乎疏散順序，不能讓她牽著鼻子走。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 38,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "reflection",
+            "content": "方嵐就在廣場，這是攔住他下達疏散指令的最後機會，再讓他走掉，我就得跟著他在這亂局裡瞎耗。",
+            "importance": 8,
+            "last_access_tick": 17
+          },
+          {
+            "id": 39,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "reflection",
+            "content": "海堤那邊石磊和顧潮已經到位，物理防線有人顧，我必須把力氣全部花在人流疏散上，這是唯一能救命的變數。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 40,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "reflection",
+            "content": "只要高地那條路擠死人，鎮潮禮做再完美也是徒勞，我的醫者職責是保命，不是去幫忙唱經。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 41,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "speech",
+            "content": "沈汐對我說：「青禾，去廟裡守著，別回頭！不管看到什麼，就在廟前把人穩住，那是大家唯一的退路！」",
+            "importance": 7,
+            "last_access_tick": 10
+          },
+          {
+            "id": 42,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "沈汐又在嘮叨那套守廟的教條，根本緩不濟急。方嵐就在前面，我絕不能放過這次直接堵人的機會。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 43,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "observation",
+            "content": "在廣場遇到阿潛。",
+            "importance": 3,
+            "last_access_tick": 11
+          },
+          {
+            "id": 44,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "我到了鎮廟。",
+            "importance": 2,
+            "last_access_tick": 13
+          },
+          {
+            "id": 45,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "在鎮廟遇到石磊。",
+            "importance": 3,
+            "last_access_tick": 14
+          },
+          {
+            "id": 46,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "在鎮廟遇到方嵐。",
+            "importance": 3,
+            "last_access_tick": 14
+          },
+          {
+            "id": 47,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "廟裡全是腐朽的香火味，救不了人。方嵐這蠢材走來廟裡幹什麼？他該在廣場組織人手去高地，我得去街上攔住他。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 48,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "（把方嵐找到，確認誰該先撤——見到了方嵐。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 23
+          },
+          {
+            "id": 49,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "injected",
+            "content": "（把方嵐找到，確認誰該先撤——見到了方嵐。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 15
+          },
+          {
+            "id": 50,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "這兩個人正往鎮廟走，簡直是往死路上擠。必須現在就攔住方嵐，叫他先把疏散的順序定下來，別去管什麼廟裡的虛禮。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 51,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "方嵐說：「石磊，閘口那邊拜託你了，務必焊死，這事沒得商量！」（當時我在街道）",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 52,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "石磊說：「方村長，閘已經焊死，顧潮就在邊上盯著。我現在去鎮廟幫忙，你也別在街上晃了，廟裡還缺人手！」（當時我在街道）",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 53,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "石磊這鐵匠去了廟裡，就沒人管高地那邊的疏散秩序了。我必須抓住方嵐，這時候還不給高地排順序，等到亂起來就來不及了。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 54,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "我說：「方村長，等等！閘有人顧，但高地那邊亂成一團會踩死人，你現在得給我個疏散順序，誰先走、誰後走，立刻定下來！」",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 55,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "方嵐現在心裡還覺得『廟』大於『命』，如果我不當面把他這念頭打死，他轉頭就會去廟裡，導致高地疏散失去指揮。",
+            "importance": 8,
+            "last_access_tick": 21
+          },
+          {
+            "id": 56,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "石磊既然確認海堤閘門已焊死，海堤這條防線就不是我的戰場了，我完全無須去海堤，只需盯死高地人流。",
+            "importance": 8,
+            "last_access_tick": 17
+          },
+          {
+            "id": 57,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "鎮廟正在成為全鎮的重心吸力，把原本能維持秩序的人手都吸過去了，我必須強行把人攔在去廟的路上，不能讓人都擠到廟裡去送死。",
+            "importance": 8,
+            "last_access_tick": 16
+          },
+          {
+            "id": 58,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "石磊說：「方嵐，閘門已經焊死，顧潮在守著，沒問題。聽青禾的，你趕緊去安排疏散，鎮廟那邊我走一趟，沈汐一個人撐不住我頂著。」（當時我在街道）",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 59,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "方嵐對我說：「青禾，按你說的辦，老人婦孺先撤！廣場那邊交給你，一定要壓住，誰敢亂擠就給我吼住他們。石磊，你去廟裡幫沈汐，人夠多禮才壓得住潮。」",
+            "importance": 7,
+            "last_access_tick": 17
+          },
+          {
+            "id": 60,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "方嵐總算開竅，石磊願意去廟裡那是最好，我可以省下力氣去高地。只要路口卡得住，人流就不會踩踏，這才是救命的關鍵。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 61,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "方嵐對我說：「青禾，聽你的。這事交給你，老人、婦孺先上高地，壯年斷後，誰敢鬧事你隨時能用我的名義壓人。石磊，廟裡你幫著沈汐，除了祭禮，誰想進來避難都准，不許亂。」",
+            "importance": 7,
+            "last_access_tick": 21
+          },
+          {
+            "id": 62,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "方嵐總算開竅，老人婦孺先上高地是對的。石磊去廟裡就讓他去吧，現在我得立刻趕到高地搶佔制高點，那裡才是疏散的唯一出口。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 63,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "observation",
+            "content": "在街道遇到顧潮。",
+            "importance": 3,
+            "last_access_tick": 20
+          },
+          {
+            "id": 64,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "speech",
+            "content": "顧潮對我說：「青禾，別管街上的人了，先上高地！上面擠的人需要你穩住，快上來！」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 65,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "顧潮在催了，高地的人流若失控踩踏，死傷會比潮水淹死的人更多。先上高地，我就是那裡的防線。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 66,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "observation",
+            "content": "我到了高地。",
+            "importance": 2,
+            "last_access_tick": 21
+          },
+          {
+            "id": 67,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "observation",
+            "content": "（自己先撤到高地，做疏散的節點——走到了高地。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 23
+          },
+          {
+            "id": 68,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "injected",
+            "content": "（自己先撤到高地，做疏散的節點——走到了高地。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 22
+          },
+          {
+            "id": 69,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "我已經在高地了，這是疏散的關鍵。顧潮比我先到，他應該清楚廣場那邊的情況，我得問他方嵐現在人在哪，這疏散令到底發了沒有。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 70,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "我說：「顧潮，高地這邊我守著。方嵐呢？他是不是還在廣場趕人？如果他還沒發話讓婦孺先上來，這路待會兒得踩死人。」",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 71,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "方嵐雖然答應了疏散順序，但他耳根子軟，若廣場的人流抵達高地入口時沒人在旁死守規矩，我的堅持就全白費了。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 72,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "顧潮既然已經在高地，他是能協助我管控人流的關鍵，我必須馬上與他確立老人婦孺優先入高的檢查順序。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 73,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "石磊去了鎮廟是人力浪費，但既然木已成舟，我不必再分心去糾結廟裡的事，死守高地入口才是現在唯一要做的。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 74,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "亥時前沒人能保證水不進來，若鎮民因為恐慌開始推擠，我必須毫不猶豫地動用「號令」強行介入。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 75,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "顧潮對我說：「青禾，高地交給你了，多留心別讓人亂跑，我去廣場帶人過來。」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 76,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "顧潮是去帶人，不是去逃命，這規矩現在不立好，等他帶大批人過來就亂了。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 77,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "我說：「顧潮，記住，帶人過來時，先領老人小孩，壯年男人給我留在後面殿後，別讓他們跟著搶路，否則高地一擠就全完了。」",
+            "importance": 5,
+            "last_access_tick": 23
+          }
+        ],
+        "next_id": 78,
+        "importance_since_reflection": 16,
+        "beliefs": [
+          "暴潮不是天災，是混亂與恐慌的試煉，人流若失控，踩踏比溺水死得更快。",
+          "鎮廟的香火救不了命，鎮潮禮只是求個心安，我不應為此浪費醫者的體力。",
+          "方嵐作為村長，他的權威是用來維持疏散秩序的，絕不能讓他被祭祀傳統帶偏。",
+          "高地是全鎮最後的防線，這條通往高地的窄路，就是我守護人命的生死關口。",
+          "老人、婦孺與幼童必須優先撤離，壯年斷後，這條生死順序絕對不能讓。",
+          "只要海堤閘門已封，防守海堤就不再是我的責任，我的戰場就在高地入口。",
+          "顧潮是能信任的守望人，在關鍵時刻，他是維繫高地秩序的盟友。",
+          "「號令」是最後的手段，必須留給最混亂的踐踏關頭，不能輕易用掉。",
+          "任何企圖將壯丁吸往鎮廟進行無用祈禱的行為，都是對疏散資源的嚴重損耗。",
+          "醫者的本分是保命，只要能活下去，我願意承擔任何強勢或得罪人的惡名。"
+        ],
+        "last_reflection_tick": 22
+      },
+      "seen_last_tick": [
+        "顧潮"
+      ],
+      "last_think_tick": 23,
+      "think_count": 20,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "reach",
+          "text": "自己先撤到高地，做疏散的節點",
+          "params": {
+            "area": "高地"
+          },
+          "status": "done",
+          "at_tick": 21,
+          "note": "走到了高地"
+        },
+        {
+          "kind": "meet",
+          "text": "把方嵐找到，確認誰該先撤",
+          "params": {
+            "who": "fang_lan"
+          },
+          "status": "done",
+          "at_tick": 14,
+          "note": "見到了方嵐"
+        }
+      ],
+      "arts": [
+        {
+          "id": "an_min_zhou",
+          "uses_left": 2,
+          "ready_at": 13,
+          "used": 1
+        },
+        {
+          "id": "hao_ling",
+          "uses_left": 3,
+          "ready_at": 18,
+          "used": 1
+        }
+      ],
+      "buffs": {}
+    },
+    "gu_chao": {
+      "id": "gu_chao",
+      "name": "顧潮",
+      "role": "villager",
+      "persona": "你叫顧潮，守望人，四十五歲，常年蹲在海堤看雲色與潮聲。\n你今天的工作是守住海堤視線，並把石磊找回來封閘——你焊不動閘，但你跑得過風。\n\n你能望潮打探別人在哪，也能疾風步趕路。別在廣場聽人哭，海堤才是你的崗。",
+      "home_area": "海堤",
+      "pos": [
+        3,
+        3
+      ],
+      "plan": "馬上下山回廣場，配合方嵐把滯留的婦孺引導上高地。",
+      "action": null,
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在廣場遇到方嵐。",
+            "importance": 3,
+            "last_access_tick": 5
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在廣場遇到青禾。",
+            "importance": 3,
+            "last_access_tick": 1
+          },
+          {
+            "id": 3,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "石磊人沒在廣場，得先用望潮找他，不然跑錯地方浪費力氣。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 4,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "（打聽到了：石磊這會兒在鐵鋪。）",
+            "importance": 8,
+            "last_access_tick": 10
+          },
+          {
+            "id": 5,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "在廣場遇到沈汐。",
+            "importance": 3,
+            "last_access_tick": 5
+          },
+          {
+            "id": 6,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "injected",
+            "content": "（打聽到了：石磊這會兒在鐵鋪。）",
+            "importance": 7,
+            "last_access_tick": 7
+          },
+          {
+            "id": 7,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "石磊就在鐵鋪，不用望潮了，直接動身趕過去。晚了就真的來不及封閘。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 8,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "observation",
+            "content": "我到了鐵鋪。",
+            "importance": 2,
+            "last_access_tick": 5
+          },
+          {
+            "id": 9,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "在鐵鋪遇到石磊。",
+            "importance": 3,
+            "last_access_tick": 6
+          },
+          {
+            "id": 10,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "石磊居然不在鋪子裡，我看走眼了，得趕緊找方嵐確認這夯貨要去哪。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 11,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "我說：「方村長，我剛才看見石磊往廣場去了，現在海堤要封閘，我得把他攔下來，你知道他去哪嗎？」",
+            "importance": 5,
+            "last_access_tick": 6
+          },
+          {
+            "id": 12,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "speech",
+            "content": "方嵐對我說：「顧潮，石磊去廣場了，你腳程快，幫我追上他告訴他：閘板不用搬，叫他直接去海堤焊死，今天這潮勢不對，得封！」",
+            "importance": 7,
+            "last_access_tick": 12
+          },
+          {
+            "id": 13,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "方嵐對我說：「顧潮，石磊去廣場準沒好事，你別管我，現在就去海堤等他，一定要攔住他封閘！」這話聽起來竟然頗有道理。",
+            "importance": 9,
+            "last_access_tick": 23
+          },
+          {
+            "id": 14,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "方嵐說得對，石磊這夯貨去廣場幹嘛？那邊沒閘板，這時候得直接去海堤。我得趕在他到廣場之前把人截下來。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 15,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "我使了疾風步。",
+            "importance": 5,
+            "last_access_tick": 6
+          },
+          {
+            "id": 16,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "speech",
+            "content": "方嵐對我說：「顧潮，石磊去廣場準沒好事，你別管我，現在就去海堤等他，一定要攔住他封閘！」",
+            "importance": 7,
+            "last_access_tick": 15
+          },
+          {
+            "id": 17,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "方嵐說得對，石磊這夯貨去廣場幹嘛？那邊沒閘板，這時候得直接去海堤。我得趕在他到廣場之前把人截下來。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 18,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 6
+          },
+          {
+            "id": 19,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "（找到石磊，讓他來封閘——見到了石磊。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 23
+          },
+          {
+            "id": 20,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "reflection",
+            "content": "望潮雖然能找人，但對方如果在移動且要往人堆裡鑽，直接找方嵐這種耳目通透的人問，才不會撲空。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 21,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "reflection",
+            "content": "石磊這夯貨一慌就會亂跑，根本待不住鐵鋪，以後找他直接去海堤堵人才是最有效率的。",
+            "importance": 8,
+            "last_access_tick": 9
+          },
+          {
+            "id": 22,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "reflection",
+            "content": "疾風步雖能追上人，但若沒鎖死目標的下一步落腳點，很容易白跑一趟浪費體力。",
+            "importance": 8,
+            "last_access_tick": 6
+          },
+          {
+            "id": 23,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "在廣場遇到沈汐。",
+            "importance": 3,
+            "last_access_tick": 7
+          },
+          {
+            "id": 24,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "observation",
+            "content": "在廣場遇到青禾。",
+            "importance": 3,
+            "last_access_tick": 7
+          },
+          {
+            "id": 25,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "injected",
+            "content": "（找到石磊，讓他來封閘——見到了石磊。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 10
+          },
+          {
+            "id": 26,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "這夯貨石磊果然在廣場晃蕩，得趕緊把他打發去海堤，我也得趕快趕回去守崗。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 27,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "speech",
+            "content": "我說：「石磊！別在廣場廢話了，閘板不用搬，直接去海堤焊死！今天這潮勢不對，得封！」",
+            "importance": 5,
+            "last_access_tick": 7
+          },
+          {
+            "id": 28,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "石磊對我說：「顧潮，跟我走！海堤的水閘得趕在傍晚前封死，你是守望人，你得給我作證！」",
+            "importance": 7,
+            "last_access_tick": 12
+          },
+          {
+            "id": 29,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "injected",
+            "content": "（北邊雲牆壓下來，海鳥成群往內陸飛。有人低聲說：這種雲，上回來過一次。）",
+            "importance": 7,
+            "last_access_tick": 8
+          },
+          {
+            "id": 30,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "這夯貨石磊竟然就在廣場，省得我到處找，既然他開口了，立刻回他去海堤，這節骨眼一刻都不能耽誤。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 31,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "我說：「別廢話，走！我這就去海堤等你，你腳步快點，那閘板要是銹了，咱們今天都得交代在這。」",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 32,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "青禾的安民咒傳進耳裡，心裡那股躁動平了些。",
+            "importance": 6,
+            "last_access_tick": 8
+          },
+          {
+            "id": 33,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "石磊這夯貨終於開竅了，現在去海堤剛好。趁還沒起大風，趕緊跟上，省得他在路上又變卦。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 34,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 9
+          },
+          {
+            "id": 35,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "（守在海堤，確認閘還能不能封——走到了海堤。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 23
+          },
+          {
+            "id": 36,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "reflection",
+            "content": "對付石磊這種夯貨，別跟他講大道理，直接給出『去海堤封閘』的明確指令，他反而聽得進去。",
+            "importance": 8,
+            "last_access_tick": 15
+          },
+          {
+            "id": 37,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "reflection",
+            "content": "望潮固然好用，但石磊只要一慌就會亂跑，與其用絕技瞎猜位置，不如直接問方嵐，這比任何輕功都省力。",
+            "importance": 8,
+            "last_access_tick": 14
+          },
+          {
+            "id": 38,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "reflection",
+            "content": "疾風步雖是救命牌，但若沒先確定目標的落腳點，用在路上只是白白浪費體力，守在崗位上比追人更要緊。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 39,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "injected",
+            "content": "（守在海堤，確認閘還能不能封——走到了海堤。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 12
+          },
+          {
+            "id": 40,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "石磊當眾行了封閘之禮。",
+            "importance": 10,
+            "last_access_tick": 23
+          },
+          {
+            "id": 41,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "石磊就在眼前，閘也到了，現在不焊等什麼時候？得盯緊他把閘封死，這才是守望人的活。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 42,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "speech",
+            "content": "我說：「石磊，別廢話了，閘就在這，快動手焊！我會一直盯著，絕不離開。」",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 43,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "石磊那倔脾氣，動起手來確實快。既然他在焊閘，我就守好這堤，別讓什麼亂七八糟的東西衝過來干擾他。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 44,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "閘門既然已經封死，我的活兒就幹完了。現在海堤這裡沒有人，我不放心廣場那邊的動靜，得去看看有沒有人落單，或是方嵐那邊有什麼要幫忙的。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 45,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "在街道遇到沈汐。",
+            "importance": 3,
+            "last_access_tick": 13
+          },
+          {
+            "id": 46,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 13
+          },
+          {
+            "id": 47,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "在廣場遇到阿潛。",
+            "importance": 3,
+            "last_access_tick": 14
+          },
+          {
+            "id": 48,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "石磊已經把閘封了，海堤那邊暫時沒事。我看見阿潛這小子還往海堤跑，這時候去海堤找死嗎？得把他拉回來。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 49,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "speech",
+            "content": "我說：「阿潛！別去海堤，潮頭要上岸了，快回高地！」",
+            "importance": 5,
+            "last_access_tick": 14
+          },
+          {
+            "id": 50,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "阿潛離我太遠了（4 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 14
+          },
+          {
+            "id": 51,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "石磊那邊已經封閘，任務了結，廣場人開始多了，不是久留之地。還是先撤去高地，省得待會水一上來，我也成了累贅。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 52,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "閘已經封死，我的任務重心該從「守閘」徹底轉為「引人上高地」。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 53,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "阿潛這種愣頭青，看見潮訊還往海堤跑，單靠在廣場喊話沒用，得追上去截人。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 54,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "廣場人雜，已成撤離焦點，我沒必要繼續待在這是非之地，得往高地去。",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 55,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "reflection",
+            "content": "方嵐掌握全鎮動向，要疏散人群，直接配合她的指令比我在鎮上瞎晃找人有效。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 56,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "我到了高地。",
+            "importance": 2,
+            "last_access_tick": 18
+          },
+          {
+            "id": 57,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "石磊那邊事了了，海堤也封了，現在就等大家往高地撤。我就守在這，看看誰還在下面磨蹭。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 58,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "observation",
+            "content": "在高地遇到青禾。",
+            "importance": 3,
+            "last_access_tick": 20
+          },
+          {
+            "id": 59,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "青禾就在前面，不用費力追，倒是這風雨看著真讓人心慌，得盯著點這附近還有沒有沒上來的人。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 60,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "青禾是鎮上的支柱，她到了，高地這才穩得住。得讓她趕快上來，別讓她在街上被其他亂跑的人纏住。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 61,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "speech",
+            "content": "我說：「青禾，別管街上的人了，先上高地！上面擠的人需要你穩住，快上來！」",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 62,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "青禾在這裡我就放心了，高地的人手足夠。我得趕快回去廣場，那裡還有很多人沒動，晚了就來不及了。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 63,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "我說：「青禾，高地交給你了，多留心別讓人亂跑，我去廣場帶人過來。」",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 64,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "青禾對我說：「顧潮，高地這邊我守著。方嵐呢？他是不是還在廣場趕人？如果他還沒發話讓婦孺先上來，這路待會兒得踩死人。」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 65,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "青禾講得對，方嵐若不在這邊壓陣，廣場那邊肯定亂套。我得趕緊下去，人命關天。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 66,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "我說：「方嵐還在廣場，我去接應他把人往這邊趕，這裡就交給你了！」",
+            "importance": 5,
+            "last_access_tick": 23
+          }
+        ],
+        "next_id": 67,
+        "importance_since_reflection": 47,
+        "beliefs": [
+          "海堤水閘是嵐潮鎮的命門，閘封了，路就活了。",
+          "沒親眼見到人，就別信他人在哪，包括我自己的直覺。",
+          "方嵐的消息網是鎮上的風向標，信她的指揮比信自己的盲目奔走更保險。",
+          "疾風步是最後關頭用的底牌，現在得省著用，給關鍵疏散留餘地。",
+          "對石磊這種夯貨，命令比勸說有效，他只認『封閘』兩個字。",
+          "海堤已經沒事，現在死守在那反而浪費力氣，該去高地或廣場拉人。",
+          "在廣場喊人，若對方沒停下，三格距離內沒追上就等於白說。",
+          "亥時將至，除了高地和廟宇，其他地方都是險地。",
+          "沈汐和青禾在，可以幫忙安撫人，我主要負責趕人上高地。",
+          "只有親眼看著大家上了高地，這場仗才算贏。"
+        ],
+        "last_reflection_tick": 15
+      },
+      "seen_last_tick": [
+        "青禾"
+      ],
+      "last_think_tick": 23,
+      "think_count": 18,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "reach",
+          "text": "守在海堤，確認閘還能不能封",
+          "params": {
+            "area": "海堤"
+          },
+          "status": "done",
+          "at_tick": 9,
+          "note": "走到了海堤"
+        },
+        {
+          "kind": "meet",
+          "text": "找到石磊，讓他來封閘",
+          "params": {
+            "who": "shi_lei"
+          },
+          "status": "done",
+          "at_tick": 6,
+          "note": "見到了石磊"
+        }
+      ],
+      "arts": [
+        {
+          "id": "wang_chao",
+          "uses_left": 4,
+          "ready_at": 1,
+          "used": 1
+        },
+        {
+          "id": "ji_feng_bu",
+          "uses_left": 3,
+          "ready_at": 9,
+          "used": 1
+        }
+      ],
+      "buffs": {}
+    }
+  },
+  "director_fired": [
+    1,
+    1,
+    2,
+    6,
+    7,
+    8,
+    8,
+    10,
+    11,
+    12,
+    15,
+    17,
+    22
+  ],
+  "awareness_score": 0.0,
+  "awareness_log": [],
+  "outcome": "",
+  "outcome_text": "",
+  "flooded": []
+}
