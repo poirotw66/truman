@@ -16,9 +16,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCENES = Path(__file__).with_name("scenes")
 
-# 檔名 → DATA.scenes 的鍵。地名對齊 scenarios/jianghu.py 的 Area.name。
+# 檔名 stem → DATA.scenes 的鍵。
+# 江湖地名對齊 scenarios/jianghu.py；嵐潮地名對齊 scenarios/tempest.py。
 SCENE_KEYS: dict[str, str] = {
     "keyart_hengshan": "keyart",
+    "keyart_tempest": "keyart",
     "keyart_night": "night",
     "scene_liufu": "劉府",
     "scene_market": "市集",
@@ -29,6 +31,16 @@ SCENE_KEYS: dict[str, str] = {
     "scene_yard": "後院",
     "scene_qunyu": "群玉院",
     "scene_temple": "城隍廟",
+    # tempest · 嵐潮鎮
+    "scene_gaodi": "高地",
+    "scene_cunzhang": "村長宅",
+    "scene_miao": "鎮廟",
+    "scene_guangchang": "廣場",
+    "scene_tiepu": "鐵鋪",
+    "scene_yushi": "漁市",
+    "scene_liangcang": "糧倉",
+    "scene_haidi": "海堤",
+    "scene_yugang": "漁港",
 }
 
 

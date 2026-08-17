@@ -287,7 +287,18 @@
       <figure><img src="art/scene_temple.jpg" alt="城隍廟"/><figcaption>城隍廟</figcaption></figure>
       <figure><img src="art/scene_shrine.jpg" alt="荒祠"/><figcaption>荒祠</figcaption></figure>
     </div>
-    <p class="hint" id="scenesOther" hidden>嵐潮／和平箱庭沒有單獨場景拼貼——開跑後看現場看板與回放地圖即可。</p>
+    <div class="scenes" id="scenesTempest" aria-label="嵐潮鎮場景" hidden>
+      <figure><img src="art/scenes/tempest/keyart.jpg" alt="嵐潮關鍵美術"/><figcaption>嵐潮</figcaption></figure>
+      <figure><img src="art/scenes/tempest/scene_miao.jpg" alt="鎮廟"/><figcaption>鎮廟</figcaption></figure>
+      <figure><img src="art/scenes/tempest/scene_haidi.jpg" alt="海堤"/><figcaption>海堤</figcaption></figure>
+      <figure><img src="art/scenes/tempest/scene_yugang.jpg" alt="漁港"/><figcaption>漁港</figcaption></figure>
+      <figure><img src="art/scenes/tempest/scene_guangchang.jpg" alt="廣場"/><figcaption>廣場</figcaption></figure>
+      <figure><img src="art/scenes/tempest/scene_gaodi.jpg" alt="高地"/><figcaption>高地</figcaption></figure>
+      <figure><img src="art/scenes/tempest/scene_tiepu.jpg" alt="鐵鋪"/><figcaption>鐵鋪</figcaption></figure>
+      <figure><img src="art/scenes/tempest/scene_cunzhang.jpg" alt="村長宅"/><figcaption>村長宅</figcaption></figure>
+      <figure><img src="art/scenes/tempest/scene_yushi.jpg" alt="漁市"/><figcaption>漁市</figcaption></figure>
+    </div>
+    <p class="hint" id="scenesOther" hidden>這個劇本還沒有場景拼貼——開跑後看現場看板與回放地圖即可。</p>
 
     <p class="foot">劇本可選：江湖 · 金盆洗手；嵐潮 · 暴潮救村（禮與閘成敗會真的淹鎮）。知識對稱、沒有預寫結局。<br>
       本機入口 · <code>python -m truman.demo</code></p>
@@ -402,8 +413,10 @@ function syncScenarioChrome() {
   $("cast").placeholder = meta.cast || "（可空）";
   if (!$("stub").checked) $("liveNote").textContent = meta.note;
   const jh = scen === "jianghu";
+  const tp = scen === "tempest";
   $("scenesJianghu").hidden = !jh;
-  $("scenesOther").hidden = jh;
+  $("scenesTempest").hidden = !tp;
+  $("scenesOther").hidden = jh || tp;
   document.body.dataset.scenario = scen;
 }
 $("scenario").onchange = syncScenarioChrome;
