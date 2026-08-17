@@ -431,11 +431,28 @@ const ZHI = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","
 function clockOf(t) {
   const m = 360 + t * 10, hh = Math.floor(m / 60) % 24, mm = m % 60;
   const sc = ZHI[Math.floor(((hh + 1) % 24) / 2) % 12];
-  let ph = "午後 · 該了的事要了";
-  if (hh < 8) ph = "清晨 · 賓客陸續到"; else if (hh < 11) ph = "午前 · 吉時將近";
-  else if (hh < 14) ph = "正午 · 演武場最擠"; else if (hh < 18) ph = "午後 · 該了的事要了";
-  else if (hh < 20) ph = "黃昏 · 街店上門板"; else ph = "入夜 · 燈籠亮起";
+  let ph;
+  if (SCENARIO === "tempest") {
+    if (hh < 8) ph = "清晨 · 雲色不對";
+    else if (hh < 11) ph = "午前 · 潮訊收緊";
+    else if (hh < 14) ph = "正午 · 人往北擠";
+    else if (hh < 17) ph = "午後 · 禮與閘搶時";
+    else if (hh < 19) ph = "黃昏 · 潮頭將近";
+    else ph = "入夜 · 暴潮過後";
+  } else {
+    ph = "午後 · 該了的事要了";
+    if (hh < 8) ph = "清晨 · 賓客陸續到"; else if (hh < 11) ph = "午前 · 吉時將近";
+    else if (hh < 14) ph = "正午 · 演武場最擠"; else if (hh < 18) ph = "午後 · 該了的事要了";
+    else if (hh < 20) ph = "黃昏 · 街店上門板"; else ph = "入夜 · 燈籠亮起";
+  }
   return { hh, mm, sc, ph, str: String(hh).padStart(2,"0") + ":" + String(mm).padStart(2,"0") };
+}
+
+function deathCause(by) {
+  if (!by) return "";
+  if (P[by]) return "死於" + P[by].name;
+  if (by === "暴潮") return "被暴潮捲走";
+  return "死於" + by;
 }
 
 /* ============================ 像素美術（共用模組，注入自 web/pixelart.js） ============================ */
@@ -795,10 +812,25 @@ F.forEach(fr => fr.events.forEach(e => {
     moments.push({ t:fr.tick, kind:"attack", label:e.line });
   } else if (e.kind === "death") {
     deathTicks.push(fr.tick); deaths.push({ t:fr.tick, id:e.agent, name:e.name, by:e.killed_by });
-    moments.push({ t:fr.tick, kind:"death", label:`${e.name} 歿` });
+    const drown = e.killed_by === "暴潮";
+    moments.push({ t:fr.tick, kind:"death",
+      label: drown ? `${e.name} 被暴潮捲走` : `${e.name} 歿` });
   }
 }));
+if (FLOOD_TICK >= 0) {
+  moments.push({ t: FLOOD_TICK, kind: "storm",
+    label: DATA.outcome_text
+      ? String(DATA.outcome_text).replace(/^[（(]|[）)]$/g, "")
+      : "亥時 · 暴潮結算" });
+}
 const hitTicks = [...new Set(moments.map(m => m.t))].sort((a,b) => a-b);
+const HAS_COMBAT = moments.some(m => m.kind === "attack");
+if (!HAS_COMBAT) {
+  const prev = document.getElementById("prevHit");
+  const next = document.getElementById("nextHit");
+  if (prev) prev.textContent = "⏮ 上一關鍵刻";
+  if (next) next.textContent = "下一關鍵刻 ⏭";
+}
 
 const feedEl = document.getElementById("feed");
 const FEED = [];
@@ -809,10 +841,17 @@ F.forEach(fr => fr.events.forEach(e => {
   else if (e.kind === "attack") FEED.push({ t:fr.tick, k:"attack", html:`<img class="ic" src="${ICONS.attack}" alt="動手"><span>${esc(e.line)}</span>${tm}` });
   else if (e.kind === "death") {
     const killer = e.killed_by || e.by || "";
-    const byTxt = killer
-      ? (P[killer] ? `，死於 <b>${esc(P[killer].name)}</b> 之手` : `，死於${esc(killer)}`)
-      : "";
-    FEED.push({ t:fr.tick, k:"death", html:`<img class="ic" src="${ICONS.death}" alt="死"><span><b>${esc(e.name)}</b> 死了${byTxt}。</span>${tm}` });
+    let line;
+    if (killer && P[killer]) {
+      line = `<b>${esc(e.name)}</b> 死了，死於 <b>${esc(P[killer].name)}</b> 之手。`;
+    } else if (killer === "暴潮") {
+      line = `<b>${esc(e.name)}</b> 被暴潮捲走。`;
+    } else if (killer) {
+      line = `<b>${esc(e.name)}</b> 死了，${esc(deathCause(killer))}。`;
+    } else {
+      line = `<b>${esc(e.name)}</b> 死了。`;
+    }
+    FEED.push({ t:fr.tick, k:"death", html:`<img class="ic" src="${ICONS.death}" alt="死"><span>${line}</span>${tm}` });
   }
   else if (e.kind === "reflection") FEED.push({ t:fr.tick, k:"reflection", html:`<img class="ic" src="${ICONS.reflection}" alt="想通了"><span><b style="color:${P[e.agent].color}">${esc(P[e.agent].name)}</b> 想通了：${esc(e.insight.length>52?e.insight.slice(0,50)+"…":e.insight)}</span>${tm}` });
   else if (e.kind === "world") FEED.push({ t:fr.tick, k:"world", html:`<img class="ic" src="${ICONS.world}" alt="世界"><span>${esc(e.text.replace(/[（）]/g,""))}</span>${tm}` });
@@ -868,8 +907,8 @@ function renderRoster() {
     const id = li.dataset.id, a = fr.agents[id], st = li.querySelector(".rstat");
     li.classList.toggle("gone", !a.alive); li.classList.toggle("sel", selected === id);
     const d = deaths.find(x => x.id === id && x.t <= cur);
-    if (!a.alive) st.innerHTML = `<span class="tag dead">已歿</span><br><span class="rmeta">${d && P[d.by] ? "死於"+esc(P[d.by].name) : ""}</span>`;
-    else st.innerHTML = a.wound >= 2 ? `<span class="tag crit">重傷</span>` : a.wound === 1 ? `<span class="tag hurt">帶傷</span>` : `<span class="tag ok">無傷</span>`;
+    if (!a.alive) st.innerHTML = `<span class="tag dead">已歿</span><br><span class="rmeta">${d ? esc(deathCause(d.by)) : ""}</span>`;
+    else st.innerHTML = a.wound >= 2 ? `<span class="tag crit">重傷</span>` : a.wound === 1 ? `<span class="tag hurt">帶傷</span>` : `<span class="tag ok">${SCENARIO === "tempest" ? "平安" : "無傷"}</span>`;
   });
   const dead = IDS.filter(id => !fr.agents[id].alive).length;
   document.getElementById("deadcount").textContent = dead ? `已歿 ${dead}` : "";
@@ -936,8 +975,11 @@ function openSheet(id) {
   const spoke = Object.keys(rel.spoke[id] || {}).filter(k => relSeen(id,k) && P[k]).map(k => `<span>說過話 · ${esc(P[k].name)}</span>`);
   const foe = Object.keys(rel.foe[id] || {}).filter(k => rel.foe[id][k] <= cur && P[k]).map(k => `<span class="foe">動過手 · ${esc(P[k].name)}</span>`);
   const d = deaths.find(x => x.id === id && x.t <= cur);
-  const status = !fr.alive ? `<span class="tag dead">已歿 ${clockOf(d ? d.t : cur).str}${d && P[d.by] ? " · 死於"+esc(P[d.by].name) : ""}</span>`
-    : fr.wound >= 2 ? `<span class="tag crit">重傷</span>` : fr.wound === 1 ? `<span class="tag hurt">帶傷</span>` : `<span class="tag ok">無傷</span>`;
+  const status = !fr.alive
+    ? `<span class="tag dead">已歿 ${clockOf(d ? d.t : cur).str}${d && d.by ? " · "+esc(deathCause(d.by)) : ""}</span>`
+    : fr.wound >= 2 ? `<span class="tag crit">重傷</span>`
+    : fr.wound === 1 ? `<span class="tag hurt">帶傷</span>`
+    : `<span class="tag ok">${SCENARIO === "tempest" ? "平安" : "無傷"}</span>`;
   sheetHost.innerHTML = `<div class="sheet">
     <div class="hd">${PORTRAIT[id]
         ? `<img class="bust" id="sheetFace" src="${PORTRAIT[id]}" alt="${esc(p.name)}" title="點看大圖">`
@@ -948,7 +990,7 @@ function openSheet(id) {
     <div class="body">
       <div class="sec"><span class="lb">今日所求</span><div class="goal">「${esc(p.goal)}」</div></div>
       ${questHTML(id)}
-      <div class="sec"><span class="lb">武功 ${c.skill} / 10</span><div class="bars">${Array.from({length:10},(_,i)=>`<i class="${i<c.skill?"on":""}"></i>`).join("")}</div></div>
+      <div class="sec"><span class="lb">${SCENARIO === "tempest" ? "本事" : "武功"} ${c.skill} / 10</span><div class="bars">${Array.from({length:10},(_,i)=>`<i class="${i<c.skill?"on":""}"></i>`).join("")}</div></div>
       ${artsSecHTML(id)}
       <div class="sec"><span class="lb">此人</span><p>${esc(p.blurb)}</p></div>
       <div class="sec"><span class="lb thoughtLab">此刻在想（${thought?clockOf(thought.t).str:"—"}）</span>
@@ -977,9 +1019,10 @@ function refreshSheet() {
   const fr = F[cur].agents[id], d = deaths.find(x => x.id === id && x.t <= cur);
   const st = host.querySelector(".status");
   if (st) st.innerHTML = !fr.alive
-      ? `<span class="tag dead">已歿 ${clockOf(d ? d.t : cur).str}${d && P[d.by] ? " · 死於"+esc(P[d.by].name) : ""}</span>`
+      ? `<span class="tag dead">已歿 ${clockOf(d ? d.t : cur).str}${d && d.by ? " · "+esc(deathCause(d.by)) : ""}</span>`
       : fr.wound >= 2 ? `<span class="tag crit">重傷</span>`
-      : fr.wound === 1 ? `<span class="tag hurt">帶傷</span>` : `<span class="tag ok">無傷</span>`;
+      : fr.wound === 1 ? `<span class="tag hurt">帶傷</span>`
+      : `<span class="tag ok">${SCENARIO === "tempest" ? "平安" : "無傷"}</span>`;
   const face = host.querySelector("#sheetFace");
   if (face && face.tagName === "IMG") face.style.filter = fr.alive ? "none" : "grayscale(1) brightness(.55)";
   let thought = null;
@@ -1201,7 +1244,10 @@ stage.addEventListener("click", ev => {
   moments.forEach(m => {
     const d = document.createElement("div");
     d.className = "mk" + (m.kind === "attack" ? " a" : "");
-    d.innerHTML = `<img src="${m.kind === "death" ? ICONS.death : ICONS.attack}" alt="">`;
+    const ic = m.kind === "death" ? ICONS.death
+      : m.kind === "storm" ? ICONS.world
+      : ICONS.attack;
+    d.innerHTML = `<img src="${ic}" alt="">`;
     d.style.left = (m.t / MAXT * 100) + "%";
     d.title = `${clockOf(m.t).str}　${m.label}`;
     d.onclick = () => seek(m.t);
@@ -1210,7 +1256,10 @@ stage.addEventListener("click", ev => {
 })();
 document.getElementById("legend").innerHTML =
   IDS.map(id => `<span><i style="background:${P[id].color}"></i>${esc(P[id].name)} · ${esc(P[id].sect)}</span>`).join("")
-  + `<span><img class="ic" src="${ICONS.attack}" alt="">動手</span><span><img class="ic" src="${ICONS.death}" alt="">命殞</span><span style="margin-left:auto">空白鍵播放／暫停　←→ 逐刻　點人看他是誰</span>`;
+  + (SCENARIO === "tempest" || !HAS_COMBAT
+      ? `<span><img class="ic" src="${ICONS.world}" alt="">暴潮</span><span><img class="ic" src="${ICONS.death}" alt="">捲走</span>`
+      : `<span><img class="ic" src="${ICONS.attack}" alt="">動手</span><span><img class="ic" src="${ICONS.death}" alt="">命殞</span>`)
+  + `<span style="margin-left:auto">空白鍵播放／暫停　←→ 逐刻　點人看他是誰</span>`;
 
 /* ============================ 片頭 / 片尾 ============================ */
 let CITY_URL = null;                                  // 沒有場景圖時，退回整座像素城
@@ -1275,7 +1324,7 @@ function showOutro() {
   const live = IDS.filter(id => F[MAXT].agents[id].alive);
   const tomb = deaths.map(d => `<div><span class="who" style="color:${P[d.id].color}">${esc(d.name)}</span>
       <span style="color:#b9ac92">${clockOf(d.t).str}　${esc(P[d.id].sect)}</span>
-      <span class="by">死於 ${P[d.by] ? esc(P[d.by].name) : esc(d.by || "不明")}</span></div>`).join("");
+      <span class="by">${esc(deathCause(d.by) || "死因不明")}</span></div>`).join("");
   const s = DATA.stats || {};
   const outcomeLine = DATA.outcome_text
     ? `<p class="lede" style="color:var(--gold)">${esc(String(DATA.outcome_text).replace(/^[（(]|[）)]$/g, ""))}</p>`
@@ -1283,20 +1332,28 @@ function showOutro() {
   const h2 = DATA.outcome === "held" ? "嵐潮，守住了"
     : DATA.outcome === "lost" ? "滅村的邊緣"
     : DATA.outcome === "partial" ? "只救回了一半"
-    : (live.length === 1 ? "只剩一個人站著" : "城裡靜下來了");
+    : (live.length === 1 ? "只剩一個人站著" : (SCENARIO === "tempest" ? "潮退了" : "城裡靜下來了"));
+  const kicker = SCENARIO === "tempest" ? "亥時 · 暴潮過後" : "亥時 · 這一天結束了";
+  const ledeTail = SCENARIO === "tempest"
+    ? "每一句勸、每一次趕路都是 agent 自己算過後的決定——對手是海，勝負看誰把人送到該去的地方。"
+    : "每一句話、每一次趕路都是 agent 自己算過後的決定——箱庭要看的就是這種結構性衝突下長出來的軌跡。";
+  const combatStat = (SCENARIO === "tempest" || !HAS_COMBAT)
+    ? `<div><b>${FLOODED.length || "0"}</b><span>格淹水</span></div>
+      <div><b>${deaths.length}</b><span>人被捲走</span></div>`
+    : `<div><b>${s.attacks ?? moments.filter(m=>m.kind==="attack").length}</b><span>次動手</span></div>
+      <div><b>${deaths.length}</b><span>人死了</span></div>`;
   const d = overlay(`
-    <div class="k">亥時 · 這一天結束了</div>
+    <div class="k">${esc(kicker)}</div>
     <h2>${esc(h2)}</h2>
     ${outcomeLine}
     <div class="tomb">${tomb}</div>
     <p class="lede">活到最後的是 ${live.map(id => `<b style="color:${P[id].color}">${esc(P[id].name)}</b>`).join("、") || "——"}。
-      每一句話、每一次趕路都是 agent 自己算過後的決定——箱庭要看的就是這種結構性衝突下長出來的軌跡。</p>
+      ${ledeTail}</p>
     ${scoreHTML()}
     <div class="nums">
       <div><b>${s.speeches ?? "—"}</b><span>句對話</span></div>
       <div><b>${s.arts ?? 0}</b><span>次使出絕技</span></div>
-      <div><b>${s.attacks ?? moments.filter(m=>m.kind==="attack").length}</b><span>次動手</span></div>
-      <div><b>${deaths.length}</b><span>人死了</span></div>
+      ${combatStat}
       <div><b>${s.goals_total ? `${s.goals_done}/${s.goals_total}` : "—"}</b><span>目的達成</span></div>
       <div><b>${MAXT}</b><span>個決策時刻</span></div>
     </div>
