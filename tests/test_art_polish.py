@@ -24,3 +24,12 @@ def test_tempest_portraits() -> None:
     m = portrait_map("tempest")
     for aid in ("shen_xi", "shi_lei", "fang_lan", "a_qian", "qing_he", "gu_chao"):
         assert aid in m, f"tempest missing {aid}"
+
+
+def test_tempest_art_icons() -> None:
+    from art.embed_icons import icon_map
+
+    m = icon_map("tempest")
+    for aid in ("zhen_chao_li", "feng_zha", "wang_chao", "ji_feng_bu", "an_min_zhou", "hao_ling"):
+        assert aid in m, f"tempest icon missing {aid}"
+        assert m[aid].startswith("data:image/jpeg;base64,")
