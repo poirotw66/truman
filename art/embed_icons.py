@@ -22,22 +22,33 @@ def icon_map(
     px: int = 96,
     quality: int = 78,
 ) -> dict[str, str]:
-    """{art_id: data URI}。沒有圖就回空的。"""
-    d = ICONS / scenario
-    if not d.exists():
-        return {}
     try:
         from PIL import Image
     except ImportError:
         print("  ⚠ 沒裝 Pillow，絕技圖示不會內嵌（pip install pillow）")
         return {}
-    out: dict[str, str] = {}
-    for p in sorted(d.glob("*.jpg")) + sorted(d.glob("*.png")):
+
+    def embed_icon(p: Path) -> str:
         im = Image.open(p).convert("RGB")
         im = im.resize((px, px), Image.LANCZOS)
         buf = io.BytesIO()
         im.save(buf, "JPEG", quality=quality, optimize=True)
-        out[p.stem] = "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
+        return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
+
+    # Priority:
+    # 1) icons/<scenario> for requested scenario variants
+    # 2) other scenario folders as fallback so {art_id: uri} covers the whole catalog
+    out: dict[str, str] = {}
+    preferred_dir = ICONS / scenario
+    if preferred_dir.exists():
+        preferred_files = sorted(preferred_dir.glob("*.jpg")) + sorted(preferred_dir.glob("*.png"))
+        for p in preferred_files:
+            out[p.stem] = embed_icon(p)
+
+    other_dirs = sorted([p for p in ICONS.iterdir() if p.is_dir() and p.name != scenario])
+    for d in other_dirs:
+        for p in sorted(d.glob("*.jpg")) + sorted(d.glob("*.png")):
+            out.setdefault(p.stem, embed_icon(p))
     return out
 
 
