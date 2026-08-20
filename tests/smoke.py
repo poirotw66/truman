@@ -28,7 +28,9 @@ from truman.obs.eventlog import EventLog  # noqa: E402
 from truman.world.engine import Engine  # noqa: E402
 from truman.world.observation import build_observations  # noqa: E402
 from truman.world.grid import Pos  # noqa: E402
-from truman.world.state import AgentState, WorldState  # noqa: E402
+from truman.world.state import AgentState, WorldState
+
+ROOT_DIR = Path(__file__).resolve().parents[1]  # noqa: E402
 
 AREAS = ["咖啡館", "廣場", "報攤", "圖書館", "公園", "海堤", "保險行"]
 
@@ -1763,6 +1765,34 @@ def main() -> int:
         total = sum(len(a.goals) for a in wx.agents.values())
         failures += not check("全員盡力也達不到 100%（互斥保證的）",
                               done < total, f"{done}/{total}")
+
+        # ---- compare：有沒有分岔要看得見 ----
+        # t1／t2 兩場一模一樣是靠人工比對日誌才發現的。箱庭的價值在於
+        # 「同一個設定會不會長出不同的故事」，所以這件事該是一個看得到的數字。
+        print("\n並排比較")
+        div = cli_mod.goal_divergence
+        same = [{"goals": {"甲／洗手": True, "乙／攔住": False}},
+                {"goals": {"甲／洗手": True, "乙／攔住": False}}]
+        allg, d = div(same)
+        failures += not check("完全一樣時 0 條分岔", len(allg) == 2 and d == [], str(d))
+        differ = [{"goals": {"甲／洗手": True, "乙／攔住": False}},
+                  {"goals": {"甲／洗手": False, "乙／攔住": True}}]
+        _, d2 = div(differ)
+        failures += not check("結果相反時兩條都算分岔", len(d2) == 2, str(d2))
+        partial = [{"goals": {"甲／洗手": True}}, {"goals": {}}]
+        _, d3 = div(partial)
+        failures += not check("其中一場沒有這條目的也算分岔", d3 == ["甲／洗手"], str(d3))
+
+        # 讀既有實錄：t1 是committed 的真 LLM 實跑
+        if (ROOT_DIR / "runs" / "t1" / "events.jsonl").exists():
+            f1 = cli_mod._run_facts("t1")
+            failures += not check("讀得出實錄的劇本與 seed",
+                                  f1["scenario"] == "tempest" and f1["seed"] == 42,
+                                  f"{f1['scenario']}／{f1['seed']}")
+            failures += not check("讀得出結局", f1["outcome"] == "held", f1["outcome"])
+            failures += not check("讀得出目的與絕技",
+                                  len(f1["goals"]) == 11 and len(f1["arts"]) == 6,
+                                  f"{len(f1['goals'])} 目的／{len(f1['arts'])} 絕技")
 
         # ---- 記憶檢索 ----
         print("\n記憶檢索")

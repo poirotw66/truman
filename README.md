@@ -139,6 +139,9 @@ copy .env.example .env      # 填你要用的那一家的 key
 # 出報告：節流率、動手／死亡、對話圖、話題擴散、reflection、成本
 .\.venv\Scripts\python.exe -m truman.cli report --run-id j2
 
+# 並排比較兩場以上——直接看它們有沒有真的分岔
+.\.venv\Scripts\python.exe -m truman.cli compare --run t1 --run t2
+
 # 零成本重放（讀日誌，不呼叫 API）
 .\.venv\Scripts\python.exe -m truman.cli --scenario jianghu replay --run-id j2
 

@@ -346,6 +346,133 @@ def cmd_fork(args) -> None:
     sys.exit(asyncio.run(_drive(engine, log, llm, args.ticks, args.quiet)))
 
 
+def _run_facts(run_id: str) -> dict:
+    """把一場 run 濃縮成「可以拿來對照的幾個事實」。"""
+    events = list(EventLog.read(RUNS / run_id))
+    if not events:
+        raise SystemExit(f"runs/{run_id} 沒有事件")
+    facts = {
+        "run": run_id, "scenario": "?", "seed": None, "max_tick": 0,
+        "goals": {}, "arts": {}, "deaths": [], "outcome": "", "outcome_text": "",
+        "ok": None, "bad": None, "cost": None,
+    }
+    for ev in events:
+        d, ty = ev.get("data") or {}, ev["type"]
+        facts["max_tick"] = max(facts["max_tick"], ev.get("tick") or 0)
+        if ty == "run_start":
+            facts["scenario"] = d.get("scenario", "?")
+            facts["seed"] = d.get("seed")
+        elif ty in ("goal_done", "goal_failed"):
+            key = f"{d.get('name', d.get('agent'))}／{d.get('text', '')}"
+            facts["goals"][key] = ty == "goal_done"
+        elif ty == "art_used":
+            facts["arts"][d.get("art_name", d.get("art", ""))] = \
+                facts["arts"].get(d.get("art_name", d.get("art", "")), 0) + 1
+        elif ty == "death":
+            facts["deaths"].append(d.get("name", d.get("agent", "?")))
+        elif ty == "storm":
+            facts["outcome"] = d.get("outcome", "")
+            facts["outcome_text"] = (d.get("text") or "").strip()
+        elif ty == "run_summary":
+            facts["ok"], facts["bad"] = d.get("ok_calls"), d.get("failed_calls")
+            facts["cost"] = (d.get("llm") or {}).get("_total_cost_usd")
+            facts["outcome"] = facts["outcome"] or (d.get("outcome") or "")
+    return facts
+
+
+def goal_divergence(facts: list[dict]) -> tuple[list[str], list[str]]:
+    """回傳 (全部目的, 有分岔的目的)。
+
+    抽成獨立函式是為了可測：「有沒有分岔」是這個專案最重要的一個判斷，
+    不該埋在一個要讀檔又要印表格的函式裡。
+    """
+    all_goals = sorted({k for f in facts for k in f["goals"]})
+    diverged = [k for k in all_goals
+                if len({f["goals"].get(k) for f in facts}) > 1]
+    return all_goals, diverged
+
+
+def cmd_compare(args) -> None:
+    """並排比較幾場 run。
+
+    存在的理由：嵐潮 `t1`／`t2` 兩場不同 seed 卻跑出一模一樣的結果
+    （11/11 目的達成、都 held、連結局文字都逐字相同），而那是靠人工比對日誌才發現的。
+    箱庭的價值在於「同一個設定會不會長出不同的故事」，所以「有沒有分岔」
+    本身就該是一個看得到的數字。
+    """
+    runs = args.run
+    if len(runs) < 2:
+        raise SystemExit("compare 至少要兩個 --run")
+    facts = [_run_facts(r) for r in runs]
+
+    console.rule("並排比較：" + "  vs  ".join(f["run"] for f in facts))
+    t = Table(show_edge=False)
+    t.add_column("項目")
+    for f in facts:
+        t.add_column(f["run"], justify="left")
+    rows = [
+        ("劇本", [f["scenario"] for f in facts]),
+        ("seed", [str(f["seed"]) for f in facts]),
+        ("跑到第幾刻", [str(f["max_tick"]) for f in facts]),
+        ("結局", [f["outcome"] or "—" for f in facts]),
+        ("死亡", ["、".join(f["deaths"]) or "無" for f in facts]),
+        ("呼叫 成功/失敗", [f"{f['ok']}/{f['bad']}" for f in facts]),
+        ("成本 USD", [f"{f['cost']:.4f}" if f["cost"] is not None else "—"
+                      for f in facts]),
+    ]
+    for label, vals in rows:
+        same = len(set(vals)) == 1
+        t.add_row(label, *[v if same else f"[yellow]{v}[/yellow]" for v in vals])
+    console.print(t)
+
+    # --- 目的：只列出「有人做到、有人沒做到」的那幾條，那才是分岔 ---
+    all_goals, diverged = goal_divergence(facts)
+    console.rule(f"目的（共 {len(all_goals)} 條，其中 {len(diverged)} 條出現分岔）")
+    if not diverged:
+        console.print(
+            "[bold yellow]這幾場的每一條目的都是同樣的結果——沒有任何分岔。[/bold yellow]\n"
+            "[dim]同一個設定跑出完全一樣的故事，表示目的之間可能沒有互相咬住，"
+            "或是張力不夠讓不同的 seed 走出不同的路。[/dim]"
+        )
+    else:
+        g = Table(show_edge=False)
+        g.add_column("要做到的事")
+        for f in facts:
+            g.add_column(f["run"], justify="center")
+        for k in diverged:
+            cells = []
+            for f in facts:
+                v = f["goals"].get(k)
+                cells.append("[green]達成[/green]" if v else
+                             ("[red]沒做到[/red]" if v is False else "[dim]—[/dim]"))
+            g.add_row(k, *cells)
+        console.print(g)
+
+    if any(f["outcome_text"] for f in facts):
+        texts = [f["outcome_text"] for f in facts]
+        console.rule("結局文字")
+        if len(set(texts)) == 1:
+            console.print(f"[yellow]三場（含）以上逐字相同：[/yellow]{texts[0][:120]}"
+                          if len(texts) > 2 else
+                          f"[yellow]兩場逐字相同：[/yellow]{texts[0][:120]}")
+        else:
+            for f in facts:
+                console.print(f"[cyan]{f['run']}[/cyan] {f['outcome_text'][:120]}")
+
+    arts = sorted({k for f in facts for k in f["arts"]})
+    if arts:
+        console.rule("絕技使用次數")
+        a = Table(show_edge=False)
+        a.add_column("絕技")
+        for f in facts:
+            a.add_column(f["run"], justify="right")
+        for k in arts:
+            vals = [str(f["arts"].get(k, 0)) for f in facts]
+            same = len(set(vals)) == 1
+            a.add_row(k, *[v if same else f"[yellow]{v}[/yellow]" for v in vals])
+        console.print(a)
+
+
 def cmd_report(args) -> None:
     run_dir = RUNS / args.run_id
     events = list(EventLog.read(run_dir))
@@ -790,6 +917,13 @@ def main() -> None:
         help="話題擴散要追的詞，逗號分隔。留空則用劇本的 TRACK_TOPICS",
     )
     rep.set_defaults(func=cmd_report)
+
+    cmp_ = sub.add_parser(
+        "compare", help="並排比較兩場以上的 run——看它們有沒有真的分岔"
+    )
+    cmp_.add_argument("--run", action="append", required=True,
+                      help="要比的 run id（至少兩個，可重複給）")
+    cmp_.set_defaults(func=cmd_compare)
 
     m = sub.add_parser("map", help="印出地圖")
     m.set_defaults(func=cmd_map)
