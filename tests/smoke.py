@@ -1794,6 +1794,63 @@ def main() -> int:
                                   len(f1["goals"]) == 11 and len(f1["arts"]) == 6,
                                   f"{len(f1['goals'])} 目的／{len(f1['arts'])} 絕技")
 
+        # ---- 期限要真的有壓力 ----
+        # t3／t4 的教訓：水閘第 8／15 拍就焊完，導演鋪的整串潮訊全被跳過，
+        # 72 拍的期限形同不存在，反對的人連一個施力的窗口都沒有。
+        print("\n期限的壓力")
+        from pathlib import Path as _P  # noqa: PLC0415
+
+        tgridw = tempest_mod.build_grid()
+        _cells = [q for q in tgridw.cells_in_areas(["海堤"]) if tgridw.walkable(q)]
+        _p1 = _cells[0]
+        _p2 = next(q for q in _cells if q != _p1 and q.chebyshev(_p1) <= 2)
+
+        def _seawall(tick):
+            wx = tempest_mod.build_world("gate", 7)
+            wx.tick = tick
+            ex = Engine(world=wx, grid=tempest_mod.build_grid(),
+                        cfg=SimConfig(combat=False), llm=None, director=None,
+                        log=blood, world_block_text="", run_dir=_P("/tmp"))
+            tie, hai = wx.agents["shi_lei"], wx.agents["a_qian"]
+            tie.pos, hai.pos = _p1, _p2
+            return wx, ex, tie, hai
+
+        wg, eg, tie, hai = _seawall(10)
+        eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
+        failures += not check("潮訊沒確認之前焊不了水門",
+                              "焊水門" not in eg._signals.rites.get("shi_lei", []),
+                              tie.last_rejection[:40])
+        wg, eg, tie, hai = _seawall(40)
+        eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
+        failures += not check("過了門檻就焊得成",
+                              "焊水門" in eg._signals.rites.get("shi_lei", []),
+                              tie.last_rejection[:40])
+
+        # 反對者要真的擋得住，否則反對只能靠嘴，對方沒有理由聽
+        wg, eg, tie, hai = _seawall(40)
+        eg._apply_intent(hai, {"kind": "use_art", "art": "攔閘"})
+        failures += not check("攔閘會把儀式擋到指定的那一拍",
+                              wg.rite_blocked.get("焊水門") == 49,
+                              str(wg.rite_blocked))
+        eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
+        failures += not check("被攔住就焊不成",
+                              "焊水門" not in eg._signals.rites.get("shi_lei", []),
+                              tie.last_rejection[:40])
+        wg, eg, tie, hai = _seawall(51)
+        wg.rite_blocked = {"焊水門": 50}
+        eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
+        failures += not check("擋期一過就焊得成（擋得住的是一陣子，不是永遠）",
+                              "焊水門" in eg._signals.rites.get("shi_lei", []))
+        failures += not check("擋阻狀態撐得過序列化",
+                              WorldState.from_dict(json.loads(json.dumps(
+                                  wg.to_dict()))).rite_blocked == {"焊水門": 50})
+
+        # 門檻要落在期限之前，而且要留得下一段可以吵架的窗口
+        _nb = arts_mod_t.get("feng_zha").params.get("not_before")
+        failures += not check("焊門門檻在暴潮期限之前，且留有窗口",
+                              _nb is not None and 0 < _nb < tempest_mod.STORM_TICK - 20,
+                              f"not_before={_nb}, STORM_TICK={tempest_mod.STORM_TICK}")
+
         # ---- 記憶檢索 ----
         print("\n記憶檢索")
         p = engine.world.protagonist()

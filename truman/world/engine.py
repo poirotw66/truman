@@ -671,6 +671,19 @@ class Engine:
             here = self.grid.area_at(a.pos)
             if area and here != area:
                 return reject(f"{d.name}得在{area}才辦得成，我人還在{here or '路上'}。")
+            # 有些儀式不到時候辦不得。嵐潮 t3／t4 兩場的教訓：水閘沒有任何門檻，
+            # 張鐵雄第 8 拍就焊完了——導演鋪了 t8→t24→t36→t48→t60→t68 一整串潮訊，
+            # 全被跳過，72 拍的期限等於不存在，反對他的人連一個能施力的窗口都沒有。
+            # `not_before` 就是把儀式壓到張力真的積起來之後才辦得成。
+            nb = p.get("not_before")
+            if nb is not None and t < int(nb):
+                return reject(p.get("too_early") or f"還不到辦{d.name}的時候。")
+            rite_name = p.get("rite", d.name)
+            until = w.rite_blocked.get(rite_name, -1)
+            if t <= until:
+                return reject(
+                    f"有人擋在那裡，這會兒動不了手。{rite_name}得再等等。"
+                )
             need = int(p.get("witnesses", 0))
             watching = bystanders(self.cfg.vision_radius)
             if len(watching) < need:
@@ -685,6 +698,26 @@ class Engine:
                 remember(o, line, 10)
             remember(a, f"我把{rite}做完了。", 10)
             detail = {"rite": rite, "area": here, "witnesses": [o.id for o in watching]}
+
+        elif d.effect == "block_rite":
+            # 擋下某個儀式一段時間。這是「反對者手上真的有東西」的那一半——
+            # 少了它，反對只能靠嘴，而對方沒有任何理由聽。
+            # 代價是它同時把整個鎮往期限推：擋過頭，該辦的事就辦不成了。
+            area = p.get("area", "")
+            here = self.grid.area_at(a.pos)
+            if area and here != area:
+                return reject(f"要擋得在{area}，我人還在{here or '路上'}。")
+            rite_name = p.get("rite", "")
+            ticks = int(p.get("ticks", 6))
+            # `t + ticks - 1`：和 buff 同一個慣例，「擋 10 拍」就真的是 10 拍。
+            # 寫成 t + ticks 會多擋一拍，因為下面的判定是 `t <= until`。
+            w.rite_blocked[rite_name] = max(
+                w.rite_blocked.get(rite_name, -1), t + ticks - 1)
+            line = p.get("line") or f"{a.name}擋在那裡，一時沒有人動得了手。"
+            for o in bystanders(self.cfg.vision_radius):
+                remember(o, line, 9)
+            remember(a, f"我擋下了{rite_name}，撐得了一時。", 8)
+            detail = {"rite": rite_name, "until": w.rite_blocked[rite_name]}
 
         else:  # 目錄裡有、引擎沒實作——設定錯誤，不要靜靜吞掉
             return reject(f"{d.name}我一時竟使不出來。")

@@ -243,6 +243,11 @@ class WorldState:
     outcome_text: str = ""
     # 已淹格子 [[x,y], ...]——跟 checkpoint 走，fork 後能把洪水覆寫回地圖。
     flooded: list = field(default_factory=list)
+    # 被人擋下來的儀式：{儀式名: 擋到第幾拍為止}。
+    # 存在的理由：嵐潮 t3／t4 兩場裡水閘第 8／15 拍就焊完了，72 拍的期限等於不存在，
+    # 反對的人連一個施力的窗口都沒有。有了這個，反對者才有辦法真的把時間往後推——
+    # 而「推到什麼時候該放手」就成了一個他自己要負責的決定。
+    rite_blocked: dict = field(default_factory=dict)
 
     def protagonist(self) -> AgentState:
         p = self.protagonist_or_none()
@@ -277,6 +282,7 @@ class WorldState:
             "outcome": self.outcome,
             "outcome_text": self.outcome_text,
             "flooded": list(self.flooded),
+            "rite_blocked": dict(self.rite_blocked),
         }
 
     @staticmethod
@@ -293,4 +299,5 @@ class WorldState:
             outcome=d.get("outcome", ""),
             outcome_text=d.get("outcome_text", ""),
             flooded=list(d.get("flooded", [])),
+            rite_blocked=dict(d.get("rite_blocked", {})),
         )
