@@ -22,40 +22,153 @@ def _ensure_root_on_path() -> None:
         sys.path.insert(0, str(ROOT))
 
 
+# 「敘事事件數」只算台詞、動手、死亡、目的結案、絕技、暴潮結算這些會真的出現在回放事件流
+# 裡的事件；不算 llm_call／tick_start／snapshot／think 這類每拍都會有一堆的內部紀錄——不然
+# 事件總數會被這些雜訊灌水，跟「這場有沒有戲」脫鉤（j3 全滅仍有 1359 筆事件就是這樣灌出來的）。
+_NARRATIVE_TYPES = {"speech", "attack", "art_used", "death", "goal_done", "goal_failed", "storm"}
+_FORK_FROM_RE = re.compile(r"[\\/]([^\\/]+)[\\/]checkpoints[\\/]")
+
+
+def _run_scenario_fallback(run_dir: Path) -> str | None:
+    """fork 出來的續集（例如 j2b、j2c）沒有自己的 run_start，退回讀第一個 checkpoint 的
+    scenario 欄位——跟 replay/build_frames.py 的 detect_scenario() 用同一套退路。"""
+    cps = sorted((run_dir / "checkpoints").glob("t*.json")) if (run_dir / "checkpoints").is_dir() else []
+    if not cps:
+        return None
+    try:
+        return json.loads(cps[0].read_text(encoding="utf-8")).get("scenario")
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _scan_run(d: Path) -> dict:
+    """掃一遍 events.jsonl，抓出排序與「全滅」標示要用的訊號。"""
+    max_tick = -1
+    n = 0
+    eff = 0
+    scenario: str | None = None
+    ok_calls = failed_calls = None
+    fork_at: int | None = None
+    fork_parent: str | None = None
+    with (d / "events.jsonl").open(encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            n += 1
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            ty = r.get("type")
+            data = r.get("data") or {}
+            tick = r.get("tick")
+            if isinstance(tick, int) and tick > max_tick:
+                max_tick = tick
+            if ty in _NARRATIVE_TYPES:
+                eff += 1
+            elif ty == "director" and data.get("fired") and data.get("text"):
+                eff += 1
+            elif ty == "run_start":
+                scenario = data.get("scenario") or scenario
+            elif ty == "run_summary":
+                ok_calls = data.get("ok_calls")
+                failed_calls = data.get("failed_calls")
+            elif ty == "fork":
+                fork_at = data.get("at_tick")
+                m = _FORK_FROM_RE.search(str(data.get("from") or ""))
+                fork_parent = m.group(1) if m else None
+    if scenario is None:
+        scenario = _run_scenario_fallback(d) or "jianghu"
+    cps = list((d / "checkpoints").glob("t*.json")) if (d / "checkpoints").is_dir() else []
+    return {
+        "id": d.name,
+        "events": n,
+        "max_tick": max_tick,
+        "when": clock_str(max_tick) if max_tick >= 0 else "",
+        "checkpoints": len(cps),
+        "scenario": scenario,
+        "eff_events": eff,
+        "ok_calls": ok_calls,
+        "failed_calls": failed_calls,
+        "failed": ok_calls == 0 and bool(failed_calls),
+        "fork_at": fork_at,
+        "fork_parent": fork_parent,
+    }
+
+
 def list_runs() -> list[dict]:
-    out: list[dict] = []
+    """回放清單：不照字母排序——照「有沒有效」與「有多少份量」排。
+
+    - 每個 run 的最後一筆事件是 run_summary，裡面有 ok_calls／failed_calls。
+      ok_calls==0 且 failed_calls>0 就是全部 LLM 呼叫都失敗、世界原地沒動的「全滅」run
+      （例如 j3：576 次呼叫全失敗，thinking_level 設定錯）。這種 run 標成 failed=true、
+      永遠排到清單最後——它是有價值的失敗紀錄，不隱藏，但不能讓人以為是最完整的一場而誤點。
+    - fork 出來的續集（例如 j2 → t24 fork → j2b → t70 fork → j2c）算成同一條故事線：
+      排序看的是整條線最終跑到第幾拍、整條線總共有多少敘事事件，而不是只看單一檔案自己的
+      長度——不然故事的開頭那段會因為「自己」只有 20-30 拍就被誤判成測試殘骸，排到後面去。
+      鏈裡的每個檔案還是各自一個可選的 run，只是排序時綁在一起、依接手的那一拍由早到晚排列，
+      讀起來像接續的故事（j2 在前，j2b 接著，j2c 收尾）。
+    - 沒有續集的 run（多數的 0728／ab25／demo_api_*／g1／g2／x 這類只有 0–3 拍的測試殘骸）
+      就照自己的 tick 數與敘事事件數排，兩者都低的自然沉到後面去。
+    """
     if not RUNS.exists():
-        return out
+        return []
+    scanned: dict[str, dict] = {}
     for d in sorted(RUNS.iterdir()):
-        if not d.is_dir() or d.name.startswith("_"):
+        if not d.is_dir() or d.name.startswith("_") or not (d / "events.jsonl").exists():
             continue
-        ev = d / "events.jsonl"
-        if not ev.exists():
-            continue
-        max_tick = -1
-        n = 0
-        with ev.open(encoding="utf-8") as fh:
-            for line in fh:
-                line = line.strip()
-                if not line:
-                    continue
-                n += 1
-                try:
-                    tick = json.loads(line).get("tick")
-                except json.JSONDecodeError:
-                    continue
-                if isinstance(tick, int) and tick > max_tick:
-                    max_tick = tick
-        cps = list((d / "checkpoints").glob("t*.json")) if (d / "checkpoints").is_dir() else []
-        out.append(
-            {
-                "id": d.name,
-                "events": n,
-                "max_tick": max_tick,
-                "when": clock_str(max_tick) if max_tick >= 0 else "",
-                "checkpoints": len(cps),
-            }
-        )
+        scanned[d.name] = _scan_run(d)
+
+    children: dict[str, list[str]] = {}
+    for rid, info in scanned.items():
+        parent = info["fork_parent"]
+        if parent and parent in scanned:
+            children.setdefault(parent, []).append(rid)
+        else:
+            info["fork_parent"] = None  # parent 不在這批 runs 裡（被刪了之類），就當沒有
+
+    def chain_members(root: str) -> list[str]:
+        out, stack = [], [root]
+        while stack:
+            cur = stack.pop()
+            out.append(cur)
+            stack.extend(children.get(cur, []))
+        return out
+
+    chain_reach: dict[str, int] = {}
+    chain_weight: dict[str, int] = {}
+    chain_root: dict[str, str] = {}
+    for root in (rid for rid, info in scanned.items() if not info["fork_parent"]):
+        members = chain_members(root)
+        reach = max(scanned[m]["max_tick"] for m in members)
+        weight = sum(scanned[m]["eff_events"] for m in members)
+        for m in members:
+            chain_reach[m] = reach
+            chain_weight[m] = weight
+            chain_root[m] = root
+
+    def sort_key(rid: str):
+        info = scanned[rid]
+        start = info["fork_at"] if info["fork_at"] is not None else 0
+        # False < True，所以全滅的 run 自然排到最後；其餘依鏈的份量（reach、weight）由大到小，
+        # 同一條鏈用 chain_root 綁在一起，鏈內再依自己接手的那一拍由早到晚排。
+        return (info["failed"], -chain_reach[rid], -chain_weight[rid], chain_root[rid], start)
+
+    out = []
+    for rid in sorted(scanned, key=sort_key):
+        info = scanned[rid]
+        out.append({
+            "id": rid,
+            "events": info["events"],
+            "max_tick": info["max_tick"],
+            "when": info["when"],
+            "checkpoints": info["checkpoints"],
+            "scenario": info["scenario"],
+            "failed": info["failed"],
+            "ok_calls": info["ok_calls"],
+            "failed_calls": info["failed_calls"],
+        })
     return out
 
 
