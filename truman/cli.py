@@ -353,7 +353,8 @@ def _run_facts(run_id: str) -> dict:
         raise SystemExit(f"runs/{run_id} 沒有事件")
     facts = {
         "run": run_id, "scenario": "?", "seed": None, "max_tick": 0,
-        "goals": {}, "arts": {}, "deaths": [], "outcome": "", "outcome_text": "",
+        "goals": {}, "labels": {}, "arts": {}, "deaths": [],
+        "outcome": "", "outcome_text": "",
         "ok": None, "bad": None, "cost": None,
     }
     for ev in events:
@@ -363,8 +364,14 @@ def _run_facts(run_id: str) -> dict:
             facts["scenario"] = d.get("scenario", "?")
             facts["seed"] = d.get("seed")
         elif ty in ("goal_done", "goal_failed"):
-            key = f"{d.get('name', d.get('agent'))}／{d.get('text', '')}"
+            # key 要用 **agent id ＋ 目的序號**，不能用名字或目的文字。
+            # 嵐潮的角色和儀式都改過名（沈汐→陳金水、鎮潮禮→海醮），拿文字當 key 的話
+            # 同一條目的會在新舊兩場各自成為一筆互不相認的紀錄，於是每一條都被算成
+            # 「分岔」——那是假的分岔，比沒有比對更糟。id 與序號跨改名都不會變。
+            key = f"{d.get('agent')}#{d.get('goal', 0)}"
             facts["goals"][key] = ty == "goal_done"
+            facts["labels"].setdefault(
+                key, f"{d.get('name', d.get('agent'))}／{d.get('text', '')}")
         elif ty == "art_used":
             facts["arts"][d.get("art_name", d.get("art", ""))] = \
                 facts["arts"].get(d.get("art_name", d.get("art", "")), 0) + 1
@@ -440,12 +447,13 @@ def cmd_compare(args) -> None:
         for f in facts:
             g.add_column(f["run"], justify="center")
         for k in diverged:
+            label = next((f["labels"][k] for f in reversed(facts) if k in f["labels"]), k)
             cells = []
             for f in facts:
                 v = f["goals"].get(k)
                 cells.append("[green]達成[/green]" if v else
                              ("[red]沒做到[/red]" if v is False else "[dim]—[/dim]"))
-            g.add_row(k, *cells)
+            g.add_row(label, *cells)
         console.print(g)
 
     if any(f["outcome_text"] for f in facts):
