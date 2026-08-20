@@ -619,17 +619,21 @@ function drawFrameInner(now) {
   bx.clearRect(0, 0, w, h);
 
   if (CAN_FILTER && DOF && !reduced) {
-    bx.save(); bx.filter = `blur(${Math.max(2, Math.round(h * .009))}px)`;
+    // 移軸景深：模糊底 + 中間一條清晰帶。這兩個數字曾經調得太重，把像素美術
+    // （地磚、劉府紅氈、演武場青石……）整片糊成米黃色；現在調輕：模糊半徑減半，
+    // 清晰帶從畫面 34%（±.17）放寬到 50%（±.25），淡出邊界跟著外推，
+    // 讓移軸的「這裡是焦點」效果還在，但不會把地圖大半吃掉。
+    bx.save(); bx.filter = `blur(${Math.max(2, Math.round(h * .005))}px)`;
     bx.drawImage(scene, 0, 0, w, h); bx.restore();     // 模糊底
     shp.setTransform(1, 0, 0, 1, 0, 0);
     shp.globalCompositeOperation = "source-over";
     shp.clearRect(0, 0, w, h); shp.drawImage(scene, 0, 0);
     shp.globalCompositeOperation = "destination-in";   // 只留中間那條清晰帶
     const gy = shp.createLinearGradient(0, 0, 0, h), c0 = .5;
-    gy.addColorStop(Math.max(0, c0 - .40), "rgba(0,0,0,0)");
-    gy.addColorStop(Math.max(.02, c0 - .17), "rgba(0,0,0,1)");
-    gy.addColorStop(Math.min(.98, c0 + .17), "rgba(0,0,0,1)");
-    gy.addColorStop(Math.min(1, c0 + .42), "rgba(0,0,0,0)");
+    gy.addColorStop(Math.max(0, c0 - .45), "rgba(0,0,0,0)");
+    gy.addColorStop(Math.max(.02, c0 - .25), "rgba(0,0,0,1)");
+    gy.addColorStop(Math.min(.98, c0 + .25), "rgba(0,0,0,1)");
+    gy.addColorStop(Math.min(1, c0 + .45), "rgba(0,0,0,0)");
     shp.fillStyle = gy; shp.fillRect(0, 0, w, h);
     shp.globalCompositeOperation = "source-over";
     bx.drawImage(sharpCv, 0, 0);
@@ -657,8 +661,9 @@ function drawFrameInner(now) {
   gr.addColorStop(.55, "rgba(255,190,120,.02)");
   gr.addColorStop(1, "rgba(18,26,52,.30)");
   bx.save(); bx.globalCompositeOperation = "overlay"; bx.fillStyle = gr; bx.fillRect(0, 0, w, h); bx.restore();
+  // 暗角原本 .62 太重，跟著把地圖邊緣一起吃掉；壓到 .42 保留「畫框」的味道就好。
   const vg = bx.createRadialGradient(w * .5, h * .5, h * .34, w * .5, h * .5, h * 1.02);
-  vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(6,4,3,.62)");
+  vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(6,4,3,.42)");
   bx.fillStyle = vg; bx.fillRect(0, 0, w, h);
   if (flash > 0) { bx.fillStyle = `rgba(178,42,32,${flash * .42})`; bx.fillRect(0, 0, w, h); }
 }

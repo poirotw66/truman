@@ -152,6 +152,29 @@ def load_scenario(name: str):
     return importlib.import_module(f"scenarios.{name}")
 
 
+def make_renamer(scen):
+    """回傳文字替換函式：把日誌裡的舊名换成劇本現在的名字。
+
+    有些劇本的角色改過名（例如嵐潮的 t1/t2 兩場是改名前跑的），但事件日誌
+    是實跑紀錄，不能回頭改。劇本模組可以宣告一張 `RENAMED = {舊名: 現名}`
+    的表，這裡讀出來、包成一個字串替換函式；沒有 RENAMED 的劇本（例如
+    江湖）拿到的是空表，函式原樣傳回文字，完全不影響顯示。
+    """
+    renamed: dict[str, str] = getattr(scen, "RENAMED", {}) or {}
+    if not renamed:
+        return lambda s: s
+
+    def _rn(s):
+        if not s:
+            return s
+        for old, new in renamed.items():
+            if old in s:
+                s = s.replace(old, new)
+        return s
+
+    return _rn
+
+
 def replay_rows(scen) -> list[str]:
     """給像素地圖用的 rows：嵐潮符號映射到現有圖磚。"""
     rows = list(scen.GRID_ROWS)
@@ -249,6 +272,7 @@ def build_replay(
     sources, checkpoint_specs = resolve_sources(runs)
     scenario_name = detect_scenario(sources[0][0])
     scen = load_scenario(scenario_name)
+    rn = make_renamer(scen)
     meta = SCENARIO_META.get(scenario_name, {
         "title": getattr(scen, "NAME", scenario_name),
         "lede": "一場多智能體箱庭實錄。",
@@ -307,7 +331,7 @@ def build_replay(
             if len(parts) >= 3 and parts[2] in ("act", "reply"):
                 th = (r["data"]["output"].get("thought") or "").strip()
                 if th:
-                    thought_at[(int(parts[0]), parts[1])] = th
+                    thought_at[(int(parts[0]), parts[1])] = rn(th)
 
     checkpoints = {}
     for run, ts in checkpoint_specs:
@@ -345,7 +369,7 @@ def build_replay(
             elif ty == "intent" and d.get("kind") == "interact":
                 action[d["agent"]] = None
                 tick_events.append(
-                    {"kind": "interact", "agent": d["agent"], "obj": d.get("object", "")}
+                    {"kind": "interact", "agent": d["agent"], "obj": rn(d.get("object", ""))}
                 )
             elif ty == "speech":
                 action[d["speaker"]] = None
@@ -354,9 +378,9 @@ def build_replay(
                     {
                         "kind": "speech",
                         "agent": d["speaker"],
-                        "name": d["speaker_name"],
+                        "name": rn(d["speaker_name"]),
                         "to": d.get("to"),
-                        "text": d["utterance"],
+                        "text": rn(d["utterance"]),
                     }
                 )
             elif ty == "attack":
@@ -367,7 +391,7 @@ def build_replay(
                         "kind": "attack",
                         "agent": d["attacker"],
                         "target": d["target"],
-                        "line": d["line"],
+                        "line": rn(d["line"]),
                         "margin": d.get("margin"),
                     }
                 )
@@ -384,8 +408,8 @@ def build_replay(
                     {
                         "kind": "death",
                         "agent": d["agent"],
-                        "name": d["name"],
-                        "killed_by": d.get("killed_by", ""),
+                        "name": rn(d["name"]),
+                        "killed_by": rn(d.get("killed_by", "")),
                     }
                 )
             elif ty == "art_used":
@@ -399,7 +423,7 @@ def build_replay(
                         "art_id": d.get("art", ""),
                         "art_kind": d.get("kind", ""),
                         "target": d.get("target", ""),
-                        "line": d.get("line", ""),
+                        "line": rn(d.get("line", "")),
                         "left": d.get("uses_left", -1),
                     }
                 )
@@ -407,29 +431,29 @@ def build_replay(
                 ok = ty == "goal_done"
                 n_goal_done += ok
                 goal_log.append({
-                    "tick": t, "agent": d["agent"], "name": d.get("name", ""),
-                    "idx": d.get("goal", 0), "text": d.get("text", ""),
-                    "kind": d.get("kind", ""), "done": ok, "note": d.get("note", ""),
+                    "tick": t, "agent": d["agent"], "name": rn(d.get("name", "")),
+                    "idx": d.get("goal", 0), "text": rn(d.get("text", "")),
+                    "kind": d.get("kind", ""), "done": ok, "note": rn(d.get("note", "")),
                 })
                 tick_events.append(
                     {
                         "kind": "goal",
                         "agent": d["agent"],
                         "done": ok,
-                        "text": d.get("text", ""),
-                        "note": d.get("note", ""),
+                        "text": rn(d.get("text", "")),
+                        "note": rn(d.get("note", "")),
                     }
                 )
             elif ty == "reflection":
                 ins = d.get("insights") or []
                 if ins:
                     tick_events.append(
-                        {"kind": "reflection", "agent": d["agent"], "insight": ins[0]}
+                        {"kind": "reflection", "agent": d["agent"], "insight": rn(ins[0])}
                     )
             elif ty == "storm":
                 flood_tick = t
                 outcome = d.get("outcome", "") or outcome
-                outcome_text = d.get("text", "") or outcome_text
+                outcome_text = rn(d.get("text", "")) or outcome_text
                 cells = d.get("flooded") or []
                 if cells:
                     flooded = [list(xy) for xy in cells]
@@ -441,7 +465,7 @@ def build_replay(
                 tick_events.append({
                     "kind": "world",
                     "area": "",
-                    "text": d.get("text") or f"暴潮結算：{d.get('outcome', '')}",
+                    "text": rn(d.get("text")) or f"暴潮結算：{d.get('outcome', '')}",
                 })
             elif ty == "director" and d.get("fired") and d.get("text"):
                 if d.get("kind") == "inject":
@@ -449,11 +473,11 @@ def build_replay(
                         continue
                     tick_events.append(
                         {"kind": "note", "agent": d.get("agent", ""),
-                         "tag": d.get("tag", ""), "text": d["text"]}
+                         "tag": d.get("tag", ""), "text": rn(d["text"])}
                     )
                 else:
                     tick_events.append(
-                        {"kind": "world", "area": d.get("area", ""), "text": d["text"]}
+                        {"kind": "world", "area": d.get("area", ""), "text": rn(d["text"])}
                     )
 
         steps: dict[str, list[list[int]]] = {}
@@ -535,7 +559,7 @@ def build_replay(
             except (OSError, json.JSONDecodeError):
                 continue
             outcome = last.get("outcome") or outcome
-            outcome_text = last.get("outcome_text") or outcome_text
+            outcome_text = rn(last.get("outcome_text") or "") or outcome_text
             if last.get("flooded") and not flooded:
                 flooded = [list(xy) for xy in last["flooded"]]
                 if flood_tick < 0:

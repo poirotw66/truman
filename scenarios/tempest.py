@@ -21,7 +21,7 @@ __all__ = [
     "AREAS", "GRID_ROWS", "LEGEND", "build_grid", "build_world", "after_goals",
     "BRIEF", "NORMS", "PUBLIC_CAST", "PUBLIC_LORE", "SETTING", "EXAMPLES",
     "AGENTS", "DIRECTOR_SCRIPT", "TRACK_TOPICS", "NAME", "COMBAT",
-    "STORM_TICK", "SAFE_AREAS", "LOW_AREAS", "SOUTH_AREAS",
+    "STORM_TICK", "SAFE_AREAS", "LOW_AREAS", "SOUTH_AREAS", "RENAMED",
 ]
 
 # ---------------------------------------------------------------- 地圖
@@ -278,6 +278,20 @@ AGENTS = [
 你能探潮打探別人在哪，也能飛毛腿趕路。別在廣場聽人哭，海堤才是你的崗。""",
     },
 ]
+
+# 舊名 → 現名。角色在 commit e6d526c 改成了現在這套台灣海線名字，
+# 但 runs/t1、runs/t2 這兩場是改名前跑的：events.jsonl 裡的台詞、旁白、
+# reflection 全部留著舊名——那是實跑紀錄，是史料，不能回頭改日誌本身。
+# 這張表只給回放頁（replay/build_frames.py）在「顯示」時把日誌文字換成
+# 現在的名字用，不影響任何模擬邏輯，也不影響日誌檔案本身一個字。
+RENAMED = {
+    "沈汐": "陳金水",
+    "石磊": "張鐵雄",
+    "方嵐": "林美華",
+    "阿潛": "阿海",
+    "青禾": "黃秀英",
+    "顧潮": "阿德",
+}
 
 # ---------------------------------------------------------------- 世界事件：只放潮，不替人做決定
 DIRECTOR_SCRIPT = [

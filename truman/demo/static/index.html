@@ -102,8 +102,16 @@
   }
   .run:hover{border-color:var(--line2)}
   .run input{accent-color:var(--gold)}
-  .run .id{font-family:var(--mono); font-size:13px; flex:1}
+  .run .id{font-family:var(--mono); font-size:13px}
+  .run .label{display:flex; flex-direction:column; gap:2px; flex:1; min-width:0}
+  .run .idrow{display:flex; align-items:center; gap:7px}
   .run .meta{font-size:11.5px; color:var(--ink2)}
+  .run .scen{
+    font-size:10px; letter-spacing:.06em; color:var(--ink2); border:1px solid var(--line2);
+    border-radius:5px; padding:1px 6px; flex:0 0 auto;
+  }
+  .run.failed{border-color:color-mix(in srgb, var(--cinnabar) 45%, transparent)}
+  .run .failwarn{font-size:11.5px; color:var(--cinnabar)}
 
   .row{display:flex; flex-wrap:wrap; gap:10px}
   .f{display:flex; flex-direction:column; gap:4px; flex:1 1 140px; min-width:0}
@@ -346,10 +354,15 @@ async function loadRuns() {
     box.innerHTML = "";
     for (const run of runs) {
       const lab = document.createElement("label");
-      lab.className = "run";
+      lab.className = "run" + (run.failed ? " failed" : "");
+      const metaLine = run.failed
+        ? `<span class="failwarn">⚠ 這場全部呼叫失敗，沒有有效決策（${run.failed_calls} 次全失敗）</span>`
+        : `<span class="meta">${run.when || "—"} · ${run.max_tick + 1} ticks · ${run.events} events</span>`;
       lab.innerHTML = `<input type="checkbox" value="${run.id}"/>
-        <span class="id">${run.id}</span>
-        <span class="meta">${run.when || "—"} · ${run.max_tick + 1} ticks · ${run.events} events</span>`;
+        <span class="label">
+          <span class="idrow"><span class="id">${run.id}</span><span class="scen">${run.scenario || ""}</span></span>
+          ${metaLine}
+        </span>`;
       box.appendChild(lab);
     }
   } catch (e) {
