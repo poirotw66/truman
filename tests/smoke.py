@@ -1711,6 +1711,59 @@ def main() -> int:
                 "kind": "broadcast", "text": "廳上的金盆擺好了。"}})["text"]
             == "廳上的金盆擺好了。")
 
+        # ---- 劇本的目的必須互相咬得住 ----
+        # t1／t2 兩場真 LLM 實跑各是 11/11 全達成、都 held、連結局文字都一樣，
+        # 因為當時嵐潮六個人的目的沒有一對互斥。達成率永遠 100%，配裝就比不出好壞。
+        print("\n目的的互斥性")
+        from scenarios import tempest as tempest_mod  # noqa: PLC0415
+
+        def exclusive_pairs(scen):
+            """回傳 [(誰, 擋誰的第幾個目的)]——prevent 是唯一會讀別人目的的判定器。"""
+            out = []
+            ids = {a["id"] for a in scen.AGENTS}
+            for a in scen.AGENTS:
+                for g in a.get("goals", []):
+                    if g["kind"] != "prevent":
+                        continue
+                    p2 = g.get("params") or {}
+                    tgt, idx = p2.get("agent"), int(p2.get("goal", 0))
+                    assert tgt in ids, f"{a['id']} 的 prevent 指到不存在的 {tgt}"
+                    other = next(x for x in scen.AGENTS if x["id"] == tgt)
+                    assert idx < len(other.get("goals", [])), \
+                        f"{a['id']} 的 prevent 指到 {tgt} 不存在的第 {idx} 個目的"
+                    out.append((a["id"], tgt, idx))
+            return out
+
+        for scen in (jianghu, tempest_mod):
+            pairs = exclusive_pairs(scen)
+            failures += not check(f"{scen.NAME} 至少有一對互斥的目的",
+                                  len(pairs) >= 1, str(pairs))
+
+        # 互斥要真的成立：對手成功則我方失敗，反之亦然
+        tgrid, tcfg = tempest_mod.build_grid(), SimConfig(combat=False)
+        for target_status, expect in (("done", "failed"), ("failed", "done")):
+            wx = tempest_mod.build_world("excl", 7)
+            who, tgt, idx = exclusive_pairs(tempest_mod)[0]
+            wx.agents[tgt].goals[idx].status = target_status
+            wx.agents[tgt].goals[idx].note = "（測試）"
+            goals_mod.evaluate(wx, tgrid, tcfg, goals_mod.Signals.empty(73))
+            mine = [g for g in wx.agents[who].goals if g.kind == "prevent"][0]
+            failures += not check(f"對手 {target_status} → 阻止方 {expect}",
+                                  mine.status == expect, f"{mine.status}／{mine.note}")
+
+        # 天花板：全員盡力也不可能全達成，否則配裝比不出好壞
+        wx = tempest_mod.build_world("ceil", 7)
+        for a in wx.agents.values():
+            for g in a.goals:
+                if g.kind != "prevent":
+                    g.status, g.note = "done", "（測試假設做到）"
+        goals_mod.evaluate(wx, tgrid, tcfg, goals_mod.Signals.empty(73))
+        goals_mod.finalize(wx, tgrid, tcfg, 96)
+        done = sum(g.status == "done" for a in wx.agents.values() for g in a.goals)
+        total = sum(len(a.goals) for a in wx.agents.values())
+        failures += not check("全員盡力也達不到 100%（互斥保證的）",
+                              done < total, f"{done}/{total}")
+
         # ---- 記憶檢索 ----
         print("\n記憶檢索")
         p = engine.world.protagonist()
