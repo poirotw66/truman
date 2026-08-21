@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>truman — LLM 多智能體箱庭</title>
+<style>
+  :root{
+    --bg:#12100c; --panel:#211d15; --panel2:#2a251b;
+    --ink:#f0e6d0; --ink2:#a99b7e; --line:rgba(240,230,205,.13); --line2:rgba(240,230,205,.26);
+    --gold:#d9a63c; --cinnabar:#c8483a; --jade:#5aa38f; --violet:#b98ede;
+    --disp:"Songti SC","STSong","Source Han Serif TC","Noto Serif CJK TC","PMingLiU",serif;
+    --ui:"PingFang TC","Source Han Sans TC","Noto Sans CJK TC","Microsoft JhengHei",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:
+      radial-gradient(120% 80% at 50% -10%, #2a251b88, transparent 60%), var(--bg);
+    color:var(--ink); font-family:var(--ui); line-height:1.65;
+    padding:clamp(16px,4vw,48px); -webkit-font-smoothing:antialiased}
+  .wrap{max-width:940px; margin:0 auto}
+  header{border-bottom:1px solid var(--line); padding-bottom:22px; margin-bottom:30px}
+  .k{font-size:10px; letter-spacing:.34em; color:var(--gold); font-weight:700}
+  h1{font-family:var(--disp); font-size:clamp(30px,6vw,46px); margin:.15em 0 .1em; letter-spacing:.04em}
+  .lede{color:var(--ink2); max-width:62ch; font-size:14.5px}
+  h2{font-family:var(--disp); font-size:20px; margin:38px 0 6px; letter-spacing:.05em}
+  h2 small{font-family:var(--ui); font-size:12px; color:var(--ink2); letter-spacing:0; margin-left:10px; font-weight:400}
+  .note{color:var(--ink2); font-size:13.5px; max-width:70ch; margin:.4em 0 14px}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(232px,1fr)); gap:12px}
+  a.card{display:flex; flex-direction:column; gap:5px; text-decoration:none; color:inherit;
+    background:var(--panel); border:1px solid var(--line2); border-radius:11px; padding:14px 16px;
+    transition:border-color .15s, transform .08s}
+  a.card:hover{border-color:var(--gold); transform:translateY(-2px)}
+  a.card b{font-family:var(--disp); font-size:16.5px; letter-spacing:.03em}
+  a.card .m{font-size:11px; color:var(--ink2); font-variant-numeric:tabular-nums}
+  a.card .d{font-size:12.5px; color:var(--ink2); line-height:1.5}
+  .tag{display:inline-block; font-size:10.5px; padding:1px 8px; border-radius:20px; margin-right:5px;
+    border:1px solid currentColor}
+  .held{color:var(--jade)} .partial{color:var(--gold)} .lost{color:var(--cinnabar)}
+  table{border-collapse:collapse; width:100%; font-size:13.5px; margin:6px 0 4px}
+  th,td{text-align:left; padding:7px 12px; border-bottom:1px solid var(--line)}
+  th{color:var(--gold); font-size:11px; letter-spacing:.12em; font-weight:700}
+  td.o{font-weight:700}
+  .foot{margin-top:46px; padding-top:20px; border-top:1px solid var(--line);
+    color:var(--ink2); font-size:12.5px}
+  a{color:var(--gold)}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.9em; color:var(--violet)}
+</style>
+</head>
+<body><div class="wrap">
+
+<header>
+  <div class="k">LLM MULTI-AGENT SANDBOX</div>
+  <h1>truman</h1>
+  <p class="lede">一座格子地圖、幾個語言模型代理。<b>沒有預寫劇本結局</b>——
+  把目標互相排斥的 AI 放進世界，看社會互動（與必要時的動手）會不會自己長出來。
+  下面每一頁都是一次真實模擬的完整回放，離線單檔，點開就能看。</p>
+</header>
+
+<h2>嵐潮 · 一組天然對照 <small>暴潮來襲前的半日 · 同樣六個人、同樣兩個 seed</small></h2>
+<p class="note">這六場是同一個劇本的三種設定。它們回答了一個問題：
+<b>光是「讓目標互相排斥」，夠不夠讓故事長出差異？</b>答案是不夠——
+衝突還需要一個能施力的窗口。</p>
+
+<table>
+  <tr><th>設定</th><th>seed 42</th><th>seed 7</th><th>分岔的目的</th></tr>
+  <tr><td>目的之間沒有互斥</td>
+      <td class="o held">held</td><td class="o held">held</td><td>0 / 11</td></tr>
+  <tr><td>有互斥，但沒有窗口</td>
+      <td class="o held">held</td><td class="o held">held</td><td>0 / 12</td></tr>
+  <tr><td><b>互斥 ＋ 時間窗口</b></td>
+      <td class="o partial">partial</td><td class="o lost">lost</td><td><b>4 / 12</b></td></tr>
+</table>
+<p class="note">前兩組連結局文字都逐字相同。第三組加了兩樣東西：水閘要等潮訊確認才焊得起來，
+以及反對的人手上有真的能拖延的籌碼。於是焊門從第 15 拍被推到第 44 拍，
+那個窗口才真的存在——而兩個 seed 給出了不同的答案。</p>
+
+<div class="grid">
+  <a class="card" href="runs/_demo/t1_replay.html"><b>t1 · 守住了</b>
+    <span class="m">seed 42 · 96 拍 · <span class="held">held</span></span>
+    <span class="d">沒有互斥的版本。六個人各做各的，全部達成。</span></a>
+  <a class="card" href="runs/_demo/t2_replay.html"><b>t2 · 守住了</b>
+    <span class="m">seed 7 · 96 拍 · <span class="held">held</span></span>
+    <span class="d">和 t1 逐字相同的結局。換了 seed 也沒有換來別的故事。</span></a>
+  <a class="card" href="runs/_demo/t3_replay.html"><b>t3 · 守住了</b>
+    <span class="m">seed 42 · 96 拍 · <span class="held">held</span></span>
+    <span class="d">加了互斥。水閘第 15 拍就焊完，期限在第 72 拍——衝突結束得太早。</span></a>
+  <a class="card" href="runs/_demo/t4_replay.html"><b>t4 · 守住了</b>
+    <span class="m">seed 7 · 96 拍 · <span class="held">held</span></span>
+    <span class="d">第 8 拍就焊完。互斥存在，但沒有人來得及施力。</span></a>
+  <a class="card" href="runs/_demo/t5_replay.html"><b>t5 · 只救回一半</b>
+    <span class="m">seed 42 · 96 拍 · <span class="partial">partial</span></span>
+    <span class="d">阿海攔了兩次閘，把焊門推到第 44 拍。水門守住了，海醮卻來不及做。</span></a>
+  <a class="card" href="runs/_demo/t6_replay.html"><b>t6 · 滅村邊緣</b>
+    <span class="m">seed 7 · 96 拍 · <span class="lost">lost</span> · 四人溺斃</span>
+    <span class="d">沒有人焊成水門。低處淹了，帶走張鐵雄、林美華、阿海、阿德。</span></a>
+</div>
+
+<h2>江湖 <small>笑傲江湖・劉正風金盆洗手那一天 · 世界允許動手，死亡不可逆</small></h2>
+<p class="note">六個人的目的結構性互斥：劉正風要洗完手，費彬奉命讓他洗不成；
+曲洋在這裡被認出來就是死罪。沒有人是單純的好人或壞人。</p>
+<div class="grid">
+  <a class="card" href="j2_replay.html"><b>j2 · 強者通吃被打破</b>
+    <span class="m">96 拍 · 死三人 · 接力三段</span>
+    <span class="d">費彬第一個死於曲洋——和前一場「他殺四人、唯一生還」完全相反。
+    起作用的是傷勢拖垮守勢，不是攻勢加成。</span></a>
+  <a class="card" href="jianghu_replay.html"><b>j1 · 一人清城</b>
+    <span class="m">96 拍 · 死五人</span>
+    <span class="d">平衡機制之前的版本。費彬六戰全勝，最後只剩他一個站著。</span></a>
+</div>
+
+<h2>開場之前 <small>挑角色、給目的、配工具，然後看它自己跑</small></h2>
+<div class="grid">
+  <a class="card" href="cast_editor.html"><b>人物工作室</b>
+    <span class="m">離線可編輯 · 產出 cast.json</span>
+    <span class="d">改人設、換目的、點卡片配絕技，還能直接在地圖上點起始位置。
+    卡片上的說明就是角色真正讀到的那段字。</span></a>
+</div>
+
+<div class="foot">
+  這些頁面全部是離線單檔，資料與美術都內嵌在裡面，不連任何外部服務。<br>
+  原始碼與完整設計說明：<a href="https://github.com/poirotw66/truman">github.com/poirotw66/truman</a>
+</div>
+
+</div></body></html>
