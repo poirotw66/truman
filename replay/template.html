@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>箱庭回放</title>
 <style>
   :root{
@@ -22,6 +27,7 @@
     }
   }
   *{box-sizing:border-box}
+  html,body{margin:0; min-height:100%}
   .jh{font-family:var(--ui); color:var(--ink); background:
       radial-gradient(120% 90% at 50% -20%, color-mix(in srgb,var(--panel) 60%,transparent), transparent 65%), var(--bg);
       min-height:100%; padding:clamp(10px,1.6vw,22px); line-height:1.5; -webkit-font-smoothing:antialiased}
@@ -40,23 +46,34 @@
   .shichen{color:var(--gold)}
   .alive b{color:var(--jade)} .alive.bleed b{color:var(--cinnabar)}
 
-  /* ---------- layout ---------- */
-  .main{display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:12px; align-items:stretch}
-  @media(max-width:1000px){ .main{grid-template-columns:1fr} }
+  /* ---------- layout：地圖左、側欄右；窄螢幕改上下，絕不疊蓋 ---------- */
+  .main{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 330px;
+    grid-template-areas:"stage rail";
+    gap:12px;
+    align-items:start;
+  }
+  .main > .stagewrap{grid-area:stage; min-width:0; position:relative; z-index:0}
+  .main > .rail{grid-area:rail; min-width:0; width:100%; max-width:330px; position:relative; z-index:0; align-self:start}
+  @media(max-width:1000px){
+    .main{grid-template-columns:1fr; grid-template-areas:"stage" "rail"}
+    .main > .rail{max-width:none}
+  }
 
-  .stagewrap{position:relative; aspect-ratio:3/2; border:1px solid var(--line2); border-radius:12px; overflow:hidden;
+  .stagewrap{aspect-ratio:3/2; border:1px solid var(--line2); border-radius:12px; overflow:hidden;
     background:#0d0b08; box-shadow:var(--shadow)}
-  canvas#board{display:block; width:100%; height:100%; image-rendering:pixelated}
-  .layer{position:absolute; inset:0; pointer-events:none; overflow:hidden}
-  .vig{position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 90px 20px rgba(0,0,0,.55); border-radius:12px}
+  canvas#board{display:block; width:100%; height:100%; image-rendering:pixelated; position:relative; z-index:0}
+  .layer{position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden}
+  .vig{position:absolute; inset:0; z-index:2; pointer-events:none; box-shadow:inset 0 0 90px 20px rgba(0,0,0,.55); border-radius:12px}
 
   .plate{position:absolute; transform:translate(-50%,0); white-space:nowrap; font-size:10.5px; font-weight:700;
     padding:1px 6px; border-radius:20px; background:rgba(12,10,7,.72); color:#fdf6e4; letter-spacing:.06em;
-    border:1px solid rgba(255,255,255,.14); text-shadow:0 1px 2px #000}
+    border:1px solid rgba(255,255,255,.14); text-shadow:0 1px 2px #000; z-index:1}
   .plate i{display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px; vertical-align:middle}
   .plate.gone{opacity:.5; text-decoration:line-through}
 
-  .bubble{position:absolute; max-width:230px; transform:translate(0,-100%);
+  .bubble{position:absolute; max-width:230px; transform:translate(0,-100%); z-index:3;
     background:#fbf3df; color:#241f18; border-radius:10px; padding:6px 10px; font-size:12.5px; line-height:1.45;
     box-shadow:0 4px 14px rgba(0,0,0,.4); animation:pop .2s ease-out}
   .bubble b{font-family:var(--disp); font-weight:700; color:#7a2f26}
@@ -67,19 +84,21 @@
   .bubble.below.pop2{animation:pop2 .2s ease-out}
   @keyframes pop2{from{opacity:0; transform:translate(0,6px) scale(.94)}}
 
-  .toast{position:absolute; left:50%; top:14%; transform:translateX(-50%); font-family:var(--disp); font-size:26px;
+  .toast{position:absolute; left:50%; top:14%; transform:translateX(-50%); z-index:4; font-family:var(--disp); font-size:26px;
     font-weight:700; letter-spacing:.28em; color:#ffe9c9; text-shadow:0 0 18px rgba(200,72,58,.9),0 3px 6px #000;
     animation:toast 2.2s ease-out forwards; white-space:nowrap}
   @keyframes toast{0%{opacity:0; transform:translateX(-50%) scale(.86)}18%{opacity:1; transform:translateX(-50%) scale(1)}70%{opacity:1}100%{opacity:0}}
 
-  .camhint{position:absolute; right:10px; top:9px; display:flex; gap:6px}
+  .camhint{position:absolute; right:10px; top:9px; z-index:5; display:flex; gap:6px}
   .chip{pointer-events:auto; font-family:var(--ui); font-size:11.5px; color:#f3e9d2; background:rgba(14,12,8,.66);
     border:1px solid rgba(255,255,255,.16); border-radius:20px; padding:4px 10px; cursor:pointer; backdrop-filter:blur(3px)}
   .chip:hover{background:rgba(217,166,60,.28)}
   .chip[aria-pressed="true"]{background:rgba(217,166,60,.32); border-color:var(--gold)}
 
   /* ---------- rail ---------- */
-  .rail{display:flex; flex-direction:column; gap:12px; min-height:0; position:relative}
+  .rail{display:flex; flex-direction:column; gap:12px; min-height:0; overflow:hidden; position:relative}
+  #sheetHost:empty{display:none}
+  #sheetHost:not(:empty){position:absolute; inset:0; z-index:20; pointer-events:auto}
   .card{background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column; min-height:0}
   .card>h3{margin:0; padding:9px 13px; font-size:10.5px; font-weight:700; letter-spacing:.22em; color:var(--ink2);
     border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px}
@@ -122,7 +141,7 @@
   .fe.now{outline:1px solid var(--gold)}
   .feed::-webkit-scrollbar,.body::-webkit-scrollbar{width:8px} .feed::-webkit-scrollbar-thumb,.body::-webkit-scrollbar-thumb{background:var(--line2); border-radius:8px}
 
-  /* ---------- character card ---------- */
+  /* ---------- character card（只蓋住側欄，不蓋地圖） ---------- */
   .sheet{position:absolute; inset:0; z-index:20; background:var(--panel); border:1px solid var(--line2); border-radius:12px;
     display:flex; flex-direction:column; box-shadow:var(--shadow); overflow:hidden}
   .sheet .hd{display:flex; gap:12px; align-items:flex-start; padding:12px 13px; border-bottom:1px solid var(--line); background:var(--panel2)}
@@ -206,10 +225,10 @@
   .rail-bg{position:absolute; left:0; right:0; top:13px; height:6px; border-radius:4px; background:var(--line2)}
   .fill{position:absolute; left:0; top:13px; height:6px; border-radius:4px; background:linear-gradient(90deg,var(--gold),var(--cinnabar))}
   .knob{position:absolute; top:8px; width:16px; height:16px; border-radius:50%; background:var(--ink); border:3px solid var(--panel); transform:translateX(-50%); z-index:3}
-  .mk{position:absolute; top:1px; transform:translateX(-50%); z-index:2; cursor:pointer; line-height:0}
-  .mk img{width:14px; height:14px; image-rendering:pixelated}
-  .mk.a{opacity:.9}
-  .mk.a img{width:12px; height:12px}
+  .tmk{position:absolute; top:1px; transform:translateX(-50%); z-index:2; cursor:pointer; line-height:0}
+  .tmk img{width:14px; height:14px; image-rendering:pixelated}
+  .tmk.a{opacity:.9}
+  .tmk.a img{width:12px; height:12px}
   .tickno{font-family:var(--mono); font-size:11.5px; color:var(--ink2); font-variant-numeric:tabular-nums}
   .legend{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:10.5px; color:var(--ink2); align-items:center}
   .legend span{display:inline-flex; align-items:center; gap:5px}
@@ -218,17 +237,19 @@
 
   /* ---------- overlays ---------- */
   .over{position:fixed; inset:0; z-index:60; background:rgba(9,7,5,.86); backdrop-filter:blur(6px);
-    display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto; animation:fade .35s ease}
+    display:flex; align-items:flex-start; justify-content:center; padding:clamp(16px,4vh,36px) 20px;
+    overflow-y:auto; animation:fade .35s ease}
   @keyframes fade{from{opacity:0}}
-  .over .in{max-width:940px; width:100%; display:flex; flex-direction:column; gap:16px; text-align:center; color:#f3e8ce}
-  .over .k{font-size:11px; letter-spacing:.4em; color:var(--gold); font-weight:700}
-  .over h2{margin:0; font-family:var(--disp); font-size:clamp(26px,4.4vw,44px); font-weight:600; letter-spacing:.06em}
-  .over .lede{margin:0 auto; max-width:44em; font-size:13.5px; line-height:1.85; color:#c9bda2}
-  .over details.epi{max-width:44em; margin:0 auto; width:100%; text-align:left;
-    background:rgba(255,247,228,.04); border:1px solid rgba(255,240,210,.14); border-radius:10px; padding:10px 14px}
-  .over details.epi summary{cursor:pointer; color:var(--gold); font-size:12px; letter-spacing:.18em; font-weight:700; list-style:none}
+  .over .in{max-width:940px; width:100%; margin:auto 0; display:flex; flex-direction:column; gap:18px;
+    text-align:center; color:#f3e8ce; position:relative; isolation:isolate}
+  .over .k{font-size:12px; letter-spacing:.4em; color:var(--gold); font-weight:700}
+  .over h2{margin:0; font-family:var(--disp); font-size:clamp(30px,5vw,48px); font-weight:600; letter-spacing:.06em}
+  .over .lede{margin:0 auto; max-width:46em; font-size:16px; line-height:1.85; color:#c9bda2}
+  .over details.epi{max-width:46em; margin:0 auto; width:100%; text-align:left;
+    background:rgba(255,247,228,.04); border:1px solid rgba(255,240,210,.14); border-radius:10px; padding:12px 16px}
+  .over details.epi summary{cursor:pointer; color:var(--gold); font-size:14px; letter-spacing:.18em; font-weight:700; list-style:none}
   .over details.epi summary::-webkit-details-marker{display:none}
-  .over details.epi .commentary{margin:10px 0 2px; font-size:13px; line-height:1.9; color:#d6c9ae; white-space:pre-wrap}
+  .over details.epi .commentary{margin:12px 0 2px; font-size:15px; line-height:1.95; color:#d6c9ae; white-space:pre-wrap}
   .cast{display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:11px}
   .cc{background:rgba(255,247,228,.05); border:1px solid rgba(255,240,210,.14); border-radius:11px; padding:11px 9px;
     display:flex; flex-direction:column; align-items:center; gap:5px; animation:rise .5s backwards}
@@ -246,31 +267,41 @@
     background:linear-gradient(180deg,var(--gold),#b8842a); border:0; border-radius:9px; padding:11px 30px; cursor:pointer}
   button.big.ghost{background:none; color:#c9bda2; border:1px solid rgba(255,240,210,.24)}
   button.big:hover{filter:brightness(1.08)}
-  .tomb{display:flex; flex-direction:column; gap:6px; max-width:520px; margin:0 auto; width:100%}
+  .tomb{display:flex; flex-direction:column; gap:6px; max-width:560px; margin:0 auto; width:100%}
   .tomb div{display:flex; gap:10px; align-items:center; background:rgba(200,72,58,.12); border:1px solid rgba(200,72,58,.3);
-    border-radius:9px; padding:7px 12px; font-size:13px}
-  .tomb .who{font-family:var(--disp); font-size:15px; font-weight:600}
-  .tomb .by{margin-left:auto; color:#c9a08f; font-size:12px}
+    border-radius:9px; padding:8px 14px; font-size:14px}
+  .tomb .who{font-family:var(--disp); font-size:16px; font-weight:600}
+  .tomb .by{margin-left:auto; color:#c9a08f; font-size:13px}
   /* 片尾成績單 */
-  .score{display:flex; flex-direction:column; gap:5px; max-width:620px; margin:0 auto; width:100%}
-  .score .sh{font-size:10px; letter-spacing:.28em; color:var(--gold); font-weight:700; margin-bottom:3px}
-  .score .sr{display:flex; gap:10px; align-items:center; padding:6px 12px; border-radius:8px;
+  .score{display:flex; flex-direction:column; gap:8px; max-width:680px; margin:0 auto; width:100%; text-align:left}
+  .score .sh{font-size:12px; letter-spacing:.28em; color:var(--gold); font-weight:700; margin-bottom:2px; text-align:center}
+  .score .sleg{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:13px; color:#c3b79c; margin-bottom:4px}
+  .score .sleg b{font-weight:600}
+  .score .sleg .y{color:#8fd8c0} .score .sleg .n{color:#eda79c}
+  .score .sr{display:flex; flex-direction:column; gap:6px; padding:10px 14px; border-radius:10px;
     background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.08)}
-  .score .sf{flex:none; width:28px; height:28px; border-radius:7px; overflow:hidden; background:#171410;
+  .score .shd{display:flex; gap:10px; align-items:center}
+  .score .sf{flex:none; width:32px; height:32px; border-radius:8px; overflow:hidden; background:#171410;
     box-shadow:inset 0 0 0 1px rgba(255,240,210,.12)}
   .score .sf img{width:100%; height:100%; object-fit:cover; object-position:50% 14%;
     transform:scale(1.7); transform-origin:50% 16%; display:block}
-  .score .who{font-family:var(--disp); font-size:14px; font-weight:600; flex:0 0 62px; text-align:left}
-  .score .gt{flex:1; text-align:left; font-size:11.5px; color:#c3b79c; line-height:1.5}
-  .score .gm{display:flex; gap:4px; margin-left:auto}
-  .score .gm i{font-style:normal; width:19px; height:19px; border-radius:5px; font-size:12px;
-    display:grid; place-items:center; cursor:help}
-  .score .gm i.y{background:rgba(90,163,143,.26); color:#8fd8c0; border:1px solid rgba(90,163,143,.5)}
-  .score .gm i.n{background:rgba(200,72,58,.2); color:#eda79c; border:1px solid rgba(200,72,58,.42)}
+  .score .who{font-family:var(--disp); font-size:16px; font-weight:600; text-align:left}
+  .score .gl{display:flex; flex-direction:column; gap:8px; margin-left:42px}
+  .score .gi{display:flex; flex-direction:column; gap:3px; padding:8px 10px; border-radius:8px;
+    background:rgba(0,0,0,.18); border:1px solid rgba(255,240,210,.08); font-size:13.5px; line-height:1.55; color:#c3b79c}
+  .score .gi .goal{text-align:left; color:#e8dcc2}
+  .score .gi .goal .lab,.score .gi .res .lab{flex:none; font-size:11.5px; letter-spacing:.12em;
+    color:#a1957c; font-weight:700; margin-right:6px}
+  .score .gi .res{display:flex; gap:6px; align-items:center; flex-wrap:wrap; text-align:left; position:relative}
+  .score .gi .gmk{flex:none; position:static; transform:none; font-size:12.5px; font-weight:700; letter-spacing:.04em;
+    padding:2px 8px; border-radius:5px; line-height:1.3}
+  .score .gi .gmk.y{background:rgba(90,163,143,.26); color:#8fd8c0; border:1px solid rgba(90,163,143,.5)}
+  .score .gi .gmk.n{background:rgba(200,72,58,.2); color:#eda79c; border:1px solid rgba(200,72,58,.42)}
+  .score .gi .note{color:#a1957c}
   .nums{display:flex; gap:22px; justify-content:center; flex-wrap:wrap}
   .nums div{display:flex; flex-direction:column}
-  .nums b{font-family:var(--disp); font-size:27px; font-weight:600; color:var(--gold)}
-  .nums span{font-size:10.5px; letter-spacing:.16em; color:#a1957c}
+  .nums b{font-family:var(--disp); font-size:28px; font-weight:600; color:var(--gold)}
+  .nums span{font-size:12px; letter-spacing:.16em; color:#a1957c}
 
   .foot{font-size:11px; color:var(--ink2); text-align:center; line-height:1.75}
   .foot b{color:var(--ink)}
@@ -280,7 +311,8 @@
     .cc:hover img.pt,.sheet img.bust:hover{transform:none}
   }
 </style>
-
+</head>
+<body>
 <div class="jh">
  <div class="wrap">
   <header class="topbar">
@@ -329,6 +361,7 @@
     <div class="sep"></div>
     <button class="ct" id="prevHit">⏮ 上一場衝突</button>
     <button class="ct" id="nextHit">下一場衝突 ⏭</button>
+    <button class="ct" id="endSum" title="跳到最後一刻並打開導演總結">結尾總結</button>
     <div class="sep"></div>
     <div class="track" id="track">
      <div class="rail-bg"></div><div class="fill" id="fill"></div><div class="knob" id="knob"></div>
@@ -496,7 +529,7 @@ const ICONS = Object.assign({}, PIXEL_ICONS, DATA.event_icons || {});
 /* image-rendered event icons look better without forced pixelation */
 if (DATA.event_icons) {
   const st = document.createElement("style");
-  st.textContent = ".fe .ic,.mk img,.legend .ic{image-rendering:auto;border-radius:3px}";
+  st.textContent = ".fe .ic,.tmk img,.legend .ic{image-rendering:auto;border-radius:3px}";
   document.head.appendChild(st);
 }
 
@@ -1210,6 +1243,13 @@ document.getElementById("stepF").onclick = () => seek(cur + 1);
 document.getElementById("stepB").onclick = () => seek(cur - 1);
 document.getElementById("nextHit").onclick = () => { const n = hitTicks.find(t => t > cur); if (n !== undefined) seek(n); };
 document.getElementById("prevHit").onclick = () => { const n = [...hitTicks].reverse().find(t => t < cur); if (n !== undefined) seek(n); };
+document.getElementById("endSum").onclick = () => {
+  started = true;
+  setPlay(false);
+  enterTick(MAXT, false);
+  renderFeed(true);
+  showOutro();
+};
 document.querySelectorAll(".spd button").forEach(b => b.onclick = () => {
   speed = +b.dataset.spd;
   document.querySelectorAll(".spd button").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
@@ -1253,7 +1293,7 @@ stage.addEventListener("click", ev => {
   const tr = document.getElementById("track");
   moments.forEach(m => {
     const d = document.createElement("div");
-    d.className = "mk" + (m.kind === "attack" ? " a" : "");
+    d.className = "tmk" + (m.kind === "attack" ? " a" : "");
     const ic = m.kind === "death" ? ICONS.death
       : m.kind === "storm" ? ICONS.world
       : ICONS.attack;
@@ -1318,15 +1358,29 @@ function scoreHTML() {
   if (!gs.length) return "";
   const rows = IDS.filter(id => gs.some(g => g.agent === id)).map(id => {
     const mine = gs.filter(g => g.agent === id).sort((a, b) => a.idx - b.idx);
-    const cells = mine.map(g =>
-      `<i class="${g.done ? "y" : "n"}" title="${esc(g.text)}　${esc(g.note)}">${g.done ? "✓" : "✕"}</i>`).join("");
+    const goals = mine.map(g => {
+      const mark = g.done ? "✓ 做到了" : "✕ 沒做到";
+      const note = g.note
+        ? `<span class="note">· ${esc(g.note)}</span>`
+        : `<span class="note">· ${g.done ? "收工時判定達成" : "時間到了仍未達成"}</span>`;
+      return `<div class="gi">
+        <div class="goal"><span class="lab">目標</span>${esc(g.text)}</div>
+        <div class="res"><span class="lab">結果</span>
+          <span class="gmk ${g.done ? "y" : "n"}">${mark}</span>${note}</div>
+      </div>`;
+    }).join("");
     return `<div class="sr">
-      ${PORTRAIT[id] ? `<span class="sf"><img src="${PORTRAIT[id]}" alt=""></span>` : ""}
-      <span class="who" style="color:${P[id].color}">${esc(P[id].name)}</span>
-      <span class="gt">${esc(mine.map(g => g.text).join("；"))}</span>
-      <span class="gm">${cells}</span></div>`;
+      <div class="shd">
+        ${PORTRAIT[id] ? `<span class="sf"><img src="${PORTRAIT[id]}" alt=""></span>` : ""}
+        <span class="who" style="color:${P[id].color}">${esc(P[id].name)}</span>
+      </div>
+      <div class="gl">${goals}</div></div>`;
   }).join("");
-  return `<div class="score"><div class="sh">今天誰拿到了自己要的東西</div>${rows}</div>`;
+  return `<div class="score">
+    <div class="sh">今天誰拿到了自己要的東西</div>
+    <div class="sleg"><span><b class="y">✓ 做到了</b>＝這一條目標在收工時判定達成</span>
+      <span><b class="n">✕ 沒做到</b>＝未達成或時間到了仍落空</span></div>
+    ${rows}</div>`;
 }
 
 function showOutro() {
@@ -1389,3 +1443,5 @@ cam.x = camT.x = W/2; cam.y = camT.y = H/2; cam.z = camT.z = 1;
 requestAnimationFrame(loop);
 showIntro();
 </script>
+</body>
+</html>
