@@ -51,11 +51,10 @@ STYLE — apply identically to every image in this set:
 - Extremely fashion-forward costume design: exaggerated ornament, layered fabric, theatrical drape, cloth caught mid-motion.
 - A theatrical twisted contrapposto pose, spine coiled like a spring, fingers splayed in an elegant deliberate gesture.
 - Halftone dots and cross-hatching in the FABRIC shadows; speed lines radiating behind the figure.
-- Exactly ONE large stylised Chinese glyph floating behind the figure as a pure graphic element (sound-effect
-  lettering, NOT a caption): 「%(onom)s」. Render it in BOLD WHITE with a thick dark outline and a soft drop
-  shadow, placed in the upper-left corner. Never solid black, never a plain caption.
 - Flat two-tone background built on %(bg)s: a smooth vertical gradient from a lighter to a deeper shade of
   that colour, plus a radial burst of thin rays behind the figure.
+- CRITICAL — ZERO written characters anywhere: no Chinese/Japanese glyphs, no letters, no sound-effect
+  lettering, no captions, no watermarks, no signatures, no frame, no border. Pure illustration only.
 
 BEAUTY — this is a cast of beautiful people; every face must be genuinely attractive:
 - Idealised leading-role good looks. Flawless luminous skin rendered with SMOOTH GRADIENTS (not flat fill),
@@ -70,7 +69,6 @@ BEAUTY — this is a cast of beautiful people; every face must be genuinely attr
 - Polished, high-detail illustration finish — this should look like premium key art.
 
 %(world)s
-No lettering other than the single glyph. No watermark, no signature, no frame, no border.
 """
 
 WORLDS = {
@@ -255,7 +253,7 @@ def build_prompt(agent: dict, pose: dict, scenario: str = "jianghu") -> str:
     look = agent.get("look") or agent.get("art") or {}
     bg = look.get("color") or "#8a8272"
     world = WORLDS.get(scenario) or WORLDS["jianghu"]
-    head = STYLE % {"onom": pose["onom"], "bg": bg, "world": world}
+    head = STYLE % {"bg": bg, "world": world}
     return (
         f"{head}\n"
         f"CHARACTER — {agent['name']} ({look.get('sect','')} · {look.get('title','')}):\n"

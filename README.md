@@ -63,16 +63,16 @@ replay 必須重現同一個結局，否則「達成率」這個數字沒有意�
 
 ### 最乾淨的對照實驗：同劇本、同 seed，只改配裝
 
-```powershell
+```bash
 # 1. 開工作室，改目的、換絕技（點卡片就是配上／拿掉）
-.\.venv\Scripts\python.exe cast\build_editor.py jianghu
+uv run cast/build_editor.py jianghu
 
 # 2. 拿下載的 cast.json 開跑
-.\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run `
-  --run-id j5 --ticks 96 --seed 7 --cast cast\jianghu.json
+uv run -m truman.cli --scenario jianghu run \
+  --run-id j5 --ticks 96 --seed 7 --cast cast/jianghu.json
 
 # 3. 看達成率與絕技使用統計
-.\.venv\Scripts\python.exe -m truman.cli report --run-id j5
+uv run -m truman.cli report --run-id j5
 ```
 
 把費彬的「名正言順」拿掉，他還攔得住嗎？給儀琳多一門輕功，她走得到城門嗎？
@@ -87,7 +87,7 @@ replay 必須重現同一個結局，否則「達成率」這個數字沒有意�
 | **anti-snowball 全日驗證** | `j2`→`j2b`→`j2c`：費彬先死於曲洋，「玻璃刀」守勢懲罰確實打破強者通吃 |
 | **目的與絕技** | 六人各有可判定的目的與配備的絕技；工作室可配裝、report 出達成率、回放頁有任務卡與成績單 |
 | **傷勢／義憤進 prompt** | 兩條 anti-snowball 機制原本只進骰子，角色感受不到；現在寫進 observation |
-| **本機 demo 入口** | `python -m truman.demo`：回放既有 run，或現場開跑（SSE 進度含時辰／phase／已花時間／平均每 tick／預估剩餘） |
+| **本機 demo 入口** | `uv run -m truman.demo`：回放既有 run，或現場開跑（SSE 進度含時辰／phase／已花時間／平均每 tick／預估剩餘） |
 | **接力回放** | `replay/build_frames.py` 可串多段 fork；checkpoint 差一拍已修 |
 | **預設 provider** | `gemini` · 全層 `gemini-3.1-flash-lite`（格式較穩；快取門檻 4096，常見前綴常進不去） |
 
@@ -119,48 +119,52 @@ replay 必須重現同一個結局，否則「達成率」這個數字沒有意�
 
 ## 快速開始
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[all]"   # 或 .[anthropic] / .[gemini]
-copy .env.example .env      # 填你要用的那一家的 key
+環境預設用 [uv](https://docs.astral.sh/uv/)（已附 `uv.lock`）：
+
+```bash
+# 尚未安裝 uv：curl -LsSf https://astral.sh/uv/install.sh | sh
+uv sync --extra all          # 或 --extra anthropic / --extra gemini
+cp .env.example .env         # Windows: copy .env.example .env；填你要用的那一家的 key
 ```
+
+之後一律 `uv run …`（會自動用專案的 `.venv`，不必手動 activate）。
 
 支援兩家 provider，用全域旗標切換（**預設 `gemini`**，全層 `gemini-3.1-flash-lite`）：
 
-```powershell
-.\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run `
+```bash
+uv run -m truman.cli --scenario jianghu run \
   --run-id j2 --ticks 96 --seed 7
 ```
 
-```powershell
+```bash
 # 不花錢，先確認一切正常
-.\.venv\Scripts\python.exe -m tests.smoke
-.\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run --run-id dry --ticks 30 --stub
-.\.venv\Scripts\python.exe -m truman.cli report --run-id dry
+uv run -m tests.smoke
+uv run -m truman.cli --scenario jianghu run --run-id dry --ticks 30 --stub
+uv run -m truman.cli report --run-id dry
 
 # Demo 前端：回放既有 run（上台推薦），或現場開一場（見下方「Demo 前端」）
-.\.venv\Scripts\python.exe -m truman.demo                        # http://127.0.0.1:8765
+uv run -m truman.demo                        # http://127.0.0.1:8765
 
 # 看地圖、快取前綴、對帳模型 ID
-.\.venv\Scripts\python.exe -m truman.cli --scenario jianghu map
-.\.venv\Scripts\python.exe -m truman.cli tokens
-.\.venv\Scripts\python.exe -m truman.cli models
+uv run -m truman.cli --scenario jianghu map
+uv run -m truman.cli tokens
+uv run -m truman.cli models
 
 # 出報告：節流率、動手／死亡、對話圖、話題擴散、reflection、成本
-.\.venv\Scripts\python.exe -m truman.cli report --run-id j2
+uv run -m truman.cli report --run-id j2
 
 # 並排比較兩場以上——直接看它們有沒有真的分岔
-.\.venv\Scripts\python.exe -m truman.cli compare --run t1 --run t2
+uv run -m truman.cli compare --run t1 --run t2
 
 # 零成本重放（讀日誌，不呼叫 API）
-.\.venv\Scripts\python.exe -m truman.cli --scenario jianghu replay --run-id j2
+uv run -m truman.cli --scenario jianghu replay --run-id j2
 
 # 事件日誌 → 完整回放頁（可接力多段 fork）
-.\.venv\Scripts\python.exe replay\build_frames.py --run j2 --run j2b --run j2c --out j2_replay.html
+uv run replay/build_frames.py --run j2 --run j2b --run j2c --out j2_replay.html
 
 # 反事實分支：從最新 checkpoint 岔出去
-.\.venv\Scripts\python.exe -m truman.cli --scenario jianghu fork `
-  --from-latest j2 --run-id j2_x --ticks 24 `
+uv run -m truman.cli --scenario jianghu fork \
+  --from-latest j2 --run-id j2_x --ticks 24 \
   --inject "liu_zhengfeng:（廳外忽然傳來一陣急驟的馬蹄聲。）"
 ```
 
@@ -179,10 +183,10 @@ copy .env.example .env      # 填你要用的那一家的 key
 
 ### Demo 前端
 
-```powershell
+```bash
 # 1. 確認 .env 有 GEMINI_API_KEY（或 GOOGLE_API_KEY）——現場開跑才需要
 # 2. 開 demo（保持這個終端開著；改 static 後要重啟才吃到）
-.\.venv\Scripts\python.exe -m truman.demo
+uv run -m truman.demo
 ```
 
 瀏覽器 `http://127.0.0.1:8765/`：
@@ -206,11 +210,11 @@ copy .env.example .env      # 填你要用的那一家的 key
 
 日誌在 `runs/<run-id>/`，回放 HTML 在 `runs/_demo/<run-id>_replay.html`。粗估全日 **$0.3–0.6**（有快取時）；3.1-flash-lite 門檻高，命中率常偏低、帳單會往上。對帳：
 
-```powershell
-.\.venv\Scripts\python.exe -m truman.cli report --run-id j3
+```bash
+uv run -m truman.cli report --run-id j3
 # 嵐潮兩場既有實錄（seed 42 / 7，皆 held）：
-.\.venv\Scripts\python.exe -m truman.cli report --run-id t1
-.\.venv\Scripts\python.exe -m truman.cli report --run-id t2
+uv run -m truman.cli report --run-id t1
+uv run -m truman.cli report --run-id t2
 ```
 
 ---
@@ -245,8 +249,8 @@ copy .env.example .env      # 填你要用的那一家的 key
 
 j2→j2b→j2c 全日重跑裡，費彬第一個死於曲洋（與 j1「費彬殺四人、唯一生還」相反）；傍晚安靜、死者較分散。串回放：
 
-```powershell
-.\.venv\Scripts\python.exe replay\build_frames.py --run j2 --run j2b --run j2c --out j2_replay.html
+```bash
+uv run replay/build_frames.py --run j2 --run j2b --run j2c --out j2_replay.html
 ```
 
 ---
@@ -415,10 +419,10 @@ todo.md                  主線待辦與實跑紀錄
 
 ## 人物立繪與場景美術
 
-```powershell
-.\.venv\Scripts\python.exe art\gen_portraits.py            # 已存在的跳過
-.\.venv\Scripts\python.exe art\gen_portraits.py --force    # 全部重畫
-.\.venv\Scripts\python.exe art\embed_scenes.py             # 看場景圖內嵌後多大
+```bash
+uv run art/gen_portraits.py            # 已存在的跳過
+uv run art/gen_portraits.py --force    # 全部重畫
+uv run art/embed_scenes.py             # 看場景圖內嵌後多大
 ```
 
 立繪一致性靠：**共用同一段 `STYLE`**（一字不改）＋ 風格錨當參考影像。
@@ -431,24 +435,24 @@ Demo 落地頁另從 `truman/demo/static/art/` 讀靜態檔。沒圖時退回像
 
 畫完重跑 `replay/build_frames.py` 與 `cast/build_editor.py`。
 
-```powershell
-.\.venv\Scripts\python.exe art\embed_icons.py              # 看絕技圖示內嵌後多大
-.\.venv\Scripts\python.exe art\embed_event_icons.py        # 事件流小圖示
-.\.venv\Scripts\python.exe art\embed_portraits.py hakoniwa # 海晏鎮立繪
+```bash
+uv run art/embed_icons.py              # 看絕技圖示內嵌後多大
+uv run art/embed_event_icons.py        # 事件流小圖示
+uv run art/embed_portraits.py hakoniwa # 海晏鎮立繪
 ```
 
 ## 開場之前：人物工作室
 
-```powershell
-.\.venv\Scripts\python.exe cast\build_editor.py jianghu   # 產出 cast_editor.html
+```bash
+uv run cast/build_editor.py jianghu   # 產出 cast_editor.html
 ```
 
 改名字／人設／武功／起始位置／在意的人／長相／**今天要做到的事**／**配備的絕技**，
 下載 `cast/jianghu.json` 後：
 
-```powershell
-.\.venv\Scripts\python.exe -m truman.cli --scenario jianghu run `
-  --run-id j2 --ticks 96 --seed 7 --cast cast\jianghu.json
+```bash
+uv run -m truman.cli --scenario jianghu run \
+  --run-id j2 --ticks 96 --seed 7 --cast cast/jianghu.json
 ```
 
 絕技那一區是一門一張卡，點下去就是配上或拿掉；卡片上的說明與滑鼠移上去的「什麼時候該用」

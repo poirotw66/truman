@@ -41,9 +41,9 @@ STYLE — apply identically to every image in this set:
 - Hyper-saturated but weather-stained colour: teal sea, slate cloud walls, salt-bleached wood, iron gates,
   temple indigo, wet stone. Metallic sheen on wet surfaces.
 - Halftone dots and cross-hatching in shadow areas; thin speed / rain streaks where wind is strong.
-- Exactly ONE large stylised Chinese glyph floating as pure graphic lettering (NOT a caption): 「%(onom)s」.
-  Render it in BOLD WHITE with a thick dark outline and soft drop shadow, upper-left corner.
-- No people as the main subject (tiny distant silhouettes OK). No watermark, no signature, no UI frame.
+- No people as the main subject (tiny distant silhouettes OK).
+- CRITICAL — ZERO written characters anywhere: no Chinese/Japanese glyphs, no letters, no numbers-as-labels,
+  no captions, no sound-effect lettering, no watermarks, no signatures, no UI frame. Pure illustration only.
 - Polished premium key-art finish — same illustrated world as the character standees.
 """
 
@@ -55,13 +55,12 @@ This is a DIFFERENT location in the SAME illustrated town. Do not copy the refer
 only the rendering style.
 """
 
-# stem → (onom, aspect, prompt body). aspect for Gemini ImageConfig.
+# stem → (aspect, prompt body). aspect for Gemini ImageConfig.
 SCENES: dict[str, dict[str, str]] = {
     "keyart_tempest": dict(
-        onom="潮",
         aspect="3:2",
         who="""\
-HERO KEY ART — full-bleed coastal vista of 嵐潮鎮 before the surge.
+HERO KEY ART — full-bleed coastal vista of the fishing town before the surge.
 Foreground: wet seawall stones and a half-open iron sluice, spray catching rim light.
 Mid: wooden fishing harbour with boats straining on ropes; beyond it a compact village of tin roofs,
 brick houses, and a sea-facing temple with a rusted bell tower.
@@ -69,7 +68,6 @@ Background: a black-teal cloud wall rolling in from the open ocean, a white tide
 Mood: epic, urgent, beautiful and doomed unless the rite and gate hold. No large characters.""",
     ),
     "keyart_night": dict(
-        onom="夜",
         aspect="3:2",
         who="""\
 NIGHT AFTERMATH KEY ART of the same Taiwanese coastal village after the storm peak.
@@ -78,72 +76,65 @@ Seawall black with wet; some boats smashed against piles; wind quieter but rain 
 Mood: hush after violence — did the village hold? Atmospheric, sombre, hopeful rim light on the temple.""",
     ),
     "scene_gaodi": dict(
-        onom="高",
         aspect="3:2",
         who="""\
-LOCATION: 高地 — the northern high rocky ground, the only place the first surge cannot reach.
+LOCATION: northern high rocky ground — the only place the first surge cannot reach.
 Narrow path of wet stone leading up between scrub and wind-bent trees; a small shelter roof below.
 Looking south you glimpse the village roofs and the angry sea. Evacuation bottleneck energy.""",
     ),
     "scene_cunzhang": dict(
-        onom="宅",
         aspect="3:2",
         who="""\
-LOCATION: 村長宅 — village head's courtyard house. Wooden doors always ajar, name plaques of past
-heads on the hall wall, rain beating the tiled roof, a whistle and ledger on a table by the door.
+LOCATION: village head's courtyard house. Wooden doors always ajar, weathered wooden name plaques of past
+heads on the hall wall (illegible carved marks only — no readable writing), rain beating the tiled roof,
+a whistle and blank ledger on a table by the door.
 Practical Taiwanese coastal home, not a palace; urgency without luxury.""",
     ),
     "scene_miao": dict(
-        onom="廟",
         aspect="3:2",
         who="""\
-LOCATION: 鎮廟 — old sea-facing temple. Thick incense ash, rusted bronze bell, weathered idols,
-stone steps wet with rain, doors open toward the black sea. This is where the 海醮 must be seen.
-Sacred, cramped, wind tearing prayer flags.""",
+LOCATION: old sea-facing temple. Thick incense ash, rusted bronze bell, weathered idols,
+stone steps wet with rain, doors open toward the black sea. This is where the sea rite must be seen.
+Sacred, cramped, wind tearing cloth prayer flags (plain dyed cloth — no readable writing on flags).""",
     ),
     "scene_guangchang": dict(
-        onom="場",
         aspect="3:2",
         who="""\
-LOCATION: 廣場 — village square of wet flagstones where nets usually dry.
-Tonight: toppled drying racks, scattered baskets, panic footprints in puddles, signs pointing north
-to high ground and temple. The emotional centre of the evacuation.""",
+LOCATION: village square of wet flagstones where nets usually dry.
+Tonight: toppled drying racks, scattered baskets, panic footprints in puddles, plain wooden directional
+markers pointing north to high ground and temple (shapes/arrows only — no readable writing).
+The emotional centre of the evacuation.""",
     ),
     "scene_tiepu": dict(
-        onom="鐵",
         aspect="3:2",
         who="""\
-LOCATION: 鐵鋪 — blacksmith shop. Furnace glow small against storm dark, piles of anchor chain and
+LOCATION: blacksmith shop. Furnace glow small against storm dark, piles of anchor chain and
 sluice plates by the door, leather apron on a peg, sparks dying in the wet wind. Work-first grit.""",
     ),
     "scene_yushi": dict(
-        onom="市",
         aspect="3:2",
         who="""\
-LOCATION: 漁市 — fish market mud lanes already emptying. Salt smell made visible as hanging scales
+LOCATION: fish market mud lanes already emptying. Salt smell made visible as hanging scales
 and empty stalls, tarps whipping, crates abandoned mid-pack. First place to go hollow when tide-talk
 tightens.""",
     ),
     "scene_liangcang": dict(
-        onom="倉",
         aspect="3:2",
         who="""\
-LOCATION: 糧倉 — heavy wooden public granary doors, sacks of millet stacked inside dim light,
+LOCATION: heavy wooden public granary doors, sacks of millet stacked inside dim light,
 rain streaking the outer wall. A place of last stores, not comfort.""",
     ),
     "scene_haidi": dict(
-        onom="堤",
         aspect="3:2",
         who="""\
-LOCATION: 海堤 — stone seawall mid-section with the iron water gate / sluice.
+LOCATION: stone seawall mid-section with the iron water gate / sluice.
 Foam forcing through seams, spray over the coping, welding tools and plates waiting.
 This is where the gate must be sealed before the surge. Violent weather, industrial folk engineering.""",
     ),
     "scene_yugang": dict(
-        onom="港",
         aspect="3:2",
         who="""\
-LOCATION: 漁港 — wooden pier and moorings. Ropes singing in wind, empty berths for boats still at sea,
+LOCATION: wooden pier and moorings. Ropes singing in wind, empty berths for boats still at sea,
 signal lantern swinging, white tide-line visible offshore. Rescue-the-fleet urgency.""",
     ),
 }
@@ -212,10 +203,7 @@ def main() -> None:
             continue
 
         spec = SCENES[stem]
-        prompt = (
-            f"{STYLE % {'onom': spec['onom']}}\n"
-            f"SHOT — {stem}:\n{spec['who']}\n"
-        )
+        prompt = f"{STYLE}\nSHOT — {stem}:\n{spec['who']}\n"
         ref = None if stem == args.anchor else anchor_bytes
         if ref is None and stem != args.anchor:
             print(f"  ⚠ {stem}：還沒有錨圖，這張會少了風格對齊")

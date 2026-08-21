@@ -38,7 +38,9 @@ STYLE — apply identically to every icon in this set:
 - Bold comic / manga inking with clear silhouette readable at 48px.
 - Rich saturated colour, soft rim light, subtle halftone in shadows.
 - Dark smoky or storm-gradient background; thin ornamental frame in muted brass / wet-iron.
-- Single clear prop or ritual object — NO readable modern text, NO letters, NO watermarks.
+- Single clear prop or ritual object only.
+- CRITICAL — ZERO written characters anywhere: no Chinese/Japanese glyphs, no letters, no numbers-as-labels,
+  no captions, no watermarks, no signatures. Pure illustration only.
 - Taiwanese coastal folk / temple / fishing-village material culture (not wuxia swords).
 """
 
@@ -51,28 +53,28 @@ and finish. Different skill, same icon set. Do not copy the reference object —
 # art_id → English subject (ids match truman.world.arts)
 ICONS: dict[str, str] = {
     "zhen_chao_li": """\
-SKILL ICON — 做海醮 (sea rite).
+SKILL ICON — sea rite.
 Ornate temple handbell and incense smoke rising over a small sea-god altar tray,
 salt spray catching the rim light. Sacred urgency, indigo and ember accents.""",
     "feng_zha": """\
-SKILL ICON — 焊水門 (seal the sluice).
+SKILL ICON — seal the sluice.
 Heavy iron sluice plate gripped by tongs, welding sparks and wet rivets,
 cool storm-iron palette with a small spark accent.""",
     "wang_chao": """\
-SKILL ICON — 探潮 (read the tide).
+SKILL ICON — read the tide.
 Brass hand-telescope / spyglass angled toward a distant white tide-line under a cloud wall,
 salt crust and wind ribbons.""",
     "ji_feng_bu": """\
-SKILL ICON — 飛毛腿 (fleet foot).
+SKILL ICON — fleet foot.
 Worn canvas running shoes and a coiled rope whipping in typhoon wind,
 motion lines, teal and mud colours.""",
     "an_min_zhou": """\
-SKILL ICON — 穩陣 (steady the crowd).
+SKILL ICON — steady the crowd.
 A pair of calm open hands over a cloth herbal pouch and a small oil lamp,
 soft sage light cutting panic — reassuring, not magical fireworks.""",
     "hao_ling": """\
-SKILL ICON — 派工 (dispatch).
-A silver whistle and a rain-spattered wooden tally board / dispatch ledger,
+SKILL ICON — dispatch.
+A silver whistle and a rain-spattered blank wooden tally board (no readable marks),
 sea-green cord, authority without luxury.""",
 }
 

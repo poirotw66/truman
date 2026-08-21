@@ -53,13 +53,15 @@
   .modes{display:flex; gap:12px; flex-wrap:wrap; width:100%}
   .mode{
     flex:1 1 240px; max-width:420px; text-align:left; cursor:pointer;
+    color:var(--ink); font:inherit;
     background:rgba(24,20,14,.72); border:1px solid var(--line); border-radius:12px; padding:18px 18px 16px;
     box-shadow:var(--shadow); backdrop-filter:blur(8px);
     transition:border-color .15s, transform .12s, background .15s;
   }
   .mode:hover{border-color:color-mix(in srgb,var(--gold) 45%,var(--line)); transform:translateY(-2px)}
   .mode[aria-pressed="true"]{border-color:var(--gold); background:color-mix(in srgb,var(--gold) 14%,rgba(24,20,14,.82))}
-  .mode .t{font-family:var(--disp); font-size:20px; font-weight:600; letter-spacing:.04em; margin:0 0 6px}
+  .mode .t{font-family:var(--disp); font-size:20px; font-weight:600; letter-spacing:.04em; margin:0 0 6px;
+    color:var(--ink)}
   .mode .d{margin:0; font-size:13px; line-height:1.65; color:var(--ink2)}
 
   .stage{display:flex; flex-direction:column; align-items:center;
