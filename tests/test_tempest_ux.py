@@ -22,3 +22,11 @@ def test_demo_scenario_chrome_switches_away_from_hengshan() -> None:
     assert "scenesJianghu" in DEMO
     assert "cast/tempest.default.json" in DEMO
     assert "syncScenarioChrome" in DEMO
+
+
+def test_hd2d_figures_draw_onto_scene_canvas() -> None:
+    """Figures must land on offscreen `sc` so DOF/bloom composite does not wipe them."""
+    assert "drawFigure(sc," in TEMPLATE
+    assert "drawFigure(bx," not in TEMPLATE
+    assert "sc.setLineDash(dash)" in TEMPLATE
+    assert "bx.setLineDash(dash)" not in TEMPLATE

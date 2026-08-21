@@ -1156,7 +1156,7 @@ function drawScene(now, t) {
     const cxw = lerp(c.x, c.fx, flee), s = toScreen(cxw, c.y);
     if (s.sx < -60 || s.sx > SW+60 || s.sy < -60 || s.sy > SH+60) return;
     sc.globalAlpha = (1 - flee*.9) * .92;
-    drawFigure(bx, s.sx, s.sy + t*.3, t*.86, c.prof,
+    drawFigure(sc, s.sx, s.sy + t*.3, t*.86, c.prof,
       { face: flee>0 ? (c.fx<0?"left":"right") : "down", frame: flee>0 ? (Math.floor(now/130+i)%4) : 0, bob: Math.sin(now/520 + c.ph) > .8 ? -.4 : 0 });
     sc.globalAlpha = 1;
   });
@@ -1172,7 +1172,7 @@ function drawScene(now, t) {
       sc.strokeStyle = "rgba(217,166,60,.9)"; sc.lineWidth = 2;
       sc.beginPath(); sc.ellipse(sx, sy + t*.28, t*.32, t*.14, 0, 0, 6.3); sc.stroke();
     }
-    drawFigure(bx, sx, sy + t*.3, t*1.15, prof, {
+    drawFigure(sc, sx, sy + t*.3, t*1.15, prof, {
       face: faceOf(d.m, d.id), wound: d.a.wound, dead: !d.a.alive,
       frame: d.m.moving ? Math.floor(now/110) % 4 : 0,
       bob: (!d.m.moving && d.a.alive) ? (Math.sin(now/430 + d.m.x) > .6 ? -.5 : 0) : 0,
@@ -1232,8 +1232,8 @@ function drawRelations(t) {
   const link = (id, col, dash) => {
     const b = F[cur].agents[id]; if (!b) return;
     const B = toScreen(b.x + .5, b.y + .5);
-    bx.save(); bx.setLineDash(dash); bx.strokeStyle = col; bx.lineWidth = 2; bx.globalAlpha = .8;
-    bx.beginPath(); bx.moveTo(A.sx, A.sy - t*.2); bx.lineTo(B.sx, B.sy - t*.2); bx.stroke(); bx.restore();
+    sc.save(); sc.setLineDash(dash); sc.strokeStyle = col; sc.lineWidth = 2; sc.globalAlpha = .8;
+    sc.beginPath(); sc.moveTo(A.sx, A.sy - t*.2); sc.lineTo(B.sx, B.sy - t*.2); sc.stroke(); sc.restore();
   };
   (CAST[selected].kin || []).forEach(k => link(k, "#5aa38f", [6,5]));
   rel.spoke[selected] && Object.keys(rel.spoke[selected]).forEach(k => { if (relSeen(selected,k)) link(k, "rgba(240,230,205,.5)", [2,6]); });
