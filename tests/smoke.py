@@ -189,6 +189,9 @@ def main() -> int:
                               tg.area_at(aw.pos))
         failures += not check("阿旺可走到漁港",
                               bool(tg.path(aw.pos, "漁港")))
+        failures += not check("阿旺回港要一段航程",
+                              len(tg.path(aw.pos, "漁港")) >= 24,
+                              str(len(tg.path(aw.pos, "漁港"))))
         failures += not check("阿海阿旺互為 kin",
                               "a_wang" in aq.kin and "a_qian" in aw.kin)
         rite_ids = {x.id for a in tw.agents.values() for x in a.arts}
@@ -344,16 +347,20 @@ def main() -> int:
         held_w, held_g = _storm_case(True, True)
         failures += not check("雙成 → held", held_w.outcome == "held", held_w.outcome)
         failures += not check("雙成不淹漁港", not held_g.is_flooded(held_g.areas["漁港"].center()))
+        offshore_cell = next(
+            p for p in held_g.cells_in_areas(["外海漁船"])
+        )
         failures += not check("雙成外海甲板仍淹",
-                              held_g.is_flooded(held_g.areas["外海漁船"].center()))
+                              held_g.is_flooded(offshore_cell))
         failures += not check("雙成漁港的人還活著", held_w.agents["a_qian"].alive)
         failures += not check("雙成上岸的阿旺還活著", held_w.agents["a_wang"].alive)
 
         stuck_w, stuck_g = _storm_case(True, True, park_low=False)
         failures += not check("雙成但阿旺仍在船上 → 被捲走",
                               not stuck_w.agents["a_wang"].alive)
+        stuck_cell = next(p for p in stuck_g.cells_in_areas(["外海漁船"]))
         failures += not check("雙成外海必淹（未上岸）",
-                              stuck_g.is_flooded(stuck_g.areas["外海漁船"].center()))
+                              stuck_g.is_flooded(stuck_cell))
 
         part_w, part_g = _storm_case(True, False)
         failures += not check("只禮 → partial", part_w.outcome == "partial")
