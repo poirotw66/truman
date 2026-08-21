@@ -677,12 +677,21 @@ class Engine:
             # `not_before` 就是把儀式壓到張力真的積起來之後才辦得成。
             nb = p.get("not_before")
             if nb is not None and t < int(nb):
-                return reject(p.get("too_early") or f"還不到辦{d.name}的時候。")
+                # **一定要講「什麼時候才可以」。** t6 的教訓：張鐵雄從 t7 到 t29 試了
+                # 十次焊水門，每次都收到同一句「等潮訊確實了再說」——沒有時辰、
+                # 沒有可等待的信號。他在 t29 放棄了今天唯一的目的，而門檻 t36 是
+                # 七拍之後才開。那一場滅村，起因不是誰的選擇，是一句話沒寫清楚。
+                # 「你不能」只會讓人一直撞牆；「你要等到什麼時候」才讓人等得下去。
+                return reject(
+                    (p.get("too_early") or f"還不到辦{d.name}的時候。")
+                    + f"（{clock_str(int(nb))}前後才動得了手，現在是{clock_str(t)}。）"
+                )
             rite_name = p.get("rite", d.name)
             until = w.rite_blocked.get(rite_name, -1)
             if t <= until:
                 return reject(
-                    f"有人擋在那裡，這會兒動不了手。{rite_name}得再等等。"
+                    f"有人擋在那裡，這會兒動不了手。{rite_name}得再等等——"
+                    f"大約到{clock_str(until + 1)}才擋得開。"
                 )
             need = int(p.get("witnesses", 0))
             watching = bystanders(self.cfg.vision_radius)

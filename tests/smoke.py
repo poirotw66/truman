@@ -1851,6 +1851,47 @@ def main() -> int:
                               _nb is not None and 0 < _nb < tempest_mod.STORM_TICK - 20,
                               f"not_before={_nb}, STORM_TICK={tempest_mod.STORM_TICK}")
 
+        # ---- 「還不行」一定要附上「什麼時候才行」 ----
+        # t6 的教訓：張鐵雄從 t7 到 t29 試了十次焊水門，每次都收到同一句
+        # 「等潮訊確實了再說」——沒有時辰。他在 t29 放棄了今天唯一的目的，
+        # 而門檻 t36 是七拍之後才開。那一場滅村不是誰的選擇，是一句話沒寫清楚。
+        print("\n時間門檻的駁回")
+        from scenarios import tempest as tp  # noqa: PLC0415
+
+        tgrid2, tcfg2 = tp.build_grid(), SimConfig(combat=False)
+        blood2 = type("Sink", (), {"write": lambda self, *a: None})()
+
+        def try_weld(tick, blocked_until=None):
+            w = tp.build_world("nb", 7)
+            w.tick = tick
+            if blocked_until is not None:
+                w.rite_blocked["焊水門"] = blocked_until
+            eng = Engine(world=w, grid=tgrid2, cfg=tcfg2, llm=None, director=None,
+                         log=blood2, world_block_text="", run_dir=tmp / "nb")
+            tie = w.agents["shi_lei"]
+            tie.pos = next(iter(tgrid2.cells_in_areas(["海堤"])))
+            other = w.agents["gu_chao"]
+            other.pos = Pos(tie.pos.x + 1, tie.pos.y)   # 湊一個作證的人
+            eng._apply_intent(tie, {"kind": "use_art", "art": "焊水門",
+                                    "target_area": "", "target_agent": "",
+                                    "utterance": "", "object": "", "art_": ""})
+            return tie.last_rejection, eng._signals.rites.get("shi_lei", [])
+
+        why, rites = try_weld(10)
+        failures += not check("時候未到就辦不成", not rites and why, why[:40])
+        failures += not check("駁回一定要說「什麼時候才可以」",
+                              clock_str(36) in why, why)
+        failures += not check("也要說現在幾點（不然沒有參考點）",
+                              clock_str(10) in why, why)
+
+        why2, rites2 = try_weld(40)
+        failures += not check("過了門檻就辦得成", bool(rites2), why2[:40])
+
+        why3, rites3 = try_weld(40, blocked_until=50)
+        failures += not check("被人擋著就辦不成", not rites3 and why3, why3[:40])
+        failures += not check("被擋的駁回也要說擋到什麼時候",
+                              clock_str(51) in why3, why3)
+
         # ---- 記憶檢索 ----
         print("\n記憶檢索")
         p = engine.world.protagonist()
