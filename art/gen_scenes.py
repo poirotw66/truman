@@ -157,6 +157,14 @@ This is where the gate must be sealed before the surge. Violent weather, industr
 LOCATION: wooden pier and moorings. Ropes singing in wind, empty berths for boats still at sea,
 signal lantern swinging, white tide-line visible offshore. Rescue-the-fleet urgency.""",
         ),
+        "scene_waihai": dict(
+            aspect="3:2",
+            who="""\
+LOCATION: OPEN SEA — a lone wooden fishing boat far offshore, deck wet with spray, nets and lantern on deck.
+No pier, no harbour planks underfoot: only heaving teal water, whitecaps, and a distant dark coastline
+with a faint village silhouette. Storm cloud wall closer here than on shore; white tide-line between boat and land.
+Mood: isolation, race-home urgency. The boat is mid-voyage, not docked.""",
+        ),
     },
     "jianghu": {
         "keyart_hengshan": dict(

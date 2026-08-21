@@ -102,6 +102,16 @@ def _check_prevent(world, grid, cfg, a, goal, sig):
         return "done", f"{other.name}沒能做成他要做的事"
     if target_goal.status == "done":
         return "failed", f"{other.name}還是做成了"
+    # on_cast：對手一動手做對應儀式就算你沒攔住——不必等焊完／禮成。
+    if goal.params.get("on_cast"):
+        act = other.action or {}
+        if (
+            act.get("kind") == "cast_rite"
+            and not act.get("done")
+            and target_goal.kind == "ritual"
+            and act.get("rite") == target_goal.params.get("rite")
+        ):
+            return "failed", f"{other.name}已經動手開始{act.get('rite')}了"
     return None
 
 

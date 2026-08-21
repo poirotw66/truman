@@ -1781,6 +1781,19 @@ def main() -> int:
             failures += not check(f"對手 {target_status} → 阻止方 {expect}",
                                   mine.status == expect, f"{mine.status}／{mine.note}")
 
+        # 嵐潮：一開工（cast_rite）阿海 prevent 就失敗，不必等焊完
+        wx = tempest_mod.build_world("oncast", 7)
+        who, tgt, idx = exclusive_pairs(tempest_mod)[0]
+        mine = [g for g in wx.agents[who].goals if g.kind == "prevent"][0]
+        failures += not check("嵐潮 prevent 開 on_cast",
+                              bool(mine.params.get("on_cast")))
+        wx.agents[tgt].action = {
+            "kind": "cast_rite", "rite": "焊水門", "done": False, "ticks_left": 10,
+        }
+        goals_mod.evaluate(wx, tgrid, tcfg, goals_mod.Signals.empty(40))
+        failures += not check("對手一開工 → 阻止方失敗",
+                              mine.status == "failed", f"{mine.status}／{mine.note}")
+
         # 天花板：全員盡力也不可能全達成，否則配裝比不出好壞
         wx = tempest_mod.build_world("ceil", 7)
         for a in wx.agents.values():
@@ -1944,6 +1957,24 @@ def main() -> int:
         failures += not check("焊門要耗一段時間",
                               _dur >= 8,
                               f"duration={_dur}")
+
+        # 開工會排廣場焊花旁白；鐵雄人設寫死最晚約第 60 拍前開工
+        wg, eg, tie, hai = _seawall(40)
+        eg.director = Director(script=[])
+        eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
+        sparks = [
+            c for c in eg.director.runtime_injections
+            if c.get("tag") == "weld_sparks"
+        ]
+        failures += not check("開工會排廣場焊花旁白",
+                              len(sparks) >= 1 and "火星" in sparks[0]["text"],
+                              str(sparks[:1]))
+        failures += not check(
+            "鐵雄人設寫最晚約第 60 拍",
+            "第 60 拍" in next(
+                a["persona"] for a in tempest_mod.AGENTS if a["id"] == "shi_lei"
+            ),
+        )
 
         # ---- 「還不行」一定要附上「什麼時候才行」 ----
         # t6 的教訓：張鐵雄從 t7 到 t29 試了十次焊水門，每次都收到同一句

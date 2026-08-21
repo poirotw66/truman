@@ -735,6 +735,14 @@ class Engine:
                     f"我開始{rite}了，大約還要 {duration} 刻才能封死。這期間走不開。",
                     9,
                 )
+                # 廣場也聽得見：焊花一冒，旁人就知道海堤還在動手——來幫忙或來攔都還來得及。
+                if self.director is not None and rite == "焊水門":
+                    self.director.add_broadcast(
+                        "（廣場上有人抬頭——海堤方向還冒著焊花與火星，水門還沒封死。）",
+                        t + 1,
+                        area="廣場",
+                        tag="weld_sparks",
+                    )
                 detail = {
                     "rite": rite, "area": here, "casting": True,
                     "duration": duration,
@@ -976,6 +984,18 @@ class Engine:
                     t, when, "observation",
                     f"{rite}還在進行，勞力大約還剩 {left}（{pace}）",
                     6,
+                )
+            # 焊接中每隔幾拍提醒廣場：火星還在——來幫忙或來攔都看得見。
+            if (
+                self.director is not None
+                and rite == "焊水門"
+                and (left == total // 2 or left == 3)
+            ):
+                self.director.add_broadcast(
+                    "（海堤那頭焊花還在閃。有人喊：鐵雄還在焊閘！）",
+                    t + 1,
+                    area="廣場",
+                    tag="weld_sparks",
                 )
             return
 

@@ -41,6 +41,7 @@ SCENE_KEYS: dict[str, str] = {
     "scene_liangcang": "糧倉",
     "scene_haidi": "海堤",
     "scene_yugang": "漁港",
+    "scene_waihai": "外海漁船",
 }
 
 

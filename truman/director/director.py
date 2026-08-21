@@ -24,6 +24,20 @@ class Director:
     log: object | None = None
     runtime_injections: list[dict] = field(default_factory=list)
 
+    def add_broadcast(
+        self, text: str, tick: int, area: str | None = None, tag: str = ""
+    ) -> None:
+        """排一則區域（或全場）旁白，在指定拍進 observation。"""
+        self.runtime_injections.append(
+            {
+                "tick": tick,
+                "kind": "broadcast",
+                "area": area,
+                "text": text,
+                "tag": tag,
+            }
+        )
+
     def add_runtime(self, agent_id: str, text: str, tick: int, tag: str = "") -> None:
         """CLI / 分支時臨時注入，引擎也用它把只有某個人知道的事送到他眼前。
 

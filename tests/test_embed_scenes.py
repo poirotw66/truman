@@ -22,12 +22,13 @@ def test_scene_keys_cover_master_files() -> None:
     assert SCENE_KEYS["keyart_tempest"] == "keyart"
     assert SCENE_KEYS["scene_haidi"] == "海堤"
     assert SCENE_KEYS["scene_miao"] == "鎮廟"
+    assert SCENE_KEYS["scene_waihai"] == "外海漁船"
 
 
 def test_tempest_scene_map_embeds_expected_keys() -> None:
     scenes = scene_map("tempest")
     assert set(scenes) >= {
-        "keyart", "night", "高地", "村長宅", "鎮廟", "廣場", "鐵鋪", "漁市", "糧倉", "海堤", "漁港",
+        "keyart", "night", "高地", "村長宅", "鎮廟", "廣場", "鐵鋪", "漁市", "糧倉", "海堤", "漁港", "外海漁船",
     }
     for uri in scenes.values():
         assert uri.startswith("data:image/jpeg;base64,")

@@ -86,11 +86,7 @@ TEMPEST_REPLAY_SYM = {
 
 
 def _scenes_for(scenario_name: str) -> dict:
-    scenes = scene_map(scenario_name)
-    # 外海甲板沒有專圖，借用漁港碼頭視角。
-    if scenario_name == "tempest" and "漁港" in scenes:
-        scenes.setdefault("外海漁船", scenes["漁港"])
-    return scenes
+    return scene_map(scenario_name)
 
 
 PROFILE_COLORS = [
