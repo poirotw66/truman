@@ -418,18 +418,19 @@ const BAKED = {
 };
 const PIXEL_FALLBACK = {
   robe:"#6b6252", trim:"#3b3529", hair:"#241d16", hat:"bun", beard:"none",
-  weapon:null, brow:"flat", mouth:"small",
+  weapon:null, acc:null, brow:"flat", mouth:"small", extra:null,
 };
 const P = {};
 DATA.cast.forEach((c, i) => {
   if (BAKED[c.id]) { P[c.id] = BAKED[c.id]; return; }
-  P[c.id] = Object.assign({}, PIXEL_FALLBACK, {
+  const look = c.look || {};
+  P[c.id] = Object.assign({}, PIXEL_FALLBACK, look, {
     ch: c.ch || (c.name || "?")[0],
     name: c.name,
-    sect: c.sect || c.home || "",
-    title: c.title || c.home || "",
-    color: c.color || ["#4f9b86","#6f7a94","#c9903a","#cf8fa4","#b84a3c","#8b6bab"][i % 6],
-    goal: c.goal || "",
+    sect: look.sect || c.sect || c.home || "",
+    title: look.title || c.title || c.home || "",
+    color: look.color || c.color || ["#4f9b86","#6f7a94","#c9903a","#cf8fa4","#b84a3c","#8b6bab"][i % 6],
+    goal: look.goal || c.goal || "",
     blurb: c.blurb || "",
   });
 });

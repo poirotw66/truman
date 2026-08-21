@@ -22,7 +22,7 @@ def test_hakoniwa_and_seahaven_portraits() -> None:
 
 def test_tempest_portraits() -> None:
     m = portrait_map("tempest")
-    for aid in ("shen_xi", "shi_lei", "fang_lan", "a_qian", "qing_he", "gu_chao"):
+    for aid in ("shen_xi", "shi_lei", "fang_lan", "a_qian", "a_wang", "qing_he", "gu_chao"):
         assert aid in m, f"tempest missing {aid}"
 
 

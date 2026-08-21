@@ -10,7 +10,8 @@
      drawPortrait(g, size, prof, opts)           方形頭像（小人縮圖）
      drawBust(g, size, prof, opts)               立繪：48×64 半身像，比例 3:4
    prof 欄位：robe trim hair hat(bun|official|nun|band|none) beard(long|short|stub|none)
-              weapon(sword|blade|qin|null)
+              weapon(sword|blade|qin|hammer|null)
+              acc(gourd|jade|kasaya|beads|rope|pouch|spyglass|whistle|null)
 */
 "use strict";
 const ART = 16;
@@ -370,11 +371,22 @@ function drawFigure(g, cx, footY, T, prof, o) {
     R(11.6, 13.4, 1.1, 1.0, "#8a3a2f"); }
   else if (prof.weapon === "qin") { R(2.2, 10.2, 4.4, 1.7, "#6b4a2c"); R(2.4, 10.4, 4.0, .4, "#d9c07a");
     R(2.4, 11.2, 4.0, .3, "#d9c07a"); }
+  else if (prof.weapon === "hammer") { R(11.4, 9.6, 1.2, 3.6, "#3a342c"); R(10.6, 9.0, 2.8, 1.6, "#6a7078");
+    R(10.8, 9.2, 2.4, .6, "#9aa3ad"); }
   if (prof.acc === "gourd") { R(11.4, 11.6, 1.8, 2.0, "#c08a3e"); R(11.8, 10.9, 1.0, .9, "#c08a3e");
     R(11.9, 10.5, .8, .5, "#6b4a2c"); }
   else if (prof.acc === "jade") { R(8.9, 12.2, 1.0, 1.3, "#7fc7b8"); R(9.2, 11.6, .4, .8, "#d9c07a"); }
   else if (prof.acc === "kasaya") { R(5.6, 8.6, 1.5, 1.4, "#b5762f"); R(6.6, 9.6, 1.5, 1.4, "#b5762f");
     R(7.6, 10.6, 1.5, 1.2, "#b5762f"); }
+  else if (prof.acc === "beads") { R(3.6, 11.0, 1.0, 1.0, "#6b4a2c"); R(3.4, 11.8, 1.0, 1.0, "#8a6234");
+    R(3.8, 12.6, 1.0, 1.0, "#6b4a2c"); }
+  else if (prof.acc === "rope") { R(11.2, 8.6, 2.0, 1.4, "#8a6a3a"); R(11.4, 9.8, 1.6, 2.4, "#6b5230");
+    R(11.6, 11.8, 1.2, 1.0, "#8a6a3a"); }
+  else if (prof.acc === "pouch") { R(11.2, 11.4, 2.2, 2.2, "#5f7a4a"); R(11.4, 11.6, 1.8, 1.4, "#7a9a5a");
+    R(11.8, 11.0, .8, .8, "#3a342c"); }
+  else if (prof.acc === "spyglass") { R(11.2, 10.0, 1.2, 3.4, "#8a7038"); R(11.0, 9.6, 1.6, 1.0, "#c8a02e");
+    R(11.4, 13.0, .8, .8, "#5a4a28"); }
+  else if (prof.acc === "whistle") { R(8.6, 11.0, .6, 2.0, "#9aa3ad"); R(8.4, 10.6, 1.0, .8, "#cfd4da"); }
 
   /* ---- 傷 ---- */
   if (hurt >= 1) R(6.5, 10.0, 2.0, 1.1, "#a32c22");
@@ -474,6 +486,15 @@ function drawBust(g, size, prof, o) {
   if (prof.hat === "nun") { R(5, 52, 38, 6, "#b5762f"); R(5, 52, 38, 1, "#d09a4d");
     R(5, 57, 38, 1, "#8a5722"); }                                // 袈裟
   if (prof.acc === "jade") { R(23, 58, 3, 4, "#7fc7b8"); R(24, 55, 1, 4, "#d9c07a"); }
+  else if (prof.acc === "beads") { R(10, 50, 3, 3, "#6b4a2c"); R(9, 53, 3, 3, "#8a6234");
+    R(11, 56, 3, 3, "#6b4a2c"); }
+  else if (prof.acc === "pouch") { R(34, 54, 7, 7, "#5f7a4a"); R(35, 55, 5, 4, "#7a9a5a");
+    R(36, 52, 3, 3, "#3a342c"); }
+  else if (prof.acc === "rope") { R(34, 46, 6, 4, "#8a6a3a"); R(35, 49, 5, 8, "#6b5230"); }
+  else if (prof.acc === "spyglass") { R(34, 48, 4, 12, "#8a7038"); R(33, 46, 6, 4, "#c8a02e"); }
+  else if (prof.acc === "whistle") { R(22, 50, 3, 2, "#cfd4da"); R(23, 52, 1, 6, "#9aa3ad"); }
+  if (prof.weapon === "hammer") { R(36, 46, 4, 12, "#3a342c"); R(33, 44, 10, 5, "#6a7078");
+    R(34, 45, 8, 2, "#9aa3ad"); }
 
   /* ---- 脖子 ---- */
   R(20, 38, 8, 9, SKIN_MI); R(20, 38, 8, 3, SKIN_SH);            // 下巴投影

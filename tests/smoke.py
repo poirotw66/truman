@@ -171,8 +171,8 @@ def main() -> int:
         failures += not check("嵐潮別名 碼頭→漁港", tg.resolve_area("碼頭") == "漁港")
         failures += not check("嵐潮別名 水閘→海堤", tg.resolve_area("水閘") == "海堤")
         tw = tempest.build_world("tempest_smoke", 7)
-        failures += not check("嵐潮六人皆有目的與絕技",
-                              len(tw.agents) == 6
+        failures += not check("嵐潮七人皆有目的與絕技",
+                              len(tw.agents) == 7
                               and all(a.goals and a.arts for a in tw.agents.values()),
                               str({a.name: (len(a.goals), len(a.arts)) for a in tw.agents.values()}))
         failures += not check("嵐潮關閉動手", tempest.COMBAT is False)
@@ -180,9 +180,17 @@ def main() -> int:
         starts = [a.pos for a in tw.agents.values()]
         failures += not check("嵐潮起點不重疊", len(starts) == len(set(starts)))
         aq, gc = tw.agents["a_qian"], tw.agents["gu_chao"]
+        aw = tw.agents["a_wang"]
         failures += not check("阿海／阿德不在目標區原地開局",
                               tg.area_at(aq.pos) != "漁港" and tg.area_at(gc.pos) != "海堤",
                               f"海={tg.area_at(aq.pos)} 德={tg.area_at(gc.pos)}")
+        failures += not check("阿旺開局在外海漁船",
+                              tg.area_at(aw.pos) == "外海漁船",
+                              tg.area_at(aw.pos))
+        failures += not check("阿旺可走到漁港",
+                              bool(tg.path(aw.pos, "漁港")))
+        failures += not check("阿海阿旺互為 kin",
+                              "a_wang" in aq.kin and "a_qian" in aw.kin)
         rite_ids = {x.id for a in tw.agents.values() for x in a.arts}
         failures += not check("嵐潮掛上做海醮與焊水門",
                               "zhen_chao_li" in rite_ids and "feng_zha" in rite_ids)
@@ -311,8 +319,9 @@ def main() -> int:
                     if g.params.get("rite") == "焊水門":
                         g.status, g.note, g.at_tick = "done", "辦成了", ww.tick
             if park_low:
-                # 阿海站在漁港——沒焊水門時應被淹
+                # 阿海站在漁港——沒焊水門時應被淹；阿旺已上岸（否則外海必灌會捲走）
                 ww.agents["a_qian"].pos = gw.areas["漁港"].center()
+                ww.agents["a_wang"].pos = gw.areas["漁港"].center()
                 ww.agents["gu_chao"].pos = gw.areas["海堤"].center()
                 ww.agents["qing_he"].pos = gw.areas["高地"].center()
             log_s = EventLog(tmp / f"storm_{rite}_{sealed}")
@@ -334,8 +343,17 @@ def main() -> int:
 
         held_w, held_g = _storm_case(True, True)
         failures += not check("雙成 → held", held_w.outcome == "held", held_w.outcome)
-        failures += not check("雙成不淹低處", not held_g.flooded)
+        failures += not check("雙成不淹漁港", not held_g.is_flooded(held_g.areas["漁港"].center()))
+        failures += not check("雙成外海甲板仍淹",
+                              held_g.is_flooded(held_g.areas["外海漁船"].center()))
         failures += not check("雙成漁港的人還活著", held_w.agents["a_qian"].alive)
+        failures += not check("雙成上岸的阿旺還活著", held_w.agents["a_wang"].alive)
+
+        stuck_w, stuck_g = _storm_case(True, True, park_low=False)
+        failures += not check("雙成但阿旺仍在船上 → 被捲走",
+                              not stuck_w.agents["a_wang"].alive)
+        failures += not check("雙成外海必淹（未上岸）",
+                              stuck_g.is_flooded(stuck_g.areas["外海漁船"].center()))
 
         part_w, part_g = _storm_case(True, False)
         failures += not check("只禮 → partial", part_w.outcome == "partial")

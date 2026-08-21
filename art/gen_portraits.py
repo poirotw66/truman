@@ -192,8 +192,9 @@ tide, wind-tossed dark hair under a simple cloth headband, lean athletic build. 
 him 阿海.
 Deep sea-blue oilskin jacket half-open at the collar, darker teal undershirt, a coiled rope over one
 shoulder; salt spray catching the rim light.
-POSE: mid-stride as if racing back to harbour, one arm raised signaling boats offshore, the other gripping
-the rope. EXPRESSION: urgent grin, alive to danger — ships still at sea means bodies the rite cannot save.""",
+POSE: mid-stride as if racing back to harbour, one arm raised signaling the boat offshore where
+his sworn brother 阿旺 still is, the other gripping the rope. EXPRESSION: urgent grit — he will try
+every means to get his brother ashore before the sluice is sealed.""",
     ),
     "qing_he": dict(
         onom="安", who="""\
@@ -224,6 +225,16 @@ CRITICAL — HAND ANATOMY: exactly five fingers each.
 POSE: crouched on an unseen seawall edge, one hand shielding his eyes toward the SEA (reading the cloud
 wall), the other pointing INLAND over his shoulder — shouting for the blacksmith. Wind tears at the coat.
 EXPRESSION: taut alertness — he cannot weld the gate, but he can outrun the wind to fetch the man who can.""",
+    ),
+    "a_wang": dict(
+        onom="旺", who="""\
+A handsome Taiwanese fisherman of twenty-seven — sun-darkened skin, bright determined eyes, wind-tossed
+black hair, lean wiry strength from hauling nets. Everyone pairs him with 阿海 — brothers by boat, not blood.
+Salt-stained indigo oilskin jacket, darker undershirt, coiled rope and a small lantern at his belt;
+spray and distant storm light on wet wood behind him.
+POSE: mid-run across a fishing-boat deck toward harbour, one hand grabbing a rail, the other waving a
+signal toward shore. EXPRESSION: raw urgency — the sluice must not seal before he makes land; the sea
+will not wait.""",
     ),
 }
 

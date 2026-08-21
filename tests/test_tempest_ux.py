@@ -32,6 +32,14 @@ def test_hd2d_figures_draw_onto_scene_canvas() -> None:
     assert "bx.setLineDash(dash)" not in TEMPLATE
 
 
+def test_tempest_cast_look_reaches_replay_profiles() -> None:
+    """嵐潮 HD-2D 小人要吃 cast look，不能整組掉回 PIXEL_FALLBACK。"""
+    assert "c.look" in TEMPLATE
+    assert "PIXEL_FALLBACK, look" in TEMPLATE
+    assert "weapon === \"hammer\"" in (ROOT / "web" / "pixelart.js").read_text(encoding="utf-8")
+    assert "acc === \"beads\"" in (ROOT / "web" / "pixelart.js").read_text(encoding="utf-8")
+
+
 def test_outro_supports_director_epilogue() -> None:
     assert "DATA.epilogue" in TEMPLATE
     assert "戲外導演" in TEMPLATE

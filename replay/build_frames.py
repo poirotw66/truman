@@ -55,8 +55,8 @@ SCENARIO_META = {
     "tempest": {
         "title": "嵐潮鎮 · 暴潮來襲前的半日",
         "lede": (
-            "六個人被丟進同一場暴潮。對手不是刀，是海——"
-            "做海醮要人看醮，焊水門要人作證，疏散要人聽勸。"
+            "七個人被丟進同一場暴潮。對手不是刀，是海——"
+            "做海醮要人看醮，焊水門要人作證，外海還有阿旺那條船趕不趕得回來。"
             "<br>亥時一到，禮與閘成不成會真的改地圖：低處淹水、斷路、捲走還站在水裡的人。"
         ),
         "foot": (
@@ -81,7 +81,17 @@ TEMPEST_REPLAY_SYM = {
     "g": "y",  # 糧倉（避開城門 g）
     "h": "s",  # 海堤 → 石面
     "p": "y",  # 碼頭（避開院子 p）
+    "o": "y",  # 外海漁船甲板 → 木板感
 }
+
+
+def _scenes_for(scenario_name: str) -> dict:
+    scenes = scene_map(scenario_name)
+    # 外海甲板沒有專圖，借用漁港碼頭視角。
+    if scenario_name == "tempest" and "漁港" in scenes:
+        scenes.setdefault("外海漁船", scenes["漁港"])
+    return scenes
+
 
 PROFILE_COLORS = [
     "#4f9b86", "#6f7a94", "#c9903a", "#cf8fa4", "#b84a3c", "#8b6bab",
@@ -222,8 +232,27 @@ def _load_cp(run: str, t: int):
     return {aid: Pos.of(a["pos"]) for aid, a in d["agents"].items()}
 
 
+def _load_cast_looks(scenario_name: str) -> dict[str, dict]:
+    """讀 cast/<scenario>.default.json 的 look（像素小人外貌）。沒有就空。"""
+    path = ROOT / "cast" / f"{scenario_name}.default.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    out: dict[str, dict] = {}
+    for agent in data.get("agents") or []:
+        aid = agent.get("id")
+        look = agent.get("look") or agent.get("art")
+        if aid and isinstance(look, dict):
+            out[str(aid)] = look
+    return out
+
+
 def _cast_profiles(scen) -> list[dict]:
     """回放用的人物卡：缺 skill／kin 的劇本給預設，並帶上開場文案欄位。"""
+    looks = _load_cast_looks(getattr(scen, "NAME", "") or "")
     cast = []
     for i, spec in enumerate(scen.AGENTS):
         goals = spec.get("goals") or []
@@ -238,7 +267,11 @@ def _cast_profiles(scen) -> list[dict]:
         if not blurb and persona:
             blurb = persona.splitlines()[0].strip()
         role = spec.get("role", "")
-        title = spec.get("home_area", "") if role in ("villager", "actor", "") else role
+        look = looks.get(spec["id"], {})
+        title = (
+            look.get("title")
+            or (spec.get("home_area", "") if role in ("villager", "actor", "") else role)
+        )
         cast.append({
             "id": spec["id"],
             "name": spec["name"],
@@ -252,11 +285,13 @@ def _cast_profiles(scen) -> list[dict]:
                 if d is not None
             ],
             "ch": spec["name"][0],
-            "sect": spec.get("home_area", ""),
+            "sect": look.get("sect") or spec.get("home_area", ""),
             "title": title,
-            "color": PROFILE_COLORS[i % len(PROFILE_COLORS)],
-            "goal": goal_text,
+            "color": look.get("color") or PROFILE_COLORS[i % len(PROFILE_COLORS)],
+            "goal": look.get("goal") or goal_text,
             "blurb": blurb,
+            # 地圖 HD-2D 小人外貌（沒有就讓前端 PIXEL_FALLBACK 接手）
+            "look": look,
         })
     return cast
 
@@ -621,7 +656,7 @@ def build_replay(
             "goals_total": len(goal_log),
         },
         "portraits": portrait_map(scenario_name),
-        "scenes": scene_map(scenario_name),
+        "scenes": _scenes_for(scenario_name),
         "art_icons": icon_map(scenario_name),
         "event_icons": event_icon_map(),
     }
