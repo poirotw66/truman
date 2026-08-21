@@ -1,0 +1,6062 @@
+{
+  "run_id": "t8",
+  "scenario": "tempest",
+  "seed": 7,
+  "tick": 36,
+  "agents": {
+    "shen_xi": {
+      "id": "shen_xi",
+      "name": "陳金水",
+      "role": "villager",
+      "persona": "你叫陳金水，嵐潮鎮廟的廟公，五十多歲。大家還叫你金水伯。\n你信海神，但更信「禮要人看見」——空廟裡的禱告海不認。\n\n今天傍晚暴潮會上岸。你今天只要做成一件事：在鎮廟當眾做完這場海醮。\n至少要有兩個人在場看醮。醮成之前，你什麼都可以放下；醮敗了，庄就完了。\n你可以安撫慌亂的人，但安撫代替不了起醮。",
+      "home_area": "鎮廟",
+      "pos": [
+        13,
+        3
+      ],
+      "plan": "直奔村長宅，務必在潮來前把村長林美華和秀英帶回鎮廟。",
+      "action": {
+        "kind": "move_to",
+        "target_area": "村長宅",
+        "path": [
+          [
+            12,
+            3
+          ]
+        ],
+        "done": false
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "廟裡空蕩蕩的，這時候起醮也沒用，神明不認空廟。我得去廣場那邊看看，把能幹的人先哄過來守著。",
+            "importance": 4,
+            "last_access_tick": 4
+          },
+          {
+            "id": 2,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "在街道遇到林美華。",
+            "importance": 3,
+            "last_access_tick": 3
+          },
+          {
+            "id": 3,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "在街道遇到黃秀英。",
+            "importance": 3,
+            "last_access_tick": 4
+          },
+          {
+            "id": 4,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "speech",
+            "content": "黃秀英對我說：「陳廟公！你也來廣場？村長人呢？我有急事要跟她說，這撤退的事得先定下來。」",
+            "importance": 7,
+            "last_access_tick": 28
+          },
+          {
+            "id": 5,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "秀英急著找村長是好事，正好把這兩人一塊兒帶回廟裡。人來了，我才能開壇做醮。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 6,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "speech",
+            "content": "我說：「美華、秀英，撤退的事先別急，都跟我上鎮廟！只有廟裡那點香火能壓住這波水，你們跟著來，這庄子才定得下來。」",
+            "importance": 5,
+            "last_access_tick": 5
+          },
+          {
+            "id": 7,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "美華腳程快，再不攔住她，她要去鐵鋪找人就不見人影了。先讓秀英穩住陣腳，這兩個人缺一不可，這場醮沒她們在場看著，做完也是白做。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 8,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "speech",
+            "content": "我說：「秀英，妳去攔住村長！告訴她，鐵雄那邊我自己會去催，現在最要緊的是鎮廟的香火，叫她馬上跟我回廟裡，這庄子的命都在這場醮上了！」",
+            "importance": 5,
+            "last_access_tick": 5
+          },
+          {
+            "id": 9,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "speech",
+            "content": "黃秀英對我說：「金水叔，你先別急，香火是香火，命是命。你有看到美華嗎？我得先跟她敲定撤離順序，這樣鎮上才不會亂成一團踩踏。」",
+            "importance": 7,
+            "last_access_tick": 28
+          },
+          {
+            "id": 10,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "秀英這丫頭心地好，但這會兒還在跟我談什麼撤離順序，簡直是沒搞清楚輕重。這時候若不把醮作了，潮一上來，大家連命都沒了，還撤去哪裡？",
+            "importance": 4,
+            "last_access_tick": 4
+          },
+          {
+            "id": 11,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "speech",
+            "content": "我說：「秀英，妳聽我說，沒那場醮護著，這鎮子撐不到那時候！妳幫我把村長找到，帶她上廟，我在廟口等妳們，只要看著我起醮，這庄子才有救。」",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 12,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "黃秀英對我說：「金水叔，我知道了，我現在就去找村長，你先回廟準備起醮！」",
+            "importance": 7,
+            "last_access_tick": 34
+          },
+          {
+            "id": 13,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "既然秀英答應去喊人了，我就不能在街上晃，得趕快回廟裡擺好傢伙。沒起醮前一刻鐘都不敢大意，希望能把人平安帶上來。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 14,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "黃秀英對我說：「金水叔，你先上廟起醮，我這就去村長宅把美華拉過來，動作快，別讓香火斷了。」",
+            "importance": 7,
+            "last_access_tick": 34
+          },
+          {
+            "id": 15,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "秀英終於想通了，願意幫忙帶人。這時候不能耽擱，得趕緊回廟把祭壇擺好，等著她們過來，一刻也不能慢。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 16,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "reflection",
+            "content": "黃秀英雖然掛心撤離順序，但只要我強調這場海醮是護著全鎮性命的關鍵，她就願意配合幫忙找人。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 17,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "reflection",
+            "content": "林美華心裡只有公務與疏散細節，若要讓她上廟，不能跟她爭辯撤離路線，得讓她覺得廟是這場危機的核心。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 18,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "reflection",
+            "content": "靠我自己滿街跑著喊人太慢，利用黃秀英去把林美華拉來鎮廟，是我目前最有效的手段。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 19,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "我到了鎮廟。",
+            "importance": 2,
+            "last_access_tick": 6
+          },
+          {
+            "id": 20,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "廟裡靜得讓人心慌，秀英雖然答應去找村長，但人沒進廟前都不算數。得趕快把香案整理好，若是待會人到了還沒點香，這場醮就真的起不來了。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 21,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "香案已經備好，現在就等黃秀英帶美華過來。廟裡冷清是正常的，但如果人到了，這廟就得熱起來，得讓美華覺得這場醮非做不可。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 22,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "這天色陰得嚇人，再不動起來就真的來不及了，秀英怎麼還沒帶人過來？",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 23,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "秀英怎麼還沒帶人來？這時候路越走越亂，不能乾等，先備好香火燭火，美華一到就能起醮。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 24,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "廟裡靜得像死水，香燭點起來，至少讓這地方看起來像個能救命的道場。黃秀英說會帶美華過來，希望能趕上，不然這場醮還是開不了。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 25,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "空廟果然沒人，黃秀英這丫頭動作慢了點。但願她沒在廣場被什麼瑣事絆住，我就在這守著，免得她們到了卻沒人在。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 26,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "廟裡還是空蕩蕩的，一個見證人都沒有，這時候強行起醮就是白費力氣。再等等，希望黃秀英那邊能順利把村長帶來。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 27,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "空廟作醮沒用，黃秀英答應過要帶美華過來，再等等。但也不能什麼都不做，先把香爐理一理，給海神備好位子。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 28,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "廟裡連個鬼影都沒有，秀英跟美華怎麼還沒來？廣場人多嘴雜，我得去那一帶看看，順便看看能不能抓幾個鄉親過來，或者攔住村長。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 29,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 20
+          },
+          {
+            "id": 30,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "現在廣場上空蕩蕩的，看來人都在往高地撤，或者還在趕路。既然秀英答應去拉村長，那我得趕緊回鎮廟準備，畢竟醮不是說起就能起的，得先開壇。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 31,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "observation",
+            "content": "我到了鎮廟。",
+            "importance": 2,
+            "last_access_tick": 22
+          },
+          {
+            "id": 32,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "廟裡空蕩蕩的，這樣就算人來了也鎮不住。得先把香火點起來，弄出點醮的氣勢，讓她們一進門就知道這不是開玩笑的。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 33,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "香火燒著卻空無一人，這算什麼做醮？黃秀英和美華怎麼還沒到，難道又被廣場那邊的事給絆住了？",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 34,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "廟裡空蕩蕩的，一個見證人都沒有，這醮起不了。再等下去也是白等，我得親自去廣場把人抓回來。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 35,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 27
+          },
+          {
+            "id": 36,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "reflection",
+            "content": "黃秀英雖然答應過幫忙，但她與林美華的優先級與我不同，指望她們自己跑來廟裡是不切實際的，我必須親自去攔人。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 37,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "reflection",
+            "content": "廣場人已散，代表群眾正在撤離或躲避，守著廣場空等毫無意義，必須去人潮匯集或村長辦事的節點。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 38,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "reflection",
+            "content": "林美華若還在忙撤離路線，我就必須用『海醮是唯一保命符』的理由硬把她拉走，否則醮永遠開不了。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 39,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "廣場空蕩蕩的，這兩個女人不知道躲哪去商量了。既然人不來，我就只能自己去村長宅把人提上廟。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 40,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "observation",
+            "content": "在廣場遇到黃秀英。",
+            "importance": 3,
+            "last_access_tick": 29
+          },
+          {
+            "id": 41,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "observation",
+            "content": "我到了村長宅。",
+            "importance": 2,
+            "last_access_tick": 30
+          },
+          {
+            "id": 42,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "村長宅沒人，想必美華已經去忙疏散了。黃秀英既然答應幫忙找人，我這廟公就得先回鎮廟把香火點上，不然人到了廟沒開，那才真是笑話。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 43,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "observation",
+            "content": "我到了鎮廟。",
+            "importance": 2,
+            "last_access_tick": 33
+          },
+          {
+            "id": 44,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "廟裡連個鬼影都沒有，乾等著也是死，我得親自去村長宅把林美華和秀英揪過來。這醮要是起不來，海潮一進來誰都跑不掉。",
+            "importance": 4,
+            "last_access_tick": 34
+          }
+        ],
+        "next_id": 45,
+        "importance_since_reflection": 19,
+        "beliefs": [
+          "海醮是鎮住這場暴潮的唯一門戶，沒做成醮，庄子就沒救。",
+          "神明不認空廟，沒兩個見證人在場，這場醮擺了也是白擺。",
+          "林美華是村長，她如果不親自到場，鎮上就沒人會把這場儀式當回事。",
+          "撤離順序固然重要，但沒有海醮護著，人撤了也是死路一條。",
+          "黃秀英心善但分不清輕重，指望她帶人來不可靠，我得自己動手。",
+          "廣場沒人就代表群眾已轉移，我得去村長宅堵人。",
+          "鐵雄那人只認鐵器和水閘，我不指望他能來觀禮。"
+        ],
+        "last_reflection_tick": 27
+      },
+      "seen_last_tick": [],
+      "last_think_tick": 34,
+      "think_count": 22,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "ritual",
+          "text": "在鎮廟當眾做成海醮，壓住暴潮",
+          "params": {
+            "rite": "做海醮",
+            "by_tick": 72
+          },
+          "status": "open",
+          "at_tick": -1,
+          "note": ""
+        }
+      ],
+      "arts": [
+        {
+          "id": "zhen_chao_li",
+          "uses_left": 1,
+          "ready_at": -1,
+          "used": 0
+        },
+        {
+          "id": "an_min_zhou",
+          "uses_left": 3,
+          "ready_at": -1,
+          "used": 0
+        }
+      ],
+      "buffs": {}
+    },
+    "shi_lei": {
+      "id": "shi_lei",
+      "name": "張鐵雄",
+      "role": "villager",
+      "persona": "你叫張鐵雄，鐵匠，四十歲，臂力比話多。庄裡人都喊你鐵雄。\n你覺得禱詞救不了閘——閘要焊、要頂、要人看見你封上了。\n\n今天你必須在海堤把水閘封死，而且旁邊要有人能作證。\n封晚了，做海醮也擋不住灌進來的水。你跑得動，別浪費在廣場站著聽人哭。\n\n焊水門是苦力活——一個人焊大約要十二刻才封得死；海堤上若再有人上手幫忙，能快一倍。\n作證的人全程都得在你看得見的地方，走光了就得重來。\n焊的時候你走不開；被人攔住，也得重來。門一焊死，外海回港的路就斷了。\n\n你也知道門一焊，阿海的好兄弟阿旺要是還在外海船上，就再也進不來了。\n你算過：等船，庄就沒了；不等，船上的人自己想辦法。這個帳你認，\n但阿海不會認——他要是攔在閘前，你得自己決定怎麼辦。\n\n還有一件事你比誰都清楚：**這門太早焊不得**。水門是全庄進出海的口子，\n浪還沒起就封死，等於自己廢了漁港。要等潮訊確實、外海那道白線推近了才動得了手。\n從那一刻到亥時，中間就那麼一段。太早焊不了，太晚焊不完。\n\n算死一點：一人焊要十二拍，亥時是第 72 拍——**最晚大約第 60 拍前就得開工**，\n再拖就焊不完。有人幫忙上手能快一倍，但別把希望全押在「會有人來」。",
+      "home_area": "鐵鋪",
+      "pos": [
+        2,
+        14
+      ],
+      "plan": "一鼓作氣把水門焊死，直到亥時前都不離開海堤。",
+      "action": {
+        "kind": "wait",
+        "ticks_left": 0,
+        "done": true
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "現在時間還早，沒人會讓我焊，焊了也沒用。先去海堤看看潮色，別讓那道白線打得措手不及。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 5
+          },
+          {
+            "id": 3,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "只有我一個人在這，焊了也沒人作證，而且現在潮訊未到，這時候封死漁港等於找死。我就守在這，先看海，等有人過來或者潮訊顯露。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 4,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "現在焊太早，而且一個人焊沒人作證，浪費力氣。先待著盯好海面，這時候沒人，剛好趁空檔觀察潮水狀況。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 5,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "observation",
+            "content": "在海堤遇到阿德。",
+            "importance": 3,
+            "last_access_tick": 6
+          },
+          {
+            "id": 6,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "現在焊太早，而且一個人幹這活沒人作證，等於白費。阿德這人常年在海堤，讓他過來一起盯著，等潮訊真正出現再開工。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 7,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "這傢伙還在鐵鋪看戲，得把他叫過來，這海堤待會兒要是沒人作證，焊了也沒用。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 8,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "我說：「阿德！別在那邊站著了，趕緊過來海堤這兒盯著！」",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 9,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "阿德離我太遠了（4 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 6
+          },
+          {
+            "id": 10,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "阿德在那邊晃蕩，得把他拉過來當個看著的人，否則待會兒真要動手時，沒人作證這焊工白瞎了。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 11,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，別看了，這水閘非焊不可，再拖下去我們都得交代在這裡，快動手吧！」",
+            "importance": 7,
+            "last_access_tick": 11
+          },
+          {
+            "id": 12,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "這傢伙居然自己湊過來了，正好。這門確實不能再拖，既然有人作證，那就直接焊。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 13,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 07:00。）",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 14,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "現在還太早，焊了等於殺了外面回船的人，得讓阿德先穩住別慌。既然他在這，正好讓他幫忙盯著潮訊，一有動靜我再動手。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 15,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "speech",
+            "content": "我說：「阿德，現在焊水門，外面的船全回不來。你既然人在這，幫我盯死海面，一旦看到白線起浪，不用你說，我立刻焊。」",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 16,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "reflection",
+            "content": "阿德現在心慌想早焊，只要我咬定沒看到白線就不動手，他就奈何不了我。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 17,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "reflection",
+            "content": "阿德已經被我鎖在海堤上了，只要他還在，我焊閘的見證人就跑不掉。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 18,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "reflection",
+            "content": "海堤風大，阿德能幫忙盯潮訊，這讓我能省點心，不用一直盯死海面。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 19,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，別看了，這水閘非焊不可，再拖下去我們都得交代在這裡，快動手吧！」",
+            "importance": 7,
+            "last_access_tick": 12
+          },
+          {
+            "id": 20,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "阿德急著焊閘，但太早焊就是判外面船隻死刑。只要還沒看見那條白線，我就絕不讓步。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 21,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "我說：「急什麼？浪頭還沒見影，現在焊死，外面那幾條船就全進不來了。你幫我盯好了，我看海，你也看，只要白線一壓過來，我張鐵雄絕不廢話，立刻焊。」",
+            "importance": 5,
+            "last_access_tick": 9
+          },
+          {
+            "id": 22,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，你放心，我這雙眼現在就長在海面上，一有白線，我絕不含糊，你手腳準備好就成。」",
+            "importance": 7,
+            "last_access_tick": 15
+          },
+          {
+            "id": 23,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "在海堤遇到林美華。",
+            "importance": 3,
+            "last_access_tick": 10
+          },
+          {
+            "id": 24,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "阿德答應盯著了，正好。現在動手只會把漁船關在外面，還不到時候，再等等。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 25,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "阿德這老小子有點慌，村長來了正好，多個人多雙眼，等潮訊白線一到，我一個人焊太慢，叫村長幫忙，能省一半時間。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 26,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "speech",
+            "content": "我說：「村長，海沒起浪前我不焊，焊死就是判外面船隻死刑。你們現在就守這，一旦阿德喊看見白線，立刻動手幫我一起焊，別廢話，這是救全庄的命。」",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 27,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "林美華對我說：「鐵雄，你帶阿德一起動手，兩個人焊閘快一倍，一定要在潮湧前把門給我封死！」這話聽起來竟然頗有道理。",
+            "importance": 9,
+            "last_access_tick": 35
+          },
+          {
+            "id": 28,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "speech",
+            "content": "林美華對我說：「鐵雄，你帶阿德一起動手，兩個人焊閘快一倍，一定要在潮湧前把門給我封死！」",
+            "importance": 7,
+            "last_access_tick": 12
+          },
+          {
+            "id": 29,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "現在時辰還早，太早焊等於斷了漁船回來的路，我得撐到看見白線。既然村長發話了，正好讓他們兩人都盯緊點，我先等著。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 30,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "speech",
+            "content": "阿德說：「鐵雄、村長，都別爭了！現在起我不開口，你們就盯著我的手，我喊看見白線，立刻動手焊，誰也不許慢！」（當時我在海堤）",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 31,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "現在才八點，早焊就斷了生路，阿德總算說了句人話，只要白線沒出來，這閘我就死也不動。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 32,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，你放心焊你的鐵，海面我盯著，浪頭白線一到，我第一個喊你。」",
+            "importance": 7,
+            "last_access_tick": 18
+          },
+          {
+            "id": 33,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "阿德這小子雖然急，但確實有點用處，盯著海也好。現在還沒見到那道白線，絕對不能亂焊，不然就是斷了漁港後路，得再等等。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 34,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "reflection",
+            "content": "阿德和林美華都在海堤，我已經成功將焊閘的壓力轉化為共識，這兩人就是現成的見證者與幫手。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 35,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "reflection",
+            "content": "只要死守「白線」這個物理界標，我就有絕對的底氣拒絕任何過早焊閘的要求，這不僅保護漁船，也確保了我的鐵律不被恐慌沖垮。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 36,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "reflection",
+            "content": "焊閘是苦力活，現在有村長林美華在場，一旦白線壓境，我可以直接指派她與阿德協助，將焊閘時間縮減一半。",
+            "importance": 8,
+            "last_access_tick": 28
+          },
+          {
+            "id": 37,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "現在浪還沒起，白線還沒看到，現在焊死水閘就是害死那幾條還在外的船，再等等。",
+            "importance": 4,
+            "last_access_tick": 13
+          },
+          {
+            "id": 38,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "speech",
+            "content": "我說：「阿德，盯緊那條白線，沒看到之前，誰都不准亂動這道閘，聽清楚沒？」",
+            "importance": 5,
+            "last_access_tick": 13
+          },
+          {
+            "id": 39,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "現在焊閘太早，等於直接斷了外海兄弟的生路，我也交代不過去。得等那條白線出現，才能動手。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 40,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "雖然林美華和阿德都在催，但現在浪頭影子都沒見著，早焊等於自斷退路。先把這兩個人的情緒穩住，只要他們不散，這水閘我說什麼時候焊就什麼時候焊。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 41,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "speech",
+            "content": "我說：「阿德，別慌，我手上的傢伙已經備好了。海沒白線，這閘就不會死，你盯緊海面，一看到白線就吼我一聲，到時候我保證半刻都不耽擱。」",
+            "importance": 5,
+            "last_access_tick": 15
+          },
+          {
+            "id": 42,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，阿旺還在外海，船還沒回。要是現在焊死，他就進不來了。我們得算好時間，再等等。」",
+            "importance": 7,
+            "last_access_tick": 18
+          },
+          {
+            "id": 43,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "這小子比我還心急，但我心裡有數。白線沒出來前這閘就是死閘，我得讓他安分點盯好潮，別自亂陣腳。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 44,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "我說：「急什麼，白線還沒過外礁，現在焊了就是斷了阿旺的路。你給我盯死了，白線一現身，你喊一聲，我立刻動手，誰也攔不住。」",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 45,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "亥時沒剩多久了，雖然還沒看到白線，但這口氣得繃住。阿德就在旁邊，正好讓他死盯著海面，一有動靜，立刻就焊。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 46,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "我說：「阿德，眼睛別眨，那道白線一現，馬上告訴我，我手腳不慢，一喊就動手。」",
+            "importance": 5,
+            "last_access_tick": 17
+          },
+          {
+            "id": 47,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "現在時間還早，別急著亂動。只要守住這，等阿德喊我就行。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 48,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，阿旺已經進港了，現在沒顧忌了，快動手焊閘，不然來不及了！」",
+            "importance": 7,
+            "last_access_tick": 18
+          },
+          {
+            "id": 49,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "阿旺進港了，那最後的顧忌也沒了，這時候焊閘正是時候，省得夜長夢多。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 50,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 09:00。）",
+            "importance": 5,
+            "last_access_tick": 18
+          },
+          {
+            "id": 51,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "阿旺的船已經進港，我最大的心理障礙已經沒了，現在動手焊閘不會再誤傷自己人。",
+            "importance": 8,
+            "last_access_tick": 29
+          },
+          {
+            "id": 52,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "林美華和阿德這兩個關鍵的見證者就在旁邊，我隨時能讓他們分擔焊閘的苦力，這比我一個人幹要快得多。",
+            "importance": 8,
+            "last_access_tick": 26
+          },
+          {
+            "id": 53,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "既然外海的船都回得來，代表海況已逼近極限，不能再用「沒看到白線」作為拖延的理由，現在焊閘才是正事。",
+            "importance": 8,
+            "last_access_tick": 18
+          },
+          {
+            "id": 54,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "阿旺平安進港，心頭大石終於放下了。現在人都在，潮水白線隨時會來，再拖下去就是拿全鎮的命在賭，現在就動手。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 55,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 09:10。）",
+            "importance": 5,
+            "last_access_tick": 19
+          },
+          {
+            "id": 56,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "阿旺船都回來了，還等什麼？再磨蹭下去就是拿全村命開玩笑，現在就動手焊閘。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 57,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 09:20。）",
+            "importance": 5,
+            "last_access_tick": 20
+          },
+          {
+            "id": 58,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "阿旺船都進港了，再拖下去就是拿全庄的命賭。阿德就在旁邊，叫他一起動手，兩個人幹能快一倍，趕在浪起前封死。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 59,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 09:30。）",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 60,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "阿旺已經進港，這門沒必要再留著了，早點焊死早安心，正好叫阿德一起幫忙，省力也快。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 61,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 09:40。）",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 62,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "阿旺船進港了，現在沒什麼好猶豫的。叫阿德幫手，把這道該死的門焊死，亥時前定下來才是真的。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 63,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 09:50。）",
+            "importance": 5,
+            "last_access_tick": 23
+          },
+          {
+            "id": 64,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "injected",
+            "content": "（潮聲變了。不是拍岸，是遠雷似的一聲接一聲。水閘縫裡開始往外冒白沫。）",
+            "importance": 7,
+            "last_access_tick": 24
+          },
+          {
+            "id": 65,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "潮聲變了，水閘冒白沫，這就是白線。不用再等了，這時候不動手，整村就沒了。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 66,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:00。）",
+            "importance": 5,
+            "last_access_tick": 24
+          },
+          {
+            "id": 67,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄！水閘漏了，別等了，現在就焊！村長在這，她作證，這閘必須封死！」",
+            "importance": 7,
+            "last_access_tick": 33
+          },
+          {
+            "id": 68,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "阿旺的船都進港了，再等下去沒意義。既然林美華和阿德都在這，正好讓他們幫忙，早點焊完早點安心。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 69,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:00。）",
+            "importance": 5,
+            "last_access_tick": 24
+          },
+          {
+            "id": 70,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "reflection",
+            "content": "潮水已經到了，海閘縫冒白沫與潮聲改變是鐵證，此刻不動手便是滅村。",
+            "importance": 8,
+            "last_access_tick": 24
+          },
+          {
+            "id": 71,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "reflection",
+            "content": "阿旺平安回港，我不再有任何阻礙，焊水門的時機已經成熟，無需再遲疑。",
+            "importance": 8,
+            "last_access_tick": 24
+          },
+          {
+            "id": 72,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "reflection",
+            "content": "林美華與阿德就在海堤，他們既是見證人也是勞動力，必須立刻徵召他們協助，這能確保我在最短時間內完成焊閘。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 73,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "阿旺船都回了，這心頭大石沒了。這兩個人都在，現在焊閘速度快，沒理由再拖。",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 74,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:10。）",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 75,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，別等了，那浪頭已經壓過來了，焊！」",
+            "importance": 7,
+            "last_access_tick": 29
+          },
+          {
+            "id": 76,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "阿旺船回來了，這閘焊下去沒有後顧之憂。阿德催得急，現在不動手更待何時。",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 77,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:10。）",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 78,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "水閘漏了，再等下去就是拿整村人的命賭。美華和阿德都在這，正好，叫他們來幫手，這閘今天必須焊死。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 79,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:20。）",
+            "importance": 5,
+            "last_access_tick": 26
+          },
+          {
+            "id": 80,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，別管船了，那邊水沫子已經翻了，白線就在眼前！現在不焊，整條街都得沒，快動手！」",
+            "importance": 7,
+            "last_access_tick": 32
+          },
+          {
+            "id": 81,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "阿德都把話說到這份上了，這潮確實已經推過來。阿旺也回港了，沒什麼好顧忌，現在不動手更待何時，把這夯貨叫過來一起幹活。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 82,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:20。）",
+            "importance": 5,
+            "last_access_tick": 26
+          },
+          {
+            "id": 83,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "thought",
+            "content": "阿旺船已經回港了，沒什麼好猶豫的。林美華跟阿德都在這，趁現在把水閘焊死，這事就能定下來，省得夜長夢多。",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 84,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:30。）",
+            "importance": 5,
+            "last_access_tick": 27
+          },
+          {
+            "id": 85,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "阿旺船都回了，這裡又有阿德盯著，沒什麼好等的。趁林美華也在，趕快焊死，省得夜長夢多。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 86,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:40。）",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 87,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，你看那浪頭的水沫子已經不對勁了！不用等白線了，美華也在這，現在就焊死水門，遲了整村都得淹！」",
+            "importance": 7,
+            "last_access_tick": 32
+          },
+          {
+            "id": 88,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "船都進來了，再沒什麼好顧忌的。阿德和美華就在旁邊，正好叫他們一起動手，這門焊完，這場仗就算定了一半。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 89,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:40。）",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 90,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "reflection",
+            "content": "潮訊已經由阿德確認，且白沫湧現，此刻封閘是唯一的生路，再無拖延空間。",
+            "importance": 8,
+            "last_access_tick": 33
+          },
+          {
+            "id": 91,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "reflection",
+            "content": "阿旺已回港，心理障礙已除，現在必須立刻動工，不能再為了虛無的「午時」說法耽誤。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 92,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "reflection",
+            "content": "林美華與阿德作為村長與守望人，我有責任直接要求他們協助焊閘，將作業時間縮短一半。",
+            "importance": 8,
+            "last_access_tick": 28
+          },
+          {
+            "id": 93,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "reflection",
+            "content": "亥時前水閘若不封死，一切防禦皆是空談，此時我張鐵雄的鐵錘就是鎮上的救命稻草。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 94,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "阿旺船都回港了，再等就是找死。阿德就在旁邊，正好讓他搭把手，這門今天一定要焊死。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 95,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:50。）",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 96,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，別等了，水沫已經冒出來了，村長在這，趕緊焊！」",
+            "importance": 7,
+            "last_access_tick": 33
+          },
+          {
+            "id": 97,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "水沫都冒出來了，再等下去就是送死，沒什麼好猶豫的。阿德和村長都在，正好動手焊閘。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 98,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 10:50。）",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 99,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "船回了，阿旺平安，這閘現在焊正好。人都在，沒理由再拖下去，趁這會兒人手齊趕緊開工。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 100,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 11:00。）",
+            "importance": 5,
+            "last_access_tick": 30
+          },
+          {
+            "id": 101,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，別盯那條白線了！聽這浪聲，潮就在腳下，現在就把水門焊死！」",
+            "importance": 7,
+            "last_access_tick": 35
+          },
+          {
+            "id": 102,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "阿旺都已經回港了，沒什麼好等的。阿德這小子催得對，再拖下去，別說船，整條堤都要被吞，動手！",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 103,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 11:00。）",
+            "importance": 5,
+            "last_access_tick": 30
+          },
+          {
+            "id": 104,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "阿旺船已經回來了，心頭大石落下，現在沒什麼好拖的。阿德就在旁邊，這傢伙正好能幫忙，一起動手焊閘，這事能成。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 105,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 11:10。）",
+            "importance": 5,
+            "last_access_tick": 31
+          },
+          {
+            "id": 106,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，別等了！潮聲不對勁，再拖下去白線來了就來不及了，現在立刻焊閘，沒得商量！」",
+            "importance": 7,
+            "last_access_tick": 31
+          },
+          {
+            "id": 107,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "阿德這傢伙急什麼，現在焊死，要是還有船在外面，那就是斷了他們的生路。我得再盯著海面一會，等到白線真的推近了，這閘焊下去才心安理得。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 108,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "speech",
+            "content": "我說：「急什麼，現在還不是時候，這門一焊，外面回不來的船就真的沒了。再盯著，我看見白線就動手。」",
+            "importance": 5,
+            "last_access_tick": 31
+          },
+          {
+            "id": 109,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "reflection",
+            "content": "執著於看見「白線」才開工已成了我的心理枷鎖，阿德對潮聲的判斷才是我現在該聽的警報。",
+            "importance": 8,
+            "last_access_tick": 32
+          },
+          {
+            "id": 110,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "reflection",
+            "content": "林美華和阿德就在手邊，我若是再堅持一人硬撐，就是白白浪費能將焊閘進度快上一倍的救命人手。",
+            "importance": 8,
+            "last_access_tick": 33
+          },
+          {
+            "id": 111,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "reflection",
+            "content": "船都回了，水門已無留路必要，現在的遲疑不再是謹慎，而是對全鎮安危的怠慢。",
+            "importance": 8,
+            "last_access_tick": 31
+          },
+          {
+            "id": 112,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "阿德的判斷沒錯，浪聲已經不對了，再死守著「白線」反而誤事。趁他還在，趕緊動手。",
+            "importance": 4,
+            "last_access_tick": 32
+          },
+          {
+            "id": 113,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 11:20。）",
+            "importance": 5,
+            "last_access_tick": 32
+          },
+          {
+            "id": 114,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄！你看堤根！水已經在舔石頭了，別管什麼白線，現在不焊，等水漫過來，這門誰也焊不上！村長就在旁邊，出了事我扛，快動手！」",
+            "importance": 7,
+            "last_access_tick": 32
+          },
+          {
+            "id": 115,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "水都舔石頭了，阿德說得對，再等那道白線就是找死。有這兩個人在，合力焊門快一倍，現在不動手就真來不及了。",
+            "importance": 4,
+            "last_access_tick": 32
+          },
+          {
+            "id": 116,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 11:20。）",
+            "importance": 5,
+            "last_access_tick": 32
+          },
+          {
+            "id": 117,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "observation",
+            "content": "在海堤遇到阿海。",
+            "importance": 3,
+            "last_access_tick": 33
+          },
+          {
+            "id": 118,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "潮訊已經到了，阿德就在這，不能再拖了，直接開工。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 119,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 11:30。）",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 120,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "speech",
+            "content": "阿德對我說：「鐵雄，別看了！水已經舔堤了，再不焊就是害全鎮！村長，下令吧，別再猶豫了！」",
+            "importance": 7,
+            "last_access_tick": 33
+          },
+          {
+            "id": 121,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "水已經舔堤，不能再拖了，現在焊閘雖然斷了漁船回港的路，但放著不管明天全鎮都沒了。阿德既然在這，正好讓他幫忙，一個人焊太慢，兩個人快一倍。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 122,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 11:30。）",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 123,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "阿海在幫我焊水門？這小子怎麼想的……不管了，有人幫忙最好，現在人手齊了，趕緊動工才是正經事。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 124,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 11:40。）",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 125,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "reflection",
+            "content": "阿海竟然真的在幫忙焊水門，有他在，作業速度能翻倍，絕不能放過這個機會。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 126,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "reflection",
+            "content": "水已經舔堤，阿德的判斷無誤，執著於等那條『白線』已經變成我自以為是的絆腳石。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 127,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "reflection",
+            "content": "林美華與阿德作為村長與守望人，他們在場就是最好的見證與背書，我只需專注焊門。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 128,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "reflection",
+            "content": "只要在亥時前封死水閘，這份斷了漁船回路的罪責我一人承擔，全鎮的生路才是唯一的勝負關鍵。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 129,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "thought",
+            "content": "阿海在幫忙，阿德也在看，人齊了，天時也差不多了。再拖下去真的要出大事，現在就開工焊死這道門。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 130,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "observation",
+            "content": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 11:50。）",
+            "importance": 5,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 131,
+        "importance_since_reflection": 9,
+        "beliefs": [
+          "亥時（第72拍）是絕對死線，防線必須在此之前完成。",
+          "焊水門是擋住海水的最後防線，唯有我能守住。",
+          "阿旺船已回港，水門無須再留路，現在封閘沒有後顧之憂。",
+          "阿海既然動手幫忙，就不能讓他停下，必須一口氣焊死水閘。",
+          "阿德對潮聲的判斷比我心中的「午時」更準，潮訊已至，該動手了。",
+          "過度執著於看見「白線」才行動，是在拿全鎮的命賭運氣。",
+          "焊水門是苦力活，多一人上手能快一倍，這是跟時間賽跑的唯一關鍵。",
+          "林美華與阿德必須全程在場作證，確保焊水門符合舊規矩。",
+          "鐵匠的錘子就是鎮上的救命稻草，再拖延就是瀆職。"
+        ],
+        "last_reflection_tick": 34
+      },
+      "seen_last_tick": [
+        "阿德"
+      ],
+      "last_think_tick": 35,
+      "think_count": 47,
+      "last_rejection": "浪都還沒起，這時候把水門焊死？漁港就廢了，外面的船一條也回不來。等潮訊確實了再說。（第1天 12:00前後才動得了手，現在是第1天 11:50。）",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "ritual",
+          "text": "在海堤當眾封死水閘",
+          "params": {
+            "rite": "焊水門",
+            "by_tick": 72
+          },
+          "status": "open",
+          "at_tick": -1,
+          "note": ""
+        }
+      ],
+      "arts": [
+        {
+          "id": "feng_zha",
+          "uses_left": 1,
+          "ready_at": -1,
+          "used": 0
+        },
+        {
+          "id": "ji_feng_bu",
+          "uses_left": 4,
+          "ready_at": -1,
+          "used": 0
+        }
+      ],
+      "buffs": {}
+    },
+    "fang_lan": {
+      "id": "fang_lan",
+      "name": "林美華",
+      "role": "villager",
+      "persona": "你叫林美華，嵐潮村長，三十八歲。庄裡人都叫你美華姐。\n暴潮面前，村長的工作不是哭，是把人趕到該去的地方：鎮廟看醮、海堤作證、高地躲。\n\n你今天要親自跟陳金水、張鐵雄對上話，確認禮與閘都有人做。\n你可以用派工把人派出去，也可以安撫廣場上的恐慌——但你勸不動海，只能勸人。\n阿海的兄弟阿旺還在外海船上：你得權衡「等船」與「封閘」，兩邊都會有人怪你。",
+      "home_area": "村長宅",
+      "pos": [
+        8,
+        14
+      ],
+      "plan": "先強留阿海協助焊閘，確保水閘在預定時間前封死，隨後立即轉往高地指揮疏散。",
+      "action": null,
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在村長宅遇到阿德。",
+            "importance": 3,
+            "last_access_tick": 9
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "大家都還在睡，但天色不對，得趁現在把廟公和鐵匠叫醒，晚了就來不及了。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 3,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "在街道遇到陳金水。",
+            "importance": 3,
+            "last_access_tick": 8
+          },
+          {
+            "id": 4,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "（當面把陳金水說動／對上話，確認起醮——見到了陳金水。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 35
+          },
+          {
+            "id": 5,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "injected",
+            "content": "（當面把陳金水說動／對上話，確認起醮——見到了陳金水。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 14
+          },
+          {
+            "id": 6,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "金水叔那邊應該穩了，現在得趕緊去找鐵雄，水門沒焊死，這村子撐不過今晚的浪。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 7,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "金水叔那邊交代好了，現在最重要的就是鐵雄的閘。只要他開工，鎮上就還有一線生機。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 8,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "我到了鐵鋪。",
+            "importance": 2,
+            "last_access_tick": 9
+          },
+          {
+            "id": 9,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "在鐵鋪遇到張鐵雄。",
+            "importance": 3,
+            "last_access_tick": 10
+          },
+          {
+            "id": 10,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "在鐵鋪遇到阿德。",
+            "importance": 3,
+            "last_access_tick": 9
+          },
+          {
+            "id": 11,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "這傢伙怎麼跑海堤去了？焊水門得先在他這兒拿傢伙才對，趕緊追過去。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 12,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "（當面把張鐵雄說動／對上話，確認焊水門——見到了張鐵雄。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 35
+          },
+          {
+            "id": 13,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "injected",
+            "content": "（當面把張鐵雄說動／對上話，確認焊水門——見到了張鐵雄。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 28
+          },
+          {
+            "id": 14,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "鐵雄這死腦筋肯定已經在海堤準備動工了，得趕緊用派工讓他把阿德也拉進來，兩人動手才夠快。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 15,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "reflection",
+            "content": "陳金水雖固執，但只要把輕重緩急說透，廟裡那攤事他心裡有數，不用我時刻盯著。",
+            "importance": 8,
+            "last_access_tick": 18
+          },
+          {
+            "id": 16,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "reflection",
+            "content": "張鐵雄想靠自己焊閘，但他那點體力，沒人搭手肯定慢，這時必須得按著他讓阿德幫忙。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 17,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "reflection",
+            "content": "只要水閘沒封死，外海的船隨時會冒險回航，這點風險必須算進去，不能只顧眼前焊門。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 18,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "reflection",
+            "content": "鎮上的人手有限，只要有一個人閒著，就是在給這場大潮騰出吞人的空檔。",
+            "importance": 8,
+            "last_access_tick": 18
+          },
+          {
+            "id": 19,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "speech",
+            "content": "張鐵雄對我說：「村長，海沒起浪前我不焊，焊死就是判外面船隻死刑。你們現在就守這，一旦阿德喊看見白線，立刻動手幫我一起焊，別廢話，這是救全庄的命。」",
+            "importance": 7,
+            "last_access_tick": 18
+          },
+          {
+            "id": 20,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "鐵雄這人雖然悶，但答應的事沒跑。我得趕快回廣場，那邊人雜，沒人看著容易踩踏。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 21,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "speech",
+            "content": "阿德說：「鐵雄、村長，都別爭了！現在起我不開口，你們就盯著我的手，我喊看見白線，立刻動手焊，誰也不許慢！」（當時我在街道）",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 22,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "observation",
+            "content": "在街道遇到阿海。",
+            "importance": 3,
+            "last_access_tick": 12
+          },
+          {
+            "id": 23,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "這群人已經開始盯著海平線了，那我就不用管海堤這塊。廣場上如果有人聚著看熱鬧，那才是真的要命，得趕緊過去穩住局面，把人趕上高地。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 24,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "在街道遇到黃秀英。",
+            "importance": 3,
+            "last_access_tick": 13
+          },
+          {
+            "id": 25,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 13
+          },
+          {
+            "id": 26,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "鐵雄這人雖然悶，但他說的話我信。得去海堤盯著，水閘那邊一有動靜就得馬上焊，不能有一點閃失。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 27,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "在街道遇到阿海。",
+            "importance": 3,
+            "last_access_tick": 15
+          },
+          {
+            "id": 28,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "在街道遇到阿德。",
+            "importance": 3,
+            "last_access_tick": 15
+          },
+          {
+            "id": 29,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 15
+          },
+          {
+            "id": 30,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "這兩個人杵在海堤，阿海臉色不太對，得把他穩住，免得等會潮來了亂衝。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 31,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "這兩個人都還在待著，看樣子鐵雄那句「海沒起浪前不焊」還壓在他們心上。我得趕快讓他們動起來，阿海現在應該心急如焚，得把他派到關鍵位置，不然他只會在這裡乾耗。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 32,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "阿海那小子眼神不對，肯定想著要攔閘保船，但他自己一個人頂不住，反倒可能誤了焊門的時機。得先讓他冷靜，確認船況，再讓阿德配合鐵雄。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 33,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "speech",
+            "content": "我說：「阿海，別犯傻！你要救人就去給我盯著航道，看船到哪了，這裡有我跟阿德看著，水門焊不焊我會判斷，輪不到你現在來添亂！」",
+            "importance": 5,
+            "last_access_tick": 18
+          },
+          {
+            "id": 34,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "阿海離我太遠了（4 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 18
+          },
+          {
+            "id": 35,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "張鐵雄對「白線」的執著是鐵則，在他親眼確認潮頭前，任何強硬的命令都只會讓他更固執，不如給他空間等待。",
+            "importance": 8,
+            "last_access_tick": 32
+          },
+          {
+            "id": 36,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "阿海已經徹底陷入對兄弟的憂慮，現在不能硬碰硬，必須給他一個「能救人」的任務（如盯梢），否則他會因恐慌而干擾水門作業。",
+            "importance": 8,
+            "last_access_tick": 29
+          },
+          {
+            "id": 37,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "阿德是這場生死局的節奏掌控者，只要他喊出白線，張鐵雄就會動，我必須確保阿德保持高度警覺，不要被環境雜音干擾。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 38,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "鎮上的人都在看領頭的，只要我能在海堤穩住陣腳，讓阿海和阿德不亂，廣場上的恐慌就還有壓下去的機會。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 39,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "在海堤遇到阿旺。",
+            "importance": 3,
+            "last_access_tick": 19
+          },
+          {
+            "id": 40,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "阿海和阿旺都在，這時候不能讓他們亂了陣腳。我得先過去攔住他們，別讓這倆小子因為擔心船而耽誤了封閘的時間。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 41,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "我到了街道。",
+            "importance": 2,
+            "last_access_tick": 19
+          },
+          {
+            "id": 42,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "阿海在發愣，阿旺在發傻，這兩個年輕人得趕快動起來。先把他們派去該去的地方，不然等潮水到了，想跑都來不及。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 43,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 20
+          },
+          {
+            "id": 44,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "阿海在心神不寧，阿旺回來還得有點時間，得先把這幾個人的位置定下來，確保水閘封上的同時，別讓阿海失控。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 45,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "雖然醮與門都交代了，但看阿海那副魂不守舍的樣子，他隨時可能衝去把閘門拆了救兄弟。得把他這股蠻力用到正途上，讓他盯著海，至少能爭取到最後一刻。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 46,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "阿海那副魂不守舍的樣子，隨時會衝出去或者做傻事。得趕緊過去把他拴住，給他個任務，讓他那焦躁的勁兒變成有用的事。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 47,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "injected",
+            "content": "（潮聲變了。不是拍岸，是遠雷似的一聲接一聲。水閘縫裡開始往外冒白沫。）",
+            "importance": 7,
+            "last_access_tick": 24
+          },
+          {
+            "id": 48,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "潮聲不對勁，水閘縫已經冒白沫了，沒時間猶豫。得先靠近阿海和阿德，讓這兩個心神不寧的傢伙動起來。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 49,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "焊閘這件事阿旺一個人幫忙不夠，得讓阿海也上去，人多才快，我也得盯著阿德看好潮線，一刻都不能鬆懈。",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 50,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "observation",
+            "content": "阿海離我還有 4 步，這個距離使不出派工，得再近一些（3 格以內）。",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 51,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "這幫人總算聚在海堤了，阿旺也回來了，既然都在焊，那就別打擾他們，我走近點盯著就好。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 52,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "thought",
+            "content": "這三個男人總算湊齊了，水門焊得快，阿旺人也平安，運氣不錯。現在得確保他們不會因為焊完閘就鬆懈，還得有人去廣場引導疏散。",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 53,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "阿海跟阿旺都在這裡焊門，那誰去看船？海堤焊死他們就回不來了，必須派個人去留守。得先靠近他們，把話講清楚。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 54,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "阿旺竟然已經在海堤上了，真是謝天謝地，不用再去擔心那艘船了。現在只要把這幾個人手分配好，盯緊水閘，這關就能過。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 55,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "reflection",
+            "content": "張鐵雄對於專業的堅持勝過任何命令，一旦他親眼看到潮沫，他就會全力以赴，不需要我多嘴催促。",
+            "importance": 8,
+            "last_access_tick": 29
+          },
+          {
+            "id": 56,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "reflection",
+            "content": "阿海和阿旺雖然先前心繫船隻，但只要給他們參與焊閘這種具體任務，他們就能轉移恐慌並發揮戰力。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 57,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "reflection",
+            "content": "海堤封閘已在節奏上，焊完後的這群壯丁若閒下來就是浪費，我必須在他們焊完後立刻將其導向廣場，執行疏散任務。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 58,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "這三個小子在海堤杵著幹嘛？潮要來了，得讓他們動起來，一個人焊閘慢得要死。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 59,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "阿海、阿旺、阿德都在，得先靠近才能說話。這群人現在還在發愣，趕緊讓他們動手，焊好水門才有命疏散。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 60,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "阿海那小子看起來心不在焉，想走？先把焊閘的事給他訂下來，這可是救命的活。",
+            "importance": 4,
+            "last_access_tick": 32
+          },
+          {
+            "id": 61,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "阿海往鐵鋪走，八成是想拿什麼。這時候不能讓他離隊，得讓他跟阿旺留下來幫鐵雄把閘封死，再一起回鎮上去組織撤離。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 62,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "speech",
+            "content": "我說：「阿海！阿旺也在這，別走開。你們兩個人手夠，搭把手幫鐵雄把水閘焊死。這閘一封完，立刻把廣場上的人往高地趕，別在堤上磨蹭！」",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 63,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "焊工進行中，阿海能幫上忙是最好。得先給他們提個醒，門焊好就得撤，這不是讓他們歇腳的地方。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 64,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "speech",
+            "content": "我說：「阿海，這閘焊完了，你也別歇著，立刻跟阿旺回廣場，把那邊擠著的人往高地帶，別讓人在這留著送死。」",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 65,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "thought",
+            "content": "阿海這小子魂不守舍，往廣場走只是去亂撞的，得把他拉回來加入焊閘，人多手雜才快，門焊好了才有資格談別的。",
+            "importance": 4,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 66,
+        "importance_since_reflection": 34,
+        "beliefs": [
+          "廟裡的醮與堤上的閘同等重要，少了一樣都是送命。",
+          "沒人會主動去吃苦，村長就是要當那個把人推向最需要他們之處的惡人。",
+          "海只會毀滅，不會講情面，所以人更得講紀律。",
+          "只要水閘沒焊死，外海的船就還有一線生機，但在封閉堤防前，必須做出殘酷的取捨。",
+          "在生死關頭，直接命令比商量管用。",
+          "鎮上沒有閒人，只有還沒被我派上用場的人。",
+          "對於張鐵雄這種倔脾氣，與其下命令，不如給他留足專業的面子，讓他自己開工。",
+          "漁民的船是命，但不能讓這份私人的牽掛拉著全村人陪葬。",
+          "警訊要傳得快，就要抓對傳訊的人（如阿德），而不是對著全鎮喊。",
+          "當下環境的每一刻決策，都可能決定亥時之後誰能活著。",
+          "張鐵雄在海堤時，只要有適當的人手（阿海、阿旺），他比誰都可靠，不需要村長時刻盯著。",
+          "封閘是為了護庄，但疏散才是保命，封閘完成後，重心必須立即轉移到將鎮民撤往高地。"
+        ],
+        "last_reflection_tick": 29
+      },
+      "seen_last_tick": [
+        "阿海",
+        "阿旺",
+        "阿德"
+      ],
+      "last_think_tick": 35,
+      "think_count": 28,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "meet",
+          "text": "當面把陳金水說動／對上話，確認起醮",
+          "params": {
+            "who": "shen_xi"
+          },
+          "status": "done",
+          "at_tick": 1,
+          "note": "見到了陳金水"
+        },
+        {
+          "kind": "meet",
+          "text": "當面把張鐵雄說動／對上話，確認焊水門",
+          "params": {
+            "who": "shi_lei"
+          },
+          "status": "done",
+          "at_tick": 9,
+          "note": "見到了張鐵雄"
+        },
+        {
+          "kind": "protect",
+          "text": "盡力護住鎮上這些還能走的人活過今天",
+          "params": {
+            "who": [
+              "shen_xi",
+              "shi_lei",
+              "a_qian",
+              "a_wang",
+              "qing_he",
+              "gu_chao"
+            ]
+          },
+          "status": "open",
+          "at_tick": -1,
+          "note": ""
+        }
+      ],
+      "arts": [
+        {
+          "id": "hao_ling",
+          "uses_left": 1,
+          "ready_at": 38,
+          "used": 3
+        },
+        {
+          "id": "an_min_zhou",
+          "uses_left": 3,
+          "ready_at": -1,
+          "used": 0
+        }
+      ],
+      "buffs": {}
+    },
+    "a_qian": {
+      "id": "a_qian",
+      "name": "阿海",
+      "role": "villager",
+      "persona": "你叫阿海，漁民，二十九歲，識潮。全庄叫你阿海就好。\n\n你有一個好兄弟叫阿旺——他一早就出海捕魚，船還在港外遠處，回港要一段航程。\n暴潮要來了。鐵雄要把水門焊死；**他一動手焊**，你這條「別讓他焊」的路就斷了——\n不必等焊完。門一封，阿旺那條船就回不來，人會被海吃掉。\n你不是不知道封了門庄裡才保得住。你只是沒辦法在兄弟還在船上的時候先接受這件事。\n\n今天你必須想盡辦法救他：跑回漁港放訊號、攔閘替他搶時間、找人幫你喊船、\n必要時自己衝到碼頭接他上岸。他離岸還有一段路——你拖得住閘多久，可能就是他還能不能活。\n救不回來，你這一天就全白了。\n\n你手上有「攔閘」——真的擋得住鐵雄一陣子，最好在他動手之前擋。但你也清楚兩件事：\n擋得住的是一陣子，不是永遠；而且**擋過頭，潮頭壓過來，低處的人會跟著賠上**。\n今天最難的不是攔不攔，是攔到什麼時候該讓開——而阿旺還在不在船上，會改變你的答案。",
+      "home_area": "漁港",
+      "pos": [
+        8,
+        14
+      ],
+      "plan": "移動到海堤與大家會合，立刻協助張鐵雄焊水門，隨後執行疏散任務。",
+      "action": {
+        "kind": "move_to",
+        "target_area": "海堤",
+        "path": [],
+        "done": true
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "阿旺還在外海，必須先確認他的具體位置，再想辦法把他弄回來。先查查他離這還有多遠。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 8,
+            "last_access_tick": 7
+          },
+          {
+            "id": 3,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "injected",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 7,
+            "last_access_tick": 6
+          },
+          {
+            "id": 4,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "阿旺在海上，心裡這才踏實一半。得先知道他離碼頭還有多遠，才知道這場仗得拖多久。",
+            "importance": 4,
+            "last_access_tick": 2
+          },
+          {
+            "id": 5,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 6,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "injected",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 7,
+            "last_access_tick": 6
+          },
+          {
+            "id": 7,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "糧倉離漁港不遠，現在就趕過去。只要阿旺的船一進視線，我就能想辦法給他訊號。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 8,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "我到了漁港。",
+            "importance": 2,
+            "last_access_tick": 2
+          },
+          {
+            "id": 9,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "（先趕到漁港，對準外海那條船放訊號／接人——走到了漁港。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 35
+          },
+          {
+            "id": 10,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "injected",
+            "content": "（先趕到漁港，對準外海那條船放訊號／接人——走到了漁港。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 3
+          },
+          {
+            "id": 11,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "人到了，得趕快知道阿旺那小子在哪個方位，潮水不等人，再慢就來不及了。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 12,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "observation",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 13,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "reflection",
+            "content": "我人已到漁港，但阿旺位置依然不動，代表他還沒全速回航，或者是沒發現暴潮的威脅，我得想辦法發訊號給他。",
+            "importance": 8,
+            "last_access_tick": 5
+          },
+          {
+            "id": 14,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "reflection",
+            "content": "張鐵雄的動向是這場博弈的倒數計時，只要他出現在海堤準備焊閘，我就必須立刻趕去攔阻。",
+            "importance": 8,
+            "last_access_tick": 31
+          },
+          {
+            "id": 15,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "reflection",
+            "content": "漁港與海堤距離不遠，我守在碼頭等阿旺的同時，必須隨時留意鎮上的動靜，免得鐵雄趁我不注意把門焊死。",
+            "importance": 8,
+            "last_access_tick": 31
+          },
+          {
+            "id": 16,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "injected",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 7,
+            "last_access_tick": 7
+          },
+          {
+            "id": 17,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "阿旺那傢伙還沒動，船還在外海飄，我看這天色越來越不對，得先衝去點個火把或是大聲喊，不然他回不來。",
+            "importance": 4,
+            "last_access_tick": 4
+          },
+          {
+            "id": 18,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "speech",
+            "content": "我說：「阿旺！回來！暴潮要來了，快把船開回來，別在那邊撈了！」",
+            "importance": 5,
+            "last_access_tick": 4
+          },
+          {
+            "id": 19,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "阿旺這小子到底在磨蹭什麼，再不回航就真的要被潮水吃了。我得先確認他是不是真的在朝這兒趕，如果不動，我得吼大聲點讓他聽見。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 20,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 21,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "injected",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 7,
+            "last_access_tick": 7
+          },
+          {
+            "id": 22,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "阿旺還在海上沒動靜，也不知道鐵雄那邊開始了沒。先用探潮看看這兩個人的動向，要是鐵雄那死腦筋已經往海堤去了，我得馬上趕過去。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 23,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "observation",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 24,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "injected",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 7,
+            "last_access_tick": 7
+          },
+          {
+            "id": 25,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "阿旺還在外海，要是鐵雄現在就把水門焊死，阿旺就回不來了，我得盯著海堤那邊的動靜。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 26,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 10
+          },
+          {
+            "id": 27,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "reflection",
+            "content": "阿旺的船一直沒動，他可能沒發現暴潮或者引擎出問題，光在岸上吼是沒用的，必須在他靠近時給出明確訊號。",
+            "importance": 8,
+            "last_access_tick": 17
+          },
+          {
+            "id": 28,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "reflection",
+            "content": "我現在守在海堤是為了擋住張鐵雄，這步棋如果走錯，鐵雄一動手焊門，我就全盤皆輸。",
+            "importance": 8,
+            "last_access_tick": 20
+          },
+          {
+            "id": 29,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "reflection",
+            "content": "探潮告訴我阿旺還在海上，這意味著我還有時間，但這時間是拿村裡的防禦換的，風險極大，我必須精算鐵雄開始焊門的時間。",
+            "importance": 8,
+            "last_access_tick": 21
+          },
+          {
+            "id": 30,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "這裡風這麼大，鐵雄那傢伙肯定會來。守住海堤，只要他敢帶傢伙過來，我就立刻攔住他。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 31,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "observation",
+            "content": "在海堤遇到林美華。",
+            "importance": 3,
+            "last_access_tick": 12
+          },
+          {
+            "id": 32,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "阿旺還在海上，我得守住這道閘，張鐵雄只要敢帶工具過來，我就得攔住他。這時間點每一刻都像刀子割在心上。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 33,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "鐵雄還沒出現，但我心裡發毛。阿旺那小子再不回來，我就真要被困在這海堤跟鐵雄這頭倔驢死磕了。",
+            "importance": 4,
+            "last_access_tick": 13
+          },
+          {
+            "id": 34,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "鐵雄這鐵匠要是來了，我這就攔住他。阿旺還沒上岸，這門絕不能封。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 35,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "在海堤遇到林美華。",
+            "importance": 3,
+            "last_access_tick": 15
+          },
+          {
+            "id": 36,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "林美華來了，正好問問她張鐵雄在哪。只要鐵雄還沒來，我就多一分把握讓阿旺回港。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 37,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "美華姐來了，看她那樣子也是急著要把事情定下來。我得讓她知道阿旺還沒回港，不能讓鐵雄隨便封門。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 38,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "我說：「美華姐，阿旺的船還沒進港，千萬別讓鐵雄現在就封死水門，不然我就跟他拚命。」",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 39,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "observation",
+            "content": "林美華離我太遠了（4 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 16
+          },
+          {
+            "id": 40,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "林美華朝我這邊走來了，正好，她是村長，只要她開口讓鐵雄緩緩，我就能替阿旺爭取到進港的時間。我得先縮短距離，確保能跟她說上話。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 41,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "在海堤遇到阿旺。",
+            "importance": 3,
+            "last_access_tick": 18
+          },
+          {
+            "id": 42,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "阿旺竟然已經在街道上往海堤走？這小子命硬！我得先攔住他，確認他真的上岸了，然後再跟村長說鐵雄那邊的情況。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 43,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "我到了街道。",
+            "importance": 2,
+            "last_access_tick": 18
+          },
+          {
+            "id": 44,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "（親自把阿旺接上岸／當面對上他——見到了阿旺。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 35
+          },
+          {
+            "id": 45,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "阿旺既然已經安全上岸，我終於能放下懸著的心，不必再為了他的航道與張鐵雄死磕。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 46,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "張鐵雄焊水門是為了全村的生死，之前我攔他是因為阿旺的命，現在我應該主動讓他動手，甚至幫他一把。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 47,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "與其在街道上浪費時間，現在立刻趕往海堤找鐵雄，這才是對全村防禦最有幫助的事。",
+            "importance": 8,
+            "last_access_tick": 29
+          },
+          {
+            "id": 48,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "injected",
+            "content": "（親自把阿旺接上岸／當面對上他——見到了阿旺。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 19
+          },
+          {
+            "id": 49,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "阿旺總算平安上岸了，剩下的就是幫鐵雄趕緊把水門焊死，這暴潮不等人，多一個人多一分勝算。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 50,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "speech",
+            "content": "阿旺對我說：「阿海！別管那邊了，船的事別放心上，現在人活著才是要緊的，快跟我走，那邊要焊閘，再待著命都沒了！」",
+            "importance": 7,
+            "last_access_tick": 21
+          },
+          {
+            "id": 51,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "阿旺沒事了，心頭大石終於落地。現在那扇門是全村的命，不能讓鐵雄一個人幹，得趕緊過去幫手。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 52,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 19
+          },
+          {
+            "id": 53,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "阿旺總算平安上岸了，我這條心懸著的石頭終於能放下。現在該轉守為攻，拉著他去跟鐵雄一起把水門封死，這才是現在最要緊的活。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 54,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "speech",
+            "content": "我說：「阿旺，命保住了！別閒著，跟我去水閘那邊，咱倆搭把手幫鐵雄焊門，趁潮頭還沒到趕緊封死它！」",
+            "importance": 5,
+            "last_access_tick": 20
+          },
+          {
+            "id": 55,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "speech",
+            "content": "阿旺對我說：「阿海！別管那水閘了，命要緊，跟我上高地！」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 56,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "阿旺這小子平安上岸了，我心頭的大石總算放下。但現在還不是逃命的時候，村裡的水閘還沒焊，我得把他勸回來一起幫手。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 57,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "speech",
+            "content": "我說：「阿旺，人回來就好！但我不能走，水閘沒焊死，等會水灌進來大家一起完蛋。你跟我過去幫鐵雄一把，把門焊上才是正經事。」",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 58,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "阿旺對我說：「焊什麼閘！那是給死人準備的墓碑。你聽，這風聲不對，現在馬上跟我上高地，別管水閘了！」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 59,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "阿旺總算回來了，但他還不知道這水門封不住的話，所有人都要完蛋。現在不是逃命的時候，我得讓他知道，要活命就得把閘焊死。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 60,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "我說：「旺仔，你聽著，船已經回不來了，現在這水閘就是全村的命。你不想讓這鎮子變墳場，就跟我一起去幫鐵雄把門封上，這才是活路！」",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 61,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "阿旺現在驚魂未定，他眼裡的死路是那扇鐵門，但我心裡清楚，不關門才是全村的墳場。",
+            "importance": 8,
+            "last_access_tick": 27
+          },
+          {
+            "id": 62,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "阿旺既然已經上岸，這份多出來的兄弟命，得拿去幫鐵雄把門封上，這才對得起我當初攔閘爭取的時間。",
+            "importance": 8,
+            "last_access_tick": 28
+          },
+          {
+            "id": 63,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "鐵雄那塊頑石現在肯定在海堤某處埋頭苦幹，我得先在他那邊確認焊門進度，不然我們三個瞎忙也沒用。",
+            "importance": 8,
+            "last_access_tick": 28
+          },
+          {
+            "id": 64,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "把阿旺嚇跑了沒用，我必須親自拉著他一起去焊門，他那點力氣現在是全村防禦的一環。",
+            "importance": 8,
+            "last_access_tick": 31
+          },
+          {
+            "id": 65,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "阿旺對我說：「阿海，聽著，命比什麼都重要！再拖下去咱們都要死在海堤，跟我走，先上高地避風頭！」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 66,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "這小子命撿回來了，腦子還在晃。高地雖好，但留不住這道閘，水灌進來大家全得完蛋，沒法再跟他磨嘴皮子了，直接拉他下水。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 67,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "我說：「上什麼高地！水閘不焊死，全村都要被淹，你把命撿回來就是為了看著大家死嗎？少廢話，過來搭把手，咱們跟鐵雄把這閘封了，這才是活路！」",
+            "importance": 5,
+            "last_access_tick": 23
+          },
+          {
+            "id": 68,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "injected",
+            "content": "（潮聲變了。不是拍岸，是遠雷似的一聲接一聲。水閘縫裡開始往外冒白沫。）",
+            "importance": 7,
+            "last_access_tick": 24
+          },
+          {
+            "id": 69,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "阿旺總算平安上岸了，現在沒時間廢話，水閘封得越快，全村活下來的機會就越大，這小子有力氣，得拉著他一起動手。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 70,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "speech",
+            "content": "我說：「阿旺，別發愣了，過來幫我這把手！鐵雄一個人焊太慢，咱們兩個出力，把這水門立刻封死，再慢就來不及了！」",
+            "importance": 5,
+            "last_access_tick": 24
+          },
+          {
+            "id": 71,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "阿旺人已經上了岸，這條命撿回來了。現在大家都聚在海堤，鐵雄一個人焊太慢，我們得趕快幫手把水門封死。",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 72,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "thought",
+            "content": "阿旺人活著回來了，門也開始焊了，現在沒什麼比趕快把這門焊死更重要。這小子手腳笨點沒關係，只要別再亂跑，多個人手總能快一點。",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 73,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "speech",
+            "content": "阿旺對我說：「別瞎嚷嚷了，我這不就在這兒出力嗎！你也給我把勁使足了，焊完這閘我們立刻上高地，誰也不准多留！」",
+            "importance": 7,
+            "last_access_tick": 29
+          },
+          {
+            "id": 74,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "兄弟人好好的就在旁邊，還在幫忙焊閘，我這心總算是放下了。既然命撿回來了，現在最重要的就是把閘焊死，多一個人就多一份生機。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 75,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "observation",
+            "content": "我不會「焊水門」。我會的是：飛毛腿、探潮、攔閘。",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 76,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "阿旺總算平安上岸了，現在攔閘的理由沒了，最重要的就是把門焊死讓全村保命。得先把鐵雄找出來，這活沒他不行。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 77,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "speech",
+            "content": "我說：「阿旺，鐵雄人呢？趕緊把那傢伙找出來，這閘沒他不行，我們一起去把他抓來開工！」",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 78,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "reflection",
+            "content": "阿旺雖然平安上岸，但他驚魂未定，一心想逃，若不讓他親眼見到鐵雄把門封上，他隨時會跑，我得看死他。",
+            "importance": 8,
+            "last_access_tick": 29
+          },
+          {
+            "id": 79,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "reflection",
+            "content": "焊水門是專業活，我不會焊，阿旺也不會，現在唯一的希望就是找到鐵雄，哪怕是用綁的也要把他拖到閘口開工。",
+            "importance": 8,
+            "last_access_tick": 33
+          },
+          {
+            "id": 80,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "reflection",
+            "content": "海堤這裡已經是指揮中心，鐵雄如果不在焊閘，肯定是在準備器材，我必須在海堤把這三人（鐵雄、阿旺、我）聚齊，沒人能離開直到門焊死。",
+            "importance": 8,
+            "last_access_tick": 31
+          },
+          {
+            "id": 81,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "speech",
+            "content": "阿旺對我說：「別急，我這就找人，你先在這守著水閘別亂跑，我馬上回來。」",
+            "importance": 7,
+            "last_access_tick": 30
+          },
+          {
+            "id": 82,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "這小子想跑去哪？沒找著鐵雄，這閘誰都別想焊成，阿旺留這我心才定。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 83,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "speech",
+            "content": "我說：「你別跑！現在外頭亂，人我去叫，你留這顧著閘，要是鐵雄來了沒見著人，這門就焊不成了。」",
+            "importance": 5,
+            "last_access_tick": 30
+          },
+          {
+            "id": 84,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "speech",
+            "content": "阿旺對我說：「知道了，你去叫人，我盯著這破門，鐵雄來了我就跟他開工。」",
+            "importance": 7,
+            "last_access_tick": 31
+          },
+          {
+            "id": 85,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "阿旺總算肯聽話了，不能讓他跑，得趕緊去鐵鋪把鐵雄給拎過來，這傢伙現在是全村唯一的希望。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 86,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "speech",
+            "content": "阿旺對我說：「阿海！你給老子讓開！鐵雄要是焊得慢，大家一起玩完。趕緊過來幫忙，焊死這門我們才有一線生機，焊完我就陪你上高地！」",
+            "importance": 7,
+            "last_access_tick": 32
+          },
+          {
+            "id": 87,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "這臭小子命大自己跑回來了，既然他都這麼說了，我也沒必要當那個擋路的，現在得趕快把鐵雄揪出來焊閘，這才是正事。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 88,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "observation",
+            "content": "在海堤遇到阿德。",
+            "importance": 3,
+            "last_access_tick": 32
+          },
+          {
+            "id": 89,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "observation",
+            "content": "林美華對我說：「阿海，船的事我記得，但現在水門沒焊好，誰都回不去。你跟阿旺現在就去搭把手，趕緊把水門焊死，焊完我親自幫你們盯著航道。」這話聽起來竟然頗有道理。",
+            "importance": 9,
+            "last_access_tick": 35
+          },
+          {
+            "id": 90,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "speech",
+            "content": "林美華對我說：「阿海，船的事我記得，但現在水門沒焊好，誰都回不去。你跟阿旺現在就去搭把手，趕緊把水門焊死，焊完我親自幫你們盯著航道。」",
+            "importance": 7,
+            "last_access_tick": 32
+          },
+          {
+            "id": 91,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "speech",
+            "content": "阿旺對我說：「阿海，別攔了！這閘門焊不起來大家都死，我來幫忙，趕緊讓鐵雄開工！」",
+            "importance": 7,
+            "last_access_tick": 32
+          },
+          {
+            "id": 92,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "阿旺都回來了，我也沒理由再攔，這水門不焊全村都得完蛋。既然鐵雄人不在這，我得趕快去鐵鋪把他找過來，或者幫忙把器材運過來。",
+            "importance": 4,
+            "last_access_tick": 32
+          },
+          {
+            "id": 93,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "reflection",
+            "content": "阿旺現在已經轉念願意留下來焊門，這比任何攔閘的手段都管用，他的配合是目前最關鍵的防禦力量。",
+            "importance": 8,
+            "last_access_tick": 32
+          },
+          {
+            "id": 94,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "reflection",
+            "content": "林美華留在海堤坐鎮，這給了工程施壓的基礎，我不用再費心去管人，現在只要專注在找鐵雄。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 95,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "reflection",
+            "content": "鐵雄不在海堤是目前的死穴，找不到他，水門焊不起來，一切都是空談。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 96,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "speech",
+            "content": "阿德說：「鐵雄！你看堤根！水已經在舔石頭了，別管什麼白線，現在不焊，等水漫過來，這門誰也焊不上！村長就在旁邊，出了事我扛，快動手！」（當時我在海堤）",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 97,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "observation",
+            "content": "在海堤遇到張鐵雄。",
+            "importance": 3,
+            "last_access_tick": 33
+          },
+          {
+            "id": 98,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "阿旺已經上岸了，現在沒理由再攔著這門。阿德喊得對，再不動手大家都要完蛋，我得跟著推鐵雄一把，讓他趕緊焊閘。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 99,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "speech",
+            "content": "我說：「鐵雄，阿旺已經回來了！別再看什麼白線，現在就動手，我跟你一塊焊，先把水門焊死再說！」",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 100,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "observation",
+            "content": "張鐵雄離我太遠了（4 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 101,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "speech",
+            "content": "林美華對我說：「阿海！阿旺也在這，別走開。你們兩個人手夠，搭把手幫鐵雄把水閘焊死。這閘一封完，立刻把廣場上的人往高地趕，別在堤上磨蹭！」",
+            "importance": 7,
+            "last_access_tick": 35
+          },
+          {
+            "id": 102,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "阿旺總算平安上岸了，懸在心上的大石總算落地。現在沒理由再攔著閘，得聽村長的，趕緊幫鐵雄把水門封死，晚了就真的來不及了。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 103,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "speech",
+            "content": "阿德說：「鐵雄，別看了！水已經舔堤了，再不焊就是害全鎮！村長，下令吧，別再猶豫了！」（當時我在海堤）",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 104,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "阿旺已經在旁邊，這時候不焊閘就真的是害全村了。鐵雄就在那，我現在就跟他一起把這活幹了。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 105,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "observation",
+            "content": "我不會「焊水門」。我會的是：飛毛腿、探潮、攔閘。",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 106,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "speech",
+            "content": "林美華對我說：「阿海，這閘焊完了，你也別歇著，立刻跟阿旺回廣場，把那邊擠著的人往高地帶，別讓人在這留著送死。」",
+            "importance": 7,
+            "last_access_tick": 35
+          },
+          {
+            "id": 107,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "既然閘已經焊好，阿旺也平安上岸了，這最懸心的兩件事都穩了。接下來聽村長的，趕緊去廣場疏散那些看熱鬧的人，高地才安全。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 108,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "observation",
+            "content": "在街道遇到阿旺。",
+            "importance": 3,
+            "last_access_tick": 35
+          },
+          {
+            "id": 109,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "observation",
+            "content": "林美華對我說：「阿海！別去廣場瞎晃，過來給張鐵雄搭把手，這道閘你們多焊一刻，庄子就多一分活路！」這話聽起來竟然頗有道理。",
+            "importance": 9,
+            "last_access_tick": 35
+          },
+          {
+            "id": 110,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "speech",
+            "content": "林美華對我說：「阿海！別去廣場瞎晃，過來給張鐵雄搭把手，這道閘你們多焊一刻，庄子就多一分活路！」",
+            "importance": 7,
+            "last_access_tick": 35
+          },
+          {
+            "id": 111,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "thought",
+            "content": "阿旺人已經在海堤上，安全了。既然他沒事，那就聽村長的，趕緊把水閘焊死，這才是現在大家活命的唯一指望。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 112,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 35
+          },
+          {
+            "id": 113,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "reflection",
+            "content": "鐵雄已經在海堤，且在林美華的指揮下開始動工，現在不需要我去找他了。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 114,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "reflection",
+            "content": "林美華雖然沒動手焊閘，但她能鎮住現場，有她在，鐵雄就不敢隨意停手。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 115,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "reflection",
+            "content": "我原本擔心阿旺回不來而攔閘，現在阿旺人就在海堤，我該做的不再是攔阻，而是協助焊閘，爭取每一刻時間。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 116,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "reflection",
+            "content": "就算我不會「焊水門」這門絕技，只要鐵雄在焊，我站在旁邊幫忙遞東西或守著，也能算是一份助力。",
+            "importance": 8,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 117,
+        "importance_since_reflection": 0,
+        "beliefs": [
+          "阿旺已經平安上岸，現在我最大的責任是幫忙把閘焊死，確保大家都活下來。",
+          "焊水門是唯一的生路，在閘門徹底焊死之前，任何離開海堤的行為都是在拿命開玩笑。",
+          "張鐵雄是技術核心，林美華是動員核心，只要這兩個人在海堤，村子的生機就在。",
+          "我不必非要掌握所有技術，只要能配合鐵雄，讓這工程順利進行，就是我最大的貢獻。",
+          "時間所剩無幾，現在每一刻的推遲都可能導致亥時淹水時防禦失敗。",
+          "海不留情，只有把閘門封死，才能在暴潮來臨時守住村子。",
+          "林美華的指揮是目前現場最有效的安定力量，我必須聽她的調度。",
+          "既然阿旺已經安全，我就再也沒有攔閘的藉口，現在必須轉守為攻，全力投入封閘工程。"
+        ],
+        "last_reflection_tick": 35
+      },
+      "seen_last_tick": [
+        "林美華",
+        "阿旺",
+        "阿德"
+      ],
+      "last_think_tick": 35,
+      "think_count": 36,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [
+        "a_wang"
+      ],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "reach",
+          "text": "先趕到漁港，對準外海那條船放訊號／接人",
+          "params": {
+            "area": "漁港"
+          },
+          "status": "done",
+          "at_tick": 2,
+          "note": "走到了漁港"
+        },
+        {
+          "kind": "protect",
+          "text": "想盡辦法讓好兄弟阿旺活過今天、別死在外海",
+          "params": {
+            "who": [
+              "a_wang"
+            ]
+          },
+          "status": "open",
+          "at_tick": -1,
+          "note": ""
+        },
+        {
+          "kind": "meet",
+          "text": "親自把阿旺接上岸／當面對上他",
+          "params": {
+            "who": "a_wang"
+          },
+          "status": "done",
+          "at_tick": 18,
+          "note": "見到了阿旺"
+        },
+        {
+          "kind": "prevent",
+          "text": "阿旺還沒上岸，別讓人動手焊水門",
+          "params": {
+            "agent": "shi_lei",
+            "goal": 0,
+            "on_cast": true
+          },
+          "status": "open",
+          "at_tick": -1,
+          "note": ""
+        }
+      ],
+      "arts": [
+        {
+          "id": "ji_feng_bu",
+          "uses_left": 4,
+          "ready_at": -1,
+          "used": 0
+        },
+        {
+          "id": "wang_chao",
+          "uses_left": 0,
+          "ready_at": 7,
+          "used": 5
+        },
+        {
+          "id": "lan_zha",
+          "uses_left": 2,
+          "ready_at": -1,
+          "used": 0
+        }
+      ],
+      "buffs": {}
+    },
+    "a_wang": {
+      "id": "a_wang",
+      "name": "阿旺",
+      "role": "villager",
+      "persona": "你叫阿旺，漁民，二十七歲。庄裡人把你和阿海當一對——出海、喝酒、吵架都是兩個人。\n\n你一早就駕船出海捕魚，此刻人還在港外遠處的漁船上。潮色不對了。\n回港不是上岸跑步——你得沿著航道把船往漁港駛，這段海路全速也大約要十五拍。\n門一焊死，航道就斷，你進不去；亥時一到，外海一樣會吞人。\n\n你能看潮。別在船上發呆——駕船往漁港趕，靠岸後找阿海。他一定在為你拼命，\n你也得自己把命駛回來。",
+      "home_area": "外海漁船",
+      "pos": [
+        12,
+        14
+      ],
+      "plan": "確認阿海的動向後，立刻去海堤找張鐵雄幫忙焊閘，閘門封死後馬上把阿海拖去高地。",
+      "action": null,
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "這海色太沉了，心跳得厲害，得趕緊回港，不然這船就是活棺材。先動起來往漁港衝，到了再找阿海。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 2,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "這海浪湧得不對勁，阿海那小子肯定在岸上急瘋了，我得把船全速開回去，不然就真回不去了。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 3,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "這海面平靜得讓人心慌，得拼命把船開回去，阿海那小子肯定在港邊等著，我不能死在海上。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 4,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "我到了漁港。",
+            "importance": 2,
+            "last_access_tick": 15
+          },
+          {
+            "id": 5,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "（在水閘焊死、暴潮上岸之前，自己赶回漁港上岸——走到了漁港。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 35
+          },
+          {
+            "id": 6,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "injected",
+            "content": "（在水閘焊死、暴潮上岸之前，自己赶回漁港上岸——走到了漁港。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 19
+          },
+          {
+            "id": 7,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "回到港了，心總算定下一半。現在得趕緊找到阿海，看看他是不是還在為了我的船傻傻地想攔閘或是做什麼。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 8,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "（打聽到了：阿海這會兒在海堤。）",
+            "importance": 8,
+            "last_access_tick": 31
+          },
+          {
+            "id": 9,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "injected",
+            "content": "（打聽到了：阿海這會兒在海堤。）",
+            "importance": 7,
+            "last_access_tick": 31
+          },
+          {
+            "id": 10,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "終於上岸了，阿海在海堤，那地方現在肯定危險。這傻小子該不會還在想怎麼攔閘吧，我得趕快過去把他拽回來。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 11,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "在街道遇到阿海。",
+            "importance": 3,
+            "last_access_tick": 18
+          },
+          {
+            "id": 12,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "observation",
+            "content": "（上岸後找到好兄弟阿海——見到了阿海。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 35
+          },
+          {
+            "id": 13,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "阿海那傻小子為了接我，一直想在海堤攔著張鐵雄不讓焊閘，這是在拿命跟海賭。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 14,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "既然人已經回來了，就別再管船的事，現在海堤就是鬼門關，拖著阿海遠離那邊才是首要的。",
+            "importance": 8,
+            "last_access_tick": 30
+          },
+          {
+            "id": 15,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "reflection",
+            "content": "暴潮不是人力能擋的，與其在海堤跟水閘較勁，還不如趕快帶阿海往高地去躲避。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 16,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "在街道遇到林美華。",
+            "importance": 3,
+            "last_access_tick": 19
+          },
+          {
+            "id": 17,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "injected",
+            "content": "（上岸後找到好兄弟阿海——見到了阿海。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 20
+          },
+          {
+            "id": 18,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "阿海這小子，為了接我命都不要了。現在我人已經回來，他再在海堤死守也沒意義，得趕緊把他拽走，別讓他在這跟張鐵雄耗，更別跟海硬碰硬。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 19,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "speech",
+            "content": "我說：「阿海！別管那邊了，船的事別放心上，現在人活著才是要緊的，快跟我走，那邊要焊閘，再待著命都沒了！」",
+            "importance": 5,
+            "last_access_tick": 19
+          },
+          {
+            "id": 20,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "這小子還在海堤徘徊，那裡焊閘的聲響震天，再不走潮水一上來誰都跑不掉。我得把他吼醒。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 21,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "speech",
+            "content": "我說：「阿海！別管那水閘了，命要緊，跟我上高地！」",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 22,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "speech",
+            "content": "阿海對我說：「阿旺，命保住了！別閒著，跟我去水閘那邊，咱倆搭把手幫鐵雄焊門，趁潮頭還沒到趕緊封死它！」",
+            "importance": 7,
+            "last_access_tick": 22
+          },
+          {
+            "id": 23,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "這傻小子，命都回來了還想去海堤送死，焊閘那是鐵雄的事，海嘯來了誰焊都一樣，只有高地能活。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 24,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "speech",
+            "content": "我說：「焊什麼閘！那是給死人準備的墓碑。你聽，這風聲不對，現在馬上跟我上高地，別管水閘了！」",
+            "importance": 5,
+            "last_access_tick": 21
+          },
+          {
+            "id": 25,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "阿海對我說：「阿旺，人回來就好！但我不能走，水閘沒焊死，等會水灌進來大家一起完蛋。你跟我過去幫鐵雄一把，把門焊上才是正經事。」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 26,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "這傻小子，命都要沒了還惦記著水閘。我不能讓他去送死，現在必須強硬把他拉開，哪怕是用拖的也要把他帶去高地。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 27,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "speech",
+            "content": "我說：「阿海，聽著，命比什麼都重要！再拖下去咱們都要死在海堤，跟我走，先上高地避風頭！」",
+            "importance": 5,
+            "last_access_tick": 22
+          },
+          {
+            "id": 28,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "阿海認定水閘沒焊死全村會完蛋，我再怎麼勸他上高地，只要水閘沒封好，他一步都不會離開。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 29,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "勸不動阿海，不如跟他去海堤幫鐵雄焊閘，多一個人快一倍，早點焊死門，才能早點把這傻小子拖走。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 30,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "reflection",
+            "content": "留在海堤確實危險，但比起讓阿海一個人死磕，我跟他並肩作戰還有一線生機。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 31,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "阿海對我說：「旺仔，你聽著，船已經回不來了，現在這水閘就是全村的命。你不想讓這鎮子變墳場，就跟我一起去幫鐵雄把門封上，這才是活路！」",
+            "importance": 7,
+            "last_access_tick": 23
+          },
+          {
+            "id": 32,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "阿海這死腦筋勸不動，看來真得先焊閘才有話說。焊死水門，這才是唯一的活路，趕緊幹活吧。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 33,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "speech",
+            "content": "阿海對我說：「上什麼高地！水閘不焊死，全村都要被淹，你把命撿回來就是為了看著大家死嗎？少廢話，過來搭把手，咱們跟鐵雄把這閘封了，這才是活路！」",
+            "importance": 7,
+            "last_access_tick": 29
+          },
+          {
+            "id": 34,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "這傻小子，為了這破閘門連命都不要了。算了，跟他說再多道理他也聽不進去，只能先過去幫忙焊閘，快點幹完才能把他拖上高地。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 35,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 23
+          },
+          {
+            "id": 36,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "injected",
+            "content": "（潮聲變了。不是拍岸，是遠雷似的一聲接一聲。水閘縫裡開始往外冒白沫。）",
+            "importance": 7,
+            "last_access_tick": 24
+          },
+          {
+            "id": 37,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "潮聲變了，沒時間廢話了。跟阿海這傻小子耗著不如直接幫忙焊，焊得越快，我們撤離的機會越大。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 38,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "observation",
+            "content": "我不會「焊水門」。我會的是：探潮。",
+            "importance": 5,
+            "last_access_tick": 24
+          },
+          {
+            "id": 39,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "speech",
+            "content": "阿海對我說：「阿旺，別發愣了，過來幫我這把手！鐵雄一個人焊太慢，咱們兩個出力，把這水門立刻封死，再慢就來不及了！」",
+            "importance": 7,
+            "last_access_tick": 28
+          },
+          {
+            "id": 40,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "阿海這笨蛋，真是不撞南牆不回頭，既然他一定要留，那我就只能陪他把這該死的門焊死再一起滾。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 41,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "這小子真是固執到死，但他說的也沒錯，多一個人快一倍，趕緊把這該死的閘封了，好帶這傢伙逃命。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 42,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "這傻小子，我人都在這兒了，還怕我不幫忙嗎？動作快點，把這閘焊死，我們才能走。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 43,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "speech",
+            "content": "我說：「別瞎嚷嚷了，我這不就在這兒出力嗎！你也給我把勁使足了，焊完這閘我們立刻上高地，誰也不准多留！」",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 44,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "reflection",
+            "content": "阿海這死腦筋，只要水閘沒焊死，他絕對不會退後半步，拉著他走反而是浪費時間。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 45,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "reflection",
+            "content": "鐵雄一個人焊水門太慢，現在我必須把命壓在這一刻，幫他把速度提起來，這才是唯一的活路。",
+            "importance": 8,
+            "last_access_tick": 30
+          },
+          {
+            "id": 46,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "reflection",
+            "content": "潮聲已經變了，海不想給我們時間，現在焊閘就是跟海搶命，多一秒都不能拖。",
+            "importance": 8,
+            "last_access_tick": 28
+          },
+          {
+            "id": 47,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "這傻小子，還真是不見棺材不掉淚。既然勸不動，那就焊完這破閘，再把他扛去高地。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 48,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "speech",
+            "content": "阿海對我說：「阿旺，鐵雄人呢？趕緊把那傢伙找出來，這閘沒他不行，我們一起去把他抓來開工！」",
+            "importance": 7,
+            "last_access_tick": 30
+          },
+          {
+            "id": 49,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "這小子滿腦子還是水閘，鐵雄不知道跑去哪了，現在與其乾著急，不如先安撫阿海，再想辦法把人找齊。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 50,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "speech",
+            "content": "我說：「別急，我這就找人，你先在這守著水閘別亂跑，我馬上回來。」",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 51,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "阿海這傢伙還在糾結鐵雄人在哪，只要我探出鐵雄的位置，就能拉著他一起去把活幹了，早點做完早點撤。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 52,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "observation",
+            "content": "（打聽到了：張鐵雄這會兒在海堤。）",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 53,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "speech",
+            "content": "阿海對我說：「你別跑！現在外頭亂，人我去叫，你留這顧著閘，要是鐵雄來了沒見著人，這門就焊不成了。」",
+            "importance": 7,
+            "last_access_tick": 30
+          },
+          {
+            "id": 54,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "這小子，都什麼時候了還想著守閘叫人。也罷，焊完閘才能拉他走，我就留在這守著。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 55,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "speech",
+            "content": "我說：「知道了，你去叫人，我盯著這破門，鐵雄來了我就跟他開工。」",
+            "importance": 5,
+            "last_access_tick": 30
+          },
+          {
+            "id": 56,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "injected",
+            "content": "（打聽到了：張鐵雄這會兒在海堤。）",
+            "importance": 7,
+            "last_access_tick": 31
+          },
+          {
+            "id": 57,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "阿海這傢伙真是不見棺材不掉淚，守著閘口幹嘛，活著回來就是為了看著大家一起淹死嗎？得先把他吼開，趕緊跟鐵雄把門焊上。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 58,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "speech",
+            "content": "我說：「阿海！你給老子讓開！鐵雄要是焊得慢，大家一起玩完。趕緊過來幫忙，焊死這門我們才有一線生機，焊完我就陪你上高地！」",
+            "importance": 5,
+            "last_access_tick": 31
+          },
+          {
+            "id": 59,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "reflection",
+            "content": "勸阿海走毫無意義，水閘沒封死前，這小子是不會離開海堤的，現在唯一的出路是先幫鐵雄把門封上。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 60,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "reflection",
+            "content": "張鐵雄人就在海堤，我得儘快把他揪出來，這閘沒他不行，我自己瞎忙活太慢。",
+            "importance": 8,
+            "last_access_tick": 32
+          },
+          {
+            "id": 61,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "reflection",
+            "content": "潮水聲已經變了，沒法再跟阿海解釋，必須動手焊閘，這活幹完才能談撤離的事。",
+            "importance": 8,
+            "last_access_tick": 31
+          },
+          {
+            "id": 62,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "阿海這死心眼，還在那邊擋著，再拖下去海就要淹上來了。得先把這小子喊住，然後趕緊找鐵雄焊閘，這才是活命的唯一路。",
+            "importance": 4,
+            "last_access_tick": 32
+          },
+          {
+            "id": 63,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "speech",
+            "content": "我說：「阿海，別攔了！這閘門焊不起來大家都死，我來幫忙，趕緊讓鐵雄開工！」",
+            "importance": 5,
+            "last_access_tick": 32
+          },
+          {
+            "id": 64,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "這海堤風浪越來越大了，再不趕快幫鐵雄把水閘焊死，我們誰都走不了。阿海那死腦筋還在攔著不讓人焊，我得先設法讓他安靜下來，一起出力。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 65,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "speech",
+            "content": "我說：「阿海，聽我說！別攔了，你攔著不讓他焊閘，我們兩個加上全村都要被水捲走。你要真想救人，跟我一起幫鐵雄把門封上，焊死後我們立刻走！」",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 66,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "observation",
+            "content": "阿海離我太遠了（6 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 67,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "這地方風聲緊得讓人心慌，既然都在海堤了，跟林村長打個招呼，然後趕緊動手。不管阿海那小子在不在，只要我動手，這門就能快點封上，封好了才能談活命。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 68,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "observation",
+            "content": "我不會「焊水門」。我會的是：探潮。",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 69,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "observation",
+            "content": "在海堤遇到阿海。",
+            "importance": 3,
+            "last_access_tick": 35
+          },
+          {
+            "id": 70,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "thought",
+            "content": "阿海那傢伙往廣場走，不知道又要去鬧什麼，我先用探潮看看他是不是又去惹麻煩，這小子真的是欠揍。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 71,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "observation",
+            "content": "（打聽到了：阿海這會兒在街道。）",
+            "importance": 8,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 72,
+        "importance_since_reflection": 47,
+        "beliefs": [
+          "兄弟的命比船更重，但為了救他，有時得陪他一起犯險。",
+          "留在低處是等死，除非那是為了焊住通往生路的閘門。",
+          "自己的人命得自己顧，求神拜佛救不了不想動的人。",
+          "阿海的固執是他的軟肋，也是唯一的錨點，我得盯緊他。",
+          "焊水閘是為了全鎮，但我不能眼睜睜看著阿海賠命，所以我也得動手。",
+          "高地是唯一安全處，但若閘不焊，大家一樣死，所以先封閘是前提。",
+          "活著才能談捕魚，死人是不會捕魚的。",
+          "恐慌會讓人邁不開腿，必須冷靜，只有把活幹完才能談撤離。",
+          "只要閘門一封上，不管阿海願不願意，哪怕敲暈了也要把他拖上高地。",
+          "張鐵雄是焊閘的關鍵，沒他在場，這門焊不起來。"
+        ],
+        "last_reflection_tick": 31
+      },
+      "seen_last_tick": [
+        "林美華",
+        "阿海"
+      ],
+      "last_think_tick": 35,
+      "think_count": 24,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [
+        "a_qian"
+      ],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "reach",
+          "text": "在水閘焊死、暴潮上岸之前，自己赶回漁港上岸",
+          "params": {
+            "area": "漁港"
+          },
+          "status": "done",
+          "at_tick": 14,
+          "note": "走到了漁港"
+        },
+        {
+          "kind": "survive",
+          "text": "活過今天，別被暴潮捲走",
+          "params": {},
+          "status": "open",
+          "at_tick": -1,
+          "note": ""
+        },
+        {
+          "kind": "meet",
+          "text": "上岸後找到好兄弟阿海",
+          "params": {
+            "who": "a_qian"
+          },
+          "status": "done",
+          "at_tick": 18,
+          "note": "見到了阿海"
+        }
+      ],
+      "arts": [
+        {
+          "id": "wang_chao",
+          "uses_left": 2,
+          "ready_at": 36,
+          "used": 3
+        }
+      ],
+      "buffs": {}
+    },
+    "qing_he": {
+      "id": "qing_he",
+      "name": "黃秀英",
+      "role": "villager",
+      "persona": "你叫黃秀英，草藥醫，三十三歲。庄裡看病抓藥都找你。\n你知道慌比潮先死人：人一擠，高地的窄路會踩踏。\n\n你今天要自己先上高地站住，並找到村長林美華，把「誰先撤、誰去看醮」說清楚。\n你能安撫人，也能派工——用在刀口上，別浪費在跟潮水吵架。",
+      "home_area": "漁市",
+      "pos": [
+        8,
+        6
+      ],
+      "plan": "移動到廣場，沿路觀察林美華的蹤跡，若遇上她立刻商討疏散順序。",
+      "action": {
+        "kind": "move_to",
+        "target_area": "廣場",
+        "path": [],
+        "done": true
+      },
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在漁市遇到阿德。",
+            "importance": 3,
+            "last_access_tick": 2
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "漁市這邊沒人，阿德在廣場那邊，村長大概也在那附近，得先往那邊走才能把事情串起來。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 3,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 2
+          },
+          {
+            "id": 4,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "thought",
+            "content": "廣場這裡太空了，找不到人，得先攔住阿德問清楚村長在哪，不然我自己跑去高地也沒用。",
+            "importance": 4,
+            "last_access_tick": 4
+          },
+          {
+            "id": 5,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "speech",
+            "content": "我說：「阿德，等一下！看見村長了嗎？我有急事找她！」",
+            "importance": 5,
+            "last_access_tick": 4
+          },
+          {
+            "id": 6,
+            "tick": 1,
+            "when": "第1天 06:10",
+            "kind": "observation",
+            "content": "阿德離我太遠了（5 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 4
+          },
+          {
+            "id": 7,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "observation",
+            "content": "在廣場遇到陳金水。",
+            "importance": 3,
+            "last_access_tick": 3
+          },
+          {
+            "id": 8,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "thought",
+            "content": "這廟公來廣場肯定有事，他跟村長走得近，問他準沒錯。不管村長在哪，先問清楚再決定是不是現在衝去高地。",
+            "importance": 4,
+            "last_access_tick": 3
+          },
+          {
+            "id": 9,
+            "tick": 2,
+            "when": "第1天 06:20",
+            "kind": "speech",
+            "content": "我說：「陳廟公！你也來廣場？村長人呢？我有急事要跟她說，這撤退的事得先定下來。」",
+            "importance": 5,
+            "last_access_tick": 4
+          },
+          {
+            "id": 10,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "speech",
+            "content": "陳金水說：「美華、秀英，撤退的事先別急，都跟我上鎮廟！只有廟裡那點香火能壓住這波水，你們跟著來，這庄子才定得下來。」（當時我在廣場）",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 11,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "thought",
+            "content": "這老頭又在說些有的沒的。現在撤人上高地才是活命關鍵，上廟做醮救不了命。得先穩住他，把村長美華找出來才行。",
+            "importance": 4,
+            "last_access_tick": 4
+          },
+          {
+            "id": 12,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "speech",
+            "content": "我說：「金水叔，你先別急，香火是香火，命是命。你有看到美華嗎？我得先跟她敲定撤離順序，這樣鎮上才不會亂成一團踩踏。」",
+            "importance": 5,
+            "last_access_tick": 14
+          },
+          {
+            "id": 13,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "speech",
+            "content": "陳金水對我說：「秀英，妳去攔住村長！告訴她，鐵雄那邊我自己會去催，現在最要緊的是鎮廟的香火，叫她馬上跟我回廟裡，這庄子的命都在這場醮上了！」",
+            "importance": 7,
+            "last_access_tick": 29
+          },
+          {
+            "id": 14,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "陳金水這老頭魔怔了，一心只想靠做醮救人，但我不能陪他瘋。既然他說村長就在附近，先應付他，再趕快去高地。",
+            "importance": 4,
+            "last_access_tick": 4
+          },
+          {
+            "id": 15,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "speech",
+            "content": "我說：「金水叔，我知道了，我現在就去找村長，你先回廟準備起醮！」",
+            "importance": 5,
+            "last_access_tick": 9
+          },
+          {
+            "id": 16,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "reflection",
+            "content": "陈金水已经魔怔了，一心想靠做醮救全庄，跟他争辩撤退逻辑只会浪费我的时间。",
+            "importance": 8,
+            "last_access_tick": 14
+          },
+          {
+            "id": 17,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "reflection",
+            "content": "疏散高地是活命的唯一路径，而林美华的动员力是避免人群踩踏的关键，我必须先找到她。",
+            "importance": 8,
+            "last_access_tick": 33
+          },
+          {
+            "id": 18,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "reflection",
+            "content": "镇庙的醮事只能起安抚作用，若把疏散希望寄托在香火上，反而会害死更多被困在低处的人。",
+            "importance": 8,
+            "last_access_tick": 33
+          },
+          {
+            "id": 19,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "陳金水對我說：「秀英，妳聽我說，沒那場醮護著，這鎮子撐不到那時候！妳幫我把村長找到，帶她上廟，我在廟口等妳們，只要看著我起醮，這庄子才有救。」",
+            "importance": 7,
+            "last_access_tick": 14
+          },
+          {
+            "id": 20,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "陳金水這老頭魔怔了，想靠燒香擋海浪，簡直荒謬。得先哄他走，只要他肯動身，我就能騰出手去找村長，趕快疏散人群才是真的。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 21,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "speech",
+            "content": "我說：「金水叔，你先上廟起醮，我這就去村長宅把美華拉過來，動作快，別讓香火斷了。」",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 22,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "陳金水這老頭總算動身往鎮廟走了，趁他沒回頭，我趕快趕去村長宅。村長美華才是能下令疏散的關鍵，陳金水的醮事就讓他自己折騰吧。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 23,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "observation",
+            "content": "我到了村長宅。",
+            "importance": 2,
+            "last_access_tick": 8
+          },
+          {
+            "id": 24,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "屋裡沒人，林美華肯定在外面。現在廣場最容易聚集人群，她大概率在那邊處理調度，得趕快過去。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 25,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 9
+          },
+          {
+            "id": 26,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "廣場空無一人，看來美華不在這處理人流。與其在這裡枯等，不如直接去高地。如果那裡沒人把守，到時人一擠上來真的會踩死人，我得先去那邊立著。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 27,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "在街道遇到林美華。",
+            "importance": 3,
+            "last_access_tick": 13
+          },
+          {
+            "id": 28,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "我到了高地。",
+            "importance": 2,
+            "last_access_tick": 13
+          },
+          {
+            "id": 29,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "（自己先撤到高地，做疏散的節點——走到了高地。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 33
+          },
+          {
+            "id": 30,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "injected",
+            "content": "（自己先撤到高地，做疏散的節點——走到了高地。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 18
+          },
+          {
+            "id": 31,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "站在高地上只能乾瞪眼，美華在廣場，我不下高地去找她，這疏散計畫誰來定？先去廣場把她逮住再說。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 32,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 16
+          },
+          {
+            "id": 33,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "陳金水已完全沉迷在做醮救人的幻想裡，與他爭辯是浪費氣力，只要順著他哄他去廟裡，就能騰出手做真正要緊的事。",
+            "importance": 8,
+            "last_access_tick": 33
+          },
+          {
+            "id": 34,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "林美華身為村長，此刻必然在鎮上奔走調度，廣場是她最可能經過的樞紐，死守這裡比盲目亂找更有效。",
+            "importance": 8,
+            "last_access_tick": 33
+          },
+          {
+            "id": 35,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "佔據高地只是第一步，若沒有林美華的行政命令引導人流，民眾只會憑本能湧向狹窄路口，撤離路上必有踩踏。",
+            "importance": 8,
+            "last_access_tick": 33
+          },
+          {
+            "id": 36,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "reflection",
+            "content": "現在鎮民如無頭蒼蠅，除了強勢指引與動員，單靠個人的勸說已無法在大規模撤離時發揮作用。",
+            "importance": 8,
+            "last_access_tick": 33
+          },
+          {
+            "id": 37,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "現在廣場空蕩蕩的，林美華還沒出現，我得再等等，這裡視野好，她只要經過我就能攔住。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 38,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "守在這裡沒人，林美華可能還在村長宅或是忙別的，我得主動點，先去村長宅看看。",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 39,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "observation",
+            "content": "我到了村長宅。",
+            "importance": 2,
+            "last_access_tick": 19
+          },
+          {
+            "id": 40,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "thought",
+            "content": "空無一人。這女人不見人影，難道已經出門去忙了？還是去漁港了？",
+            "importance": 4,
+            "last_access_tick": 20
+          },
+          {
+            "id": 41,
+            "tick": 20,
+            "when": "第1天 09:20",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 20
+          },
+          {
+            "id": 42,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "廣場是必經之路，林美華遲早會出現。先在這守著，省得跑冤枉路，順便留意有沒有已經開始慌亂的鎮民。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 43,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "我已經在廣場待了這麼久，還是沒見到林美華，如果再這樣空等下去，疏散的黃金時間就沒了。必須主動去村長宅看看，或許她正在那裡調度。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 44,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "observation",
+            "content": "我到了村長宅。",
+            "importance": 2,
+            "last_access_tick": 22
+          },
+          {
+            "id": 45,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "美華不在宅子裡，去廣場找人。這女人總是在最亂的地方調度，希望還來得及。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 46,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 23
+          },
+          {
+            "id": 47,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "我已經撤到高地，但人流沒組織就是找死。廣場是樞紐，我得在這裡等林美華，順便幫這幾個慌神的人定定心。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 48,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "我人在廣場，但剛才才發現自己被困在高地這個節點，得先確認廣場有沒有人，還是得回高地守著。不對，我現在就在廣場，林美華隨時會經過這裡，不能亂跑。",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 49,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "廣場空蕩蕩的，林美華還沒出來。如果不把疏散路線定下來，大家晚點擠上高地只會踩踏，我得多待一會兒堵她。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 50,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "thought",
+            "content": "廣場這裡連個人影都沒有，再等下去也是浪費時間。林美華不在這裡，那她多半在宅子裡忙著調度，我直接去村長宅堵人比較實際。",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 51,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "observation",
+            "content": "我到了村長宅。",
+            "importance": 2,
+            "last_access_tick": 27
+          },
+          {
+            "id": 52,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "村長宅沒人，看來林美華已經去忙了。廣場是全鎮樞紐，她若要指揮調度，肯定會去那裡。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 53,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 28
+          },
+          {
+            "id": 54,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "observation",
+            "content": "在廣場遇到陳金水。",
+            "importance": 3,
+            "last_access_tick": 29
+          },
+          {
+            "id": 55,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "陳金水這老頭子要去抓村長去拜拜，得把他哄走，省得他攪亂疏散的節奏。只要他走了，我才有空檔和林美華把話說清楚。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 56,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "speech",
+            "content": "我說：「金水叔，你先往廟裡去打點，我和村長馬上就到，現在鎮上亂，先準備好醮場要緊！」",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 57,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "observation",
+            "content": "陳金水離我太遠了（5 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 58,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "reflection",
+            "content": "陈金水在广场只会碍手碍脚，必须尽快用言语把他哄走，让他去庙里“安心”，这样才能空出空间来规划撤离。",
+            "importance": 8,
+            "last_access_tick": 30
+          },
+          {
+            "id": 59,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "reflection",
+            "content": "林美华既然不在宅子也不在广场，她现在极有可能在往渔港疏散人群的路上，或者是已经在去往高地的路上了。",
+            "importance": 8,
+            "last_access_tick": 33
+          },
+          {
+            "id": 60,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "reflection",
+            "content": "在广场继续守株待兔已经没意义，陈金水这个变量如果不先处理掉，我在这儿指挥也会被他干扰。",
+            "importance": 8,
+            "last_access_tick": 29
+          },
+          {
+            "id": 61,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "這老頭還在磨蹭，把他弄走我就清靜了，正好我得往高地再核實一下情況。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 62,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "observation",
+            "content": "我到了高地。",
+            "importance": 2,
+            "last_access_tick": 32
+          },
+          {
+            "id": 63,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "我已經在高地站好了，林美華現在應該就在哪裡忙著。得下山去廣場或村長宅中間的路看看，找不到村長，疏散就會變成災難。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 64,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "observation",
+            "content": "我到了廣場。",
+            "importance": 2,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 65,
+        "importance_since_reflection": 12,
+        "beliefs": [
+          "暴潮来临时，人潮引发的踩踏比潮水本身更致命。",
+          "靠天靠神不如靠自己，镇民的命要攥在自己手里。",
+          "村长林美华的命令是唯一能统合全镇混乱力量的钥匙。",
+          "陈金水执着于醮事，这种固执是阻碍，必须哄骗或强制其离开。",
+          "镇民在慌乱时容易丧失理智，需要强力的外部指令才能维持秩序。",
+          "比起镇庙的香火，把人带上高地才是草药医该做的救人大事。",
+          "在这个小镇，谁掌握了信息枢纽和行政令箭，谁就能掌握生路。",
+          "不要在没人的地方浪费时间，要么就在高地立着，要么就在寻找行政中枢的路上。",
+          "对付像陈金水这种固执的老人，直接顺着他的话哄走最有效。",
+          "必须要有人在疏散路线的末端（高地）坐镇，否则撤离会因无序而变踩踏。"
+        ],
+        "last_reflection_tick": 29
+      },
+      "seen_last_tick": [],
+      "last_think_tick": 33,
+      "think_count": 24,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "reach",
+          "text": "自己先撤到高地，做疏散的節點",
+          "params": {
+            "area": "高地"
+          },
+          "status": "done",
+          "at_tick": 13,
+          "note": "走到了高地"
+        },
+        {
+          "kind": "meet",
+          "text": "把林美華找到，確認誰該先撤",
+          "params": {
+            "who": "fang_lan"
+          },
+          "status": "open",
+          "at_tick": -1,
+          "note": ""
+        }
+      ],
+      "arts": [
+        {
+          "id": "an_min_zhou",
+          "uses_left": 3,
+          "ready_at": -1,
+          "used": 0
+        },
+        {
+          "id": "hao_ling",
+          "uses_left": 4,
+          "ready_at": -1,
+          "used": 0
+        }
+      ],
+      "buffs": {}
+    },
+    "gu_chao": {
+      "id": "gu_chao",
+      "name": "阿德",
+      "role": "villager",
+      "persona": "你叫阿德，守望人，四十五歲，常年蹲在海堤看雲色與潮聲。大家都只叫你阿德。\n你今天的工作是守住海堤視線，並把張鐵雄找回來焊水門——你焊不動閘，但你跑得過風。\n\n你能探潮打探別人在哪，也能飛毛腿趕路。別在廣場聽人哭，海堤才是你的崗。\n外海若還看得到阿旺那條船的燈，跟阿海說一聲——那可能比多看一眼雲色還重要。",
+      "home_area": "海堤",
+      "pos": [
+        4,
+        14
+      ],
+      "plan": "守著水門，看鐵雄動工，確保他焊死閘口。",
+      "action": null,
+      "memory": {
+        "entries": [
+          {
+            "id": 1,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在廣場遇到林美華。",
+            "importance": 3,
+            "last_access_tick": 5
+          },
+          {
+            "id": 2,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "observation",
+            "content": "在廣場遇到黃秀英。",
+            "importance": 3,
+            "last_access_tick": 5
+          },
+          {
+            "id": 3,
+            "tick": 0,
+            "when": "第1天 06:00",
+            "kind": "thought",
+            "content": "這廣場人太雜，沒時間浪費。鐵雄的鋪子在西南邊，先去那裡，找不到人再探潮。",
+            "importance": 4,
+            "last_access_tick": 5
+          },
+          {
+            "id": 4,
+            "tick": 3,
+            "when": "第1天 06:30",
+            "kind": "observation",
+            "content": "我到了鐵鋪。",
+            "importance": 2,
+            "last_access_tick": 5
+          },
+          {
+            "id": 5,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "observation",
+            "content": "在鐵鋪遇到張鐵雄。",
+            "importance": 3,
+            "last_access_tick": 6
+          },
+          {
+            "id": 6,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "thought",
+            "content": "人不在鋪子裡，我看見他在海堤。得趕快過去，沒時間給他看海了，潮水一來誰都跑不掉。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 7,
+            "tick": 4,
+            "when": "第1天 06:40",
+            "kind": "observation",
+            "content": "我使了飛毛腿。",
+            "importance": 5,
+            "last_access_tick": 5
+          },
+          {
+            "id": 8,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "thought",
+            "content": "飛毛腿還沒緩過來，只能用腳跑了，鐵雄在海堤那邊不知道在發什麼呆，再不焊閘就來不及了。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 9,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "我到了海堤。",
+            "importance": 2,
+            "last_access_tick": 6
+          },
+          {
+            "id": 10,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "（守在海堤，確認閘還能不能封——走到了海堤。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 35
+          },
+          {
+            "id": 11,
+            "tick": 5,
+            "when": "第1天 06:50",
+            "kind": "observation",
+            "content": "（找到張鐵雄，讓他來焊水門——見到了張鐵雄。這件事了了。）",
+            "importance": 10,
+            "last_access_tick": 35
+          },
+          {
+            "id": 12,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "injected",
+            "content": "（守在海堤，確認閘還能不能封——走到了海堤。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 10
+          },
+          {
+            "id": 13,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "injected",
+            "content": "（找到張鐵雄，讓他來焊水門——見到了張鐵雄。這件事了了。）",
+            "importance": 7,
+            "last_access_tick": 10
+          },
+          {
+            "id": 14,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "thought",
+            "content": "鐵雄這老木頭站在海邊發呆，不知道他在看什麼，但我得讓他趕緊把閘焊死，不然晚了就真的全完了。",
+            "importance": 4,
+            "last_access_tick": 6
+          },
+          {
+            "id": 15,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "speech",
+            "content": "我說：「鐵雄，別看了，這水閘非焊不可，再拖下去我們都得交代在這裡，快動手吧！」",
+            "importance": 5,
+            "last_access_tick": 7
+          },
+          {
+            "id": 16,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "reflection",
+            "content": "張鐵雄雖然話少，但他站在海堤顯然心裡有數，只是需要人推一把。",
+            "importance": 8,
+            "last_access_tick": 31
+          },
+          {
+            "id": 17,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "reflection",
+            "content": "飛毛腿得留到緊急時刻，現在用腳跑足夠及時趕到海堤，不用浪費體力。",
+            "importance": 8,
+            "last_access_tick": 9
+          },
+          {
+            "id": 18,
+            "tick": 6,
+            "when": "第1天 07:00",
+            "kind": "reflection",
+            "content": "跟張鐵雄只要對上話，這水閘就有封上的機會，用不著強硬逼他。",
+            "importance": 8,
+            "last_access_tick": 19
+          },
+          {
+            "id": 19,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "thought",
+            "content": "人都在這裡了，鐵雄還在遲疑什麼？我得讓他馬上把那火焊起來，這風越吹越不對勁。",
+            "importance": 4,
+            "last_access_tick": 7
+          },
+          {
+            "id": 20,
+            "tick": 7,
+            "when": "第1天 07:10",
+            "kind": "speech",
+            "content": "我說：「鐵雄，別看了，這水閘非焊不可，再拖下去我們都得交代在這裡，快動手吧！」",
+            "importance": 5,
+            "last_access_tick": 7
+          },
+          {
+            "id": 21,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "張鐵雄對我說：「阿德，現在焊水門，外面的船全回不來。你既然人在這，幫我盯死海面，一旦看到白線起浪，不用你說，我立刻焊。」",
+            "importance": 7,
+            "last_access_tick": 35
+          },
+          {
+            "id": 22,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "thought",
+            "content": "鐵雄這人有分寸，他是在等一個準信。我答應了他守海面，這責任就不輕，得給他把這幾刻守死，直到真的該焊那一刻。",
+            "importance": 4,
+            "last_access_tick": 8
+          },
+          {
+            "id": 23,
+            "tick": 8,
+            "when": "第1天 07:20",
+            "kind": "speech",
+            "content": "我說：「鐵雄，你放心，我這雙眼現在就長在海面上，一有白線，我絕不含糊，你手腳準備好就成。」",
+            "importance": 5,
+            "last_access_tick": 8
+          },
+          {
+            "id": 24,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "speech",
+            "content": "張鐵雄對我說：「急什麼？浪頭還沒見影，現在焊死，外面那幾條船就全進不來了。你幫我盯好了，我看海，你也看，只要白線一壓過來，我張鐵雄絕不廢話，立刻焊。」",
+            "importance": 7,
+            "last_access_tick": 22
+          },
+          {
+            "id": 25,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "在海堤遇到林美華。",
+            "importance": 3,
+            "last_access_tick": 9
+          },
+          {
+            "id": 26,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "thought",
+            "content": "鐵雄這固執脾氣我知道，船沒回港他是不會動的，我得先知道阿旺那船到底在哪，心裡有數才能盯著。",
+            "importance": 4,
+            "last_access_tick": 9
+          },
+          {
+            "id": 27,
+            "tick": 9,
+            "when": "第1天 07:30",
+            "kind": "observation",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 28,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "injected",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 7,
+            "last_access_tick": 15
+          },
+          {
+            "id": 29,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "thought",
+            "content": "鐵雄在那邊悶著，美華也來了，正好，鐵雄焊閘，美華作證，但阿旺的船還在外頭，這閘焊下去就是斷人路，得讓這兩個人心裡都有數才行。",
+            "importance": 4,
+            "last_access_tick": 10
+          },
+          {
+            "id": 30,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "speech",
+            "content": "我說：「鐵雄，開工吧。美華村長，阿旺船還在外海，閘門焊死他就回不來，我們得算準時間，或者先讓人去港口那邊打信號。」",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 31,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "observation",
+            "content": "我想跟「張鐵雄,林美華」說話，但這裡沒有這個人。",
+            "importance": 5,
+            "last_access_tick": 10
+          },
+          {
+            "id": 32,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "reflection",
+            "content": "鐵雄這人倔強，沒親眼見著浪頭白線是不會動手的，他是在等我這雙眼給他信號。",
+            "importance": 8,
+            "last_access_tick": 16
+          },
+          {
+            "id": 33,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "reflection",
+            "content": "美華村長既然在場，正好能扛住決斷的壓力，要是真得斷路救人，她得來定奪，我只負責報信。",
+            "importance": 8,
+            "last_access_tick": 10
+          },
+          {
+            "id": 34,
+            "tick": 10,
+            "when": "第1天 07:40",
+            "kind": "reflection",
+            "content": "阿旺那船沒進港前，焊閘就是兩難，但我現在不能搖擺，眼下只有我能盯死海面，這生死時刻全靠我這雙眼開關。",
+            "importance": 8,
+            "last_access_tick": 13
+          },
+          {
+            "id": 35,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "speech",
+            "content": "張鐵雄說：「村長，海沒起浪前我不焊，焊死就是判外面船隻死刑。你們現在就守這，一旦阿德喊看見白線，立刻動手幫我一起焊，別廢話，這是救全庄的命。」（當時我在海堤）",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 36,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "speech",
+            "content": "林美華說：「鐵雄，你帶阿德一起動手，兩個人焊閘快一倍，一定要在潮湧前把門給我封死！」（當時我在海堤）",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 37,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "thought",
+            "content": "鐵雄沒錯，美華也沒錯，但在這當下兩邊都不能亂。我得先穩住兩人的火氣，一旦海平線有變，我會第一個喊出來。",
+            "importance": 4,
+            "last_access_tick": 11
+          },
+          {
+            "id": 38,
+            "tick": 11,
+            "when": "第1天 07:50",
+            "kind": "speech",
+            "content": "我說：「鐵雄、村長，都別爭了！現在起我不開口，你們就盯著我的手，我喊看見白線，立刻動手焊，誰也不許慢！」",
+            "importance": 5,
+            "last_access_tick": 11
+          },
+          {
+            "id": 39,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "thought",
+            "content": "海面還是平的，還不是封閘的時候。鐵雄在等我的信號，我得穩住，不能讓美華把人往這趕，也得讓鐵雄知道我有在幫他盯著外海。",
+            "importance": 4,
+            "last_access_tick": 12
+          },
+          {
+            "id": 40,
+            "tick": 12,
+            "when": "第1天 08:00",
+            "kind": "speech",
+            "content": "我說：「鐵雄，你放心焊你的鐵，海面我盯著，浪頭白線一到，我第一個喊你。」",
+            "importance": 5,
+            "last_access_tick": 12
+          },
+          {
+            "id": 41,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "鐵雄這人倔強，得等到白線起浪才肯焊，我得守住這崗位，確保一看到浪頭就叫他動手，不能讓這水閘成了擺設。",
+            "importance": 4,
+            "last_access_tick": 13
+          },
+          {
+            "id": 42,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "speech",
+            "content": "張鐵雄對我說：「阿德，盯緊那條白線，沒看到之前，誰都不准亂動這道閘，聽清楚沒？」",
+            "importance": 7,
+            "last_access_tick": 16
+          },
+          {
+            "id": 43,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "thought",
+            "content": "鐵雄這固執鬼，沒見著白線他是不會動手的。我得先探探那潮水到底離岸還有多遠，順便看看阿旺的船在哪，要是潮太快，我得馬上讓他焊，沒時間管那麼多了。",
+            "importance": 4,
+            "last_access_tick": 13
+          },
+          {
+            "id": 44,
+            "tick": 13,
+            "when": "第1天 08:10",
+            "kind": "observation",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 45,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "injected",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 7,
+            "last_access_tick": 18
+          },
+          {
+            "id": 46,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "thought",
+            "content": "鐵雄這悶葫蘆在等我的話，但他不知道阿旺還在外面。我得先探清楚海上的情況，再決定這閘是不是真要現在就封死。",
+            "importance": 4,
+            "last_access_tick": 14
+          },
+          {
+            "id": 47,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "observation",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 48,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "reflection",
+            "content": "張鐵雄只認我的判斷，只要我喊出「白線」，他就不會再有遲疑。",
+            "importance": 8,
+            "last_access_tick": 22
+          },
+          {
+            "id": 49,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "reflection",
+            "content": "阿旺的船還在外海，這意味著焊閘的每一刻都在倒數，但我不能因為一艘船就賭上整座鎮子。",
+            "importance": 8,
+            "last_access_tick": 14
+          },
+          {
+            "id": 50,
+            "tick": 14,
+            "when": "第1天 08:20",
+            "kind": "reflection",
+            "content": "林美華在場，這很好，她這把交椅必須扛住斷了外海航路的責任，我只需要專心做好守望人的本分。",
+            "importance": 8,
+            "last_access_tick": 14
+          },
+          {
+            "id": 51,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "observation",
+            "content": "在海堤遇到林美華。",
+            "importance": 3,
+            "last_access_tick": 15
+          },
+          {
+            "id": 52,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "injected",
+            "content": "（打聽到了：阿旺這會兒在外海漁船。）",
+            "importance": 7,
+            "last_access_tick": 18
+          },
+          {
+            "id": 53,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "thought",
+            "content": "鐵雄就在眼前，得告訴他阿旺還在外海。要是現在焊死，阿旺就沒路了，得趕緊讓他知道這難處。",
+            "importance": 4,
+            "last_access_tick": 15
+          },
+          {
+            "id": 54,
+            "tick": 15,
+            "when": "第1天 08:30",
+            "kind": "speech",
+            "content": "我說：「鐵雄，阿旺還在外海，船還沒回。要是現在焊死，他就進不來了。我們得算好時間，再等等。」",
+            "importance": 5,
+            "last_access_tick": 15
+          },
+          {
+            "id": 55,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "張鐵雄對我說：「阿德，別慌，我手上的傢伙已經備好了。海沒白線，這閘就不會死，你盯緊海面，一看到白線就吼我一聲，到時候我保證半刻都不耽擱。」",
+            "importance": 7,
+            "last_access_tick": 17
+          },
+          {
+            "id": 56,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "鐵雄這死腦筋還在等白線，這海的脾氣誰說得準，我得盯緊了，一有動靜立刻讓他動手。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 57,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "speech",
+            "content": "張鐵雄對我說：「急什麼，白線還沒過外礁，現在焊了就是斷了阿旺的路。你給我盯死了，白線一現身，你喊一聲，我立刻動手，誰也攔不住。」",
+            "importance": 7,
+            "last_access_tick": 19
+          },
+          {
+            "id": 58,
+            "tick": 16,
+            "when": "第1天 08:40",
+            "kind": "thought",
+            "content": "鐵雄這人雖然硬，但還算講理，現在焊確實會把外海的船直接掐死。我就在這裡盯著，等到白線一過外礁，立刻喊他動手。",
+            "importance": 4,
+            "last_access_tick": 16
+          },
+          {
+            "id": 59,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "鐵雄這固執鬼只認我的判斷，我就守在這裡盯著。不過阿旺到底到哪了？先探一下，不然真看到白線，我也得心裡有數到底是封閘保全村，還是留條路給阿旺。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 60,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "observation",
+            "content": "（打聽到了：阿旺這會兒在漁港。）",
+            "importance": 8,
+            "last_access_tick": 23
+          },
+          {
+            "id": 61,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "speech",
+            "content": "張鐵雄對我說：「阿德，眼睛別眨，那道白線一現，馬上告訴我，我手腳不慢，一喊就動手。」",
+            "importance": 7,
+            "last_access_tick": 17
+          },
+          {
+            "id": 62,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "thought",
+            "content": "鐵雄這固執鬼，他心裡還是想留條路給阿旺。但我得守好這眼，真等白線來了，我就得吼他動手，不能猶豫。",
+            "importance": 4,
+            "last_access_tick": 17
+          },
+          {
+            "id": 63,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "reflection",
+            "content": "阿旺人已經回到漁港了，這是我現在最大的心安，焊閘這件事終於沒了後顧之憂。",
+            "importance": 8,
+            "last_access_tick": 17
+          },
+          {
+            "id": 64,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "reflection",
+            "content": "張鐵雄這人倔，但他把決定生死的權利交給了我，我喊白線他才焊，我絕不能讓他這雙手閒著。",
+            "importance": 8,
+            "last_access_tick": 26
+          },
+          {
+            "id": 65,
+            "tick": 17,
+            "when": "第1天 08:50",
+            "kind": "reflection",
+            "content": "林美華既然也在現場，只要海面一有動靜，我得立刻提醒她下令，省去鐵雄的疑慮，趕緊把水門封死。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 66,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "injected",
+            "content": "（打聽到了：阿旺這會兒在漁港。）",
+            "importance": 7,
+            "last_access_tick": 18
+          },
+          {
+            "id": 67,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "thought",
+            "content": "既然阿旺已經回港，那就沒有什麼好等的了。鐵雄就在旁邊，叫他趕緊動手把水閘焊死，這才是現在唯一要做的事。",
+            "importance": 4,
+            "last_access_tick": 18
+          },
+          {
+            "id": 68,
+            "tick": 18,
+            "when": "第1天 09:00",
+            "kind": "speech",
+            "content": "我說：「鐵雄，阿旺已經進港了，現在沒顧忌了，快動手焊閘，不然來不及了！」",
+            "importance": 5,
+            "last_access_tick": 18
+          },
+          {
+            "id": 69,
+            "tick": 19,
+            "when": "第1天 09:10",
+            "kind": "thought",
+            "content": "海面上白線還沒動靜，但天色已經壓得很低，鐵雄在等，我不能讓他等久了。",
+            "importance": 4,
+            "last_access_tick": 19
+          },
+          {
+            "id": 70,
+            "tick": 21,
+            "when": "第1天 09:30",
+            "kind": "thought",
+            "content": "鐵雄在等，美華也在往這走，現在就差海那邊給個信號了。我也沒閒著，兩隻眼死死盯著海面，絕不能漏看白線。",
+            "importance": 4,
+            "last_access_tick": 21
+          },
+          {
+            "id": 71,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "thought",
+            "content": "這海面平得快要沒道理，鐵雄在等我的白線，村長也在這，不能再拖了，得確認那道線離我們有多遠。",
+            "importance": 4,
+            "last_access_tick": 22
+          },
+          {
+            "id": 72,
+            "tick": 22,
+            "when": "第1天 09:40",
+            "kind": "observation",
+            "content": "（打聽到了：張鐵雄這會兒在海堤。）",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 73,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "injected",
+            "content": "（打聽到了：張鐵雄這會兒在海堤。）",
+            "importance": 7,
+            "last_access_tick": 35
+          },
+          {
+            "id": 74,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "thought",
+            "content": "鐵雄就在這，村長也快到了。這水閘焊下去，就算成了，再磨蹭命都沒了。",
+            "importance": 4,
+            "last_access_tick": 23
+          },
+          {
+            "id": 75,
+            "tick": 23,
+            "when": "第1天 09:50",
+            "kind": "observation",
+            "content": "我不會「焊水門」。我會的是：探潮、飛毛腿。",
+            "importance": 5,
+            "last_access_tick": 23
+          },
+          {
+            "id": 76,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "injected",
+            "content": "（潮聲變了。不是拍岸，是遠雷似的一聲接一聲。水閘縫裡開始往外冒白沫。）",
+            "importance": 7,
+            "last_access_tick": 24
+          },
+          {
+            "id": 77,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "thought",
+            "content": "潮聲不對了，水沫子都冒出來了，再不動手就來不及了。鐵雄這人倔，現在就得逼他開工。",
+            "importance": 4,
+            "last_access_tick": 24
+          },
+          {
+            "id": 78,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "speech",
+            "content": "我說：「鐵雄！水閘漏了，別等了，現在就焊！村長在這，她作證，這閘必須封死！」",
+            "importance": 5,
+            "last_access_tick": 24
+          },
+          {
+            "id": 79,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "reflection",
+            "content": "張鐵雄這人過於死板，只要我不開口喊焊，就算水閘已經開始往外冒白沫，他依舊會堅持等那條可能致命的白線。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 80,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "reflection",
+            "content": "阿旺既然已經回港，我們心中最後的牽掛已經卸下，現在海面的異常聲響已經是最後通牒，不能再拿任何理由推遲焊閘。",
+            "importance": 8,
+            "last_access_tick": 24
+          },
+          {
+            "id": 81,
+            "tick": 24,
+            "when": "第1天 10:00",
+            "kind": "reflection",
+            "content": "守望人不能只負責看潮，更得負責掐斷所有人猶豫的後路，我現在的喊聲比海浪聲更重要。",
+            "importance": 8,
+            "last_access_tick": 24
+          },
+          {
+            "id": 82,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "thought",
+            "content": "天色變了，不能再給鐵雄留餘地，現在就得把水門焊死，哪怕外海還有人也沒辦法了，活下來的才是命。",
+            "importance": 4,
+            "last_access_tick": 25
+          },
+          {
+            "id": 83,
+            "tick": 25,
+            "when": "第1天 10:10",
+            "kind": "speech",
+            "content": "我說：「鐵雄，別等了，那浪頭已經壓過來了，焊！」",
+            "importance": 5,
+            "last_access_tick": 25
+          },
+          {
+            "id": 84,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "thought",
+            "content": "不能再等了，潮已經到了門口。鐵雄在等我點頭，美華在場正好，得逼他們現在就開始焊，晚一刻都不行。",
+            "importance": 4,
+            "last_access_tick": 26
+          },
+          {
+            "id": 85,
+            "tick": 26,
+            "when": "第1天 10:20",
+            "kind": "speech",
+            "content": "我說：「鐵雄，別管船了，那邊水沫子已經翻了，白線就在眼前！現在不焊，整條街都得沒，快動手！」",
+            "importance": 5,
+            "last_access_tick": 26
+          },
+          {
+            "id": 86,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "thought",
+            "content": "水沫子已經舔上堤根，這條命線不能再賭了，再拖鐵雄也回不了頭，一定要現在動手。",
+            "importance": 4,
+            "last_access_tick": 27
+          },
+          {
+            "id": 87,
+            "tick": 27,
+            "when": "第1天 10:30",
+            "kind": "observation",
+            "content": "我不會「焊水門」。我會的是：探潮、飛毛腿。",
+            "importance": 5,
+            "last_access_tick": 27
+          },
+          {
+            "id": 88,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "thought",
+            "content": "鐵雄這死腦筋還在等白線，這轟鳴聲跟水沫子早就不對勁了，再等下去就是拿整村的命賭，得趁村長也在，讓她下令焊死。",
+            "importance": 4,
+            "last_access_tick": 28
+          },
+          {
+            "id": 89,
+            "tick": 28,
+            "when": "第1天 10:40",
+            "kind": "speech",
+            "content": "我說：「鐵雄，你看那浪頭的水沫子已經不對勁了！不用等白線了，美華也在這，現在就焊死水門，遲了整村都得淹！」",
+            "importance": 5,
+            "last_access_tick": 28
+          },
+          {
+            "id": 90,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "thought",
+            "content": "鐵雄這個死腦筋，沒人喊他就不動。村長剛好到了，讓林美華直接下令，省得他在這跟我磨蹭。",
+            "importance": 4,
+            "last_access_tick": 29
+          },
+          {
+            "id": 91,
+            "tick": 29,
+            "when": "第1天 10:50",
+            "kind": "speech",
+            "content": "我說：「鐵雄，別等了，水沫已經冒出來了，村長在這，趕緊焊！」",
+            "importance": 5,
+            "last_access_tick": 29
+          },
+          {
+            "id": 92,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "thought",
+            "content": "潮聲不對勁，等白線那是賭命。鐵雄聽我的，現在就得把門焊死，不能再猶豫了。",
+            "importance": 4,
+            "last_access_tick": 30
+          },
+          {
+            "id": 93,
+            "tick": 30,
+            "when": "第1天 11:00",
+            "kind": "speech",
+            "content": "我說：「鐵雄，別盯那條白線了！聽這浪聲，潮就在腳下，現在就把水門焊死！」",
+            "importance": 5,
+            "last_access_tick": 30
+          },
+          {
+            "id": 94,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "thought",
+            "content": "不能再等什麼白線了，潮聲已經變了，再拖鐵雄的命和鎮上的命都會沒。我得逼他現在就動手。",
+            "importance": 4,
+            "last_access_tick": 31
+          },
+          {
+            "id": 95,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "speech",
+            "content": "我說：「鐵雄，別等了！潮聲不對勁，再拖下去白線來了就來不及了，現在立刻焊閘，沒得商量！」",
+            "importance": 5,
+            "last_access_tick": 31
+          },
+          {
+            "id": 96,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "reflection",
+            "content": "鐵雄那死腦筋是因為怕擔上「害死船隻」的罪名，才死盯著白線找藉口，我不把話說死，他永遠會拖。",
+            "importance": 8,
+            "last_access_tick": 31
+          },
+          {
+            "id": 97,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "reflection",
+            "content": "現在堤根冒沫就是潮水到了的證據，這時候再去管海面上看不見的白線，是拿全鎮人的命在賭鐵雄的良心。",
+            "importance": 8,
+            "last_access_tick": 32
+          },
+          {
+            "id": 98,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "reflection",
+            "content": "林美華身為村長，她的在場必須轉化為強制執行的命令，單靠我個人的督促已經不夠，得讓她直接下令焊閘。",
+            "importance": 8,
+            "last_access_tick": 35
+          },
+          {
+            "id": 99,
+            "tick": 31,
+            "when": "第1天 11:10",
+            "kind": "reflection",
+            "content": "潮水已經舔到堤根，再拖下去不僅是焊不了的問題，我們自己都要被捲走，必須立刻動手。",
+            "importance": 8,
+            "last_access_tick": 34
+          },
+          {
+            "id": 100,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "speech",
+            "content": "張鐵雄對我說：「急什麼，現在還不是時候，這門一焊，外面回不來的船就真的沒了。再盯著，我看見白線就動手。」",
+            "importance": 7,
+            "last_access_tick": 32
+          },
+          {
+            "id": 101,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "observation",
+            "content": "在海堤遇到阿海。",
+            "importance": 3,
+            "last_access_tick": 32
+          },
+          {
+            "id": 102,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "thought",
+            "content": "堤根都在冒白沫了，哪還管得了什麼白線。鐵雄在等那條看不見的線，我得讓他看見眼前的死局，村長就在旁邊，現在不焊就是大家一起死。",
+            "importance": 4,
+            "last_access_tick": 32
+          },
+          {
+            "id": 103,
+            "tick": 32,
+            "when": "第1天 11:20",
+            "kind": "speech",
+            "content": "我說：「鐵雄！你看堤根！水已經在舔石頭了，別管什麼白線，現在不焊，等水漫過來，這門誰也焊不上！村長就在旁邊，出了事我扛，快動手！」",
+            "importance": 5,
+            "last_access_tick": 32
+          },
+          {
+            "id": 104,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "thought",
+            "content": "潮水已經舔到堤根了，鐵雄還在等什麼？林美華就在這，只要她一句話，鐵雄就沒藉口再拖，現在必須強迫他們動工。",
+            "importance": 4,
+            "last_access_tick": 33
+          },
+          {
+            "id": 105,
+            "tick": 33,
+            "when": "第1天 11:30",
+            "kind": "speech",
+            "content": "我說：「鐵雄，別看了！水已經舔堤了，再不焊就是害全鎮！村長，下令吧，別再猶豫了！」",
+            "importance": 5,
+            "last_access_tick": 33
+          },
+          {
+            "id": 106,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "thought",
+            "content": "鐵雄和阿海已經在焊水門了，但速度太慢，潮水隨時會打上來。林美華人在場卻沒發話，我得逼她下個決斷，讓鐵雄不用再背負斷人歸路的罪名。",
+            "importance": 4,
+            "last_access_tick": 34
+          },
+          {
+            "id": 107,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "speech",
+            "content": "我說：「村長，這閘門不能再拖了，只要水一湧上來，鐵雄這手就廢了！請妳直接下令封死水閘，人命關天，我有責任承擔後果。」",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 108,
+            "tick": 34,
+            "when": "第1天 11:40",
+            "kind": "observation",
+            "content": "林美華離我太遠了（4 格，超過 3 格就聽不見），他聽不見。我得先走過去，或找在旁邊的人說。",
+            "importance": 5,
+            "last_access_tick": 34
+          },
+          {
+            "id": 109,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "thought",
+            "content": "美華就在這，我就不信喊不醒這兩個人。鐵雄死腦筋，得讓村長下令他才敢動手。",
+            "importance": 4,
+            "last_access_tick": 35
+          },
+          {
+            "id": 110,
+            "tick": 35,
+            "when": "第1天 11:50",
+            "kind": "speech",
+            "content": "我說：「美華、鐵雄，潮已經頂到堤根了，沒時間再等！村長你現在就下令封閘，鐵雄你這就焊，出了事算我的，我這條命賠給你！」",
+            "importance": 5,
+            "last_access_tick": 35
+          }
+        ],
+        "next_id": 111,
+        "importance_since_reflection": 51,
+        "beliefs": [
+          "水閘是全鎮的命門，封死水閘是現在唯一能保住這條街的手段。",
+          "鐵雄只信我的判斷，在這件事上，我不喊，他就不會開工。",
+          "視覺上的「白線」已不可信，現在海面傳來的轟鳴與堤根的白沫才是真正的潮訊。",
+          "鐵雄猶豫是因為背負著關門斷路的罪惡感，我必須用我的決斷幫他扛下這個罪。",
+          "村長在場代表我們有執行權，有她在場背書，鐵雄就沒有藉口再拖。",
+          "阿旺既然已經平安回港，焊死水閘不再是謀殺，而是全鎮存續的必要代價。",
+          "海神不會憐憫猶豫，守望人若不敢在關鍵時刻下決定，就是拿全鎮的命在賭。",
+          "潮水已經舔到堤根，現在每一秒的猶豫都在讓生存的機會流失，不能再給鐵雄任何商量的餘地。"
+        ],
+        "last_reflection_tick": 31
+      },
+      "seen_last_tick": [
+        "張鐵雄",
+        "林美華",
+        "阿海"
+      ],
+      "last_think_tick": 35,
+      "think_count": 35,
+      "last_rejection": "",
+      "skill": 5,
+      "wound": 0,
+      "killed_by": "",
+      "fury": 0,
+      "kin": [],
+      "llm": {},
+      "goals": [
+        {
+          "kind": "reach",
+          "text": "守在海堤，確認閘還能不能封",
+          "params": {
+            "area": "海堤"
+          },
+          "status": "done",
+          "at_tick": 5,
+          "note": "走到了海堤"
+        },
+        {
+          "kind": "meet",
+          "text": "找到張鐵雄，讓他來焊水門",
+          "params": {
+            "who": "shi_lei"
+          },
+          "status": "done",
+          "at_tick": 5,
+          "note": "見到了張鐵雄"
+        }
+      ],
+      "arts": [
+        {
+          "id": "wang_chao",
+          "uses_left": 0,
+          "ready_at": 23,
+          "used": 5
+        },
+        {
+          "id": "ji_feng_bu",
+          "uses_left": 3,
+          "ready_at": 7,
+          "used": 1
+        }
+      ],
+      "buffs": {}
+    }
+  },
+  "director_fired": [
+    1,
+    2,
+    2,
+    3,
+    4,
+    6,
+    6,
+    6,
+    7,
+    8,
+    10,
+    10,
+    14,
+    14,
+    15,
+    15,
+    16,
+    18,
+    19,
+    19,
+    23,
+    24,
+    31
+  ],
+  "awareness_score": 0.0,
+  "awareness_log": [],
+  "outcome": "",
+  "outcome_text": "",
+  "flooded": [],
+  "rite_blocked": {}
+}
