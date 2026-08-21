@@ -355,6 +355,13 @@ def build_replay(
     flooded: list[list[int]] = []
     outcome = ""
     outcome_text = ""
+    epilogue: dict = {}
+
+    # epilogue 可能 tick=null（補寫），不進 by_tick；直接從各 run 原文取最後一筆
+    for run, _, _ in sources:
+        for r in _read_events(run):
+            if r.get("type") == "epilogue" and isinstance(r.get("data"), dict):
+                epilogue = r["data"]
 
     for t in range(0, max_tick + 1):
         evs = by_tick.get(t, [])
@@ -599,6 +606,11 @@ def build_replay(
         "flooded": flooded,
         "outcome": outcome,
         "outcome_text": outcome_text,
+        "epilogue": {
+            "label": (epilogue.get("label") or "").strip(),
+            "blurb": (epilogue.get("blurb") or "").strip(),
+            "commentary": (epilogue.get("commentary") or "").strip(),
+        } if epilogue.get("label") and epilogue.get("blurb") and epilogue.get("commentary") else None,
         "stats": {
             "speeches": n_speech,
             "attacks": n_attack,

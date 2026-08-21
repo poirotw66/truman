@@ -37,6 +37,10 @@ class StubLLM:
     def total_cost(self) -> float:
         return 0.0
 
+    async def call(self, c):
+        out = await self.run_batch([c])
+        return out[c.key]
+
     async def run_batch(self, calls) -> dict:
         out = {}
         for c in calls:
@@ -54,6 +58,12 @@ class StubLLM:
         if c.key.endswith(":awareness"):
             return {"score": min(10, self.n // 8), "evidence": ["（stub）"],
                     "rationale": "stub 評分，無意義。"}
+        if c.key.endswith(":epilogue"):
+            return {
+                "label": "（stub）收工",
+                "blurb": "這是 stub 跑出來的場，沒有真正的導演短評。",
+                "commentary": "stub 不寫長評。",
+            }
 
         i = self.n
         if i % 5 == 2:

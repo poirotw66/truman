@@ -201,6 +201,13 @@ class JobRunner:
                 await engine.finish()
         finally:
             checkpoint.save(engine.world, engine.run_dir)
+            if getattr(llm, "provider", None) != "stub":
+                try:
+                    from truman.director.epilogue import write_epilogue
+
+                    await write_epilogue(llm, log, engine.run_dir)
+                except Exception as exc:  # pragma: no cover
+                    log.write("epilogue_failed", {"error": str(exc)[:500]})
             stats = llm.stats()
             ok, bad = engine.ok_calls, engine.failed_calls
             log.write(

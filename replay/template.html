@@ -224,6 +224,11 @@
   .over .k{font-size:11px; letter-spacing:.4em; color:var(--gold); font-weight:700}
   .over h2{margin:0; font-family:var(--disp); font-size:clamp(26px,4.4vw,44px); font-weight:600; letter-spacing:.06em}
   .over .lede{margin:0 auto; max-width:44em; font-size:13.5px; line-height:1.85; color:#c9bda2}
+  .over details.epi{max-width:44em; margin:0 auto; width:100%; text-align:left;
+    background:rgba(255,247,228,.04); border:1px solid rgba(255,240,210,.14); border-radius:10px; padding:10px 14px}
+  .over details.epi summary{cursor:pointer; color:var(--gold); font-size:12px; letter-spacing:.18em; font-weight:700; list-style:none}
+  .over details.epi summary::-webkit-details-marker{display:none}
+  .over details.epi .commentary{margin:10px 0 2px; font-size:13px; line-height:1.9; color:#d6c9ae; white-space:pre-wrap}
   .cast{display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:11px}
   .cc{background:rgba(255,247,228,.05); border:1px solid rgba(255,240,210,.14); border-radius:11px; padding:11px 9px;
     display:flex; flex-direction:column; align-items:center; gap:5px; animation:rise .5s backwards}
@@ -1331,13 +1336,20 @@ function showOutro() {
       <span style="color:#b9ac92">${clockOf(d.t).str}　${esc(P[d.id].sect)}</span>
       <span class="by">${esc(deathCause(d.by) || "死因不明")}</span></div>`).join("");
   const s = DATA.stats || {};
-  const outcomeLine = DATA.outcome_text
-    ? `<p class="lede" style="color:var(--gold)">${esc(String(DATA.outcome_text).replace(/^[（(]|[）)]$/g, ""))}</p>`
-    : "";
-  const h2 = DATA.outcome === "held" ? "嵐潮，守住了"
+  const epi = DATA.epilogue;
+  const outcomeLine = (epi && epi.blurb)
+    ? `<p class="lede" style="color:var(--gold)">${esc(epi.blurb)}</p>`
+    : (DATA.outcome_text
+      ? `<p class="lede" style="color:var(--gold)">${esc(String(DATA.outcome_text).replace(/^[（(]|[）)]$/g, ""))}</p>`
+      : "");
+  const h2 = (epi && epi.label) ? epi.label
+    : DATA.outcome === "held" ? "嵐潮，守住了"
     : DATA.outcome === "lost" ? "滅村的邊緣"
     : DATA.outcome === "partial" ? "只救回了一半"
     : (live.length === 1 ? "只剩一個人站著" : (SCENARIO === "tempest" ? "潮退了" : "城裡靜下來了"));
+  const epiLong = (epi && epi.commentary)
+    ? `<details class="epi"><summary>戲外導演 · 展開長評</summary><div class="commentary">${esc(epi.commentary)}</div></details>`
+    : "";
   const kicker = SCENARIO === "tempest" ? "亥時 · 暴潮過後" : "亥時 · 這一天結束了";
   const ledeTail = SCENARIO === "tempest"
     ? "每一句勸、每一次趕路都是 agent 自己算過後的決定——對手是海，勝負看誰把人送到該去的地方。"
@@ -1351,6 +1363,7 @@ function showOutro() {
     <div class="k">${esc(kicker)}</div>
     <h2>${esc(h2)}</h2>
     ${outcomeLine}
+    ${epiLong}
     <div class="tomb">${tomb}</div>
     <p class="lede">活到最後的是 ${live.map(id => `<b style="color:${P[id].color}">${esc(P[id].name)}</b>`).join("、") || "——"}。
       ${ledeTail}</p>

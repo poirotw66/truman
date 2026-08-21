@@ -131,3 +131,24 @@ AWARENESS_SCHEMA = {
     "required": ["score", "evidence", "rationale"],
     "additionalProperties": False,
 }
+
+
+EPILOGUE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "label": {
+            "type": "string",
+            "description": "結局短語，4–10 字，像影評標題，具體、不空泛。",
+        },
+        "blurb": {
+            "type": "string",
+            "description": "摘要卡正文，2–4 句戲外導演口吻。",
+        },
+        "commentary": {
+            "type": "string",
+            "description": "長評，約 300–600 字：主軸、最大轉折、誰釘死走向、遺憾或反諷。",
+        },
+    },
+    "required": ["label", "blurb", "commentary"],
+    "additionalProperties": False,
+}

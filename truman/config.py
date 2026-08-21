@@ -77,6 +77,7 @@ PROVIDERS = {
             "judge": "gemini-3.1-flash-lite",
         },
         "prices": {
+            "gemini-3.7-flash": (1.50, 7.50, 0.15),  # * 暫比照 3.6；請用 models 對帳
             "gemini-3.6-flash": (1.50, 7.50, 0.15),
             "gemini-3.5-flash": (1.50, 9.00, 0.15),
             "gemini-3.5-flash-lite": (0.30, 2.50, 0.03),
@@ -92,6 +93,7 @@ PROVIDERS = {
             "gemini-3.1-pro-preview": 4096,
             "gemini-2.5-flash": 2048,
             "gemini-2.5-pro": 2048,
+            "gemini-3.7-flash": 4096,  # *
             "gemini-3.6-flash": 4096,  # *
             "gemini-3.5-flash-lite": 4096,  # *
             "gemini-3.1-flash-lite": 4096,  # *

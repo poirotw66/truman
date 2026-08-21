@@ -30,3 +30,9 @@ def test_hd2d_figures_draw_onto_scene_canvas() -> None:
     assert "drawFigure(bx," not in TEMPLATE
     assert "sc.setLineDash(dash)" in TEMPLATE
     assert "bx.setLineDash(dash)" not in TEMPLATE
+
+
+def test_outro_supports_director_epilogue() -> None:
+    assert "DATA.epilogue" in TEMPLATE
+    assert "戲外導演" in TEMPLATE
+    assert "details.epi" in TEMPLATE or "class=\"epi\"" in TEMPLATE

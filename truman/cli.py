@@ -237,6 +237,16 @@ async def _drive(engine, log, llm, ticks: int, quiet: bool) -> int:
             await engine.finish()  # 收工補評一次覺察，見 Engine.finish
     finally:
         checkpoint.save(engine.world, engine.run_dir)
+        # 戲外導演總結：在 run_summary 之前寫入，失敗不擋收工。
+        if getattr(llm, "provider", None) != "stub":
+            try:
+                from .director.epilogue import write_epilogue
+
+                await write_epilogue(llm, log, engine.run_dir)
+            except Exception as exc:  # pragma: no cover - 收工保底
+                log.write("epilogue_failed", {"error": str(exc)[:500]})
+                if not quiet:
+                    console.print(f"[yellow]導演總結失敗：{exc}[/yellow]")
         stats = llm.stats()
         ok, bad = engine.ok_calls, engine.failed_calls
         log.write("run_summary", {
@@ -829,6 +839,63 @@ def cmd_tokens(args) -> None:
     )
 
 
+def cmd_epilogue(args) -> None:
+    """為既有 run 補戲外導演總結（不重跑模擬），可選重建回放 HTML。"""
+    require_credentials(args.provider)
+    if args.all:
+        run_ids = sorted(
+            p.name for p in RUNS.iterdir()
+            if p.is_dir() and p.name != "_demo" and (p / "events.jsonl").exists()
+        )
+    else:
+        run_ids = list(args.run_id or [])
+    if not run_ids:
+        console.print("[red]請給 --run-id 或 --all[/red]")
+        sys.exit(2)
+
+    cfg = build_config(args, use_cache=not args.no_cache)
+
+    async def _one(run_id: str) -> str:
+        from .director.epilogue import has_epilogue, write_epilogue
+
+        run_dir = RUNS / run_id
+        if not (run_dir / "events.jsonl").exists():
+            return f"[red]{run_id}[/red] 沒有 events.jsonl"
+        if has_epilogue(run_dir) and not args.force:
+            return f"[dim]{run_id}[/dim] 已有 epilogue，跳過"
+        log = EventLog(run_dir)
+        llm = make_client(cfg=cfg, log=log)
+        try:
+            body = await write_epilogue(llm, log, run_dir, force=args.force)
+        except Exception as exc:
+            log.close()
+            return f"[red]{run_id}[/red] 失敗：{exc}"
+        log.close()
+        if not body:
+            return f"[dim]{run_id}[/dim] 跳過"
+        label = body.get("label", "")
+        return f"[green]{run_id}[/green] {label}"
+
+    async def _all() -> None:
+        for rid in run_ids:
+            console.print(await _one(rid))
+
+    asyncio.run(_all())
+
+    if args.rebuild:
+        from replay.build_frames import build_replay
+
+        demo_out = RUNS / "_demo"
+        demo_out.mkdir(parents=True, exist_ok=True)
+        for rid in run_ids:
+            out = demo_out / f"{rid}_replay.html"
+            try:
+                build_replay([rid], out, write_frames_json=False, quiet=True)
+                console.print(f"[cyan]重建[/cyan] {out.relative_to(ROOT)}")
+            except Exception as exc:
+                console.print(f"[yellow]{rid} 回放重建失敗：{exc}[/yellow]")
+
+
 def cmd_models(args) -> None:
     """列出該 provider 目前實際可用的模型，並檢查設定裡的 ID 還在不在。
 
@@ -932,6 +999,14 @@ def main() -> None:
     cmp_.add_argument("--run", action="append", required=True,
                       help="要比的 run id（至少兩個，可重複給）")
     cmp_.set_defaults(func=cmd_compare)
+
+    epi = sub.add_parser("epilogue", help="為既有 run 補戲外導演總結（不重跑）")
+    epi.add_argument("--run-id", action="append", help="run id，可重複")
+    epi.add_argument("--all", action="store_true", help="runs/ 下全部有日誌的場")
+    epi.add_argument("--force", action="store_true", help="已有 epilogue 也再寫一筆")
+    epi.add_argument("--rebuild", action="store_true", help="寫完後重建 runs/_demo/<id>_replay.html")
+    epi.add_argument("--no-cache", action="store_true")
+    epi.set_defaults(func=cmd_epilogue)
 
     m = sub.add_parser("map", help="印出地圖")
     m.set_defaults(func=cmd_map)
