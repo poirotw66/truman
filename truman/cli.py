@@ -205,6 +205,7 @@ def make_engine(world, scen, cfg, run_dir: Path, replay_index=None, quiet=False,
         run_dir=run_dir,
         console=None if quiet else console,
         on_after_goals=getattr(scen, "after_goals", None),
+        on_rite_done=getattr(scen, "on_rite_done", None),
     )
     return engine, log, llm
 

@@ -190,8 +190,11 @@ def main() -> int:
         failures += not check("阿旺可走到漁港",
                               bool(tg.path(aw.pos, "漁港")))
         failures += not check("阿旺回港要一段航程",
-                              len(tg.path(aw.pos, "漁港")) >= 24,
+                              len(tg.path(aw.pos, "漁港")) >= 40,
                               str(len(tg.path(aw.pos, "漁港"))))
+        failures += not check("阿旺全速回港約十五拍",
+                              14 <= (len(tg.path(aw.pos, "漁港")) + 2) // 3 <= 16,
+                              str((len(tg.path(aw.pos, "漁港")) + 2) // 3))
         failures += not check("阿海阿旺互為 kin",
                               "a_wang" in aq.kin and "a_qian" in aw.kin)
         rite_ids = {x.id for a in tw.agents.values() for x in a.arts}
@@ -1835,7 +1838,8 @@ def main() -> int:
             wx.tick = tick
             ex = Engine(world=wx, grid=tempest_mod.build_grid(),
                         cfg=SimConfig(combat=False), llm=None, director=None,
-                        log=blood, world_block_text="", run_dir=_P("/tmp"))
+                        log=blood, world_block_text="", run_dir=_P("/tmp"),
+                        on_rite_done=tempest_mod.on_rite_done)
             tie, hai = wx.agents["shi_lei"], wx.agents["a_qian"]
             tie.pos, hai.pos = _p1, _p2
             return wx, ex, tie, hai
@@ -1847,9 +1851,46 @@ def main() -> int:
                               tie.last_rejection[:40])
         wg, eg, tie, hai = _seawall(40)
         eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
-        failures += not check("過了門檻就焊得成",
+        failures += not check("過了門檻就開得了工（還不算焊成）",
+                              tie.action is not None
+                              and tie.action.get("kind") == "cast_rite"
+                              and "焊水門" not in eg._signals.rites.get("shi_lei", []),
+                              str(tie.action))
+        # 連續推進：海堤上只有鐵雄＋一名證人 → 每拍進度 1，滿 12 拍
+        _dur = int(arts_mod_t.get("feng_zha").params.get("duration", 1))
+        for _ in range(_dur):
+            eg._advance(tie)
+        failures += not check("一人焊滿時辰才算封死",
                               "焊水門" in eg._signals.rites.get("shi_lei", []),
-                              tie.last_rejection[:40])
+                              str(eg._signals.rites))
+
+        # 再多一人上手 → 進度 2，約一半時間
+        wg, eg, tie, hai = _seawall(40)
+        helper = wg.agents["gu_chao"]
+        _cells2 = [q for q in eg.grid.cells_in_areas(["海堤"]) if eg.grid.walkable(q)]
+        tie.pos, hai.pos = _cells2[0], _cells2[1]
+        helper.pos = next(
+            q for q in _cells2
+            if q != tie.pos and q != hai.pos and q.chebyshev(tie.pos) <= 2
+        )
+        eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
+        for _ in range((_dur + 1) // 2):
+            eg._advance(tie)
+        failures += not check("兩人上手約一半時間就焊成",
+                              "焊水門" in eg._signals.rites.get("shi_lei", []),
+                              str(tie.action))
+
+        # 焊成後外海航道應被切斷
+        failures += not check(
+            "焊成後外海甲板不可通行",
+            not eg.grid.walkable(eg.grid.areas["外海漁船"].center())
+            or any(eg.grid.is_flooded(p) for p in eg.grid.cells_in_areas(["外海漁船"])),
+        )
+        aw = wg.agents["a_wang"]
+        failures += not check(
+            "焊成後阿旺從外海走不到漁港",
+            not eg.grid.path(aw.pos, "漁港"),
+        )
 
         # 反對者要真的擋得住，否則反對只能靠嘴，對方沒有理由聽
         wg, eg, tie, hai = _seawall(40)
@@ -1858,23 +1899,51 @@ def main() -> int:
                               wg.rite_blocked.get("焊水門") == 49,
                               str(wg.rite_blocked))
         eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
-        failures += not check("被攔住就焊不成",
-                              "焊水門" not in eg._signals.rites.get("shi_lei", []),
+        failures += not check("被攔住就開不了工",
+                              (tie.action or {}).get("kind") != "cast_rite"
+                              and "焊水門" not in eg._signals.rites.get("shi_lei", []),
                               tie.last_rejection[:40])
         wg, eg, tie, hai = _seawall(51)
         wg.rite_blocked = {"焊水門": 50}
         eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
-        failures += not check("擋期一過就焊得成（擋得住的是一陣子，不是永遠）",
-                              "焊水門" in eg._signals.rites.get("shi_lei", []))
+        failures += not check("擋期一過就能開工（擋得住的是一陣子，不是永遠）",
+                              (tie.action or {}).get("kind") == "cast_rite")
         failures += not check("擋阻狀態撐得過序列化",
                               WorldState.from_dict(json.loads(json.dumps(
                                   wg.to_dict()))).rite_blocked == {"焊水門": 50})
+
+        # 焊到一半被人攔 → 打斷，得重來
+        wg, eg, tie, hai = _seawall(40)
+        eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
+        eg._advance(tie)
+        eg._advance(tie)
+        failures += not check("焊到一半還不算成",
+                              "焊水門" not in eg._signals.rites.get("shi_lei", []))
+        eg._apply_intent(hai, {"kind": "use_art", "art": "攔閘"})
+        failures += not check("攔閘會打斷正在焊的人",
+                              tie.action is None
+                              or (tie.action or {}).get("kind") != "cast_rite",
+                              str(tie.action))
+
+        # 證人走光 → 打斷
+        wg, eg, tie, hai = _seawall(40)
+        eg._apply_intent(tie, {"kind": "use_art", "art": "焊水門"})
+        eg._advance(tie)
+        hai.pos = eg.grid.areas["高地"].center()  # 證人離開海堤
+        eg._advance(tie)
+        failures += not check("證人走光會打斷焊接",
+                              tie.action is None
+                              or (tie.action or {}).get("kind") != "cast_rite",
+                              str(tie.action))
 
         # 門檻要落在期限之前，而且要留得下一段可以吵架的窗口
         _nb = arts_mod_t.get("feng_zha").params.get("not_before")
         failures += not check("焊門門檻在暴潮期限之前，且留有窗口",
                               _nb is not None and 0 < _nb < tempest_mod.STORM_TICK - 20,
                               f"not_before={_nb}, STORM_TICK={tempest_mod.STORM_TICK}")
+        failures += not check("焊門要耗一段時間",
+                              _dur >= 8,
+                              f"duration={_dur}")
 
         # ---- 「還不行」一定要附上「什麼時候才行」 ----
         # t6 的教訓：張鐵雄從 t7 到 t29 試了十次焊水門，每次都收到同一句
@@ -1910,7 +1979,12 @@ def main() -> int:
                               clock_str(10) in why, why)
 
         why2, rites2 = try_weld(40)
-        failures += not check("過了門檻就辦得成", bool(rites2), why2[:40])
+        failures += not check("過了門檻就開得了工",
+                              not rites2 and not why2,
+                              why2[:40] if why2 else "ok")
+        # try_weld 只送 intent，不推進——儀式還在施工中
+        failures += not check("開工當下還不算焊成（要耗時間）",
+                              not rites2)
 
         why3, rites3 = try_weld(40, blocked_until=50)
         failures += not check("被人擋著就辦不成", not rites3 and why3, why3[:40])

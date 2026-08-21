@@ -170,6 +170,12 @@ def describe_action(a: AgentState) -> str:
     kind = act.get("kind")
     if kind == "move_to":
         return f"往{act.get('target_area')}走"
+    if kind == "cast_rite":
+        left = act.get("ticks_left")
+        rite = act.get("rite") or "儀式"
+        if left is not None:
+            return f"正在{rite}（還約 {left} 刻）"
+        return f"正在{rite}"
     if kind == "interact":
         return f"{act.get('object') or '做些什麼'}"
     if kind == "speak":

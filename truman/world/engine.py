@@ -56,6 +56,8 @@ class Engine:
     # 劇本掛鉤：目的判定之後、reflect 之前。嵐潮用它結算暴潮／淹水／滅村。
     # 簽名：callable(engine) -> None。沒掛就是普通劇本。
     on_after_goals: object | None = None
+    # 長儀式完工時：callable(engine, agent, rite_name) -> None。
+    on_rite_done: object | None = None
 
     # ------------------------------------------------------------ 主迴圈
     async def run(self, ticks: int) -> None:
@@ -701,6 +703,53 @@ class Engine:
                     "我得等人到齊。"
                 )
             rite = p.get("rite", d.name)
+            duration = int(p.get("duration", 1))
+            # duration>1：苦力活／長儀式。開工不立刻算成，得連續做完；中途可被打斷。
+            # 配額在完工時才扣——被打斷可以再來，緊張感來自「焊的時候走不開」。
+            if duration > 1:
+                if (
+                    a.action
+                    and a.action.get("kind") == "cast_rite"
+                    and a.action.get("art") == d.id
+                    and not a.action.get("done")
+                ):
+                    return reject(f"我已經在{rite}了，得先做完這一段。")
+                a.action = {
+                    "kind": "cast_rite",
+                    "art": d.id,
+                    "rite": rite,
+                    "area": area or here,
+                    "ticks_left": duration,
+                    "ticks_total": duration,
+                    "witnesses": need,
+                    "keep_witnesses": bool(p.get("keep_witnesses", need > 0)),
+                    "done": False,
+                }
+                line = (
+                    f"{a.name}動手開始{rite}——這不是一下子的事，還得焊上一段時間。"
+                )
+                for o in watching:
+                    remember(o, line, 9)
+                remember(
+                    a,
+                    f"我開始{rite}了，大約還要 {duration} 刻才能封死。這期間走不開。",
+                    9,
+                )
+                detail = {
+                    "rite": rite, "area": here, "casting": True,
+                    "duration": duration,
+                    "witnesses": [o.id for o in watching],
+                }
+                # 開工不 spend、不記入 rites；完工在 _advance。
+                self.log.write("art_used", {
+                    "agent": a.id, "name": a.name, "art": d.id, "art_name": d.name,
+                    "kind": d.kind, "effect": d.effect, "line": line,
+                    "uses_left": slot.uses_left, **detail,
+                })
+                if self.console:
+                    self.console.print(f"[magenta]✦ {line}[/magenta]")
+                return
+
             self._signals.rites.setdefault(a.id, []).append(rite)
             line = f"{a.name}當眾行了{rite}之禮。"
             for o in watching:
@@ -723,10 +772,37 @@ class Engine:
             w.rite_blocked[rite_name] = max(
                 w.rite_blocked.get(rite_name, -1), t + ticks - 1)
             line = p.get("line") or f"{a.name}擋在那裡，一時沒有人動得了手。"
+            # 若有人正在焊／正在辦這場儀式，當場打斷——否則「擋」擋不住已經動手的人。
+            interrupted = []
+            for other in w.agents.values():
+                act = other.action or {}
+                if (
+                    other.alive
+                    and act.get("kind") == "cast_rite"
+                    and act.get("rite") == rite_name
+                    and not act.get("done")
+                ):
+                    other.action = None
+                    other.memory.add(
+                        t, when, "observation",
+                        f"{rite_name}做到一半，被{a.name}打斷了。得重新來過。",
+                        9,
+                    )
+                    interrupted.append(other.id)
+                    self.log.write(
+                        "rite_interrupted",
+                        {
+                            "agent": other.id, "rite": rite_name,
+                            "by": a.id, "reason": "block_rite",
+                        },
+                    )
             for o in bystanders(self.cfg.vision_radius):
                 remember(o, line, 9)
             remember(a, f"我擋下了{rite_name}，撐得了一時。", 8)
-            detail = {"rite": rite_name, "until": w.rite_blocked[rite_name]}
+            detail = {
+                "rite": rite_name, "until": w.rite_blocked[rite_name],
+                "interrupted": interrupted,
+            }
 
         else:  # 目錄裡有、引擎沒實作——設定錯誤，不要靜靜吞掉
             return reject(f"{d.name}我一時竟使不出來。")
@@ -829,10 +905,112 @@ class Engine:
                     "前面的路已被水斷了，走不過去。",
                     7,
                 )
-        else:
-            act["ticks_left"] = act.get("ticks_left", 1) - 1
-            if act["ticks_left"] <= 0:
-                act["done"] = True
+            return
+
+        if act["kind"] == "cast_rite":
+            self._advance_cast_rite(a, act, t, when)
+            return
+
+        act["ticks_left"] = act.get("ticks_left", 1) - 1
+        if act["ticks_left"] <= 0:
+            act["done"] = True
+
+    def _advance_cast_rite(self, a, act: dict, t: int, when: str) -> None:
+        """長儀式／苦力活：每拍推進；離場、缺證人、被擋就中斷；做完才記入 rites。
+
+        進度：預設每拍扣 1。同區再多一個上手的人（證人以外的第二人）每拍扣 2——
+        一人焊滿 duration 拍；兩人一起上手，大約一半時間。
+        """
+        w = self.world
+        rite = act.get("rite", "")
+        need_area = act.get("area", "")
+        here = self.grid.area_at(a.pos)
+
+        def interrupt(reason: str, note: str) -> None:
+            a.action = None
+            a.memory.add(t, when, "observation", note, 9)
+            self.log.write(
+                "rite_interrupted",
+                {"agent": a.id, "rite": rite, "reason": reason, "tick": t},
+            )
+            if self.console:
+                self.console.print(f"[yellow]✦ {a.name}的{rite}中斷了。[/yellow]")
+
+        if need_area and here != need_area:
+            interrupt("left_area", f"{rite}做到一半，人卻離開了{need_area}。得重新來過。")
+            return
+        until = w.rite_blocked.get(rite, -1)
+        if t <= until:
+            interrupt(
+                "blocked",
+                f"{rite}做到一半，被人攔住了。大約到{clock_str(until + 1)}才能再動手。",
+            )
+            return
+
+        others = [
+            o for o in w.agents.values()
+            if (
+                o.alive
+                and o is not a
+                and self.grid.area_at(o.pos) == (need_area or here)
+                and o.pos.chebyshev(a.pos) <= self.cfg.vision_radius
+            )
+        ]
+        need_w = int(act.get("witnesses", 0))
+        if act.get("keep_witnesses") and need_w and len(others) < need_w:
+            interrupt(
+                "no_witness",
+                f"{rite}做到一半，作證的人走光了——沒人看見就不算。得重新來過。",
+            )
+            return
+
+        # 一人（+剛好湊滿證人）每拍進度 1；再多至少一人上手 → 進度 2。
+        progress = 2 if len(others) >= need_w + 1 else 1
+        act["ticks_left"] = int(act.get("ticks_left", 1)) - progress
+        left = act["ticks_left"]
+        total = int(act.get("ticks_total", 0)) or 1
+        if left > 0:
+            if left == total // 2 or left <= 2:
+                pace = "兩人一起上手，進度比較快。" if progress > 1 else "就你一個人焊，還得再耗一陣子。"
+                a.memory.add(
+                    t, when, "observation",
+                    f"{rite}還在進行，勞力大約還剩 {left}（{pace}）",
+                    6,
+                )
+            return
+
+        # 完工：扣配額、記入訊號、讓旁觀者看見。
+        art_id = act.get("art", "")
+        slot = a.art(art_id) if art_id else None
+        d = arts_mod.get(art_id) if art_id else None
+        if slot is not None and d is not None:
+            if slot.uses_left > 0:
+                slot.uses_left -= 1
+            slot.used += 1
+            slot.ready_at = t + d.cooldown if d.cooldown else -1
+        self._signals.rites.setdefault(a.id, []).append(rite)
+        line = f"{a.name}當眾把{rite}做完了。"
+        for o in w.agents.values():
+            if o.alive and o is not a and o.pos.chebyshev(a.pos) <= self.cfg.vision_radius:
+                o.memory.add(t, when, "observation", line, 10)
+        a.memory.add(t, when, "observation", f"我把{rite}做完了。", 10)
+        act["done"] = True
+        a.action = None
+        self.log.write(
+            "art_used",
+            {
+                "agent": a.id, "name": a.name, "art": art_id,
+                "art_name": d.name if d else rite,
+                "kind": d.kind if d else "social",
+                "effect": "rite", "line": line,
+                "rite": rite, "area": here, "casting": False, "completed": True,
+                "uses_left": slot.uses_left if slot else 0,
+            },
+        )
+        if self.console:
+            self.console.print(f"[magenta]✦ {line}[/magenta]")
+        if self.on_rite_done is not None:
+            self.on_rite_done(self, a, rite)
 
     # ------------------------------------------------------------ reflection
     async def _reflect_phase(self) -> None:
