@@ -177,6 +177,17 @@ function buildWorldCanvas(rows, areas, TS, decor, margin) {
       if (h(6) > .7) R(Math.floor(h(7)*10)+2, Math.floor(h(8)*10)+2, 3, 2, "rgba(255,255,255,.18)");
       return;
     }
+    if (sym === "o") {                                     // 外海漁船甲板（嵐潮）：海面包一層木板
+      const SEA = ["#3a6d8a", "#356480", "#407897"];
+      R(0,0,16,16,SEA[Math.floor(h(2)*3)]);
+      R(0, Math.floor(h(4)*6)+2, 16, 1, "rgba(220,240,255,.18)");
+      // 中央木甲板；邊緣留海水，讀起來是船在海上，不是陸地伸出去的路
+      R(2,2,12,12,"#6b5238");
+      for (let ry = 3; ry < 14; ry += 3) R(2, ry, 12, 1, "#5a432c");
+      R(2,2,12,1,"#8a6a3c"); R(2,13,12,1,"#4a3627");
+      if (h(6) > .55) R(6, 5, 4, 2, "#3a2a1a");           // 艙口／網具影子
+      return;
+    }
     // 長街
     R(0,0,16,16,PAL.street[Math.floor(h(1)*3)]);
     for (let i=0; i<4; i++) { const cx = Math.floor(h(10+i)*12)+1, cy = Math.floor(h(20+i)*12)+1;

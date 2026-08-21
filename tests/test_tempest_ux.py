@@ -40,7 +40,17 @@ def test_tempest_cast_look_reaches_replay_profiles() -> None:
     assert "acc === \"beads\"" in (ROOT / "web" / "pixelart.js").read_text(encoding="utf-8")
 
 
-def test_outro_supports_director_epilogue() -> None:
+def test_tempest_offshore_boat_tiles_not_mapped_to_dirt() -> None:
+    """外海甲板 o 必須畫成海上木板，不能被 TEMPEST_REPLAY_SYM 映射成泥地 y。"""
+    from replay.build_frames import TEMPEST_REPLAY_SYM, replay_rows
+    from scenarios import tempest as scen
+
+    assert "o" not in TEMPEST_REPLAY_SYM
+    pixel = (ROOT / "web" / "pixelart.js").read_text(encoding="utf-8")
+    assert 'sym === "o"' in pixel
+    rows = replay_rows(scen)
+    assert any("o" in row for row in rows)
+    assert all("~" in row or "o" in row or "#" in row for row in rows[-4:-1])
     assert "DATA.epilogue" in TEMPLATE
     assert "戲外導演" in TEMPLATE
     assert "details.epi" in TEMPLATE or "class=\"epi\"" in TEMPLATE
