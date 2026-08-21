@@ -1,0 +1,13 @@
+{"seq": 1, "tick": 24, "wall": "2026-08-21T06:05:40+00:00", "type": "fork", "data": {"from": "runs/t7c/checkpoints/t00024.json", "at_tick": 24, "run_id": "t7d"}}
+{"seq": 2, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "preflight", "data": {"checked": [{"model": "gemini-3.1-flash-lite", "thinking": "low"}, {"model": "gemini-3.1-flash-lite", "thinking": "high"}], "failed": []}}
+{"seq": 3, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "tick_start", "data": {"tick": 24, "when": "第1天 10:00"}}
+{"seq": 4, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "director", "data": {"tick": 24, "kind": "broadcast", "area": "海堤", "text": "（潮聲變了。不是拍岸，是遠雷似的一聲接一聲。水閘縫裡開始往外冒白沫。）", "fired": true}}
+{"seq": 5, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "coast", "data": {"agent": "fang_lan", "reason": "coasting"}}
+{"seq": 6, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "coast", "data": {"agent": "a_qian", "reason": "coasting"}}
+{"seq": 7, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "think", "data": {"agent": "shen_xi", "reason": "action_done", "tier": "routine"}}
+{"seq": 8, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "think", "data": {"agent": "shi_lei", "reason": "no_action", "tier": "routine"}}
+{"seq": 9, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "think", "data": {"agent": "a_wang", "reason": "no_action", "tier": "routine"}}
+{"seq": 10, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "think", "data": {"agent": "qing_he", "reason": "action_done", "tier": "routine"}}
+{"seq": 11, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "think", "data": {"agent": "gu_chao", "reason": "no_action", "tier": "routine"}}
+{"seq": 12, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "warmup_skipped", "data": {"model": "gemini-3.1-flash-lite", "approx_prefix_tokens": 2738, "min_cacheable": 4096, "note": "前綴進不了快取，跳過循序暖機，整批並行送出。"}}
+{"seq": 13, "tick": 24, "wall": "2026-08-21T06:05:44+00:00", "type": "cache_warning", "data": {"provider": "gemini", "model": "gemini-3.1-flash-lite", "approx_prefix_tokens": 2738, "min_cacheable": 4096, "note": "前綴低於文件記載的快取門檻。Gemini 有時仍會回報 cached tokens——以實際 usage 的 cache_read 為準；若一路是 0，才代表完全沒吃到快取。"}}

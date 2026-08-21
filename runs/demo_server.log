@@ -1,0 +1,22 @@
+Truman demo → http://127.0.0.1:8765/
+  箱庭入口：回放既有軌跡，或現場開一場（預設真 LLM · 96 ticks）。Ctrl+C 結束。
+127.0.0.1 - "GET / HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scene_market.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scene_liufu.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scene_plaza.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scene_gate.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scene_tavern.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scene_yard.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scene_shrine.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scene_qunyu.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scenes/tempest/scene_haidi.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scenes/tempest/scene_miao.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scenes/tempest/keyart.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scene_temple.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/keyart_hengshan.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scenes/tempest/scene_yugang.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scenes/tempest/scene_guangchang.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scenes/tempest/scene_gaodi.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scenes/tempest/scene_tiepu.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scenes/tempest/scene_cunzhang.jpg HTTP/1.1" 200 -
+127.0.0.1 - "GET /art/scenes/tempest/scene_yushi.jpg HTTP/1.1" 200 -
